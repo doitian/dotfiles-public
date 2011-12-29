@@ -2,4 +2,5 @@
 /_vim_/doc/tags
 /_irssi_/*.log
 /_irssi_/*.autosave
+/_irssi_/config
 *~

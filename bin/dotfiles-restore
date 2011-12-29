@@ -6,7 +6,7 @@ restore_file () {
   local f=
 
   for f in $BACKUP_DIR/$dir*; do
-    if [ -e "$f" ]; then
+    if [ -e "$f" ] && [ "$(basename $f)" != "README.md" ]; then
       local b=`basename "$f"`
       local r=`echo "$HOME/$dir$b" | sed -e 's;/_;/.;g' -e 's;/._;/_;g'`
       if [ -d "$f" ] && [ "$f" = "${f%_}" ]; then
