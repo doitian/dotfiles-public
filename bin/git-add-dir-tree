@@ -1,0 +1,13 @@
+#!/bin/sh
+
+function main()
+{
+  local dir="$1"
+  if [ -z "$dir" ]; then
+    dir="$PWD"
+  fi
+
+  find "$dir" -type d -exec touch {}/.gitkeep \; -exec git add {}/.gitkeep \;
+}
+
+main "$*"

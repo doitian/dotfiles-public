@@ -1,0 +1,6 @@
+keysym Menu = Super_R
+add mod4 = Super_R
+
+remove Lock = Caps_Lock
+keysym Caps_Lock = Control_L
+add Control = Control_L

@@ -1,0 +1,29 @@
+include /etc/xpdfrc
+
+textEncoding		UTF-8
+textEOL		unix
+urlCommand	"firefox '%s'"
+
+initialZoom width
+continuousView yes
+
+bind mousePress4    any         scrollUpPrevPage(80)
+bind mousePress5    any         scrollDownNextPage(80)
+
+bind	j	any	scrollDown(64)
+bind	k	any	scrollUp(64)
+bind	h	any	scrollLeft(64)
+bind	l	any	scrollRight(64)
+bind	ctrl-j	any	scrollDown(8)
+bind	ctrl-k	any	scrollUp(8)
+bind	ctrl-h	any	scrollLeft(8)
+bind	ctrl-l	any	scrollRight(8)
+bind	/	any	find
+bind 	ctrl-v	any	pageDown
+bind	alt-v	any	pageUp
+bind	g	any	gotoPage(1)
+bind	G	any	gotoLastPage
+bind    alt-<   any     gotoPage(1)
+bind    alt->   any     gotoLastPage
+bind	=	any	zoomIn
+bind    `       any     toggleOutline

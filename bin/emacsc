@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Emacs Compiler
+
+# -nf no force
+
+if [ -n "$1" -a "$1" = "--no-force" ]; then
+    shift
+    exec /usr/bin/emacs --batch -q -no-site-file --eval "(batch-byte-compile t)" "$@"
+else
+    exec /usr/bin/emacs --batch -q -no-site-file -f batch-byte-compile "$@"
+fi

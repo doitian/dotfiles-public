@@ -1,0 +1,41 @@
+#!/bin/sh
+BACKUP_DIR="$HOME/CodeBase/dotfiles"
+
+restore_file () {
+  local dir=$1${1:+/}
+  local f=
+
+  for f in $BACKUP_DIR/$dir*; do
+    if [ -e "$f" ]; then
+      local b=`basename "$f"`
+      local r=`echo "$HOME/$dir$b" | sed -e 's;/_;/.;g' -e 's;/._;/_;g'`
+      if [ -d "$f" ] && [ "$f" = "${f%_}" ]; then
+        restore_file "$dir$b"
+      else
+        local d=`dirname "$r"`
+        if ! [ -d "$d" ]; then
+          mkdir -p "$d"
+        fi
+        ln -f -n -s "$f" "${r%_}"
+      fi
+    fi
+  done
+}
+
+restore_file "$@"
+chmod +x $BACKUP_DIR/bin/*
+[ -d "$HOME/.backup/vim" ] || mkdir -p "$HOME/.backup/vim"
+
+if [ -d "$HOME/.kdemod4" ]; then
+  mkdir -p "$HOME/.kdemod4/share/config"
+  cp "$BACKUP_DIR/_kdiff3rc.conf" "$HOME/.kdemod4/share/config/kdiff3rc"
+fi
+
+if [ -d "$HOME/.kde" ]; then
+  mkdir -p "$HOME/.kde/share/config"
+  cp "$BACKUP_DIR/_kdiff3rc.conf" "$HOME/.kde/share/config/kdiff3rc"
+fi
+
+ln -snf "$HOME/Dropbox/Secrets/secrets.el" "$HOME/.emacs.d/secrets.el"
+ln -snf "$HOME/Dropbox/Secrets/irssi.pl" "$HOME/.irssi/config"
+ln -snf "$HOME/Dropbox/Secrets/gitconfig" "$HOME/.gitconfig"

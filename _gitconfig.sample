@@ -1,0 +1,72 @@
+[color]
+    status = auto
+    diff = auto
+    branch = auto
+    interactive = auto
+
+[alias]
+    br = branch
+    bs = show-branch
+
+    ci = commit
+    cm = commit
+    ca = commit --amend
+    co = checkout
+    cb = checkout -b
+
+    di = diff -p --stat # show difference between working tree and the index
+    dc = diff --cached --stat # what would be committed with "git commit"
+    da = diff -p --stat HEAD # what would be committed with "git commit -a"
+    df = diff --stat # show different files between working tree and the index
+    dt = difftool
+
+    fp = format-patch -s
+
+    sa = stash
+    sl = stash list
+    sp = stash pop
+
+    ll = log --pretty=format:'%h... %an - %s %Cgreen%ar%Creset'
+    show-graph = log --graph --abbrev-commit --pretty=oneline
+
+    me = merge
+    mt = mergetool
+
+    rs = reset
+    rf = reset --hard
+    del = reset HEAD
+
+    rb = rebase
+    rc = rebase --continue
+    ra = rebase --abort
+
+    st = status
+
+    ls = ls-files
+
+[giggle]
+	compact-mode = false
+	main-window-maximized = false
+	main-window-geometry = 1920x1180+0+20
+	main-window-view = HistoryView
+	history-view-vpane-position = 668
+	file-view-vpane-position = 657
+[diff]
+	tool = kdiff3
+[merge]
+	tool = kdiff3
+[core]
+	excludesfile = ~/.cvsignore
+[color "branch"]
+	current = yellow bold
+    local = blue bold
+    remote = green
+[color "diff"]
+    meta = yellow bold
+    frag = cyan bold
+    func = blue bold
+    whitespace = reverse
+    old = red bold
+    new = green bold
+[push]
+	default = upstream

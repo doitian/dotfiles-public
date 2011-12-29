@@ -1,0 +1,9 @@
+#!/bin/bash
+if grep -q '^\w\+://' <<<"$*"; then
+    TMPFILE=`mktemp vimperator.$UID.XXXXX`
+    trap "rm -f $TMPFILE" EXIT
+    wget -q -O "$TMPFILE" "$*"
+    emacs-dwim "$TMPFILE"
+else
+    emacs-dwim "$*"
+fi

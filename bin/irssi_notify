@@ -1,0 +1,16 @@
+#!/bin/sh
+
+function main ()
+{
+  local icon=$HOME/Dropbox/Photos/icons/irssi-icon.png
+  if which growlnotify > /dev/null 2>&1; then
+    growlnotify -w -n Irssi --image $icon -m "$2" "$1"
+  elif which notify-send > /dev/null 2>&1; then
+    local id=`cat /tmp/irssi_notify_id 2>/dev/null`
+    if [ -z "$id" ]; then
+      id="0"
+    fi
+    notify-send.py -n Irssi -r "$id" -i $icon "$1" "$2" > /tmp/irssi_notify_id
+  fi
+}
+main "$@"

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+vim -R -c "Tail %" -c "only" -c "map <TAB> <Nop>" "$1"

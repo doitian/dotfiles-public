@@ -1,0 +1,10 @@
+#!/bin/sh
+
+echo $# args: | tee -a "/tmp/echo-args$UID"
+
+id=0
+for a; do
+    echo -ne "$id\t"
+    echo "|$a|"
+    let id=id+1
+done | tee -a "/tmp/echo-args$UID"

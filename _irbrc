@@ -1,0 +1,17 @@
+def my_require(lib)
+  begin
+    require lib
+    yield if block_given?
+  rescue LoadError => err
+    $stderr.puts "Couldn't load #{lib}: #{err}"
+  end
+end
+
+my_require 'rubygems'
+my_require 'wirble' do
+  Wirble.init
+  Wirble.colorize unless ENV['EMACS']
+end
+
+def q; quit; end
+

@@ -1,0 +1,113 @@
+set mapleader=","
+
+set editor=vimperator-editor
+set defsearch=-g
+set guioptions=NBCs
+" set showtabline=never
+set altwildmode=list:longest
+set newtab=all
+set activate+=links
+
+colorscheme zenburn
+
+
+" history
+noremap <A-[> H
+noremap <A-]> L
+inoremap <A-[> <ESC>H
+inoremap <A-]> <ESC>L
+cnoremap <A-[> <ESC>H
+cnoremap <A-]> <ESC>L
+
+" tab
+noremap J 5j
+noremap K 5k
+noremap H 5h
+noremap L 5l
+noremap <C-j> gt
+noremap <C-k> gT
+noremap <C-y> gb
+noremap <C-e> gB
+
+noremap <A-}> gt
+noremap <A-{> gT
+inoremap <A-}> <ESC>gt
+inoremap <A-{> <ESC>gT
+cnoremap <A-}> <ESC>gt
+cnoremap <A-{> <ESC>gT
+
+noremap <C-A-}> :tabmove +1<return>
+noremap <C-A-{> :tabmove -1<return>
+inoremap <C-A-}> <ESC>:tabmove +1<return>
+inoremap <C-A-{> <ESC>:tabmove -1<return>
+cnoremap <C-A-}> <ESC>:tabmove +1<return>
+cnoremap <C-A-{> <ESC>:tabmove -1<return>
+
+noremap <C-b> :tabmove 
+
+" move
+noremap <BS> <C-b>
+noremap <C-n> <C-v><Down>
+noremap <C-p> <C-v><Up>
+
+" quote
+noremap <C-q> <A-b>
+inoremap <C-q> <A-b>
+cnoremap <C-q> <A-b>
+
+" edit in command
+cnoremap <A-BS> <C-BS>
+cnoremap <C-x> <pass>
+cnoremap <C-c> <pass>
+cnoremap <C-v> <pass>
+cnoremap <C-z> <pass>
+cnoremap <C-b> <Left>
+cnoremap <C-f> <Right>
+cnoremap <C-p> <Up>
+cnoremap <C-n> <Down>
+cnoremap <C-S-p> <S-Up>
+cnoremap <C-S-n> <S-Down>
+cnoremap <A-b> <C-Left>
+cnoremap <A-f> <C-Right>
+cnoremap <A-d> <C-Del>
+
+" edit in insert mode
+inoremap <A-BS> <C-BS>
+inoremap <C-x> <pass>
+inoremap <C-c> <pass>
+inoremap <C-v> <pass>
+inoremap <C-z> <pass>
+inoremap <C-b> <Left>
+inoremap <C-f> <Right>
+inoremap <C-p> <Up>
+inoremap <C-n> <Down>
+inoremap <A-b> <C-Left>
+inoremap <A-f> <C-Right>
+inoremap <A-d> <C-Del>
+imap <C-t> <pass>
+
+" helper
+noremap E <C-S-e><C-z>
+noremap <C-Tab> <pass>
+noremap <C-S-Tab> <pass>
+map x :open x-
+map s :open -
+
+" qmarks
+" qmark r https://www.google.com/reader
+" qmark m https://mail.google.com/mail
+" qmark l http://www.instapaper.com/u
+" qmark t https://twitter.com
+" qmark w https://weibo.com
+" qmark s http://sports.163.com
+
+" Keys
+set passkeys+=mail.google.com:'jkxseopnUI<CR><Esc>/?,gi,gl,*r,*u,*n,*a'
+set passkeys+=www.google.com/reader:'jknpomNPOASD<SPC><BS>'
+set passkeys+=pinboard.in/add:'<Tab>'
+
+" Style
+highlight TabIconNumber width:16px;text-align:center;margin:0 3px 0 -16px !important;color:#586e75;text-shadow:#073642 1px 1px 1px;font-size:14px;background:#eee8d5;border-radius:8px;
+
+style -group user http://hootsuite.com/dashboard* #messageBoxMessage{font-size:140% !important}.messageContent{font-size:160% !important}.commentContent{font-size:140% !important}
+style -group user https://hootsuite.com/dashboard* #messageBoxMessage{font-size:140% !important}.messageContent{font-size:160% !important}.commentContent{font-size:140% !important}

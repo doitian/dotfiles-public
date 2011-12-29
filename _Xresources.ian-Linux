@@ -1,0 +1,8 @@
+Emacs*font: Inconsolata:pixelsize=18
+URxvt.font:xft:Terminus-12,xft:WenQuanYi Micro Hei Mono-12
+URxvt.boldFont:xft:Terminus-12:Bold,xft:WenQuanYi Micro Hei Mono-12:Bold
+scratchpad.font:xft:Terminus-12,xft:WenQuanYi Micro Hei Mono-12
+scratchpad.boldFont:xft:Terminus-12:Bold,xft:WenQuanYi Micro Hei Mono-12:Bold
+URxvt.iconFile: /usr/share/icons/Faenza/apps/24/terminal.png
+scratchpad.iconFile: /usr/share/icons/Faenza/apps/24/terminal.png
+XTerm*font: -xos4-terminus-medium-r-normal--16-*

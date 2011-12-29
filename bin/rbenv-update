@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+# Verify Git is installed, otherwise suggest running bootstrap:
+if [ ! $(which git) ]; then
+  echo "Git is not installed."
+  exit
+fi
+
+RBENV_ROOT="$HOME/.rbenv"
+
+# Install rbenv:
+if [ ! -d "$RBENV_ROOT" ] ; then
+  set -x
+  git clone git://github.com/sstephenson/rbenv.git $RBENV_ROOT
+  set +x
+else
+  set -x
+  cd $RBENV_ROOT
+  git pull
+  set +x
+fi
+
+# Install plugins:
+PLUGINS=( "sstephenson:rbenv-vars"
+          "sstephenson:ruby-build"
+          "jamis:rbenv-gemset" )
+for plugin in ${PLUGINS[@]} ; do
+
+  KEY=${plugin%%:*}
+  VALUE=${plugin#*:}
+
+  RBENV_PLUGIN_ROOT="${RBENV_ROOT}/plugins/$VALUE"
+  if [ ! -d "$RBENV_PLUGIN_ROOT" ] ; then
+    set -x
+    git clone git://github.com/$KEY/$VALUE.git $RBENV_PLUGIN_ROOT
+    set +x
+  else
+    set -x
+    cd $RBENV_PLUGIN_ROOT
+    git pull
+    set +x
+  fi
+
+done
+
+# Show help if `.rbenv` is not in the path:
+if [ ! $(which rbenv) ]; then
+  echo "
+Seems you still have not added 'rbenv' to the load path:
+
+    if [[ -d \$HOME/.rbenv ]]; then
+      export PATH=\"\$HOME/.rbenv/bin:\$PATH\"
+      eval \"\$(rbenv init -)\"
+    fi
+  "
+fi
