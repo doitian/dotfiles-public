@@ -20,14 +20,10 @@ cnoremap <A-[> <ESC>H
 cnoremap <A-]> <ESC>L
 
 " tab
-noremap J 5j
-noremap K 5k
-noremap H 5h
-noremap L 5l
-noremap <C-j> gt
-noremap <C-k> gT
-noremap <C-y> gb
-noremap <C-e> gB
+noremap J gt
+noremap K gT
+noremap <C-.> gb
+noremap <C-,> gB
 
 noremap <A-}> gt
 noremap <A-{> gT
@@ -36,6 +32,8 @@ inoremap <A-{> <ESC>gT
 cnoremap <A-}> <ESC>gt
 cnoremap <A-{> <ESC>gT
 
+noremap <C-j> :tabmove +1<return>
+noremap <C-k> :tabmove -1<return>
 noremap <C-A-}> :tabmove +1<return>
 noremap <C-A-{> :tabmove -1<return>
 inoremap <C-A-}> <ESC>:tabmove +1<return>
@@ -70,6 +68,7 @@ cnoremap <C-S-n> <S-Down>
 cnoremap <A-b> <C-Left>
 cnoremap <A-f> <C-Right>
 cnoremap <A-d> <C-Del>
+cnoremap <C-g> <ESC>
 
 " edit in insert mode
 inoremap <A-BS> <C-BS>
@@ -84,12 +83,15 @@ inoremap <C-n> <Down>
 inoremap <A-b> <C-Left>
 inoremap <A-f> <C-Right>
 inoremap <A-d> <C-Del>
-imap <C-t> <pass>
+inoremap <C-g> <ESC>
 
 " helper
 noremap E <C-S-e><C-z>
 noremap <C-Tab> <pass>
 noremap <C-S-Tab> <pass>
+noremap <C-t> <pass>
+cnoremap <C-t> <pass>
+inoremap <C-t> <pass>
 map x :open x-
 map s :open -
 
