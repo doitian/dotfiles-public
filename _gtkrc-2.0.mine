@@ -19,3 +19,14 @@ gtk-enable-event-sounds = 0
 gtk-enable-input-feedback-sounds = 0
 
 gtk-icon-sizes = "panel-menu=16,16:panel=16,16:gtk-menu=16,16:gtk-large-toolbar=16,16:gtk-small-toolbar=16,16:gtk-button=16,16"
+
+# binding
+binding "gtk-binding-text" {
+    bind "<alt>n" { "move-cursor" (display-lines, 1, 0) }
+    bind "<alt>p" { "move-cursor" (display-lines, -1, 0) }
+    bind "<ctrl>n" { "move-cursor" (display-lines, 1, 0) }
+    bind "<ctrl>p" { "move-cursor" (display-lines, -1, 0) }
+    bind "<alt>BackSpace"  { "delete-from-cursor" (word-ends, -1) }
+}
+class "GtkEntry" binding "gtk-binding-text"
+class "GtkTextView" binding "gtk-binding-text"
