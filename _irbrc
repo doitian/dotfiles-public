@@ -8,10 +8,7 @@ def my_require(lib)
 end
 
 my_require 'rubygems'
-my_require 'wirble' do
-  Wirble.init
-  Wirble.colorize unless ENV['EMACS']
-end
+my_require 'awesome_print'
 
 def q; quit; end
 
