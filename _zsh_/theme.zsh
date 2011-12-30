@@ -13,11 +13,11 @@ function rbenv_prompt_info() {
 Function git_prompt_info() {
   local ref dirty
   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
-  # dirty='%{[1;32m%}✔'
-  # if [[ -n $(git status -s 2> /dev/null) ]]; then
-  #   dirty='%{[1;31m%}✘✘✘'
-  # fi
-  echo "(${ref#refs/heads/}${dirty})"
+  dirty='%{[1;32m%}'
+  if [[ -n $(git status -s 2> /dev/null) ]]; then
+    dirty='%{[1;31m%}'
+  fi
+  echo "${dirty}(${ref#refs/heads/})"
 }
 function git_prompt_dirty() {
   if [[ -n $(git status -s 2> /dev/null) ]]; then
@@ -47,5 +47,5 @@ if [[ -n "$SSH_CLIENT"  ||  -n "$SSH2_CLIENT" ]]; then
   PR_SSH_INDICATOR='%{[1;33m%}'
 fi
 
-PROMPT='%{[47m%}%{[1;30m%}╭─%{[00m%}'"$PR_ROOT_INDICATOR"'%n%{[00m%}@'"$PR_SSH_INDICATOR"'%m%{[00m%} %{[1;33m%}%~ %{[1;31m%}$(git_prompt_info) %{[1;34m%}$(rbenv_prompt_info)%(?..%{[1;31m%} %? ↵%{[00m%})%{[00m%}
+PROMPT='%{[47m%}%{[1;30m%}╭─%{[00m%}'"$PR_ROOT_INDICATOR"'%n%{[00m%}@'"$PR_SSH_INDICATOR"'%m%{[00m%} %{[1;33m%}%~ $(git_prompt_info) %{[1;34m%}$(rbenv_prompt_info)%(?..%{[1;31m%} %? ↵%{[00m%})%{[00m%}
 %{[47m%}%{[1;30m%}╰─'"$PR_ROOT_INDICATOR"'➤%{[00m%} '
