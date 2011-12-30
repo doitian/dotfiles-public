@@ -1,6 +1,6 @@
 # -*- ruby -*-
 # === EDITOR ===
-Pry.editor = proc { |file, line| "emacsclient #{file} +#{line}" }
+Pry.editor = proc { |file, line| "emacs-dwim #{file} +#{line}" }
 
 # === CUSTOM PROMPT ===
 # This prompt shows the ruby version (useful for RVM)
