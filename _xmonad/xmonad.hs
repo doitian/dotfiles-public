@@ -193,7 +193,7 @@ myKeys =  \conf -> mkKeymap conf $
     , ("M-S-o", spawn "xopen -") -- open current selection
 
     -- app
-    , ("M-o", runOrRaiseNext "firefox" (className =? "Firefox")) -- chrome
+    , ("M-o", runOrRaiseNext "chromium" (className =? "Chromium")) -- chrome
     , ("M-i", runOrRaiseNext "emacs-dwim" (className =? "Emacs")) --emacs
     , ("M-u", runOrRaiseNext "urxvt" (className =? "URxvt" <&&> resource /=? "scratchpad")) -- raise next terminal
 
@@ -405,8 +405,7 @@ myLayout = configurableNavigation (navigateColor myActiveBorderColor)
 myWorkspaces    = ["1.sys","2.www","3.emacs","4.doc","5","6","7","8.gimp","9.im","0","-"]
 
 myFloatManageHook = composeOne . concat $
-    [ [ (isFullscreen -?> doFullFloat')
-      , (className =? "Gsimplecal" -?> doRectFloat (W.RationalRect 0.75 0.02 0.25 0.23))
+    [ [ (className =? "Gsimplecal" -?> doRectFloat (W.RationalRect 0.75 0.02 0.25 0.23))
       , (className =? "Screenkey" -?> doIgnore)
       , (role =? "gimp-toolbox" -?> doMaster)
       ]
@@ -414,27 +413,26 @@ myFloatManageHook = composeOne . concat $
     , [ className =? x -?> doMaster | x <- masters ]
     ]
     where
-      unFloat = ask >>= doF . W.sink
       cCenter = [ "Gmrun", "Gpicker", "Gcolor2" ]
       masters = [ "Emacs" ]
-      doMaster = doF W.shiftMaster
-      doFullFloat' = doFullFloat <+> doMaster
       doCenterFloat' = doCenterFloat <+> doMaster
+      doMaster = doF W.shiftMaster
       role = stringProperty "WM_WINDOW_ROLE"
       
 mySmartFloatManageHook = composeOne . concat $
-  [ [ className =? x -?> doFloat' | x <- cFloat ]
-  , [ (className =? "Minefield" <||> className =? "Firefox") <&&> resource =? x -?> doFloat'
-    | x <- ffCenter
-    ]
+  [ [ (isFullscreen <&&> className =? "Chromium" -?> unFloat )
+    , (isFullscreen -?> doFullFloat') ]
+  , [ className =? x -?> doFloat' | x <- cFloat ]
   , [ role =? x -?> doFloat' | x <- rFloat ]
   , [ (isDialog -?> doFloat') ] ]
   where
-    cFloat  = [ "Zenity", "Stardict", "Update-manager", "Shutter" ]
+    cFloat  = [ "Zenity", "Stardict", "Update-manager", "Shutter", "Firefox", "Chromium" ]
     rFloat  = [ "gimp-dock" ]
     ffCenter = [ "Manager", "Extension", "Download", "Dialog", "Browser", "Toplevel" ]
-    doMaster = doF W.shiftMaster
+    unFloat = ask >>= doF . W.sink
+    doFullFloat' = doFullFloat <+> doMaster
     doFloat' = doFloat <+> doMaster
+    doMaster = doF W.shiftMaster
     role = stringProperty "WM_WINDOW_ROLE"
 
 myShiftManageHook = composeOne . concat $
