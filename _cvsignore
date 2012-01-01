@@ -20,3 +20,4 @@ TAGS
 *.bbl
 *.blg
 *.vrb
+.dir-locals.el
