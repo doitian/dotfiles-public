@@ -1,8 +1,8 @@
 autoload colors; colors;
-export LSCOLORS="Gxfxcxdxbxegedabagacad"
-if [ "$OS_TYPE" = "Linux" -a -f "$HOME/.zsh/dircolors.256dark" ]; then
-  eval `dircolors $HOME/.zsh/dircolors.256dark`
-fi
+# export LSCOLORS="Gxfxcxdxbxegedabagacad"
+# if [ "$OS_TYPE" = "Linux" -a -f "$HOME/.zsh/dircolors.256dark" ]; then
+#   eval `dircolors $HOME/.zsh/dircolors.256dark`
+# fi
 setopt prompt_subst
 
 function rbenv_prompt_info() {
