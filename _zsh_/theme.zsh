@@ -21,7 +21,7 @@ autoload colors; colors;
 #g     cyan
 #h     light grey
 #                1 2 3 4 5 6 7 8 9 0 1
-export LSCOLORS="Exfxcxdxbxegedabagacad"
+export LSCOLORS="ExGxFxdxCxEgEdHbagacad"
 # if [ "$OS_TYPE" = "Linux" -a -f "$HOME/.zsh/dircolors.256dark" ]; then
 #   eval `dircolors $HOME/.zsh/dircolors.256dark`
 # fi
