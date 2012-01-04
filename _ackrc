@@ -1,0 +1,9 @@
+--type=text
+--ignore-dir=vendor/bundle
+--ignore-dir=vendor/jruby-bundle
+--ignore-dir=tmp
+--ignore-dir=cache
+--ignore-dir=log
+--ignore-dir=logs
+--ignore-dir=.tmp
+--ignore-dir=.sass-cache

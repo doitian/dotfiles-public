@@ -24,6 +24,7 @@ restore_file () {
 
 restore_file "$@"
 chmod +x $BACKUP_DIR/bin/*
+[ -d "$HOME/.backup/emacs" ] || mkdir -p "$HOME/.backup/emacs"
 [ -d "$HOME/.backup/vim" ] || mkdir -p "$HOME/.backup/vim"
 
 if [ -d "$HOME/.kdemod4" ]; then
@@ -39,3 +40,4 @@ fi
 ln -snf "$HOME/Dropbox/Secrets/secrets.el" "$HOME/.emacs.d/secrets.el"
 ln -snf "$HOME/Dropbox/Secrets/irssi.pl" "$HOME/.irssi/config"
 ln -snf "$HOME/Dropbox/Secrets/gitconfig" "$HOME/.gitconfig"
+ln -snf "$HOME/.vim/vimrc" "$HOME/.vimrc"

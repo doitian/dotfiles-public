@@ -21,3 +21,4 @@ TAGS
 *.blg
 *.vrb
 .dir-locals.el
+.tmp
