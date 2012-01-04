@@ -22,3 +22,4 @@ TAGS
 *.vrb
 .dir-locals.el
 .tmp
+doc/tags
