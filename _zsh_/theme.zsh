@@ -69,5 +69,5 @@ if [[ -n "$SSH_CLIENT"  ||  -n "$SSH2_CLIENT" ]]; then
   PR_SSH_INDICATOR='%{[1;33m%}'
 fi
 
-PROMPT='%{[47m%}%{[34m%}╭─%{[00m%}'"$PR_ROOT_INDICATOR"'%n%{[00m%}@'"$PR_SSH_INDICATOR"'%m%{[00m%} %{[33m%}%~ $(git_prompt_info) %{[1;34m%}$(rbenv_prompt_info)%(?..%{[31m%} %? ↵%{[00m%})%{[00m%}
+PROMPT='%{[47m%}%{[34m%}╭─%{[00m%}'"$PR_ROOT_INDICATOR"'%n%{[00m%}@'"$PR_SSH_INDICATOR"'%m%{[00m%} %{[1;34m%}%~ %{[00m%}$(git_prompt_info) %{[33m%}$(rbenv_prompt_info)%(?..%{[31m%} %? ↵%{[00m%})%{[00m%}
 %{[47m%}%{[34m%}╰─'"$PR_ROOT_INDICATOR"'➤%{[00m%} '
