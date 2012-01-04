@@ -95,22 +95,22 @@ URxvt*cursorColor: #F0DFAF
 !!URxvt*fadeColor: #002b36
 !! URxvt*tint: 35
 
-color0: #1E2320
-color1: #705050
-color10: #C3BF9F
-color11: #F0DFAF
-color12: #94BFF3
-color13: #EC93D3
-color14: #93E0E3
-color15: #FFFFFF
-color2: #60B48A
-color3: #DFAF8F
-color4: #506070
-color5: #DC8CC3
-color6: #8CD0D3
-color7: #DCDCCC
-color8: #709080
-color9: #DCA3A3
+URxvt*color0: #1E2320
+URxvt*color8: #709080
+URxvt*color1: #705050
+URxvt*color10: #C3BF9F
+URxvt*color11: #F0DFAF
+URxvt*color12: #94BFF3
+URxvt*color13: #EC93D3
+URxvt*color14: #93E0E3
+URxvt*color15: #FFFFFF
+URxvt*color2: #60B48A
+URxvt*color3: #DFAF8F
+URxvt*color4: #506070
+URxvt*color5: #DC8CC3
+URxvt*color6: #8CD0D3
+URxvt*color7: #DCDCCC
+URxvt*color9: #DCA3A3
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !! Misc

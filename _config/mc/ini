@@ -80,7 +80,7 @@ editor_backup_extension=~
 mcview_eof=
 ignore_ftp_chattr_errors=true
 keymap=my.keymap
-skin=/opt/solarized.ini
+skin=default
 
 [Layout]
 equal_split=1
