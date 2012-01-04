@@ -1,5 +1,27 @@
 autoload colors; colors;
-# export LSCOLORS="Gxfxcxdxbxegedabagacad"
+
+#1.   directory
+#2.   symbolic link
+#3.   socket
+#4.   pipe
+#5.   executable
+#6.   block special
+#7.   character special
+#8.   executable with setuid bit set
+#9.   executable with setgid bit set
+#10.  directory writable to others, with sticky bit
+#11.  directory writable to others, without sticky bit
+
+#a     black
+#b     red
+#c     green
+#d     brown
+#e     blue
+#f     magenta
+#g     cyan
+#h     light grey
+#                1 2 3 4 5 6 7 8 9 0 1
+export LSCOLORS="Exfxcxdxbxegedabagacad"
 # if [ "$OS_TYPE" = "Linux" -a -f "$HOME/.zsh/dircolors.256dark" ]; then
 #   eval `dircolors $HOME/.zsh/dircolors.256dark`
 # fi
