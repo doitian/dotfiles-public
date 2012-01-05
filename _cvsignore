@@ -24,3 +24,5 @@ TAGS
 .tmp
 doc/tags
 .netrwhist
+.emacs.desktop
+.emacs.desktop.lock
