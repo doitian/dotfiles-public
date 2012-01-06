@@ -54,6 +54,9 @@ setopt clobber
 setopt interactivecomments
 setopt multios
 
+# Correction
+setopt correct
+
 ##################################################
 # Other
 
