@@ -32,6 +32,7 @@ setopt append_history
 setopt auto_cd
 setopt auto_name_dirs
 setopt auto_pushd
+setopt pushd_ignore_dups
 setopt cdablevars
 # setopt pushd_ignore_dups
 
