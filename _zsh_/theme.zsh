@@ -36,9 +36,9 @@ Function git_prompt_info() {
   local ref dirty
   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
   dirty='%{[32m%}'
-  #if [[ -n $(git status -s 2> /dev/null) ]]; then
-  #  dirty='%{[1;31m%}'
-  #fi
+  if [[ -n $(git status -s 2> /dev/null) ]]; then
+    dirty='%{[1;31m%}'
+  fi
   echo "${dirty}(${ref#refs/heads/})"
 }
 function git_prompt_dirty() {
