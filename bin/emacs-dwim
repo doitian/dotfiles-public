@@ -62,7 +62,7 @@ main () {
 
 kill_emacs () {
     pidof emacs && \
-    emacsclient -e -n '(progn (dolist (f (cdr-safe (reverse (frame-list)))) (delete-frame f t)) (kill-emacs "yyyyyy"))'
+    emacsclient -e -n '(let ((desktop-save '\''if-exists)) (dolist (f (cdr-safe (reverse (frame-list)))) (delete-frame f t)) (kill-emacs "yyyyyy"))'
     pidof emacs && killall emacs
     return 0
 }
