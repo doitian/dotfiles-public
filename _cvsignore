@@ -26,3 +26,4 @@ doc/tags
 .netrwhist
 .emacs.desktop
 .emacs.desktop.lock
+.eproject

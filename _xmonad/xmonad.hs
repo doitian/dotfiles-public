@@ -193,7 +193,7 @@ myKeys =  \conf -> mkKeymap conf $
     , ("M-S-o", spawn "xopen -") -- open current selection
 
     -- app
-    , ("M-o", runOrRaiseNext "chromium" (className =? "Chromium")) -- chrome
+    , ("M-o", runOrRaiseNext "google-chrome" (className =? "Google-chrome" <||> className =? "Chromium")) -- chrome
     , ("M-i", runOrRaiseNext "emacs-dwim" (className =? "Emacs")) --emacs
     , ("M-u", runOrRaiseNext "urxvt" (className =? "URxvt" <&&> resource /=? "scratchpad")) -- raise next terminal
 
@@ -420,13 +420,12 @@ myFloatManageHook = composeOne . concat $
       role = stringProperty "WM_WINDOW_ROLE"
       
 mySmartFloatManageHook = composeOne . concat $
-  [ [ (isFullscreen <&&> className =? "Chromium" -?> unFloat )
-    , (isFullscreen -?> doFullFloat') ]
+  [ [ (isFullscreen -?> doFullFloat') ]
   , [ className =? x -?> doFloat' | x <- cFloat ]
   , [ role =? x -?> doFloat' | x <- rFloat ]
   , [ (isDialog -?> doFloat') ] ]
   where
-    cFloat  = [ "Zenity", "Stardict", "Update-manager", "Shutter", "Firefox", "Chromium" ]
+    cFloat  = [ "Zenity", "Stardict", "Update-manager", "Shutter", "Firefox", "Google-chrome", "Chromium" ]
     rFloat  = [ "gimp-dock" ]
     ffCenter = [ "Manager", "Extension", "Download", "Dialog", "Browser", "Toplevel" ]
     unFloat = ask >>= doF . W.sink

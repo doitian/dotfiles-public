@@ -30,3 +30,4 @@ binding "gtk-binding-text" {
 }
 class "GtkEntry" binding "gtk-binding-text"
 class "GtkTextView" binding "gtk-binding-text"
+
