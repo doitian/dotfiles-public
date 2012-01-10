@@ -56,7 +56,7 @@ setopt interactivecomments
 setopt multios
 
 # Correction
-setopt correct
+setopt no_correct
 
 ##################################################
 # Other
