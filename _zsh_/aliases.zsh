@@ -155,7 +155,7 @@ if [ -x "/usr/bin/perl-rename" ]; then
 fi
 
 if yri --version > /dev/null 2>&1; then
-  alias ri=yri
+  alias ri="yri"
 fi
 alias irb=pry
 
