@@ -2,6 +2,7 @@
 
 bindkey -e
 bindkey '\ew' kill-region
+bindkey '\er' backward-kill-word
 bindkey -s '\el' "-"
 bindkey -s '\eu' "_"
 bindkey '^r' history-incremental-search-backward

@@ -6,3 +6,4 @@ set show-all-if-ambiguous on
 "\e#":complete-filename
 "\eu":"_"
 "\el":"-"
+"\er":backward-kill-word
