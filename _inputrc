@@ -6,4 +6,6 @@ set show-all-if-ambiguous on
 "\e#":complete-filename
 "\eu":"_"
 "\el":"-"
+"\eU":upcase-word
+"\eL":downcase-word
 "\er":backward-kill-word

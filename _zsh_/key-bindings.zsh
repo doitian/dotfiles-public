@@ -5,6 +5,8 @@ bindkey '\ew' kill-region
 bindkey '\er' backward-kill-word
 bindkey -s '\el' "-"
 bindkey -s '\eu' "_"
+bindkey '\eU' up-case-word
+bindkey '\eL' down-case-word
 bindkey '^r' history-incremental-search-backward
 bindkey "^[[5~" up-line-or-history
 bindkey "^[[6~" down-line-or-history
