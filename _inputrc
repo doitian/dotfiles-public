@@ -2,8 +2,7 @@ set print-completions-horizontally on
 set show-all-if-ambiguous on 
 
 "\e/":menu-complete
-"\ei":menu-complete
 "\C-x#":possible-filename-completions
 "\e#":complete-filename
-"\e[A":history-search-backward
-"\e[B":history-search-forward
+"\eu":"_"
+"\el":"-"
