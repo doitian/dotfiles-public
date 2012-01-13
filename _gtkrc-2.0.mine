@@ -26,6 +26,8 @@ binding "gtk-binding-text" {
     bind "<alt>p" { "move-cursor" (display-lines, -1, 0) }
     bind "<ctrl>n" { "move-cursor" (display-lines, 1, 0) }
     bind "<ctrl>p" { "move-cursor" (display-lines, -1, 0) }
+    bind "<alt>u" { "insert-at-cursor" ("_") }
+    bind "<alt>l" { "insert-at-cursor" ("-") }
     bind "<alt>BackSpace"  { "delete-from-cursor" (word-ends, -1) }
 }
 class "GtkEntry" binding "gtk-binding-text"
