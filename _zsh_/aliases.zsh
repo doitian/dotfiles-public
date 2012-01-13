@@ -24,6 +24,15 @@ alias tn="tmux neww"
 alias tss="tmuxinator start"
 
 ##################################################
+# Regexp
+if [ "$OS_TYPE" = "Darwin" ]; then
+  alias sed="sed -E"
+else
+  alias sed="sed -r"
+fi
+alias grep="grep -E"
+
+##################################################
 # Yaourt
 alias y="yaourt"
 alias yy="yaourt -S"

@@ -193,7 +193,7 @@ myKeys =  \conf -> mkKeymap conf $
     , ("M-S-o", spawn "xopen -") -- open current selection
 
     -- app
-    , ("M-o", runOrRaiseNext "google-chrome" (className =? "Google-chrome" <||> className =? "Chromium")) -- chrome
+    , ("M-o", runOrRaiseNext "firefox" (className =? "Firefox" <||> className =? "Google-chrome" <||> className =? "Chromium")) -- browser
     , ("M-i", runOrRaiseNext "emacs-dwim" (className =? "Emacs")) --emacs
     , ("M-u", runOrRaiseNext "urxvt" (className =? "URxvt" <&&> resource /=? "scratchpad")) -- raise next terminal
 

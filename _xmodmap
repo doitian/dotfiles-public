@@ -4,3 +4,6 @@ add mod4 = Super_R
 remove Lock = Caps_Lock
 keysym Caps_Lock = Control_L
 add Control = Control_L
+
+keycode 418 = Page_Up
+keycode 419 = Page_Down

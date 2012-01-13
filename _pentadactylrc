@@ -22,6 +22,8 @@ cnoremap <A-]> <ESC>L
 " tab
 noremap J gt
 noremap K gT
+noremap <C-j> gt
+noremap <C-k> gT
 noremap <C-.> gb
 noremap <C-,> gB
 
@@ -32,8 +34,6 @@ inoremap <A-{> <ESC>gT
 cnoremap <A-}> <ESC>gt
 cnoremap <A-{> <ESC>gT
 
-noremap <C-j> :tabmove +1<return>
-noremap <C-k> :tabmove -1<return>
 noremap <C-A-}> :tabmove +1<return>
 noremap <C-A-{> :tabmove -1<return>
 inoremap <C-A-}> <ESC>:tabmove +1<return>
@@ -94,6 +94,7 @@ cnoremap <C-t> <pass>
 inoremap <C-t> <pass>
 map x :open x-
 map s :open -
+map ! :open x-q<return>
 
 " qmarks
 " qmark r https://www.google.com/reader
