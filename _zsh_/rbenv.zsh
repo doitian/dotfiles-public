@@ -1,4 +1,3 @@
-RBENV=$HOME/.rbenv
 function rbenv() {
   command="$1"
   if [ "$#" -gt 0 ]; then
@@ -19,8 +18,8 @@ alias b='bundle exec'
 alias rails='bundle exec rails'
 alias gemset='rbenv gemset'
 
-if [ -f $RBENV/completions/rbenv.zsh ]; then
-  source $RBENV/completions/rbenv.zsh
+if [ -f $HOME/.rbenv/completions/rbenv.zsh ]; then
+  source $HOME/.rbenv/completions/rbenv.zsh
 fi
 
 ##################################################
@@ -32,7 +31,7 @@ alias bl="bundle list"
 alias bp="bundle package"
 alias bu="bundle update"
 
-bundled_commands=(cucumber foreman guard heroku nanoc3 rackup rails rainbows rake rspec ruby shotgun spec spork thin unicorn unicorn_rails)
+bundled_commands=(cucumber foreman guard heroku nanoc3 rackup rails rainbows rake rspec shotgun spec spork thin unicorn unicorn_rails)
 
 _bundler-installed() {
   which bundle > /dev/null 2>&1
