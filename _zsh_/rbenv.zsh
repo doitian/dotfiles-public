@@ -31,7 +31,7 @@ alias bl="bundle list"
 alias bp="bundle package"
 alias bu="bundle update"
 
-bundled_commands=(cucumber foreman guard heroku nanoc3 rackup rails rainbows rake rspec shotgun spec spork thin unicorn unicorn_rails)
+bundled_commands=(cucumber foreman guard nanoc3 rackup rails rainbows rake rspec shotgun spec spork thin unicorn unicorn_rails knife)
 
 _bundler-installed() {
   which bundle > /dev/null 2>&1

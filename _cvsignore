@@ -2,6 +2,7 @@
 .rbenv-vars
 .rbenv-gemsets
 vendor/bundle
+*/vendor/bundle
 .DS_Store
 .bundle
 db/*.sqlite3
