@@ -15,7 +15,6 @@ function rbenv() {
 alias ru='rbenv local'
 alias re='vim .rbenv-vars'
 alias b='bundle exec'
-alias rails='bundle exec rails'
 alias gemset='rbenv gemset'
 
 if [ -f $HOME/.rbenv/completions/rbenv.zsh ]; then
