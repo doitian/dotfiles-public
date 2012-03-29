@@ -2,15 +2,14 @@ set mapleader=","
 
 set editor=vimperator-editor
 set defsearch=-g
-set guioptions=NBCs
-" set showtabline=never
+set guioptions=NCs
+set showtabline=never
 set altwildmode=list:longest
 set newtab=all
 set activate+=links
 set popups=resized
 
 colorscheme zenburn
-
 
 " history
 noremap <A-[> H
@@ -112,10 +111,16 @@ map ! :open x-q<return>
 " Keys
 set passkeys+=mail.google.com:'jkxseopnUI<CR><Esc>/?,gi,gl,*r,*u,*n,*a'
 set passkeys+=www.google.com/reader:'jknpomNPOASD<SPC><BS>'
+set passkeys+=groups.google.com:'ojkJKnpNPhfaAcs/,gl,gm,gs'
 set passkeys+=pinboard.in/add:'<Tab>'
 
 " Style
-highlight TabIconNumber width:16px;text-align:center;margin:0 3px 0 -16px !important;color:#586e75;text-shadow:#073642 1px 1px 1px;font-size:14px;background:#eee8d5;border-radius:8px;
+" highlight TabIconNumber width:16px;text-align:center;margin:0 3px 0 -16px !important;color:#586e75;text-shadow:#073642 1px 1px 1px;font-size:14px;background:#eee8d5;border-radius:8px;
 
 style -group user http://hootsuite.com/dashboard* #messageBoxMessage{font-size:140% !important}.messageContent{font-size:160% !important}.commentContent{font-size:140% !important}
 style -group user https://hootsuite.com/dashboard* #messageBoxMessage{font-size:140% !important}.messageContent{font-size:160% !important}.commentContent{font-size:140% !important}
+
+" Plugins
+loadplugins
+set btp
+
