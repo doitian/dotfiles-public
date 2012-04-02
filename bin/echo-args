@@ -2,7 +2,7 @@
 
 echo $# args: | tee -a "/tmp/echo-args$UID"
 
-id=0
+id=1
 for a; do
     echo -ne "$id\t"
     echo "|$a|"

@@ -82,6 +82,8 @@ getSortByIndex' = mkWsSort getWsCompare'
 -- xdotool, wmctrl
 
 myTerminal      = "urxvt"
+-- window class, use `M-c i` to inspect the window class name
+myTerminalClass = "URxvt"
 myBorderWidth   = 2
 myModMask       = mod4Mask
 
@@ -151,7 +153,7 @@ myDzenPP h = defaultPP
                                     return $ Just ("\0000" ++ concat (intersperse "\0000" tags))
 
 dzenSwitchWs :: String -> String
-dzenSwitchWs s = "^ca(1,switch-workspace.rb " ++ (show s) ++ ")" ++ s ++ "^ca()"
+dzenSwitchWs s = "^ca(1,switch-workspace.zsh " ++ (show s) ++ ")" ++ s ++ "^ca()"
 
 myTheme :: Theme
 myTheme = defaultTheme
@@ -169,7 +171,10 @@ myTheme = defaultTheme
           , urgentTextColor = "#dc322f"
           }
 
-pads = [ NS "term" "urxvt -name scratchpad -e sh -l -c 'tmux has -t quake && tmux attach -t quake || tmux new -s quake'" (resource =? "scratchpad" <&&> className =? "URxvt") (customFloating $ W.RationalRect 0.2 0.6 0.6 0.4)
+pads = [ NS "term"
+         (myTerminal ++ " -name scratchpad -e sh -l -c 'tmux has -t quake && tmux attach -t quake || tmux new -s quake'")
+         (resource =? "scratchpad" <&&> className =? myTerminalClass)
+         (customFloating $ W.RationalRect 0.2 0.6 0.6 0.4)
        ]
 
 -- unused char
@@ -195,9 +200,9 @@ myKeys =  \conf -> mkKeymap conf $
     -- app
     , ("M-o", runOrRaiseNext "firefox" (className =? "Firefox" <||> className =? "Google-chrome" <||> className =? "Chromium")) -- browser
     , ("M-i", runOrRaiseNext "emacs-dwim" (className =? "Emacs")) --emacs
-    , ("M-u", runOrRaiseNext "urxvt" (className =? "URxvt" <&&> resource /=? "scratchpad")) -- raise next terminal
+    , ("M-u", runOrRaiseNext myTerminal (className =? myTerminalClass <&&> resource /=? "scratchpad")) -- raise next terminal
 
-    , ("M-c t", raiseNextMaybe (spawn "urxvt -name htop -e htop") (resource =? "htop")) -- Top
+    , ("M-c t", raiseNextMaybe (spawn $ myTerminal ++ " -name htop -e htop") (resource =? "htop")) -- Top
     , ("M-c r", raiseNextMaybe (spawn "xranger") (resource =? "ranger")) -- File Browser
     , ("M-c m", raiseNextMaybe (spawn "xmc") (resource =? "mc")) -- File Manager
     , ("M-c h", spawn "xmonad-key.sh") -- Help
@@ -219,8 +224,8 @@ myKeys =  \conf -> mkKeymap conf $
     , ("M-C-S-=",  kill) -- kill all
 
     -- make sure mod matches keysym
-    , ("M-a", rotSlavesUp)
-    , ("M-S-a", rotSlavesDown)
+    , ("M-a", rotSlavesUp) -- rotate slaves up
+    , ("M-S-a", rotSlavesDown) -- rotate slaves down
     , ("M-<Tab>", windows W.focusDown) -- focus down
     , ("M-S-<Tab>", windows W.focusUp) -- focus up
     , ("M-;", windows W.focusMaster) -- focus master
@@ -335,8 +340,7 @@ myKeys =  \conf -> mkKeymap conf $
 
 dmenuXinerama :: [String] -> X String
 dmenuXinerama opts = do
-    curscreen <- (fromIntegral . W.screen . W.current) `fmap` gets windowset :: X Int
-    io $ runProcessWithInput "dmenu" ["-m", show curscreen] (unlines opts)
+    io $ runProcessWithInput "dmenu.sh" [] (unlines opts)
 
 withWorkspace' :: (String -> X ()) -> X ()
 withWorkspace' job = do sort <- fmap (.namedScratchpadFilterOutWorkspace) getSortByIndex'
@@ -523,6 +527,6 @@ main = do
              , ((mod4Mask, 0x1008ff13), spawn "mpc-osd volume +5")
              , ((mod4Mask, 0x1008ff11), spawn "mpc-osd volume -5")
              , ((0, 0xff14), spawn "xscreensaver-command -lock || gnome-screensaver-command --lock")
-             , ((mod4Mask, 0xff61), spawn "shutter --full")
-             , ((mod4Mask .|. controlMask, 0xff61), spawn "shutter --selection")
+             , ((mod4Mask, 0xff61), spawn "scrot.sh")
+             , ((mod4Mask .|. controlMask, 0xff61), spawn "sleep 0.2; scrot.sh -s &")
              ]

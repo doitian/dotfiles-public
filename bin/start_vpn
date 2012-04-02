@@ -1,0 +1,7 @@
+/etc/rc.d/openswan restart
+/etc/rc.d/xl2tpd restart
+sleep 1
+ipsec auto --up L2TP-PSK
+echo 'c vpn-connection' > /var/run/xl2tpd/l2tp-control
+sleep 3
+route add 216.24.200.218 gw 192.168.0.1
