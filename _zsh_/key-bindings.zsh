@@ -11,6 +11,8 @@ bindkey '^r' history-incremental-search-backward
 bindkey "^[[5~" up-line-or-history
 bindkey "^[[6~" down-line-or-history
 
+bindkey "\eq" push-line-or-edit
+
 # make search up and down work, so partially type and hit up/down to find relevant stuff
 bindkey '^[[A' up-line-or-search
 bindkey '^[[B' down-line-or-search
