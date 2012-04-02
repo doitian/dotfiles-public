@@ -87,13 +87,16 @@ myTerminalClass = "URxvt"
 myBorderWidth   = 2
 myModMask       = mod4Mask
 
+myFont = "WenQuanYi Micro Hei"
+myMonoFont = "WenQuanYi Micro Hei Mono"
+
 myNormalBorderColor  = "#444444"
 myFocusedBorderColor = "#268bd2"
 myActiveBorderColor  = "#444444"
 
 -- shell prompt theme
 mySP = defaultXPConfig
-       { font = "xft:WenQuanYi Micro Hei Mono:pixelsize=14"
+       { font = "xft:" ++ myMonoFont ++ ":pixelsize=14"
        , bgColor           = "#002b36"
        , fgColor           = "#93a1a1"
        , bgHLight          = "#93a1a1"
@@ -157,7 +160,7 @@ dzenSwitchWs s = "^ca(1,switch-workspace.zsh " ++ (show s) ++ ")" ++ s ++ "^ca()
 
 myTheme :: Theme
 myTheme = defaultTheme
-          { fontName = "xft:WenQuanYi Micro Hei:pixelsize=14"
+          { fontName = "xft:" ++ myFont ++ ":pixelsize=14"
           , decoHeight = 20
           , decoWidth = 400
           , activeColor = myFocusedBorderColor
@@ -340,7 +343,17 @@ myKeys =  \conf -> mkKeymap conf $
 
 dmenuXinerama :: [String] -> X String
 dmenuXinerama opts = do
-    io $ runProcessWithInput "dmenu.sh" [] (unlines opts)
+    io $ runProcessWithInput "dmenu" [ "-fn"
+                                     , (myFont ++ "-10")
+                                     , "-nb"
+                                     , "#1e2320" 
+                                     , "-nf" 
+                                     , "#acbc90" 
+                                     , "-sf" 
+                                     , "#0f1a0f"
+                                     , "-sb"
+                                     , "#f0dfaf"
+                                     ] (unlines opts)
 
 withWorkspace' :: (String -> X ()) -> X ()
 withWorkspace' job = do sort <- fmap (.namedScratchpadFilterOutWorkspace) getSortByIndex'
@@ -487,7 +500,7 @@ exitHook = do
 --
 
 main = do
-  dzen <- spawnPipe "xmonad.panel"
+  dzen <- spawnPipe $ "xmonad.panel -fn '" ++ myFont ++ "-10'"
   xmonad $ ewmh $ withUrgencyHook LibNotifyUrgencyHook defaultConfig
              { terminal           = myTerminal
              , focusFollowsMouse  = myFocusFollowsMouse
