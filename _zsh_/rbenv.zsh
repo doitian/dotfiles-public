@@ -34,7 +34,10 @@ function gemset() {
   fi
 }
 function _gemset() {
-  _arguments ':action: _values active create delete file list version' '*::arguments: _sudo'
+  local -a _actions _gemsets
+  _actions=(active create delete file list version)
+  _gemsets=($(rbenv gemset list | grep '^ ' | uniq))
+  _arguments ":action: _values actions ${_actions} ${_gemsets}" '*::arguments: _sudo'
 }
 compdef _gemset gemset
 
@@ -44,6 +47,10 @@ alias tmuxinator="gemset tools tmuxinator"
 alias mux="tmuxinator"
 compdef _tmuxinator mux
 alias tss="tmuxinator start"
+alias cap='gemset deploy cap'
+alias capify='gemset deploy capify'
+alias pry='gemset debug pry'
+alias irb='pry'
 
 if [ -f $HOME/.rbenv/completions/rbenv.zsh ]; then
   source $HOME/.rbenv/completions/rbenv.zsh
@@ -77,9 +84,14 @@ bundler-exec() {
   if _bundler-installed && _within-bundled-project; then
     bundle exec "$@"
   else
-    if [ "$1" = 'rails' ]; then
-      gemset rails "$@"
-    fi
+    case "$1" in
+      nanoc3|rails)
+        gemset generator "$@"
+        ;;
+      *)
+        "$@"
+        ;;
+    esac
   fi
 }
 
