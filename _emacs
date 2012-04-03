@@ -8,4 +8,4 @@
   (setq time (time-since time))
   (message "Started in %s.%06s seconds"
            (+ (* (car time) 65536) (cadr time))
-           (car (cdr (cdr (cdr time))))))
+           (car (cdr (cdr time)))))

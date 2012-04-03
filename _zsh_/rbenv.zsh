@@ -17,6 +17,8 @@ alias re='rbenv exec'
 alias rv='vim .rbenv-vars'
 alias b='bundle exec'
 
+# unset global RBENV_GEMSET_FILE
+unset RBENV_GEMSET_FILE
 function gemset() {
   if [ -z "$1" ]; then
     rbenv gemset active
