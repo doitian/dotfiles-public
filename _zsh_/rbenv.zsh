@@ -13,9 +13,37 @@ function rbenv() {
 }
 
 alias ru='rbenv local'
-alias re='vim .rbenv-vars'
+alias re='rbenv exec'
+alias rv='vim .rbenv-vars'
 alias b='bundle exec'
-alias gemset='rbenv gemset'
+
+function gemset() {
+  if [ -z "$1" ]; then
+    rbenv gemset active
+  else
+    local action="$1"
+    shift
+    case "$action" in
+      active|create|delete|file|list|version)
+        rbenv gemset "$action" "$@"
+        ;;
+      *)
+        RBENV_GEMSET_FILE==(<<<"$action") "$@"
+        ;;
+    esac
+  fi
+}
+function _gemset() {
+  _arguments ':action: _values active create delete file list version' '*::arguments: _sudo'
+}
+compdef _gemset gemset
+
+alias github='gemset tools github'
+alias gh=github
+alias tmuxinator="gemset tools tmuxinator"
+alias mux="tmuxinator"
+compdef _tmuxinator mux
+alias tss="tmuxinator start"
 
 if [ -f $HOME/.rbenv/completions/rbenv.zsh ]; then
   source $HOME/.rbenv/completions/rbenv.zsh
@@ -49,7 +77,9 @@ bundler-exec() {
   if _bundler-installed && _within-bundled-project; then
     bundle exec "$@"
   else
-    "$@"
+    if [ "$1" = 'rails' ]; then
+      gemset rails "$@"
+    fi
   fi
 }
 

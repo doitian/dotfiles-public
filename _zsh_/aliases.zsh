@@ -21,7 +21,6 @@ alias ts=tmux-new-or-attach
 alias t="tmux"
 alias tl="tmux ls"
 alias tn="tmux neww"
-alias tss="tmuxinator start"
 
 ##################################################
 # Regexp

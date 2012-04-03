@@ -1,7 +1,7 @@
 #compdef tmuxinator
 #autoload
 
-local curcontext="$curcontext" state line ret=1
+local curcontext="$curcontext" context state state_descr line ret=1
 local -a _configs
 
 _arguments -C \
@@ -25,7 +25,7 @@ case $state in
   args)
     case $line[1] in
       start|open|copy|delete)
-        _configs=(`tmuxinator list | sed -n 's/^[ \t]\+//p'`)
+        _configs=($(find $HOME/.tmuxinator -name '*.yml' -printf "%P\n" | sed 's/\.yml$//'))
         _values 'configs' $_configs
         ret=0
         ;;
