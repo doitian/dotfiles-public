@@ -204,6 +204,7 @@ myKeys =  \conf -> mkKeymap conf $
     , ("M-o", runOrRaiseNext "firefox" (className =? "Firefox" <||> className =? "Google-chrome" <||> className =? "Chromium")) -- browser
     , ("M-i", runOrRaiseNext "emacs-dwim" (className =? "Emacs")) --emacs
     , ("M-u", runOrRaiseNext myTerminal (className =? myTerminalClass <&&> resource /=? "scratchpad")) -- raise next terminal
+    , ("M-<Space>", runOrRaiseNext "recoll" (className =? "Recoll")) -- raise next terminal
 
     , ("M-c t", raiseNextMaybe (spawn $ myTerminal ++ " -name htop -e htop") (resource =? "htop")) -- Top
     , ("M-c r", raiseNextMaybe (spawn "xranger") (resource =? "ranger")) -- File Browser
@@ -524,7 +525,7 @@ main = do
              }
              `additionalKeys`
              [ ((0, 0x1008ff18), AL.launchApp mySP { defaultText = "~" } "pcmanfm")
-             , ((0, 0x1008ff1b), spawn "xopen -")
+             , ((0, 0x1008ff1b), spawn "recoll")
              , ((0, 0x1008ff19), namedScratchpadAction pads "mutt")
              , ((0, 0x1008ff30), spawn "goodsong add")
              , ((mod4Mask, 0x1008ff30), spawn "goodsong play")
