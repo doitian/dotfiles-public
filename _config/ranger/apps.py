@@ -62,8 +62,6 @@
 #
 # 3. A tuple of arguments that should be run.
 #     return "mplayer", "-fs", context.file.path
-# If you use lists instead of strings, they will be flattened:
-#     args = ["-fs", "-shuf"]
 #     return "mplayer", args, context.filepaths
 # "context.filepaths" can, and will often be abbreviated with just "context":
 #     return "mplayer", context

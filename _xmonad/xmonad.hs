@@ -321,8 +321,9 @@ myKeys =  \conf -> mkKeymap conf $
         | (k, sc) <- zip ["w", "e", "r"] [0..]
         , (f, m) <- [(W.view, ""), (W.shift, "S-")]]
     ++
-    [ ("M-'", prevScreen) -- Prev Screen
-    , ("M-S-'", swapNextScreen) -- Swap next screen
+    [ ("M-'", nextScreen) -- Prev Screen
+    , ("M-S-'", prevScreen) -- Next screen
+    , ("M-C-'", swapNextScreen) -- Swap next screen
     ]
     ++
     -- HiddenNonEmptyWS
@@ -443,7 +444,7 @@ mySmartFloatManageHook = composeOne . concat $
   , [ role =? x -?> doFloat' | x <- rFloat ]
   , [ (isDialog -?> doFloat') ] ]
   where
-    cFloat  = [ "Zenity", "Stardict", "Update-manager", "Shutter", "Firefox", "Google-chrome", "Chromium" ]
+    cFloat  = [ "Zenity", "Stardict", "Update-manager", "Shutter", "MPlayer", "Vlc" ]
     rFloat  = [ "gimp-dock" ]
     ffCenter = [ "Manager", "Extension", "Download", "Dialog", "Browser", "Toplevel" ]
     unFloat = ask >>= doF . W.sink

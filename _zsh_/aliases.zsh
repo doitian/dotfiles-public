@@ -157,7 +157,20 @@ fi
 if yri --version > /dev/null 2>&1; then
   alias ri="yri"
 fi
-#alias irb=pry
+
+alias ibc="{echo 'scale=6';cat} | bc"
+function bcc () {
+  local scale=6
+  if [ "$1" = "-s" ]; then
+    shift
+    scale="$1"
+    shift
+  fi
+  {
+    echo "scale=$scale"
+    echo "$*"
+  } | bc
+}
 
 ##################################################
 # Ext Aliases

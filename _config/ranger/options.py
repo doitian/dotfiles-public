@@ -21,7 +21,7 @@ from ranger.api.options import *
 load_default_rc = True
 
 # How many columns are there, and what are their relative widths?
-column_ratios = (1, 3)
+column_ratios = (1, 1, 3)
 
 # Which files should be hidden?  Toggle this by typing `zh' or
 # changing the setting `show_hidden'
@@ -50,8 +50,8 @@ colorscheme = 'default'
 
 # Preview files on the rightmost column?
 # And collapse (shrink) the last column if there is nothing to preview?
-preview_files = True
-preview_directories = True
+preview_files = False
+preview_directories = False
 collapse_preview = True
 
 # Save the console history on exit?
