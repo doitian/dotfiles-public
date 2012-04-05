@@ -43,8 +43,9 @@ Function git_prompt_info() {
 }
 function git_prompt_dirty() {
   if [[ -n $(git status -s 2> /dev/null) ]]; then
+    :
   else
-    echo 
+    :
   fi
 }
 

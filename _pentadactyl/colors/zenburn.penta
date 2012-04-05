@@ -58,10 +58,10 @@ hi -a REPL-R
 hi -a REPL-E                                    
 
 " plugin styles
-hi -a BufTabSelected                            color:#2e3330; background-color:#88b090; padding:0 4px; font-weight:normal;
-hi -a BufTabAlternate                           color:#ddd;
+hi -a BufTabSelected                            color:#2e3330; background-color:#88b090; padding:0 4px; font-weight:normal; max-width:240px;
+hi -a BufTabAlternate                           color:#ddd; max-width:120px;
 hi -a BufTabs                                   color:#a0a0a0; margin:0 4px; overflow:hidden;
-hi -a BufTab                                    padding:0 2px;
+hi -a BufTab                                    padding:0 2px; max-width:120px;
 
 " specific
 hi -a NonText                                   color:#5b605e; font-weight:bold;

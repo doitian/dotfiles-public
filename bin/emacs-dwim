@@ -32,7 +32,7 @@ main () {
         fi
     fi
 
-    if [ -n "$DISPLAY" ]; then
+    if [ -n "$DISPLAY" -a "$1" != "-t" -a "$1" != "-n" ]; then
         local cur=$(_active_window_id)
         if _is_emacs_window_exist; then
             wmctrl -x -a emacs.Emacs &> /dev/null

@@ -3,8 +3,8 @@ export LANG=en_US.UTF-8
 export LC_CTYPE=$LANG
 export LC_ALL=$LANG
 export RUBYLIB=$HOME/.rubylib
-export FCEDIT="vim"
-export VISUAL="vim"
+export FCEDIT="emacs-dwim -t"
+export VISUAL="emacs-dwim -t"
 export EDITOR="emacs-dwim"
 export ALTERNATE_EDITOR="vim"
 export GREP_OPTIONS='--color=auto'
