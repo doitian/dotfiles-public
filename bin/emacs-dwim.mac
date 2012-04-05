@@ -7,7 +7,9 @@ if pgrep -u $UID Emacs > /dev/null; then
     if [ -n "$1" ]; then
         $EMACSCLIENT "$@"
     fi
-    open -a Emacs
+    if [ "$1" != "-t" -a "$1" != "-n" ]; then
+        open -a Emacs
+    fi
 else
     open -a Emacs --args "$@"
 fi
