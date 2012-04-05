@@ -414,7 +414,7 @@ myLayout = configurableNavigation (navigateColor myActiveBorderColor)
     rows'    = named "rows" $ Mirror $ layoutHints $ deco $ multiCol [2] 3 (2/100) (4/7)
     tabs'    = named "tab"  $ layoutHints $ tabs
     grid'    = named "grid" $ layoutHints $ deco $ Grid (16/10)
-    big'     = named "big"  $ layoutHints $ deco $ Mirror $ OneBig (3/4) (19/24)
+    big'     = named "big"  $ layoutHints $ deco $ Mirror $ OneBig (2/3) (2/3)
     -- basic layouts
     tabs     = tabbed shrinkText myTheme
     deco     = dwmStyle shrinkText myTheme
