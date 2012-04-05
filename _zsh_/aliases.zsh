@@ -4,6 +4,8 @@ OS_TYPE=`uname -s`
 ##################################################
 # Editor
 alias e="emacs-dwim"
+alias et="emacs-dwim -t"
+alias en="emacs-dwim -n"
 alias g="git"
 alias f="file-picker"
 alias vi='vim'

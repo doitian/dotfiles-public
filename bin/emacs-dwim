@@ -56,7 +56,11 @@ main () {
             [ -n "$1" -a -n "$cur" -a "$1" != "-n" ] && wmctrl -i -a "$cur"
         fi
     else
-        emacsclient -t "$@"
+        if [ "$1" = "-t" -o "$1" = "-n" ]; then
+            emacsclient "$@"
+        else
+            emacsclient -t "$@"
+        fi
     fi
 }
 
