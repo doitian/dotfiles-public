@@ -1,4 +1,7 @@
 #!/bin/zsh
+
+if [[  "$-" != *i* ]]; then return 0; fi
+
 zstyle :omz:plugins:ssh-agent agent-forwarding on
 
 ZSH="$HOME/.zsh"

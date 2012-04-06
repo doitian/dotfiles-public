@@ -3,7 +3,7 @@
 
 EMACSCLIENT=/Applications/Emacs.app/Contents/MacOS/bin/emacsclient
 
-if pgrep -u $UID Emacs > /dev/null; then
+if ps -u $UID -o comm= | grep "Emacs$"; then
     if [ -n "$1" ]; then
         $EMACSCLIENT "$@"
     fi
