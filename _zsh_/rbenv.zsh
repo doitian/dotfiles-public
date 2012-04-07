@@ -61,6 +61,7 @@ fi
 
 ##################################################
 # Bundle Alias
+# from oh-my-zsh bundler plugin
 
 alias be="bundle exec"
 alias bi="bundle install"
