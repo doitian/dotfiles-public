@@ -7,8 +7,9 @@ alias e="emacs-dwim"
 alias et="emacs-dwim -t"
 alias en="emacs-dwim -n"
 alias g="git"
-alias f="file-picker"
+alias fp="file-picker"
 alias vi='vim'
+alias v='vim'
 
 ##################################################
 # Command Edit
@@ -88,6 +89,7 @@ alias cd....='cd ../../..'
 alias cd.....='cd ../../../..'
 alias cd/='cd /'
 
+alias dv='dirs -v'
 alias 1='cd -'
 alias 2='cd +2'
 alias 3='cd +3'
@@ -112,9 +114,15 @@ cd () {
   fi
 }
 
+# fasd
+if which fasd > /dev/null 2>&1; then
+  eval "$(fasd --init auto)"
+  unalias z
+  alias j='fasd_cd -d'
+fi
+
 alias md='mkdir -p'
 alias rd=rmdir
-alias d='dirs -v'
 
 ##################################################
 # System
@@ -173,6 +181,9 @@ function bcc () {
     echo "$*"
   } | bc
 }
+
+alias m=mplayer
+alias mmm=vlc
 
 ##################################################
 # Ext Aliases
