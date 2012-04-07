@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PATH</key>
+	<string>/Users/ian/bin:/Users/ian/.rbenv/shims:/Users/ian/.rbenv/bin:/Users/ian/.cabal/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/X11/bin:/Users/ian/bin:/Users/ian/.rbenv/shims:/Users/ian/.rbenv/bin:/Users/ian/.cabal/bin</string>
+	<key>emacs-dwim.mac +%(linenum) '%(filename)'</key>
+    <string></string>
+</dict>
+</plist>

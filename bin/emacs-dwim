@@ -1,12 +1,12 @@
 #!/bin/bash
 # Author: Ian Yang
+export LC_CTYPE=zh_CN.UTF-8
+export LC_ALL=
 UNAME=`uname -s`
+
 if [ "$UNAME" = "Darwin" ]; then
     exec emacs-dwim.mac "$@"
 fi
-
-export LC_CTYPE=zh_CN.UTF-8
-export LC_ALL=
 
 _is_emacs_daemon_started () {
     netstat -nlpx 2> /dev/null | awk '{print $NF}' | grep -q "emacs$UID/server"

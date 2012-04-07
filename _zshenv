@@ -10,6 +10,8 @@ export ALTERNATE_EDITOR="vim"
 export GREP_OPTIONS='--color=auto'
 export GREP_COLOR='1;32'
 export rvm_path="$HOME/.rvm"
+export EMACS=emacs
+export EMACSCLIENT=emacsclient
 
 # ruby perf
 export RUBY_HEAP_MIN_SLOTS=1000000

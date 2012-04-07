@@ -53,6 +53,7 @@ alias cap='gemset deploy cap'
 alias capify='gemset deploy capify'
 alias pry='gemset debug pry'
 alias irb='pry'
+alias sequel='gemset debug sequel'
 
 if [ -f $HOME/.rbenv/completions/rbenv.zsh ]; then
   source $HOME/.rbenv/completions/rbenv.zsh
