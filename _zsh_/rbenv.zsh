@@ -52,6 +52,7 @@ alias tss="tmuxinator start"
 alias cap='gemset deploy cap'
 alias capify='gemset deploy capify'
 alias pry='gemset debug pry'
+alias rpry='gemset debug rails-console-pry -r awesome_print -r pry-doc'
 alias irb='pry'
 alias sequel='gemset debug sequel'
 
@@ -69,7 +70,7 @@ alias bl="bundle list"
 alias bp="bundle package"
 alias bu="bundle update"
 
-bundled_commands=(cucumber foreman guard nanoc3 rackup rails rainbows rake rspec shotgun spec spork thin unicorn unicorn_rails knife)
+bundled_commands=(cucumber guard nanoc3 rackup rails jeweler rake rspec shotgun spec spork thin unicorn unicorn_rails knife)
 
 _bundler-installed() {
   which bundle > /dev/null 2>&1

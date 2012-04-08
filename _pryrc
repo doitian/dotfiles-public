@@ -25,8 +25,11 @@ end
 # from: https://gist.github.com/1297510
 default_command_set = Pry::CommandSet.new do
   command "copy", "Copy argument to the clip-board" do |str|
-    #TODO linux xclip
-    IO.popen('pbcopy', 'w') { |f| f << str.to_s }
+    begin
+      IO.popen('pbcopy', 'w') { |f| f << str.to_s }
+    rescue Errno::ENOENT
+      IO.popen('xclip', 'w') { |f| f << str.to_s }
+    end
   end
 
   command "clear" do
@@ -51,6 +54,13 @@ default_command_set = Pry::CommandSet.new do
       method = Regexp.last_match[3]
       output.puts [file, line, method]
     end
+  end
+  command "bundler" do |*groups|
+    require 'bundler'
+    groups = (groups + [:default, ENV["RAILS_ENV"] || 'development']).compact.collect(&:to_sym)
+    groups << :assets if groups.include?(:development)
+    groups = groups.uniq
+    Bundler.require(*groups)
   end
 end
 
