@@ -12,6 +12,9 @@ if ! tmux has-session -t mutt; then
   tmux send-keys -t mutt:3 offlineimap C-m
   tmux send-keys -t mutt:4 "ssh -D 9999 -L 6667:localhost:6667 iany.me" C-m
   tmux send-keys -t mutt:5 "while true; do; mu index --maildir ~/Mail; sleep 300; done" C-m
+
+  set-window-option -t mutt:3 monitor-activity off
+  set-window-option -t mutt:5 monitor-activity off
 fi
 
 if [ "$1" = "attach" ]; then

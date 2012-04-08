@@ -81,9 +81,7 @@ mailboxes +INBOX +drafts +starred +archive
 # always sourced
 #source $alias_file                                              # required for functionality
 source ~/.mutt/colors.muttrc                                    # source colors file
-#source ~/.mutt/sidebar.muttrc                                   # any muttng options are here
-set from = 'me@iany.me'
-set sendmail = '/usr/bin/msmtp -a ianyme'
+source ~/.mutt/ianyme.muttrc
 set mbox = +archive
 set record = +sent
 set postponed = +drafts
