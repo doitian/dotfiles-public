@@ -1,0 +1,3 @@
+set from = 'me@iany.me'
+set sendmail = '/usr/bin/msmtp -a ianyme'
+set signature = '~/.signature'

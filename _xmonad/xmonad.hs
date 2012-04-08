@@ -178,6 +178,10 @@ pads = [ NS "term"
          (myTerminal ++ " -name scratchpad -e sh -l -c 'tmux has -t quake && tmux attach -t quake || tmux new -s quake'")
          (resource =? "scratchpad" <&&> className =? myTerminalClass)
          (customFloating $ W.RationalRect 0.2 0.6 0.6 0.4)
+       , NS "msg"
+         (myTerminal ++ " -name msg -e sh -l -c '$HOME/bin/start_msg.sh attach'")
+         (resource =? "msg" <&&> className =? myTerminalClass)
+         (customFloating $ W.RationalRect 0.6 0.02 0.4 0.98)
        ]
 
 -- unused char
@@ -185,6 +189,7 @@ pads = [ NS "term"
 myKeys =  \conf -> mkKeymap conf $
     [ ("M-S-<Return>", spawn $ XMonad.terminal conf) -- terminal
     , ("M-`", namedScratchpadAction pads "term") -- quake terminal
+    , ("M-m", namedScratchpadAction pads "msg") -- quake msg
 
     -- prompt
     , ("M-p g", windowPromptGoto myWaitSP) -- window go prompt
@@ -290,7 +295,6 @@ myKeys =  \conf -> mkKeymap conf $
 
     -- cycle through workspaces
     , ("M-n", withWorkspace' (windows . W.greedyView)) -- workspace prompt gready
-    , ("M-m", withWorkspace' (windows . W.view)) -- workspace prompt
     , ("M-S-n", withWorkspace' (windows . W.shift)) -- workspace shift prompt
     , ("M-C-n", withWorkspace' (windows . copy)) -- workspace copy prompt
     , ("M-C-S-n", renameWorkspace mySP) -- rename workspace

@@ -1,0 +1,5 @@
+text/html ; w3m -dump %s; nametemplate=%s.html; copiousoutput
+application/pdf ; mupdf %s ; copiousoutput
+image/* ; geeqie %s ; copiousoutput
+audio/* ; mplayer %s ; copiousoutput
+video/* ; mplayer %s ; copiousoutput

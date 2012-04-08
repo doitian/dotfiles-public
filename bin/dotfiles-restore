@@ -37,7 +37,12 @@ if [ -d "$HOME/.kde" ]; then
   cp "$BACKUP_DIR/_kdiff3rc.conf" "$HOME/.kde/share/config/kdiff3rc"
 fi
 
+chmod -R u=rwX,go= $HOME/Dropbox/Secrets
 ln -snf "$HOME/Dropbox/Secrets/secrets.el" "$HOME/.emacs.d/secrets.el"
 ln -snf "$HOME/Dropbox/Secrets/irssi.pl" "$HOME/.irssi/config"
 ln -snf "$HOME/Dropbox/Secrets/gitconfig" "$HOME/.gitconfig"
+ln -snf "$HOME/Dropbox/Secrets/offlineimaprc" "$HOME/.offlineimaprc"
+ln -snf "$HOME/Dropbox/Secrets/msmtp" "$HOME/.msmtprc"
+ln -snf "$HOME/Dropbox/Secrets/signature" "$HOME/.signature"
+ln -snf "$HOME/Dropbox/Secrets/signature.intridea" "$HOME/.signature.intridea"
 ln -snf "$HOME/.vim/vimrc" "$HOME/.vimrc"

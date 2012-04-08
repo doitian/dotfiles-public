@@ -2,7 +2,7 @@
 
 FG='#93a1a1'
 BG='#262626'
-USER_CONTENT_WIDTH=120
+USER_CONTENT_WIDTH=160
 
 zmodload zsh/zselect
 SCREEN_LAYOUT=($(xrandr | sed -r -n 's/.*connected ([0-9]+)x[0-9]+([-+][0-9]+).*/\2 \1/p' | sort -g))
@@ -51,6 +51,18 @@ refresh () {
 }
 
 user_content() {
+  if [ -d "$HOME/Mail/INBOX" ]; then
+    local cur=$(ls $HOME/Mail/INBOX/cur | wc -l)
+    local new=$(ls $HOME/Mail/INBOX/new | wc -l)
+    local -i total=cur+new
+    local color=
+    if [ "$new" -gt 0 ]; then
+      color="^bg(#8b0000)^fg(#cccccc)"
+    else
+      color="^fg(#666)"
+    fi
+    echo -n "^ca(1,xdotool key Super_L+m)${color} M: ${new}/${total} ^fg()^bg()^ca() "
+  fi
   date +"^ca(1,gsimplecal)%a %b %d, %H:%M^ca()"
 }
 
