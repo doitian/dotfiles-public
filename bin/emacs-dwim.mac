@@ -1,6 +1,11 @@
 #!/bin/bash
 # Author: Ian Yang
 
+# recommend aliases
+#
+# alias e=emacs-dwim
+# alias et='emacs-dwim -t'
+# alias en='emacs-dwim -n'
 
 AUTOMATOR=
 # AUTOMATOR=1
