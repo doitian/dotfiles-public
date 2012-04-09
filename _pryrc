@@ -81,3 +81,17 @@ class Hash
     Hash[Array.toy(n).zip(Array.toy(n){|c| (96+(c+1)).chr})]
   end
 end
+
+if defined?(Rails) && Rails.env
+  begin
+    require 'hirb'
+    remember_old_print = Pry.config.print || Pry::DEFAULT_PRINT
+    Pry.config.print = proc do |output, value|
+      Hirb::View.view_or_page_output(value) || remember_old_print.call(output, value)
+    end
+
+    Hirb.enable
+  rescue LoadError => err
+    puts "gem install hirb  # <-- highly recommended"
+  end
+end
