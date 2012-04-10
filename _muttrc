@@ -34,6 +34,7 @@ set sort_aux            = reverse-last-date-received            # like gmail
 set uncollapse_jump                                             # don't collapse on an unread message 
 set sort_re                                                     # thread based on regex
 set reply_regexp        = "^(([Rr][Ee]?(\[[0-9]+\])?: *)?(\[[^]]+\] *)?)*"
+set auto_tag
 
 # pager options
 set pager_index_lines   = 10                                    # number of index lines to show 
@@ -108,7 +109,7 @@ bind index J           next-unread
 bind index,pager R     group-reply
 
 # macros
-macro index \Cr "<tag-prefix><clear-flag>N" "mark tagged messages as read"
+macro index I "<tag-prefix><clear-flag>N" "mark tagged messages as read"
 macro index B "<limit>~b "                "search message bodies"
 macro index gi "<change-folder>!<enter>"   "go to Inbox"
 macro index gS "<change-folder-readonly>+search<enter>"   "go to Search Result"
