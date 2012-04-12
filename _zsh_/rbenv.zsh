@@ -46,6 +46,7 @@ compdef _gemset gemset
 alias github='gemset tools github'
 alias gh=github
 alias tmuxinator="gemset tools tmuxinator"
+alias heroku="gemset tools heroku"
 alias mux="tmuxinator"
 compdef _tmuxinator mux
 alias tss="tmuxinator start"
