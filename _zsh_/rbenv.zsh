@@ -30,7 +30,11 @@ function gemset() {
         rbenv gemset "$action" "$@"
         ;;
       *)
-        RBENV_GEMSET_FILE==(<<<"$action") "$@"
+        RBENV_GEMSET_FILE==(<<<"$action")
+        "$@"
+        if [ -f "$RBENV_GEMSET_FILE" ]; then
+          rm "$RBENV_GEMSET_FILE"
+        fi
         ;;
     esac
   fi

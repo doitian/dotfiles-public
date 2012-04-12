@@ -4,29 +4,23 @@ if [ "$UNAME" = "Darwin" ]; then
     exec open "$@"
 fi
 
-fm=xranger
-ff=chromium
-
-exec > /dev/null 2>&1
-
-if [ -z "$1" ]; then
-  $fm &
-fi
-
 for arg; do
   if [ "$arg" = '-' ]; then
     arg=$(xclip -o)
   fi
 
   if [ -z "$arg" -o -d "$arg" ]; then
-    $fm "$arg" &
+    if runningx; then
+      xranger &>/dev/null &
+    else
+      ranger
+    fi
   elif [ -f "$arg" ]; then
-    xdg-open "$arg"
-  elif grep -q '^http' <<<"$arg"; then
-    $ff "$arg" &
-  elif grep -q '\b[-_[:alnum:]]\+\.[-_[:alnum:]./?&@#]*[-_[:alnum:]/]' <<<"$arg"; then
-    $ff "$arg" &
-  else
-    $ff "http://www.google.com/search?q=$arg" &
+    if runningx; then
+      run-mailcap "$arg" || xdg-open "$arg"
+    else
+      run-mailcap "$arg"
+    fi
   fi
 done
+

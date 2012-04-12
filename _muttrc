@@ -7,7 +7,7 @@ set alias_file          = ~/.mutt/alias                         # alias file
 set header_cache        = ~/.mutt/cache/headers                 # where to store headers        
 set message_cachedir    = ~/.mutt/cache/bodies                  # where to store bodies
 set certificate_file    = ~/.mutt/certificates                  # where to store certs
-set mailcap_path        = ~/.mutt/mailcap                       # entrys for filetypes
+set mailcap_path        = ~/.mailcap                            # entrys for filetypes
 set tmpdir              = ~/.mutt/temp                          # where to keep temp files
 #set editor
 

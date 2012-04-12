@@ -1,0 +1,8 @@
+text/html ; x-www-browser %s; nametemplate=%s.html; test=runningx
+text/html ; w3m %s; nametemplate=%s.html
+text/html ; w3m -dump %s; nametemplate=%s.html; copiousoutput
+application/pdf ; mupdf %s ; copiousoutput; test=runningx
+application/pdf ; pdftotext %s -; copiousoutput
+image/* ; geeqie %s ; copiousoutput; test=runningx
+audio/* ; mplayer %s ; copiousoutput
+video/* ; mplayer %s ; copiousoutput

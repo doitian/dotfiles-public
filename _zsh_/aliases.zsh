@@ -187,6 +187,10 @@ function bcc () {
 alias m=mplayer
 alias mmm=vlc
 
+if ! which open &> /dev/null; then
+  alias open=xopen
+fi
+
 ##################################################
 # Ext Aliases
 alias -s html=w3m
