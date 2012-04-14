@@ -89,56 +89,9 @@ class CustomApplications(Applications):
 		"""How to determine the default application?"""
 		f = c.file
 
-		if f.basename.lower() == 'makefile' and c.mode == 1:
-			made = self.either(c, 'make')
-			if made: return made
-
-		if f.extension is not None:
-			if f.extension in ('pdf', ):
-				return self.either(c, 'evince', 'zathura', 'apvlv')
-			if f.extension == 'djvu':
-				return self.either(c, 'evince')
-			if f.extension in ('xml', ):
-				return self.either(c, 'editor')
-			if f.extension in ('html', 'htm', 'xhtml'):
-				return self.either(c, 'firefox', 'opera', 'jumanji',
-						'luakit', 'elinks', 'lynx')
-			if f.extension == 'swf':
-				return self.either(c, 'firefox', 'opera', 'jumanji', 'luakit')
-			if f.extension == 'nes':
-				return self.either(c, 'fceux')
-			if f.extension in ('swc', 'smc', 'sfc'):
-				return self.either(c, 'zsnes')
-			if f.extension in ('odt', 'ods', 'odp', 'odf', 'odg',
-					'doc', 'xls'):
-				return self.either(c, 'libreoffice', 'soffice', 'ooffice')
-
-		if f.mimetype is not None:
-			if INTERPRETED_LANGUAGES.match(f.mimetype):
-				return self.either(c, 'edit_or_run')
-
-		if f.container:
-			return self.either(c, 'aunpack', 'file_roller')
-
-		if f.video or f.audio:
-			if f.video:
-				c.flags += 'd'
-			return self.either(c, 'mplayer2', 'mplayer', 'smplayer', 'vlc',
-					'totem')
-
-		if f.image:
-			if c.mode in (11, 12, 13, 14):
-				return self.either(c, 'set_bg_with_feh')
-			else:
-				return self.either(c, 'sxiv', 'feh', 'eog', 'mirage')
-
-		if f.document or f.filetype.startswith('text') or f.size == 0:
-			return self.either(c, 'editor')
-
 		# You can put this at the top of the function and mimeopen will
 		# always be used for every file.
-		return self.either(c, 'mimeopen')
-
+		return self.either(c, 'open', 'xopen', 'xdg-open')
 
 	# ----------------------------------------- application definitions
 	# Note: Trivial application definitions are at the bottom

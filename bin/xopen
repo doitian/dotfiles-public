@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 UNAME=`uname -s`
 if [ "$UNAME" = "Darwin" ]; then
     exec open "$@"
@@ -15,9 +15,16 @@ for arg; do
     else
       ranger
     fi
-  elif [ -f "$arg" ]; then
+  else
     if runningx; then
-      run-mailcap "$arg" || xdg-open "$arg"
+      local app=xdg-open
+      if which mimeo &> /dev/null; then
+        app=mimeo
+      fi
+        
+      if ! $app "$arg" &> /dev/null; then
+        echo "Cannot open ${arg}" >&2
+      fi
     else
       run-mailcap "$arg"
     fi
