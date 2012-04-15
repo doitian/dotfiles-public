@@ -6,3 +6,5 @@ scratchpad.boldFont:xft:Terminus-12:Bold,xft:WenQuanYi Micro Hei Mono-12:Bold
 URxvt.iconFile: /usr/share/icons/Faenza/apps/24/terminal.png
 scratchpad.iconFile: /usr/share/icons/Faenza/apps/24/terminal.png
 XTerm*font: -xos4-terminus-medium-r-normal--16-*
+Xcursor.theme: Polar-Green
+Xcursor.size: 24
