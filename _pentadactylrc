@@ -53,8 +53,11 @@ noremap <C-q> <A-b>
 inoremap <C-q> <A-b>
 cnoremap <C-q> <A-b>
 
+nnoremap <A-Space> gi
+
 " edit in command
 cnoremap <A-BS> <C-BS>
+cnoremap <A-Space> <ESC>
 cnoremap <C-x> <pass>
 cnoremap <C-c> <pass>
 cnoremap <C-v> <pass>
@@ -74,6 +77,7 @@ cnoremap <A-l> -
 
 " edit in insert mode
 inoremap <A-BS> <C-BS>
+inoremap <A-Space> <ESC>
 inoremap <C-x> <pass>
 inoremap <C-c> <pass>
 inoremap <C-v> <pass>

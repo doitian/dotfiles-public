@@ -119,7 +119,7 @@ URxvt*color9: #DCA3A3
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 xpdf*foreground:     #111111
 xpdf*background:     #FCFCFC
-xpdf*urlCommand:     firefox %s
+xpdf*urlCommand:     firefox -P default -new-tab %s
 xpdf*antialias:      yes
 xpdf*enableFreetype: yes
 

@@ -73,6 +73,7 @@ text/x-fortran=emacs-dwim.desktop;
 text/x-haskell=emacs-dwim.desktop;
 text/x-java=emacs-dwim.desktop;
 text/x-java-source=emacs-dwim.desktop;
+text/x-lisp=emacs-dwim.desktop;
 text/x-literate-haskell=emacs-dwim.desktop;
 text/x-makefile=emacs-dwim.desktop;
 text/x-moc=emacs-dwim.desktop;

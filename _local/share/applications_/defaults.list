@@ -96,3 +96,5 @@ text/x-vcard=emacs-dwim.desktop;
 text/xml=emacs-dwim.desktop;
 text/xml-external-parsed-entity=emacs-dwim.desktop;
 text/xml-svg=emacs-dwim.desktop;
+x-scheme-handler/http=firefox.desktop;
+x-scheme-handler/https=firefox.desktop;
