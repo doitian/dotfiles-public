@@ -64,7 +64,11 @@ main () {
         fi
     else
         if [ "$1" = "-t" -o "$1" = "-n" ]; then
-            emacsclient "$@"
+            if _is_emacs_window_exist; then
+                emacsclient "$@"
+            else
+                emacsclient -c "$@"
+            fi
         else
             emacsclient -t "$@"
         fi
