@@ -115,8 +115,10 @@ macro index gi "<change-folder>!<enter>"   "go to Inbox"
 macro index gS "<change-folder-readonly>+search<enter>"   "go to Search Result"
 macro index   q       '<change-folder>?<toggle-mailboxes>'
 macro browser q       '<exit><quit>'
-macro index ~N "<tag-pattern>~N<enter>" "Mark New"
-macro index ~R "<tag-pattern>~N<enter>" "Mark Read"
+macro index xu "<tag-pattern>~N<enter>" "Mark New"
+macro index xr "<tag-pattern>~R<enter>" "Mark Read"
+macro index xa "<tag-pattern>.<enter>" "Mark All"
+macro index xn "<untag-pattern>.<enter>" "Unmark All"
 
 # save a decoded copy in ~
 macro index P   "<pipe-message>cat > ~/"    "save message as"
