@@ -191,6 +191,8 @@ if ! which open &> /dev/null; then
   alias open=xopen
 fi
 
+alias ssh="TERM=xterm-256color ssh"
+
 ##################################################
 # Ext Aliases
 alias -s html=w3m

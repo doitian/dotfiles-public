@@ -49,7 +49,7 @@ zstyle ':completion:*:hosts' hosts $hosts
 
 # Use caching so that commands like apt and dpkg complete are useable
 zstyle ':completion::complete:*' use-cache 1
-zstyle ':completion::complete:*' cache-path ~/.oh-my-zsh/cache/
+zstyle ':completion::complete:*' cache-path ~/.zsh/cache/
 
 # Don't complete uninteresting users
 zstyle ':completion:*:*:*:users' ignored-patterns \
@@ -77,3 +77,29 @@ bindkey "^I" expand-or-complete-with-dots
 compinit -u
 compdef _github gh=github
 compdef _sudo proxychains
+
+# cach rake
+_rake () {
+  if [ -f Rakefile ]; then
+    if ! [ -f .rake_tasks~ ] || [ Rakefile -nt .rake_tasks~ ]; then
+      echo "\nGenerating .rake_tasks~..." >&2
+      bundler-exec rake --silent --tasks | cut -d " " -f 2 > .rake_tasks~
+    fi
+    compadd `cat .rake_tasks~`
+  fi
+}
+
+compdef _rake rake
+
+# cap cache
+function _cap () {
+  if [ -f config/deploy.rb ]; then
+    if ! [ -f .cap_tasks~ ] || [ config/deploy.rb -nt .cap_tasks~ ]; then
+      echo "\nGenerating .cap_tasks~..." >&2
+      gemset deploy cap -T | grep '^cap ' | cut -d " " -f 2 > .cap_tasks~
+    fi
+    compadd `cat .cap_tasks~`
+  fi
+}
+
+compdef _cap cap

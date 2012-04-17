@@ -30,7 +30,7 @@ function gemset() {
         rbenv gemset "$action" "$@"
         ;;
       *)
-        local tmp=$(mktemp gemsetXXXXXXXX)
+        local tmp=$(mktemp /tmp/gemsetXXXXXXXX)
         echo "$action" > "$tmp"
         RBENV_GEMSET_FILE="$tmp" "$@"
         rm "$tmp"
