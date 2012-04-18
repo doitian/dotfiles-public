@@ -13,6 +13,10 @@ export rvm_path="$HOME/.rvm"
 export EMACS=emacs
 export EMACSCLIENT=emacsclient
 
+if [ "$(uname -s)" = "CYGWIN_NT-5.1" ] && [ "$TERM" = "rxvt-unicode" ]; then
+  export TERM=rxvt-256color
+fi
+
 # ruby perf
 export RUBY_HEAP_MIN_SLOTS=1000000
 export RUBY_HEAP_SLOTS_INCREMENT=1000000

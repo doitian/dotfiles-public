@@ -53,7 +53,7 @@ alias yd="yaourt -Rcs"
 ##################################################
 # File & Direcotry
 if [ "$TERM" != "dumb" ] || [ -n "$EMACS" ]; then
-  if [ "$OS_TYPE" = "Linux" ]; then
+  if [ "$OS_TYPE" = "Linux" -o "$OS_TYPE" = "CYGWIN_NT-5.1" ]; then
     #eval "`dircolors -b`"
     alias ls='ls --color=tty'
   else

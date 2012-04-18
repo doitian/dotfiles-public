@@ -1,0 +1,4 @@
+export TERM=rxvt-256color
+export PATH="$PATH:$HOME/bin"
+cd /h
+exec urxvt  -geometry  +1+1  -n  login  -display  :0
