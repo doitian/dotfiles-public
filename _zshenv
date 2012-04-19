@@ -13,8 +13,13 @@ export rvm_path="$HOME/.rvm"
 export EMACS=emacs
 export EMACSCLIENT=emacsclient
 
-if [ "$(uname -s)" = "CYGWIN_NT-5.1" ] && [ "$TERM" = "rxvt-unicode" ]; then
-  export TERM=rxvt-256color
+if [ "$(uname -s)" = "CYGWIN_NT-5.1" ]; then
+  if [ "$TERM" = "rxvt-unicode" ]; then
+    export TERM=rxvt-256color
+  fi
+  export EDITOR="vim"
+  export FCEDIT="vim"
+  export VISUAL="vim"
 fi
 
 # ruby perf

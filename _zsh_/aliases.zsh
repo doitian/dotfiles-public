@@ -78,7 +78,7 @@ alias po='popd'
 alias ...='cd ../..'
 alias -- -='cd -'
 
-if [ "$OS_TYPE" != "Darwin" ]; then
+if [ "$OS_TYPE" != "Darwin" ] && which ruby &> /dev/null; then
   alias rm="rm.rb -I"
 fi
 alias mv="mv -i"
