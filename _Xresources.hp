@@ -1,0 +1,6 @@
+Emacs*font: Bitstream Vera Sans Mono:pixelsize=18
+URxvt*termName: rxvt-256color
+URxvt.font:		xft:Bitstream Vera Sans Mono:size=16:medium:roman:antialias=true
+URxvt.boldFont:		xft:Bitstream Vera Sans Mono:size=16:bold:roman:antialias=true
+URxvt.italicFont:	xft:Bitstream Vera Sans Mono:size=16:medium:italic:autohint=true:antialias=true
+URxvt.boldItalicFont:	xft:Bitstream Vera Sans Mono:size=16:bold:italic:autohint=true:antialias=true
