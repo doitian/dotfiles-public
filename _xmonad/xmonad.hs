@@ -188,6 +188,7 @@ pads = [ NS "term"
 -- a, x, y, ', m
 myKeys =  \conf -> mkKeymap conf $
     [ ("M-S-<Return>", spawn $ XMonad.terminal conf) -- terminal
+    , ("M-C-<Return>", spawn $ XMonad.terminal conf) -- terminal      
     , ("M-`", namedScratchpadAction pads "term") -- quake terminal
     , ("M-m", namedScratchpadAction pads "msg") -- quake msg
 
