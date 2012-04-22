@@ -1,5 +1,5 @@
-keysym Menu = Super_R
-add mod4 = Super_R
+keysym Menu = Hyper_L
+add Mod3 = Hyper_L
 
 remove Lock = Caps_Lock
 keysym Caps_Lock = Control_L
