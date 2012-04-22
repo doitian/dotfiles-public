@@ -74,6 +74,8 @@ cnoremap <A-d> <C-Del>
 cnoremap <C-g> <ESC>
 cnoremap <A-u> _
 cnoremap <A-l> -
+cnoremap <A-r> <C-BS>
+cnoremap <C-h> <BS>
 
 " edit in insert mode
 inoremap <A-BS> <C-BS>
@@ -92,6 +94,8 @@ inoremap <A-d> <C-Del>
 inoremap <C-g> <ESC>
 inoremap <A-u> _
 inoremap <A-l> -
+inoremap <A-r> <C-BS>
+inoremap <C-h> <BS>
 
 " helper
 noremap E <C-S-e><C-z>
