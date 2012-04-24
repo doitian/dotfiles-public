@@ -547,6 +547,7 @@ main = do
              , ((mod4Mask, 0x1008ff13), spawn "mpc-osd volume +5")
              , ((mod4Mask, 0x1008ff11), spawn "mpc-osd volume -5")
              , ((0, 0xff14), spawn "xscreensaver-command -lock || gnome-screensaver-command --lock")
+             , ((0, 0x1008ff2d), spawn "xscreensaver-command -lock || gnome-screensaver-command --lock")
              , ((mod4Mask, 0xff61), spawn "scrot.sh")
              , ((mod4Mask .|. controlMask, 0xff61), spawn "sleep 0.2; scrot.sh -s &")
              ]
