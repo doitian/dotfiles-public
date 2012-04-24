@@ -4,6 +4,6 @@ zle -N self-insert url-quote-magic
 # editor
 # autoload -U zed
 # batch rename
-# autoload -U zmv
+autoload -U zmv
 # autoload -U zcalc
 # autoload -U zprof

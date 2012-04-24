@@ -181,7 +181,7 @@ pads = [ NS "term"
        , NS "msg"
          (myTerminal ++ " -name msg -e sh -l -c '$HOME/bin/start_msg.sh attach'")
          (resource =? "msg" <&&> className =? myTerminalClass)
-         (customFloating $ W.RationalRect 0.6 0.02 0.4 0.98)
+         (customFloating $ W.RationalRect 0.4 0.02 0.6 0.98)
        ]
 
 -- unused char

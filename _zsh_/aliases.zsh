@@ -39,6 +39,7 @@ alias grep="grep -E"
 # Yaourt
 alias y="yaourt"
 alias yy="yaourt -S"
+alias yY="yaourt -S --noconfirm"
 alias yC="yaourt -C"
 alias ys="yaourt -Ss"
 alias yl="yaourt -Ql"
@@ -157,13 +158,6 @@ alias dog=wcat
 
 if [ -x /usr/bin/colordiff ]; then
   alias diff=colordiff
-fi
-
-if [ -x "/usr/bin/prename" ]; then
-  alias rename="/usr/bin/prename"
-fi
-if [ -x "/usr/bin/perl-rename" ]; then
-  alias rename="/usr/bin/perl-rename"
 fi
 
 if yri --version > /dev/null 2>&1; then

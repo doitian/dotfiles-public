@@ -1,5 +1,3 @@
-set mapleader=","
-
 set editor=vimperator-editor
 set defsearch=-g
 set guioptions=NCs
@@ -12,109 +10,101 @@ set popups=resized
 colorscheme zenburn
 
 " history
-noremap <A-[> H
-noremap <A-]> L
-inoremap <A-[> <ESC>H
-inoremap <A-]> <ESC>L
-cnoremap <A-[> <ESC>H
-cnoremap <A-]> <ESC>L
+map -builtin <A-[> H
+map -builtin <A-]> L
+imap -builtin <A-[> <ESC>H
+imap -builtin <A-]> <ESC>L
+cmap -builtin <A-[> <ESC>H
+cmap -builtin <A-]> <ESC>L
 
 " tab
-noremap J gt
-noremap K gT
-noremap <C-j> gt
-noremap <C-k> gT
-noremap <C-.> gb
-noremap <C-,> gB
+map -builtin J gt
+map -builtin K gT
+map -builtin <C-j> gt
+map -builtin <C-k> gT
+map -builtin <C-.> gb
+map -builtin <C-,> gB
 
-noremap <A-}> gt
-noremap <A-{> gT
-inoremap <A-}> <ESC>gt
-inoremap <A-{> <ESC>gT
-cnoremap <A-}> <ESC>gt
-cnoremap <A-{> <ESC>gT
+map -builtin <A-}> gt
+map -builtin <A-{> gT
+imap -builtin <A-}> <ESC>gt
+imap -builtin <A-{> <ESC>gT
+cmap -builtin <A-}> <ESC>gt
+cmap -builtin <A-{> <ESC>gT
 
-noremap <C-A-}> :tabmove +1<return>
-noremap <C-A-{> :tabmove -1<return>
-inoremap <C-A-}> <ESC>:tabmove +1<return>
-inoremap <C-A-{> <ESC>:tabmove -1<return>
-cnoremap <C-A-}> <ESC>:tabmove +1<return>
-cnoremap <C-A-{> <ESC>:tabmove -1<return>
+map -builtin <C-A-}> :tabmove +1<return>
+map -builtin <C-A-{> :tabmove -1<return>
+imap -builtin <C-A-}> <ESC>:tabmove +1<return>
+imap -builtin <C-A-{> <ESC>:tabmove -1<return>
+cmap -builtin <C-A-}> <ESC>:tabmove +1<return>
+cmap -builtin <C-A-{> <ESC>:tabmove -1<return>
 
-noremap <C-b> :tabmove 
+map -builtin <C-b> :tabmove 
 
 " move
-noremap <BS> <C-b>
-noremap <C-n> <C-v><Down>
-noremap <C-p> <C-v><Up>
+map -builtin <BS> <C-b>
+map -builtin <C-n> <C-v><Down>
+map -builtin <C-p> <C-v><Up>
 
 " quote
-noremap <C-q> <A-b>
-inoremap <C-q> <A-b>
-cnoremap <C-q> <A-b>
+map -builtin <C-q> <A-b>
+imap -builtin <C-q> <A-b>
+cmap -builtin <C-q> <A-b>
 
-nnoremap <A-Space> gi
+nmap -builtin <A-Space> gi
 
 " edit in command
-cnoremap <A-BS> <C-BS>
-cnoremap <A-Space> <ESC>
-cnoremap <C-x> <pass>
-cnoremap <C-c> <pass>
-cnoremap <C-v> <pass>
-cnoremap <C-z> <pass>
-cnoremap <C-b> <Left>
-cnoremap <C-f> <Right>
-cnoremap <C-p> <Up>
-cnoremap <C-n> <Down>
-cnoremap <C-S-p> <S-Up>
-cnoremap <C-S-n> <S-Down>
-cnoremap <A-b> <C-Left>
-cnoremap <A-f> <C-Right>
-cnoremap <A-d> <C-Del>
-cnoremap <C-g> <ESC>
-cnoremap <A-u> _
-cnoremap <A-l> -
-cnoremap <A-r> <C-BS>
-cnoremap <C-h> <BS>
+cmap -builtin <A-BS> <C-BS>
+cmap -builtin <A-Space> <ESC>
+cmap -builtin <C-x> <pass>
+cmap -builtin <C-c> <pass>
+cmap -builtin <C-v> <pass>
+cmap -builtin <C-z> <pass>
+cmap -builtin <C-b> <Left>
+cmap -builtin <C-f> <Right>
+cmap -builtin <C-p> <Up>
+cmap -builtin <C-n> <Down>
+cmap -builtin <C-S-p> <S-Up>
+cmap -builtin <C-S-n> <S-Down>
+cmap -builtin <A-b> <C-Left>
+cmap -builtin <A-f> <C-Right>
+cmap -builtin <A-d> <C-Del>
+cmap -builtin <C-g> <ESC>
+cmap -builtin <A-u> _
+cmap -builtin <A-l> -
+cmap -builtin <A-r> <C-BS>
+cmap -builtin <C-h> <BS>
 
 " edit in insert mode
-inoremap <A-BS> <C-BS>
-inoremap <A-Space> <ESC>
-inoremap <C-x> <pass>
-inoremap <C-c> <pass>
-inoremap <C-v> <pass>
-inoremap <C-z> <pass>
-inoremap <C-b> <Left>
-inoremap <C-f> <Right>
-inoremap <C-p> <Up>
-inoremap <C-n> <Down>
-inoremap <A-b> <C-Left>
-inoremap <A-f> <C-Right>
-inoremap <A-d> <C-Del>
-inoremap <C-g> <ESC>
-inoremap <A-u> _
-inoremap <A-l> -
-inoremap <A-r> <C-BS>
-inoremap <C-h> <BS>
+imap -builtin <A-BS> <C-BS>
+imap -builtin <A-Space> <ESC>
+imap -builtin <C-x> <pass>
+imap -builtin <C-c> <pass>
+imap -builtin <C-v> <pass>
+imap -builtin <C-z> <pass>
+imap -builtin <C-b> <Left>
+imap -builtin <C-f> <Right>
+imap -builtin <C-p> <Up>
+imap -builtin <C-n> <Down>
+imap -builtin <A-b> <C-Left>
+imap -builtin <A-f> <C-Right>
+imap -builtin <A-d> <C-Del>
+imap -builtin <C-g> <ESC>
+imap -builtin <A-u> _
+imap -builtin <A-l> -
+imap -builtin <A-r> <C-BS>
+imap -builtin <C-h> <BS>
 
 " helper
-noremap E <C-S-e><C-z>
-noremap <C-Tab> <pass>
-noremap <C-S-Tab> <pass>
-noremap <C-t> <pass>
-cnoremap <C-t> <pass>
-inoremap <C-t> <pass>
+map -builtin E <C-S-e><C-z>
+map -builtin <C-Tab> <pass>
+map -builtin <C-S-Tab> <pass>
+map -builtin <C-t> <pass>
+cmap -builtin <C-t> <pass>
+imap -builtin <C-t> <pass>
 map x :open x-
 map s :open -
 map ! :open x-q<return>
-
-" qmarks
-" qmark r https://www.google.com/reader
-" qmark m https://mail.google.com/mail
-" qmark l http://www.instapaper.com/u
-" qmark t https://twitter.com
-" qmark w https://weibo.com
-" qmark s http://sports.163.com
 
 " Keys
 set passkeys+=mail.google.com:'jkxseopnUI<CR><Esc>/?,gi,gl,*r,*u,*n,*a'
