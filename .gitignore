@@ -3,4 +3,5 @@
 /_irssi_/*.log
 /_irssi_/*.autosave
 /_irssi_/config
+/_zsh_/cache
 *~
