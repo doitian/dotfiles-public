@@ -8,9 +8,9 @@ if ! tmux has-session -t mutt; then
   tmux new-window -t mutt:5 -n mu-index
 
   tmux send-keys -t mutt:1 mutt C-m
-  tmux send-keys -t mutt:2 "start_irssi.sh -w" C-m
+  tmux send-keys -t mutt:2 "irssi" C-m
   tmux send-keys -t mutt:3 offlineimap C-m
-  tmux send-keys -t mutt:4 "ssh -D 9999 -L 6667:localhost:6667 iany.me" C-m
+  tmux send-keys -t mutt:4 "ssh -D 9999 cn.intridea.com" C-m
   tmux send-keys -t mutt:5 "while true; do; mu index --maildir ~/Mail; sleep 300; done" C-m
 
   set-window-option -t mutt:3 monitor-activity off

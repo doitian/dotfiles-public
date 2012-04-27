@@ -27,6 +27,7 @@ run_daemon xscreensaver -no-splash
 #run_daemon parcellite
 run_daemon clipit
 run_daemon fcitx
+#run_daemon pcmanfm -d
 
 if [ -z "$NO_IM" ]; then
   : # run_daemon pidgin

@@ -18,6 +18,7 @@ done
 [ -f ~/.Xresources.$HOSTNAME ] && xrdb -merge ~/.Xresources.$HOSTNAME
 xsetroot -cursor_name left_ptr
 [ -f /usr/bin/nitrogen ] && nitrogen --restore
+xset b 50 440 50
 
 export OOO_FORCE_DESKTOP=gnome
 export JAVA_FONTS=/usr/share/fonts/TTF

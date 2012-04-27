@@ -429,7 +429,7 @@ myLayout = configurableNavigation (navigateColor myActiveBorderColor)
 myWorkspaces    = ["1.sys","2.www","3.emacs","4.doc","5","6","7","8.gimp","9.im","0","-"]
 
 myFloatManageHook = composeOne . concat $
-    [ [ (className =? "Gsimplecal" -?> doRectFloat (W.RationalRect 0.75 0.02 0.25 0.23))
+    [ [ (className =? "Gsimplecal" -?> doRectFloat (W.RationalRect 0.75 0.02 0.25 0.33))
       , (className =? "Screenkey" -?> doIgnore)
       , (role =? "gimp-toolbox" -?> doMaster)
       ]
