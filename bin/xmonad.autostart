@@ -27,10 +27,10 @@ run_daemon xscreensaver -no-splash
 #run_daemon parcellite
 run_daemon clipit
 run_daemon fcitx
-#run_daemon pcmanfm -d
+run_daemon pcmanfm -d
 
 if [ -z "$NO_IM" ]; then
-  : # run_daemon pidgin
+  : #run_daemon pidgin
 fi
 
 if which dropbox > /dev/null 2>&1; then

@@ -410,6 +410,7 @@ myLayout = configurableNavigation (navigateColor myActiveBorderColor)
            $ mkToggle (single MAG)
            $ mkToggle (single FULL)
            $ (onWorkspace "8.gimp" $ named "gimp" $ withIM (2/11) (Role "gimp-toolbox") $ big')
+           $ (onWorkspace "9.im" $ named "im" $ withIM (2/7) (Role "buddy_list") $ grid')
            $ mkToggle (single SIDEBAR) 
            $ layouts
   where
