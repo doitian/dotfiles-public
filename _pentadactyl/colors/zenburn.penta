@@ -65,5 +65,7 @@ hi -a BufTab                                    padding:0 2px; max-width:120px;
 
 " specific
 hi -a NonText                                   color:#5b605e; font-weight:bold;
+hi -a Hint                                      font-size: 9pt !important; text-transform: uppercase;
+hi Hint::after                                  content: attr(number) !important;
 
 " vim: set ft=pentadactyl:ts=4:sw=4:tw=0:
