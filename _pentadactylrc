@@ -6,6 +6,7 @@ set altwildmode=list:longest
 set newtab=all
 set activate+=links
 set popups=resized
+set hintkeys="asdfg;lkjh"
 
 colorscheme zenburn
 
