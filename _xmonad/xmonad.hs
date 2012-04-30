@@ -197,6 +197,7 @@ myKeys =  \conf -> mkKeymap conf $
     , ("M-p b", windowPromptBring myWaitSP) -- window bring prompt
     , ("M-p d", AL.launchApp mySP { defaultText = "~" } "xranger") -- directory prompt
     , ("M-p M-d", AL.launchApp mySP { defaultText = "~" } "xmc") -- directory promptD
+    , ("M-p f", AL.launchApp mySP { defaultText = "~" } "pcmanfm") -- pcmanfm prompt
     , ("M-p o", AL.launchApp mySP "xopen" ) -- open prompt
     , ("M-p m", manPrompt mySP ) -- xmonad prompt
     , ("M-g", runOrRaise "window-go.sh" (resource =? "WindowGo" <&&> className =? "Gpicker")) -- window go
