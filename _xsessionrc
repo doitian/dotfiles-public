@@ -25,4 +25,4 @@ export JAVA_FONTS=/usr/share/fonts/TTF
 export GDFONTPATH=/usr/share/fonts/TTF
 export GDK_NATIVE_WINDOWS=1
 export GDK_USE_XFT=1
-export GNOME_DESKTOP_SESSION_ID=Default
+#export GNOME_DESKTOP_SESSION_ID=Default
