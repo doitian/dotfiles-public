@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cd $HOME/Music
+exec urxvt -name cmus -e cmus

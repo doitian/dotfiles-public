@@ -1,0 +1,72 @@
+#!/bin/bash -e
+
+[ -z "$1" ] && exit 1
+ACTION="$1"
+shift
+
+OSD_ID_FILE="$HOME/.cmus_remote.id"
+if [ -f "$OSD_ID_FILE" ]; then
+  OSD_ID=$(cat $OSD_ID_FILE)
+fi
+OSD_ID=${OSD_ID:-0}
+
+function cmus_title() {
+  echo "$@" | sed -n 's/tag title //p'
+}
+
+function cmus_message() {
+  echo "$@" | sed -n -e 's/tag artist /by /p' -e 's/tag album /in /p'
+}
+
+case "$ACTION" in
+  volume)
+    cmus-remote --volume "$@"
+    VOLUME=$(cmus-remote -Q | sed -n 's/set vol_left //p')
+    if [ $VOLUME -eq 0 ]; then
+        ICON=notification-audio-volume-off
+    elif [ $VOLUME -lt 33 ]; then
+        ICON=notification-audio-volume-low
+    elif [ $VOLUME -lt 66 ]; then
+        ICON=notification-audio-volume-medium
+    else
+        ICON=notification-audio-volume-high
+    fi
+    notify-send -i $ICON -h int:value:$VOLUME -h string:x-canonical-private-synchronous:true "cmus Volume"
+    ;;
+  stop)
+    cmus-remote --stop
+    notify-send.py -r "$OSD_ID" -i player_stop "cmus" > "$OSD_ID_FILE"
+    ;;
+  toggle)
+    cmus-remote --pause
+    status=$(cmus-remote -Q)
+    title=$(cmus_title "$status")
+    message=$(cmus_message "$status")
+    if echo "$status" | head -1 | grep 'playing'; then
+      notify-send.py  -r "$OSD_ID" -i player_play "$title" "$message" > "$OSD_ID_FILE" 
+    elif echo "$status" | head -1 | grep 'paused'; then
+      notify-send.py  -r "$OSD_ID" -i player_pause "$title" "$message" > "$OSD_ID_FILE" 
+    else
+      notify-send.py -r "$OSD_ID" -i player_stop "cmus" > "$OSD_ID_FILE"
+    fi
+    ;;
+  next|prev)
+    cmus-remote "--${ACTION}"
+    status=$(cmus-remote -Q)
+    title=$(cmus_title "$status")
+    message=$(cmus_message "$status")
+    icon=media-skip-forward
+    if [ "$ACTION" = 'prev' ]; then
+      icon=media-skip-backward
+    fi
+    if echo "$status" | head -1 | grep 'playing'; then
+      notify-send.py  -r "$OSD_ID" -i "$icon" "$title" "$message" > "$OSD_ID_FILE" 
+    elif echo "$status" | head -1 | grep 'paused'; then
+      notify-send.py  -r "$OSD_ID" -i player_pause "$title" "$message" > "$OSD_ID_FILE" 
+    else
+      notify-send.py -r "$OSD_ID" -i player_stop "cmus" > "$OSD_ID_FILE"
+    fi
+    ;;
+  *)
+    ;;
+esac

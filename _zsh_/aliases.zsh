@@ -187,6 +187,8 @@ fi
 
 alias ssh="TERM=xterm-256color ssh"
 
+alias cmr=cmus-remote
+
 ##################################################
 # Ext Aliases
 alias -s html=w3m

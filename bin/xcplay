@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ -z "$1" ]; then
+  dir=$HOME/Music
+else
+  dir="$*"
+fi
+exec urxvt -name cplay -e cplay "$dir"q

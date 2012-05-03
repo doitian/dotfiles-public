@@ -182,6 +182,10 @@ pads = [ NS "term"
          (myTerminal ++ " -name msg -e sh -l -c '$HOME/bin/start_msg.sh attach'")
          (resource =? "msg" <&&> className =? myTerminalClass)
          (customFloating $ W.RationalRect 0.4 0.02 0.6 0.98)
+       , NS "music"
+         (myTerminal ++ " -name music -e sh -l -c '$HOME/bin/start_cmus.sh attach'")
+         (resource =? "music" <&&> className =? myTerminalClass)
+         (customFloating $ W.RationalRect 0 0.02 0.6 0.98)
        ]
 
 -- unused char
@@ -191,12 +195,13 @@ myKeys =  \conf -> mkKeymap conf $
     , ("M-C-<Return>", spawn $ XMonad.terminal conf) -- terminal      
     , ("M-`", namedScratchpadAction pads "term") -- quake terminal
     , ("M-m", namedScratchpadAction pads "msg") -- quake msg
+    , ("M-S-m", namedScratchpadAction pads "music") -- quake music
 
     -- prompt
     , ("M-p g", windowPromptGoto myWaitSP) -- window go prompt
     , ("M-p b", windowPromptBring myWaitSP) -- window bring prompt
     , ("M-p d", AL.launchApp mySP { defaultText = "~" } "xranger") -- directory prompt
-    , ("M-p M-d", AL.launchApp mySP { defaultText = "~" } "xmc") -- directory promptD
+    , ("M-p S-d", AL.launchApp mySP { defaultText = "~" } "xmc") -- directory prompt using midnight commander
     , ("M-p f", AL.launchApp mySP { defaultText = "~" } "pcmanfm") -- pcmanfm prompt
     , ("M-p o", AL.launchApp mySP "xopen" ) -- open prompt
     , ("M-p m", manPrompt mySP ) -- xmonad prompt
@@ -215,7 +220,6 @@ myKeys =  \conf -> mkKeymap conf $
 
     , ("M-c t", raiseNextMaybe (spawn $ myTerminal ++ " -name htop -e htop") (resource =? "htop")) -- Top
     , ("M-c r", raiseNextMaybe (spawn "xranger") (resource =? "ranger")) -- File Browser
-    , ("M-c m", raiseNextMaybe (spawn "xmc") (resource =? "mc")) -- File Manager
     , ("M-c h", spawn "xmonad-key.sh") -- Help
     , ("M-c i", spawn "xp") -- Window Info
     , ("M-c x", spawn "xkill") -- Kill X app
@@ -538,16 +542,17 @@ main = do
              , ((0, 0x1008ff30), spawn "goodsong add")
              , ((mod4Mask, 0x1008ff30), spawn "goodsong play")
              , ((0, 0x1008ff1d), runOrRaise "gcalctool" (className =? "Gcalctool"))
-             , ((0, 0x1008ff26), spawn "mpc-osd prev")
-             , ((0, 0x1008ff27), spawn "mpc-osd next")
-             , ((0, 0x1008ff14), spawn "mpc-osd toggle")
-             , ((mod4Mask, 0x1008ff26), spawn "mpc-osd seek -5")
-             , ((mod4Mask, 0x1008ff27), spawn "mpc-osd seek +5")
+             , ((0, 0x1008ff14), spawn "cmus-osd toggle")
+             , ((0, 0x1008ff15), spawn "cmus-osd stop")
+             , ((0, 0x1008ff16), spawn "cmus-osd prev")
+             , ((0, 0x1008ff17), spawn "cmus-osd next")
+             , ((mod4Mask, 0x1008ff26), spawn "cmus-osd seek -5")
+             , ((mod4Mask, 0x1008ff27), spawn "cmus-osd seek +5")
              , ((0, 0x1008ff13), spawn "volume-osd 2+")
              , ((0, 0x1008ff11), spawn "volume-osd 2-")
              , ((0, 0x1008ff12), spawn "volume-osd toggle")
-             , ((mod4Mask, 0x1008ff13), spawn "mpc-osd volume +5")
-             , ((mod4Mask, 0x1008ff11), spawn "mpc-osd volume -5")
+             , ((mod4Mask, 0x1008ff13), spawn "cmus-osd volume +5")
+             , ((mod4Mask, 0x1008ff11), spawn "cmus-osd volume -5")
              , ((0, 0xff14), spawn "xscreensaver-command -lock || gnome-screensaver-command --lock")
              , ((0, 0x1008ff2d), spawn "xscreensaver-command -lock || gnome-screensaver-command --lock")
              , ((mod4Mask, 0xff61), spawn "scrot.sh")
