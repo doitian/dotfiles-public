@@ -11,3 +11,5 @@ clock_label = Local
 clock_tz = Asia/Shanghai
 clock_label = US Central
 clock_tz = US/Central
+clock_label = Pacific Standard Time
+clock_tz = US/Pacific
