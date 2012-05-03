@@ -1,3 +1,4 @@
+
 [Added Associations]
 text/calendar=emacs-dwim.desktop;
 text/comma-separated-values=emacs-dwim.desktop;
@@ -96,3 +97,4 @@ text/xml-external-parsed-entity=emacs-dwim.desktop;
 text/xml-svg=emacs-dwim.desktop;
 x-scheme-handler/http=firefox.desktop;
 x-scheme-handler/https=firefox.desktop;
+application/vnd.openxmlformats-officedocument.wordprocessingml.document=libreoffice-writer.desktop;
