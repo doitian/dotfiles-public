@@ -51,6 +51,4 @@ $HOME/bin/start_msg.sh &
 env | grep '^DBUS_SESSION_BUS_ADDRESS=\|^XAUTHORITY=\|^SSH_AUTH_SOCK=' > ~/.xenv
 echo "export DBUS_SESSION_BUS_ADDRESS XAUTHORITY SSH_AUTH_SOCK" >> ~/.xenv
 
-if [ "$#" -gt 0 ]; then
-  exec "$@"
-fi
+exec xmonad

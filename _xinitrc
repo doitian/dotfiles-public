@@ -20,5 +20,4 @@ export QT_IM_MODULE=fcitx
 export XMODIFIERS="@im=fcitx"
 source $HOME/.xsessionrc
 
-exec ck-launch-session $HOME/bin/xmonad.autostart xmonad
-#exec /usr/bin/openbox
+exec $HOME/bin/xmonad.autostart

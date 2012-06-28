@@ -2,6 +2,6 @@
 #xrandr --output DFP1 --mode 1920x1080 --rotate left --output DFP2 --mode 1920x1080 --rotate right --right-of DFP1
 #xrandr --newmode "1280x720_60.00"   74.50  1280 1344 1472 1664  720 723 728 748 -HSync +VSync
 xrandr --newmode "1280x720_60.00"  74.48  1280 1336 1472 1664  720 721 724 746  -HSync +Vsync
-xrandr --addmode DVI-0 "1280x720_60.00"
-xrandr --addmode DVI-1 "1280x720_60.00"
-xrandr --output DVI-0 --mode 1280x720_60.00 --output DVI-1 --mode 1280x720_60.00 --right-of DVI-0
+xrandr --addmode LVDS1 "1280x720_60.00"
+#xrandr --addmode DVI-1 "1280x720_60.00"
+xrandr --output LVDS1 --mode 1280x720_60.00 # --output DVI-1 --mode 1280x720_60.00 --right-of DVI-0
