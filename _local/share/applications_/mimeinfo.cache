@@ -1,4 +1,5 @@
 [MIME Cache]
+application/pdf=mendeleydesktop.desktop;
 text/calendar=emacs-dwim.desktop;
 text/comma-separated-values=emacs-dwim.desktop;
 text/css=emacs-dwim.desktop;
@@ -60,7 +61,7 @@ text/vnd.wap.sl=emacs-dwim.desktop;
 text/vnd.wap.wml=emacs-dwim.desktop;
 text/vnd.wap.wmlscript=emacs-dwim.desktop;
 text/x-asm=emacs-dwim.desktop;
-text/x-bibtex=emacs-dwim.desktop;
+text/x-bibtex=emacs-dwim.desktop;mendeleydesktop.desktop;
 text/x-c=emacs-dwim.desktop;
 text/x-c++=emacs-dwim.desktop;
 text/x-c++hdr=emacs-dwim.desktop;
@@ -94,3 +95,5 @@ text/x-vcard=emacs-dwim.desktop;
 text/xml=emacs-dwim.desktop;
 text/xml-external-parsed-entity=emacs-dwim.desktop;
 text/xml-svg=emacs-dwim.desktop;
+x-scheme-handler/http=firefox.desktop;
+x-scheme-handler/mendeley=mendeleydesktop.desktop;
