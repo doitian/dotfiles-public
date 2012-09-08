@@ -1,0 +1,111 @@
+set editor=vimperator-editor
+set defsearch=-g
+set gui=none
+
+set newtab=all
+set activate+=paste
+set popups=resized
+set hintchars="asdfg;lkjh"
+
+" colorscheme zenburn
+
+" history
+map <A-[> H
+map <A-]> L
+imap <A-[> <ESC>H
+imap <A-]> <ESC>L
+cmap <A-[> <ESC>H
+cmap <A-]> <ESC>L
+
+" tab
+map J gt
+map K gT
+map <C-j> gt
+map <C-k> gT
+map <C-.> gb
+map <C-,> gB
+
+map <A-}> gt
+map <A-{> gT
+imap <A-}> <ESC>gt
+imap <A-{> <ESC>gT
+cmap <A-}> <ESC>gt
+cmap <A-{> <ESC>gT
+
+map <C-A-}> :tabmove +1<return>
+map <C-A-{> :tabmove -1<return>
+imap <C-A-}> <ESC>:tabmove +1<return>
+imap <C-A-{> <ESC>:tabmove -1<return>
+cmap <C-A-}> <ESC>:tabmove +1<return>
+cmap <C-A-{> <ESC>:tabmove -1<return>
+
+map <C-b> :tabmove 
+
+" move
+map <BS> <C-b>
+map <C-n> <C-v><Down>
+map <C-p> <C-v><Up>
+
+" quote
+map <C-q> <A-b>
+imap <C-q> <A-b>
+cmap <C-q> <A-b>
+
+nmap <A-Space> gi
+
+" edit in command
+cmap <A-BS> <C-BS>
+cmap <A-Space> <ESC>
+cmap <C-b> <Left>
+cmap <C-f> <Right>
+cmap <C-p> <Up>
+cmap <C-n> <Down>
+cmap <C-S-p> <S-Up>
+cmap <C-S-n> <S-Down>
+cmap <A-b> <C-Left>
+cmap <A-f> <C-Right>
+cmap <A-d> <C-Del>
+cmap <C-g> <ESC>
+cmap <A-u> _
+cmap <A-l> -
+cmap <A-r> <C-BS>
+cmap <C-h> <BS>
+
+" edit in insert mode
+imap <A-BS> <C-BS>
+imap <A-Space> <ESC>
+imap <C-b> <Left>
+imap <C-f> <Right>
+imap <C-p> <Up>
+imap <C-n> <Down>
+imap <A-b> <C-Left>
+imap <A-f> <C-Right>
+imap <A-d> <C-Del>
+imap <C-g> <ESC>
+imap <A-u> _
+imap <A-l> -
+imap <A-r> <C-BS>
+imap <C-h> <BS>
+
+" helper
+map E <C-S-e><C-z>
+map x :open x-
+map s :open -
+map ! :open x-q<return>
+
+" Keys
+" set passkeys+=mail.google.com:'jkxseopnUI<CR><Esc>/?,gi,gl,*r,*u,*n,*a'
+" set passkeys+=www.google.com/reader:'jknpomNPOASD<SPC><BS>'
+" set passkeys+=groups.google.com:'ojkJKnpNPhfaAcs/,gl,gm,gs'
+" set passkeys+=pinboard.in/add:'<Tab>'
+
+" Style
+" highlight TabIconNumber width:16px;text-align:center;margin:0 3px 0 -16px !important;color:#586e75;text-shadow:#073642 1px 1px 1px;font-size:14px;background:#eee8d5;border-radius:8px;
+
+" style -group user http://hootsuite.com/dashboard* #messageBoxMessage{font-size:140% !important}.messageContent{font-size:160% !important}.commentContent{font-size:140% !important}
+" style -group user https://hootsuite.com/dashboard* #messageBoxMessage{font-size:140% !important}.messageContent{font-size:160% !important}.commentContent{font-size:140% !important}
+
+" Plugins
+loadplugins
+"set btp
+
