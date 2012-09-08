@@ -46,7 +46,7 @@ if which dropbox > /dev/null 2>&1; then
     ) &
 fi
 
-$HOME/bin/start_msg.sh &
+#$HOME/bin/start_msg.sh &
 
 env | grep '^DBUS_SESSION_BUS_ADDRESS=\|^XAUTHORITY=\|^SSH_AUTH_SOCK=' > ~/.xenv
 echo "export DBUS_SESSION_BUS_ADDRESS XAUTHORITY SSH_AUTH_SOCK" >> ~/.xenv
