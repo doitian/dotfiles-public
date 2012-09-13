@@ -6,6 +6,8 @@ set newtab=all
 set activate+=paste
 set popups=resized
 set hintchars="asdfg;lkjh"
+set focuscontent
+set messagetimeout=1000
 
 " colorscheme zenburn
 
@@ -24,6 +26,7 @@ map <C-j> gt
 map <C-k> gT
 map <C-.> gb
 map <C-,> gB
+map D :tabdetach<return>
 
 map <A-}> gt
 map <A-{> gT
@@ -99,13 +102,6 @@ map ! :open x-q<return>
 " set passkeys+=groups.google.com:'ojkJKnpNPhfaAcs/,gl,gm,gs'
 " set passkeys+=pinboard.in/add:'<Tab>'
 
-" Style
-" highlight TabIconNumber width:16px;text-align:center;margin:0 3px 0 -16px !important;color:#586e75;text-shadow:#073642 1px 1px 1px;font-size:14px;background:#eee8d5;border-radius:8px;
-
-" style -group user http://hootsuite.com/dashboard* #messageBoxMessage{font-size:140% !important}.messageContent{font-size:160% !important}.commentContent{font-size:140% !important}
-" style -group user https://hootsuite.com/dashboard* #messageBoxMessage{font-size:140% !important}.messageContent{font-size:160% !important}.commentContent{font-size:140% !important}
-
 " Plugins
 loadplugins
-"set btp
 

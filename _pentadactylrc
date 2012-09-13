@@ -25,6 +25,7 @@ map -builtin <C-j> gt
 map -builtin <C-k> gT
 map -builtin <C-.> gb
 map -builtin <C-,> gB
+map -builtin D :tabdetach<return>
 
 map -builtin <A-}> gt
 map -builtin <A-{> gT
