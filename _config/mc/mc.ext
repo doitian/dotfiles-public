@@ -505,7 +505,8 @@ type/^PostScript
 
 # PDF
 type/^PDF
-	Open=(xpdf %f &)
+	Open=(mupdf %f &)
+	#Open=(xpdf %f &)
 	#Open=(acroread %f &)
 	#Open=(ghostview %f &)
 	View=%view{ascii} pdftotext %f -
