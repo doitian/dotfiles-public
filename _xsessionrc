@@ -14,7 +14,8 @@ for f in ~/.zshenv ~/.xsessionrc.$HOSTNAME; do
 done
 
 [ -f ~/.Xresources ] && xrdb -merge ~/.Xresources
-[ -f ~/.xmodmap ] && xmodmap ~/.xmodmap
+#[ -f ~/.xmodmap ] && xmodmap ~/.xmodmap
+setxkbmap -option ctrl:nocaps
 [ -f ~/.Xresources.$HOSTNAME ] && xrdb -merge ~/.Xresources.$HOSTNAME
 xsetroot -cursor_name left_ptr
 [ -f /usr/bin/nitrogen ] && nitrogen --restore

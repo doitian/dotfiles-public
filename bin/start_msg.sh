@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if ! tmux has-session -t mutt; then
   env TMUX= tmux start-server \; set-option -g base-index 1 \; new-session -d -s mutt -n mutt
