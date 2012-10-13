@@ -1,0 +1,3 @@
+if [ $(xrandr | grep -c '\bconnected') = 2 ]; then
+  /home/ian/bin/laptop-res
+fi
