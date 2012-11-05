@@ -30,3 +30,4 @@ doc/tags
 .eproject
 project.org
 dir
+node_modules

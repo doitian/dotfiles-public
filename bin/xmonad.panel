@@ -5,7 +5,7 @@ BG='#262626'
 ICON_DIR="$HOME/Dropbox/Photos/dzen"
 
 LAPTOP_MODE=
-USER_CONTENT_WIDTH=160
+USER_CONTENT_WIDTH=180
 if which acpid &> /dev/null; then
   LAPTOP_MODE=1
   USER_CONTENT_WIDTH=340
