@@ -42,7 +42,7 @@ ln -snf "$HOME/Dropbox/Secrets/secrets.el" "$HOME/.emacs.d/secrets.el"
 ln -snf "$HOME/Dropbox/Secrets/irssi.pl" "$HOME/.irssi/config"
 ln -snf "$HOME/Dropbox/Secrets/gitconfig" "$HOME/.gitconfig"
 if ! [ -f "$HOME/.offlineimaprc" ]; then
-  ln -snf "$HOME/Dropbox/Secrets/offlineimaprc" "$HOME/.offlineimaprc"
+  cp "$HOME/Dropbox/Secrets/offlineimaprc" "$HOME/.offlineimaprc"
 fi
 ln -snf "$HOME/Dropbox/Secrets/msmtp" "$HOME/.msmtprc"
 ln -snf "$HOME/Dropbox/Secrets/signature" "$HOME/.signature"
