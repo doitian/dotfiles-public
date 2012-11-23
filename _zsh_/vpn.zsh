@@ -95,8 +95,8 @@ l2tp () {
       local LOCAL_IP=$(ifconfig "$INTERFACE" | grep "inet "| awk '{print $2}')
       local SERVER_IP=
       local SHARED_KEY=
-      local USERNAME=
-      local PASSWORD=
+      local VPN_USERNAME=
+      local VPN_PASSWORD=
       if [ -f "$dir/config.sh" ]; then
         source "$dir/config.sh"
       fi
@@ -113,8 +113,8 @@ l2tp () {
           -e "s/\{SERVER_IP\}/${SERVER_IP}/g" \
           -e "s/\{INTERFACE\}/${INTERFACE}/g" \
           -e "s/\{SHARED_KEY\}/${SHARED_KEY}/g" \
-          -e "s/\{USERNAME\}/${USERNAME}/g" \
-          -e "s/\{PASSWORD\}/${PASSWORD}/g" \
+          -e "s/\{VPN_USERNAME\}/${VPN_USERNAME}/g" \
+          -e "s/\{VPN_PASSWORD\}/${VPN_PASSWORD}/g" \
           "$dir/$file_basename" \
           | sudo tee "$file_path" > /dev/null
         sudo chmod 600 "$file_path"
@@ -152,7 +152,7 @@ l2tp () {
 }
 
 _l2tp () {
-  compadd $(ls $L2TP_CONFIG_DIR) stop
+  compadd $(ls $L2TP_CONFIG_DIR | grep -v '^ip-') stop
 }
 
 compdef _ovpn ovpn
