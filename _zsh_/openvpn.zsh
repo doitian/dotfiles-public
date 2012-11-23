@@ -22,7 +22,7 @@ ovpn () {
 
   if [ -n "$route" ]; then
     if [ -f "$ROUTES_FILE" ]; then
-      if ! [ -f client-with-routes.conf -a client-with-routes.conf -nt "$ROUTES_FILE" ]; then
+      if ! [ -f client-with-routes.conf -a client-with-routes.conf -nt "$ROUTES_FILE" -a client-with-routes.conf -nt client.conf ]; then
         local num=$(( $(wc -l "$ROUTES_FILE" | cut -d\  -f1 ) + 50 ))
         echo "max-routes $num" | cat - client.conf "$ROUTES_FILE" > client-with-routes.conf
       fi
