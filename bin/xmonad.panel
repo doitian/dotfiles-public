@@ -71,7 +71,7 @@ user_content() {
     if [ "${#interfaces[@]}" = 0 ]; then
       echo -n " ^ca(1,$net_action)^i($net_icon) ^bg(#8b0000)^fg(#cccccc) N/A ^bg()^fg()^ca()"
     else
-      if [ "${interfaces[1]}" = 'wlan0' ]; then
+      if echo "${interfaces[@]}" | grep -q 'wlan'; then
         net_icon="$ICON_DIR/wifi_02.xbm"
       fi
       echo -n " ^ca(1,$net_action)^i($net_icon)  ${interfaces[*]} ^ca()"
