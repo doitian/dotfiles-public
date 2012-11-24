@@ -51,6 +51,7 @@ alias gh=github
 alias tmuxinator="gemset tools tmuxinator"
 alias heroku="gemset tools heroku"
 alias vagrant="gemset tools vagrant"
+alias vmc="gemset tools vmc"
 alias lolcat="gemset tools lolcat"
 alias mux="tmuxinator"
 compdef _tmuxinator mux
