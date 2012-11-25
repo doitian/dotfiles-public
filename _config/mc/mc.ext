@@ -533,11 +533,11 @@ shell/.abw
 	Open=(abiword %f &)
 
 # Microsoft Word Document
-regex/\.([Dd][oO][cCtT]|[Ww][rR][iI])$
-	Open=(abiword %f >/dev/null 2>&1 &)
+regex/\.([Dd][oO][cCtT][xX]?|[Ww][rR][iI])$
+	Open=(lowriter %f >/dev/null 2>&1 &)
 	View=%view{ascii} antiword -t %f || catdoc -w %f || word2x -f text %f - || strings %f
 type/^Microsoft\ Word
-	Open=(abiword %f >/dev/null 2>&1 &)
+	Open=(lowriter %f >/dev/null 2>&1 &)
 	View=%view{ascii} antiword -t %f || catdoc -w %f || word2x -f text %f - || strings %f
 
 # RTF document
@@ -545,8 +545,8 @@ regex/\.([rR][tT][fF])$
 	Open=(abiword %f >/dev/null 2>&1 &)
 
 # Microsoft Excel Worksheet
-regex/\.([xX][lL][sSwW])$
-	Open=(gnumeric %f >/dev/null 2>&1 &)
+regex/\.([xX][lL][sSwW][xX]?)$
+	Open=(localc %f >/dev/null 2>&1 &)
 	View=%view{ascii} xls2csv %f || strings %f
 type/^Microsoft\ Excel
 	Open=(gnumeric %f >/dev/null 2>&1 &)
@@ -554,7 +554,7 @@ type/^Microsoft\ Excel
 
 # Use OpenOffice.org to open any MS Office documents
 type/^Microsoft\ Office\ Document
-	Open=(ooffice %f &)
+	Open=(loffice %f &)
 
 # Framemaker
 type/^FrameMaker
@@ -684,7 +684,7 @@ regex/\.xz$
 
 # Default target for anything not described above
 default/*
-	Open=
+	Open=xopen %f
 	View=
 
 

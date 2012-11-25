@@ -6,6 +6,11 @@ OVPN_ROUTES_FILE="$ROUTES_DIR/openvpn/routes.txt"
 
 L2TP_CONFIG_DIR="$HOME/Dropbox/Secrets/l2tp"
 
+# Start/stop L2TP/IPSec VPN.
+#
+# All VPN config should be in $OVPN_CONFIG_DIR. Each directory is a VPN configuration.
+#
+# See http://github.com/doitian/vpn-config-sample
 ovpn () {
   if [ -z "$1" ]; then
     echo "Usage: ovpn [--route] NAME"
@@ -47,7 +52,7 @@ ovpn () {
 }
 
 _ovpn () {
-  compadd $(ls $OVPN_CONFIG_DIR)
+  compadd $(ls $OVPN_CONFIG_DIR) '--route'
 }
 
 download-routes () {
@@ -66,6 +71,11 @@ download-routes () {
   }
 }
 
+# Start/stop L2TP/IPSec VPN.
+#
+# All VPN config should be in $L2TP_CONFIG_DIR. Each directory is a VPN configuration.
+#
+# See http://github.com/doitian/vpn-config-sample
 l2tp () {
   if [ -z "$1" ]; then
     echo "Usage: l2tp stop | [--route] NAME"
@@ -109,13 +119,17 @@ l2tp () {
         /etc/ppp/options.l2tpd.client \
         /etc/xl2tpd/xl2tpd.conf; do
         file_basename=$(basename "$file_path")
+        file_src_path="$dir/$file_basename"
+        if ! [ -e "$file_src_path" ]; then
+          file_src_path="$L2TP_CONFIG_DIR/common/$file_basename"
+        fi
         sed -e "s/\{LOCAL_IP\}/${LOCAL_IP}/g" \
           -e "s/\{SERVER_IP\}/${SERVER_IP}/g" \
           -e "s/\{INTERFACE\}/${INTERFACE}/g" \
           -e "s/\{SHARED_KEY\}/${SHARED_KEY}/g" \
           -e "s/\{VPN_USERNAME\}/${VPN_USERNAME}/g" \
           -e "s/\{VPN_PASSWORD\}/${VPN_PASSWORD}/g" \
-          "$dir/$file_basename" \
+          "$file_src_path" \
           | sudo tee "$file_path" > /dev/null
         sudo chmod 600 "$file_path"
         sudo chown root: "$file_path"
@@ -152,7 +166,7 @@ l2tp () {
 }
 
 _l2tp () {
-  compadd $(ls $L2TP_CONFIG_DIR | grep -v '^ip-') stop
+  compadd $(ls $L2TP_CONFIG_DIR | grep -v '^ip-\|^common$') stop '--route'
 }
 
 compdef _ovpn ovpn

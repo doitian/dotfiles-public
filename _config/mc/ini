@@ -71,7 +71,6 @@ editor_check_new_line=0
 editor_show_right_margin=0
 editor_group_undo=0
 nice_rotating_dash=1
-horizontal_split=0
 mcview_remember_file_position=0
 auto_fill_mkdir_name=1
 copymove_persistent_attr=1
@@ -83,8 +82,6 @@ keymap=my.keymap
 skin=default
 
 [Layout]
-equal_split=1
-first_panel_size=71
 message_visible=1
 keybar_visible=1
 xterm_title=1
@@ -92,6 +89,12 @@ output_lines=0
 command_prompt=1
 menubar_visible=1
 free_space=1
+
+horizontal_split=0
+vertical_equal=1
+left_panel_size=0
+horizontal_equal=1
+top_panel_size=71
 
 [Misc]
 timeformat_recent=%b %e %H:%M
@@ -108,6 +111,8 @@ clipboard_paste=
 base_color=
 rxvt-256color=
 color_terminals=
+
+rxvt-unicode-256color=
 
 [Panels]
 simple_swap=false
