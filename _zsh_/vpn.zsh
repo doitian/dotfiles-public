@@ -66,7 +66,7 @@ download-routes () {
       mkdir -p "${ROUTES_DIR}/${file_name}"
       curl ${ROUTES_SITE}/${file_path} > "${ROUTES_DIR}/${file_name}/${file_name}.zip"
       unzip -o "${ROUTES_DIR}/${file_name}/${file_name}.zip" -d "${ROUTES_DIR}/${file_name}"
-      chmod u+r "${ROUTES_DIR}/${file_name}/*"
+      chmod -R u+r "${ROUTES_DIR}/${file_name}"
     done
   }
 }
