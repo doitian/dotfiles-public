@@ -3,8 +3,6 @@
 import XMonad hiding ( (|||) )
 import qualified XMonad.StackSet as W
 
-import Control.OldException(catchDyn,try)
-
 import Data.Char (toLower)
 import Data.Monoid (mappend)
 import Data.List (intercalate, intersperse, isSuffixOf, isPrefixOf)
@@ -306,6 +304,18 @@ myKeys =  \conf -> mkKeymap conf $
     , ("M-C-S-n", renameWorkspace mySP) -- rename workspace
     , ("M-C-S-<Backspace>", removeWorkspace) -- delete empty workspace
     , ("M-/", toggleWSNoSP) -- toggle recently visited workspaces
+
+    -- multimedia
+    , ("M-<F12>", spawn "volume-osd 2+") -- volume up
+    , ("M-<F11>", spawn "volume-osd 2-") -- volume down
+    , ("M-<F10>", spawn "volume-osd toggle") -- toggle silient
+
+    , ("M-<F6>", spawn "cmus-osd toggle") -- play/pause music
+    , ("M-<F5>", spawn "cmus-osd stop") -- stop music
+    , ("M-<F7>", spawn "cmus-osd prev") -- prev song
+    , ("M-<F8>", spawn "cmus-osd next") -- next song
+    , ("M-<F3>", spawn "cmus-osd seek -5") -- seek back
+    , ("M-<F4>", spawn "cmus-osd seek +5") -- seek forward
     ]
     ++
     -- "M-[1..9,0,-]" -- Switch to workspace N
