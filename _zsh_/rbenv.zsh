@@ -38,7 +38,7 @@ function gemset() {
     esac
   fi
 }
-function _gemset() {
+nfunction _gemset() {
   local -a _actions _gemsets
   _actions=(active create delete file list version)
   _gemsets=($(rbenv gemset list | grep '^ ' | uniq))
