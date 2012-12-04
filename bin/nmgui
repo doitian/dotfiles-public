@@ -1,5 +1,10 @@
 #!/bin/sh
 
-nm-applet &> /dev/null &
-stalonetray &> /dev/null
+if pidof stalonetray &> /dev/null; then
+  nm-applet &> /dev/null
+else
+  nm-applet &> /dev/null &
+  stalonetray &> /dev/null
+fi
+
 killall nm-applet

@@ -20,6 +20,8 @@ run_daemon () {
     return 1
 }
 
+run_daemon stalonetray
+run_daemon volti
 #run_daemon trayer --edge right --widthtype request --transparent true --SetDockType true --SetPartialStrut true
 
 LC_ALL= LC_CTYPE=zh_CN.UTF-8 run_daemon emacs --daemon

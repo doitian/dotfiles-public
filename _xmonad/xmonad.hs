@@ -447,13 +447,14 @@ myWorkspaces    = ["1.sys","2.www","3.emacs","4.doc","5","6","7","8.gimp","9.im"
 myFloatManageHook = composeOne . concat $
     [ [ (className =? "Gsimplecal" -?> doRectFloat (W.RationalRect 0.75 0.02 0.25 0.33))
       , (className =? "Screenkey" -?> doIgnore)
+      , (className =? "stalonetray" -?> doIgnore)
       , (role =? "gimp-toolbox" -?> doMaster)
       ]
     , [ className =? x -?> doCenterFloat' | x <- cCenter ]
     , [ className =? x -?> doMaster | x <- masters ]
     ]
     where
-      cCenter = [ "Gmrun", "Gpicker", "Gcolor2" ]
+      cCenter = [ "Gmrun", "Gpicker", "Gcolor2", "Volti" ]
       masters = [ "Emacs" ]
       doCenterFloat' = doCenterFloat <+> doMaster
       doMaster = doF W.shiftMaster
