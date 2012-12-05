@@ -512,6 +512,7 @@ myFocusFollowsMouse = True
 -- By default, do nothing.
 myStartupHook = adjustEventInput
                 >> setWMName "LG3D"
+                >> spawn "killall stalonetray && stalonetray"
 
 exitHook :: IO ()
 exitHook = do

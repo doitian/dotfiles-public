@@ -20,7 +20,6 @@ run_daemon () {
     return 1
 }
 
-run_daemon stalonetray
 run_daemon volti
 #run_daemon trayer --edge right --widthtype request --transparent true --SetDockType true --SetPartialStrut true
 
