@@ -31,3 +31,4 @@ doc/tags
 project.org
 dir
 node_modules
+chromedriver.log
