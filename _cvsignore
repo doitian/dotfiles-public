@@ -32,3 +32,4 @@ project.org
 dir
 node_modules
 chromedriver.log
+dump.rdb

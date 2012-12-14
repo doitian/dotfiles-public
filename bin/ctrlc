@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# echo ~/.ssh/id_rsa.pub | ctrlc
+# Then CTRL-v in Chrome
+
+exec xclip -selection clipboard "$@"

@@ -1,0 +1,57 @@
+#!/usr/bin/env zsh
+
+ROUTES_SITE="http://chnroutes-dl.appspot.com/"
+ROUTES_DIR="$HOME/.routes"
+OVPN_CONFIG_DIR="$HOME/Dropbox/Secrets/openvpn"
+OVPN_ROUTES_FILE="$ROUTES_DIR/openvpn/routes.txt"
+
+# Start/stop L2TP/IPSec VPN.
+#
+# All VPN config should be in $OVPN_CONFIG_DIR. Each directory is a VPN configuration.
+#
+# See http://github.com/doitian/vpn-config-sample
+main () {
+  if [ -z "$1" ]; then
+    echo "Usage: ovpn [--route] NAME"
+    return 1
+  fi
+
+  local route=
+  if [ "$1" = "--route" ]; then
+    shift
+    route=1
+  fi
+  local dir="${OVPN_CONFIG_DIR}/$1"
+
+  echo 1 | tee /proc/sys/net/ipv4/ip_forward
+  local interface=eth0
+  if ip addr show wlan0 | grep -q UP; then
+    interface=wlan0
+  fi
+
+  ip link set dev $interface promisc on
+
+  cd "$dir"
+
+  if [ -n "$route" ]; then
+    if [ -f "$OVPN_ROUTES_FILE" ]; then
+      if ! [ -f client-with-routes.conf -a client-with-routes.conf -nt "$OVPN_ROUTES_FILE" -a client-with-routes.conf -nt client.conf ]; then
+        local num=$(( $(wc -l "$OVPN_ROUTES_FILE" | cut -d\  -f1 ) + 50 ))
+        echo "max-routes $num" | cat - client.conf "$OVPN_ROUTES_FILE" > client-with-routes.conf
+      fi
+      chmod 600 client-with-routes.conf
+    else
+      cp client.conf client-with-routes.conf
+    fi
+
+    openvpn --config client-with-routes.conf
+  else
+    openvpn --config client.conf
+  fi
+}
+
+if [ "$UID" != 0 ]; then
+  sudo -E "$0" "$@"
+else
+  main "$@"
+fi

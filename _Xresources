@@ -100,7 +100,8 @@ URxvt*cursorColor: #F0DFAF
 
 URxvt*color0: #1E2320
 URxvt*color8: #709080
-URxvt*color1: #705050
+!!URxvt*color1: #705050
+URxvt*color1: #8F6666
 URxvt*color10: #C3BF9F
 URxvt*color11: #F0DFAF
 URxvt*color12: #94BFF3

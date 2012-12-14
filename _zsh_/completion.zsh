@@ -103,3 +103,17 @@ function _cap () {
 }
 
 compdef _cap cap
+
+L2TP_CONFIG_DIR="$HOME/Dropbox/Secrets/l2tp"
+OVPN_CONFIG_DIR="$HOME/Dropbox/Secrets/openvpn"
+
+_ovpn () {
+  compadd $(ls $OVPN_CONFIG_DIR) '--route'
+}
+
+_l2tp () {
+  compadd $(ls $L2TP_CONFIG_DIR | grep -v '^ip-\|^common$') stop '--route'
+}
+
+compdef _ovpn ovpn
+compdef _l2tp l2tp
