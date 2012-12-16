@@ -18,8 +18,8 @@ main () {
   case "$1" in
     stop)
 
-      sudo /etc/rc.d/openswan stop
-      sudo /etc/rc.d/xl2tpd stop
+      /etc/rc.d/openswan stop
+      /etc/rc.d/xl2tpd stop
 
       ;;
     *)
@@ -62,38 +62,38 @@ main () {
           -e "s/\{SHARED_KEY\}/${SHARED_KEY}/g" \
           -e "s/\{VPN_USERNAME\}/${VPN_USERNAME}/g" \
           -e "s/\{VPN_PASSWORD\}/${VPN_PASSWORD}/g" \
-          "$file_src_path" \
-          | sudo tee "$file_path" > /dev/null
-        sudo chmod 600 "$file_path"
-        sudo chown root: "$file_path"
+          "$file_src_path" > "$file_path"
+        chmod 600 "$file_path"
+        chown root: "$file_path"
       done
 
       if [ -n "$route" ]; then
-        sudo cp -f "$ROUTES_DIR/linux/ip-pre-up" /etc/ppp/ip-up.d/50-l2tp.sh
-        sudo cp -f "$ROUTES_DIR/linux/ip-down" /etc/ppp/ip-down.d/50-l2tp.sh
+        cp -f "$ROUTES_DIR/linux/ip-pre-up" /etc/ppp/ip-up.d/50-l2tp.sh
+        cp -f "$ROUTES_DIR/linux/ip-down" /etc/ppp/ip-down.d/50-l2tp.sh
       else
-        : | sudo tee /etc/ppp/ip-up.d/50-l2tp.sh > /dev/null
-        : | sudo tee /etc/ppp/ip-down.d/50-l2tp.sh > /dev/null
+        : > /etc/ppp/ip-up.d/50-l2tp.sh
+        : > /etc/ppp/ip-down.d/50-l2tp.sh
       fi
 
       sed -r -e "s/\{SERVER_IP\}/${SERVER_IP}/g" \
         -e "s/\{INTERFACE\}/${INTERFACE}/g" \
         "$L2TP_CONFIG_DIR/ip-up" \
-        | sudo tee -a /etc/ppp/ip-up.d/50-l2tp.sh > /dev/null
+        >> /etc/ppp/ip-up.d/50-l2tp.sh
       sed -r -e "s/\{SERVER_IP\}/${SERVER_IP}/g" \
         -e "s/\{INTERFACE\}/${INTERFACE}/g" \
         "$L2TP_CONFIG_DIR/ip-down" \
-        | sudo tee -a /etc/ppp/ip-down.d/50-l2tp.sh > /dev/null
+        >> /etc/ppp/ip-down.d/50-l2tp.sh
 
-      sudo chmod 500 /etc/ppp/ip-up.d/50-l2tp.sh
-      sudo chown root: /etc/ppp/ip-up.d/50-l2tp.sh
-      sudo chmod 500 /etc/ppp/ip-down.d/50-l2tp.sh
-      sudo chown root: /etc/ppp/ip-down.d/50-l2tp.sh
+      chmod 500 /etc/ppp/ip-up.d/50-l2tp.sh
+      chown root: /etc/ppp/ip-up.d/50-l2tp.sh
+      chmod 500 /etc/ppp/ip-down.d/50-l2tp.sh
+      chown root: /etc/ppp/ip-down.d/50-l2tp.sh
 
-      sudo /etc/rc.d/openswan start
-      sudo /etc/rc.d/xl2tpd start
-      sudo ipsec auto --up L2TP-PSK
-      echo "c vpn-connection" | sudo tee /var/run/xl2tpd/l2tp-control
+      /etc/rc.d/openswan start
+      /etc/rc.d/xl2tpd start
+      ipsec auto --up L2TP-PSK
+      sleep 1
+      echo "c vpn-connection" > /run/xl2tpd/l2tp-control
       ;;
   esac
 }

@@ -62,7 +62,7 @@ alias pry='gemset debug pry'
 alias rpry='gemset debug rails-console-pry -r awesome_print -r pry-doc -r hirb'
 alias irb='pry'
 alias sequel='gemset debug sequel'
-alias rails_wizard='gemset generator rails_wizard'
+alias foreman='gemset tools foreman'
 
 if [ -f $HOME/.rbenv/completions/rbenv.zsh ]; then
   source $HOME/.rbenv/completions/rbenv.zsh

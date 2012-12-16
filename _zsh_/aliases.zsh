@@ -200,8 +200,9 @@ alias -s svg=geeqie
 ##################################################
 # Dir Aliases
 cb=$HOME/CodeBase
+box=$HOME/Dropbox
+docs=$HOME/docs
 dotfiles=$cb/dotfiles
 dotemacs=$HOME/.emacs.d
 dotvim=$HOME/.vim
 ohmyzsh=$HOME/.oh-my-zsh
-music='/My/iTunes/iTunes Media/Music'

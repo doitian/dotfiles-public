@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 
 VAR_GEMSETS=(tools deploy debug generator)
-VAR_GEMS_tools=(github tmuxinator heroku vagrant vmc lolcat)
+VAR_GEMS_tools=(github tmuxinator heroku vagrant vmc lolcat foreman)
 VAR_GEMS_deploy=(bundler capistrano capistrano-ext)
 VAR_GEMS_debug=(pry rails-console-pry awesome_print hirb sequel)
 VAR_GEMS_generator=(pry rails nanoc)
@@ -32,7 +32,7 @@ case "$1" in
   uninstall)
     _foreach_gemset 'gem list | cut -d" " -f1 | xargs gem uninstall -aIx'
     ;;
-  help)
+  *)
     echo "Usage: rbenv setup-gemsets COMMAND"
     echo
     echo "-   install: install gems for all gemsets"
