@@ -49,7 +49,6 @@ compdef _gemset gemset
 alias github='gemset tools github'
 alias gh=github
 alias tmuxinator="gemset tools tmuxinator"
-alias heroku="gemset tools heroku"
 alias vagrant="gemset tools vagrant"
 alias vmc="gemset tools vmc"
 alias lolcat="gemset tools lolcat"
@@ -62,7 +61,6 @@ alias pry='gemset debug pry'
 alias rpry='gemset debug rails-console-pry -r awesome_print -r pry-doc -r hirb'
 alias irb='pry'
 alias sequel='gemset debug sequel'
-alias foreman='gemset tools foreman'
 
 if [ -f $HOME/.rbenv/completions/rbenv.zsh ]; then
   source $HOME/.rbenv/completions/rbenv.zsh
@@ -103,9 +101,6 @@ bundler-exec() {
     case "$1" in
       nanoc|rails)
         gemset generator "$@"
-        ;;
-      foreman)
-        gemset tools "$@"
         ;;
       *)
         "$@"
