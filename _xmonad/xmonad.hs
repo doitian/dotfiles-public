@@ -199,7 +199,6 @@ myKeys =  \conf -> mkKeymap conf $
     , ("M-p g", windowPromptGoto myWaitSP) -- window go prompt
     , ("M-p b", windowPromptBring myWaitSP) -- window bring prompt
     , ("M-p d", AL.launchApp mySP { defaultText = "~" } "xranger") -- directory prompt
-    , ("M-p S-d", AL.launchApp mySP { defaultText = "~" } "xmc") -- directory prompt using midnight commander
     , ("M-p f", AL.launchApp mySP { defaultText = "~" } "pcmanfm") -- pcmanfm prompt
     , ("M-p o", AL.launchApp mySP "xopen" ) -- open prompt
     , ("M-p m", manPrompt mySP ) -- xmonad prompt
