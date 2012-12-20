@@ -12,6 +12,8 @@ export GREP_COLOR='1;32'
 export rvm_path="$HOME/.rvm"
 export EMACS=emacs
 export EMACSCLIENT=emacsclient
+export SURFRAW_text_browser=w3m
+export SURFRAW_browser=x-www-browser
 
 if [ "$(uname -s)" = "CYGWIN_NT-5.1" ]; then
   if [ "$TERM" = "rxvt-unicode" ]; then
@@ -30,3 +32,4 @@ export RUBY_GC_MALLOC_LIMIT=1000000000
 export RUBY_HEAP_FREE_MIN=500000
 
 export PATH="$HOME/bin:$HOME/.rbenv/shims:$HOME/.rbenv/bin:$HOME/.cabal/bin:$PATH"
+
