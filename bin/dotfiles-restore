@@ -1,5 +1,5 @@
 #!/bin/sh
-BACKUP_DIR="$HOME/CodeBase/dotfiles"
+BACKUP_DIR="$HOME/codebase/dotfiles"
 
 restore_file () {
   local dir=$1${1:+/}

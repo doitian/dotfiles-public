@@ -189,7 +189,7 @@ alias ssh="TERM=xterm-256color ssh"
 
 alias cmr=cmus-remote
 
-alias am="$HOME/CodeBase/automators/bin/automator"
+alias am="$HOME/codebase/automators/bin/automator"
 
 ##################################################
 # Ext Aliases
@@ -201,7 +201,7 @@ alias -s svg=geeqie
 
 ##################################################
 # Dir Aliases
-cb=$HOME/CodeBase
+cb=$HOME/codebase
 box=$HOME/Dropbox
 docs=$HOME/docs
 dotfiles=$cb/dotfiles

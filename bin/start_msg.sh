@@ -5,7 +5,7 @@ if ! tmux has-session -t mutt; then
   tmux new-window -t mutt:2 -n daemons
 
   tmux send-keys -t mutt:1 mutt C-m
-  tmux send-keys -t mutt:2 "cd ~/CodeBase/daemons; foreman start" C-m
+  tmux send-keys -t mutt:2 "cd ~/codebase/daemons; foreman start" C-m
 
   set-window-option -t mutt:2 monitor-activity off
   set-window-option -t mutt:2 monitor-silence 600
