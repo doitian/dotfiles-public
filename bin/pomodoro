@@ -56,14 +56,17 @@ refresh () {
   fi
 }
 
+FINISHED=
 finish () {
-  if [ -n "$MPLAYER" ]; then
-    kill "$MPLAYER"
+  if [ -z "$FINISHED" ]; then
+    FINISHED=1
+    if [ -n "$MPLAYER" ]; then
+      kill "$MPLAYER"
+    fi
+    if [ -n "$SOUND" ]; then
+      mplayer ~/Dropbox/resources/audio/ring.mp3 &> /dev/null &
+    fi
   fi
-  if [ -n "$SOUND" ]; then
-    mplayer ~/Dropbox/resources/audio/ring.mp3 &> /dev/null &
-  fi
-  exit
 }
 
 [ -z "$DEBUG" ] && exec > >(dzen2 -x -200 -y -30 -fn "WenQuanYi Micro Hei-22" -w 200 -h 30 -fg "$FG" -bg "$BG")
@@ -75,5 +78,10 @@ fi
 
 while true; do
   refresh
-  zselect -t 100 -r 0
+  if zselect -t 100 -r 0; then
+    if ! read -t 0 -A WORKSPACES; then
+      finish
+      exit
+    fi
+  fi
 done
