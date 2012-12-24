@@ -10,4 +10,3 @@ image/* ; geeqie %s &> /dev/null &; copiousoutput; test=runningx
 audio/* ; mplayer %s ; copiousoutput
 video/* ; mplayer %s ; copiousoutput
 application/msword ; lowriter %s ; test=runningx
-text/* ; emacs-dwim %s ; test=runningx
