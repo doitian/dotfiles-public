@@ -1,7 +1,10 @@
 .rvmrc
 .rbenv-vars
 .rbenv-gemsets
+.rbenv-version
 vendor/bundle
+client_vendor/bundle
+host_vendor/bundle
 */vendor/bundle
 .DS_Store
 .bundle
@@ -27,6 +30,7 @@ doc/tags
 .netrwhist
 .emacs.desktop
 .emacs.desktop.lock
+.emacs.bmk
 .eproject
 project.org
 dir

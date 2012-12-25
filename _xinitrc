@@ -20,5 +20,8 @@ export QT_IM_MODULE=fcitx
 export XMODIFIERS="@im=fcitx"
 source $HOME/.xsessionrc
 
-#exec enlightenment_start
-exec $HOME/bin/xmonad.autostart
+if [ "$!" = "e17" ]; then
+  exec enlightenment_start
+else
+  exec $HOME/bin/xmonad.autostart
+fi
