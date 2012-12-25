@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 
 VAR_GEMSETS=(tools deploy debug generator)
-VAR_GEMS_tools=(github tmuxinator heroku vagrant vmc lolcat foreman thor)
+VAR_GEMS_tools=(github tmuxinator vagrant vmc lolcat foreman thor)
 VAR_GEMS_deploy=(bundler capistrano capistrano-ext)
 VAR_GEMS_debug=(pry rails-console-pry awesome_print hirb sequel)
 VAR_GEMS_generator=(pry rails nanoc)

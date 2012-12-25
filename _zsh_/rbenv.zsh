@@ -48,6 +48,7 @@ compdef _gemset gemset
 
 alias github='gemset tools github'
 alias thor='gemset tools thor'
+alias foreman='gemset tools foreman'
 alias gh=github
 alias tmuxinator="gemset tools tmuxinator"
 alias vagrant="gemset tools vagrant"

@@ -191,6 +191,8 @@ alias cmr=cmus-remote
 
 alias am="$HOME/codebase/automators/bin/automator"
 
+alias vtig="GIT_EDITOR=vim tig"
+
 ##################################################
 # Ext Aliases
 alias -s html=w3m
