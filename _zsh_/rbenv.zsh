@@ -17,28 +17,7 @@ alias re='rbenv exec'
 alias rv='vim .rbenv-vars'
 alias b='bundle exec'
 
-# unset global RBENV_GEMSET_FILE
-unset RBENV_GEMSET_FILE
-function gemset() {
-  if [ -z "$1" ]; then
-    rbenv gemset active
-  else
-    local action="$1"
-    shift
-    case "$action" in
-      active|create|delete|file|list|version)
-        rbenv gemset "$action" "$@"
-        ;;
-      *)
-        local tmp=$(mktemp /tmp/gemsetXXXXXXXX)
-        echo "$action" > "$tmp"
-        RBENV_GEMSET_FILE="$tmp" "$@"
-        rm "$tmp"
-        ;;
-    esac
-  fi
-}
-nfunction _gemset() {
+function _gemset() {
   local -a _actions _gemsets
   _actions=(active create delete file list version)
   _gemsets=($(rbenv gemset list | grep '^ ' | uniq))
@@ -59,8 +38,8 @@ compdef _tmuxinator mux
 alias tss="tmuxinator start"
 alias cap='gemset deploy cap'
 alias capify='gemset deploy capify'
-alias pry='gemset debug pry'
 alias rpry='gemset debug rails-console-pry -r awesome_print -r pry-doc -r hirb'
+alias pry='gemset debug pry'
 alias irb='pry'
 alias sequel='gemset debug sequel'
 

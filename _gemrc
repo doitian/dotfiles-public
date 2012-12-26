@@ -7,3 +7,5 @@
 :update_sources: true
 :verbose: true
 gem: --no-ri --no-rdoc
+gempath:
+  - /home/ian/.bundle

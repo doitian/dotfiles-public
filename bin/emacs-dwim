@@ -6,7 +6,6 @@
 # alias e=emacs-dwim
 # alias et='emacs-dwim -t'
 # alias en='emacs-dwim -n'
-
 export LC_CTYPE=zh_CN.UTF-8
 export LC_ALL=
 UNAME=`uname -s`

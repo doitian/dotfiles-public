@@ -1,0 +1,11 @@
+#!/bin/bash
+
+VAR_MODE=
+case "$1" in
+  -u|-a)
+    VAR_MODE="$1"
+    shift
+    ;;
+esac
+
+exec ctags $VAR_MODE -e -f TAGS --tag-relative "$@"

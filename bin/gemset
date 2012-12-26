@@ -1,0 +1,22 @@
+#!/bin/zsh
+
+# unset global RBENV_GEMSET_FILE
+unset RBENV_GEMSET_FILE
+if [ -z "$1" ]; then
+  rbenv gemset active
+else
+  VAR_ACTION="$1"
+  shift
+  case "$VAR_ACTION" in
+    active|create|delete|file|list|version)
+      rbenv gemset "$VAR_ACTION" "$@"
+      ;;
+    *)
+      VAR_TMP=$(mktemp /tmp/gemsetXXXXXXXX)
+      trap "rm $VAR_TMP; exit" SIGHUP SIGINT SIGTERM
+      echo "$VAR_ACTION" > "$VAR_TMP"
+      RBENV_GEMSET_FILE="$VAR_TMP" "$@"
+      rm "$VAR_TMP"
+      ;;
+  esac
+fi
