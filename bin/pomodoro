@@ -67,6 +67,7 @@ finish () {
       mplayer ~/Dropbox/resources/audio/ring.mp3 &> /dev/null &
     fi
   fi
+  exit 0
 }
 
 [ -z "$DEBUG" ] && exec > >(dzen2 -x -200 -y -30 -fn "WenQuanYi Micro Hei-22" -w 200 -h 30 -fg "$FG" -bg "$BG")
