@@ -1,9 +1,6 @@
 # -*- ruby -*-
-# === EDITOR ===
+Pry.config.theme = 'zenburn'
 Pry.editor = proc { |file, line| "emacs-dwim #{file} +#{line}" }
-
-# === CUSTOM PROMPT ===
-# This prompt shows the ruby version (useful for RVM)
 Pry.prompt = [proc { |obj, nest_level, _| "#{RUBY_VERSION} (#{obj}):#{nest_level} > " }, proc { |obj, nest_level, _| "#{RUBY_VERSION} (#{obj}):#{nest_level} * " }]
 
 # == PLUGINS ===
@@ -31,14 +28,12 @@ default_command_set = Pry::CommandSet.new do
       IO.popen('xclip', 'w') { |f| f << str.to_s }
     end
   end
-
-  command "clear" do
+  command "clear", "Clear screen" do
     system 'clear'
     if ENV['RAILS_ENV']
       output.puts "Rails Environment: " + ENV['RAILS_ENV']
     end
   end
-
   command "sql", "Send sql over AR." do |query|
     if ENV['RAILS_ENV'] || defined?(Rails)
       pp ActiveRecord::Base.connection.select_all(query)
@@ -55,12 +50,17 @@ default_command_set = Pry::CommandSet.new do
       output.puts [file, line, method]
     end
   end
-  command "bundler" do |*groups|
+  command "bundler", "load gems by bundler" do |*groups|
     require 'bundler'
     groups = (groups + [:default, ENV["RAILS_ENV"] || 'development']).compact.collect(&:to_sym)
     groups << :assets if groups.include?(:development)
     groups = groups.uniq
     Bundler.require(*groups)
+  end
+
+  command "gempath", "append new gem paths" do |*paths|
+    Gem.path.concat(paths.collect { |p| File.expand_path(p) })
+    Gem.refresh
   end
 end
 
