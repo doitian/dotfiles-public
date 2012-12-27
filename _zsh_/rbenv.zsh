@@ -27,7 +27,6 @@ compdef _gemset gemset
 
 alias github='gemset tools github'
 alias thor='gemset tools thor'
-alias foreman='gemset tools foreman'
 alias gh=github
 alias tmuxinator="gemset tools tmuxinator"
 alias vagrant="gemset tools vagrant"
@@ -59,7 +58,7 @@ alias bu="bundle update"
 
 bundled_commands=(
   cucumber guard nanoc rackup rails jeweler rake rspec shotgun spec spork thin
-  unicorn unicorn_rails knife foreman
+  unicorn unicorn_rails knife
 )
 
 _bundler-installed() {
