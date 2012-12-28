@@ -1,7 +1,6 @@
 begin
   require 'rubygems'
   paths = `gemset debug ruby -e 'puts Gem.path'`.lines.collect(&:chop)
-  p paths
   Gem.path.concat paths
   Gem.refresh
   require "pry"
