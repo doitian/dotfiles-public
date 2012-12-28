@@ -1,14 +1,12 @@
-def my_require(lib)
-  begin
-    require lib
-    yield if block_given?
-  rescue LoadError => err
-    $stderr.puts "Couldn't load #{lib}: #{err}"
-  end
+begin
+  require 'rubygems'
+  paths = `gemset debug ruby -e 'puts Gem.path'`.lines.collect(&:chop)
+  p paths
+  Gem.path.concat paths
+  Gem.refresh
+  require "pry"
+  Pry.start
+  exit
+rescue LoadError => e
+  warn "=> Unable to load pry"
 end
-
-my_require 'rubygems'
-my_require 'awesome_print'
-
-def q; quit; end
-

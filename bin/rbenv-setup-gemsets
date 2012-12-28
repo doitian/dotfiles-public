@@ -3,8 +3,8 @@
 VAR_GEMSETS=(tools deploy debug generator)
 VAR_GEMS_tools=(github tmuxinator vagrant vmc lolcat foreman thor)
 VAR_GEMS_deploy=(bundler capistrano capistrano-ext)
-VAR_GEMS_debug=(pry rails-console-pry awesome_print hirb sequel)
-VAR_GEMS_generator=(pry rails nanoc)
+VAR_GEMS_debug=(pry rails-console-pry awesome_print hirb sequel pry-doc yard pry-nav puma)
+VAR_GEMS_generator=(rails nanoc)
 
 export RBENV_GEMSET_FILE="/tmp/rbenv-setup-gemsets.$UID.rbenv-gemsets.tmp"
 touch "$RBENV_GEMSET_FILE"

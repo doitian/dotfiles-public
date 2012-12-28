@@ -62,6 +62,13 @@ default_command_set = Pry::CommandSet.new do
     Gem.path.concat(paths.collect { |p| File.expand_path(p) })
     Gem.refresh
   end
+  command "hirb-toggle", "enable hirb" do
+    if Hirb::View.enabled?
+      Hirb.disable
+    else
+      Hirb.enable
+    end
+  end
 end
 
 Pry.config.commands.import default_command_set
@@ -82,16 +89,15 @@ class Hash
   end
 end
 
-if defined?(Rails) && Rails.env
-  begin
-    require 'hirb'
-    remember_old_print = Pry.config.print || Pry::DEFAULT_PRINT
-    Pry.config.print = proc do |output, value|
-      Hirb::View.view_or_page_output(value) || remember_old_print.call(output, value)
-    end
+begin
+  require 'hirb'
+  require 'hirb/import_object'
+  extend Hirb::Console
 
-    Hirb.enable
-  rescue LoadError => err
-    puts "gem install hirb  # <-- highly recommended"
+  remember_old_print = Pry.config.print || Pry::DEFAULT_PRINT
+  Pry.config.print = proc do |output, value|
+    Hirb::View.view_or_page_output(value) || remember_old_print.call(output, value)
   end
+rescue LoadError => err
+  puts "gem install hirb  # <-- highly recommended"
 end

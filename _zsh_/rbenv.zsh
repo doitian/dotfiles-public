@@ -37,10 +37,12 @@ compdef _tmuxinator mux
 alias tss="tmuxinator start"
 alias cap='gemset deploy cap'
 alias capify='gemset deploy capify'
-alias rpry='gemset debug rails-console-pry -r awesome_print -r pry-doc -r hirb'
+alias rpry='gemset debug rails-console-pry -r awesome_print -r pry-doc -r hirb -r pry-nav'
 alias pry='gemset debug pry'
 alias irb='pry'
 alias sequel='gemset debug sequel'
+alias puma='gemset debug puma'
+alias puma3000='gemset debug puma -p 3000'
 
 if [ -f $HOME/.rbenv/completions/rbenv.zsh ]; then
   source $HOME/.rbenv/completions/rbenv.zsh
