@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+
+require 'uri'
+
+uri = URI(ARGV.first)
+
+case uri.host
+when 'open'
+  params = Hash[*URI.decode_www_form(uri.query).flatten]
+  file = URI(params['url']).path if params['url']
+  line = params['line'] || '1'
+  column = params['column'] || '1'
+
+  system('emacs-dwim', '-n', "+#{line}:#{column}", file)
+else
+  STDERROR.puts "unknown action #{uri.host}"
+  exit(1)
+end

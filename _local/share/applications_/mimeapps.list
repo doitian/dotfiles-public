@@ -1,4 +1,11 @@
 [Added Associations]
+application/vnd.openxmlformats-officedocument.wordprocessingml.document=libreoffice-writer.desktop;
+application/x-extension-htm=userapp-Firefox-RFQOIW.desktop;
+application/x-extension-html=userapp-Firefox-RFQOIW.desktop;
+application/x-extension-shtml=userapp-Firefox-RFQOIW.desktop;
+application/x-extension-xht=userapp-Firefox-RFQOIW.desktop;
+application/x-extension-xhtml=userapp-Firefox-RFQOIW.desktop;
+application/xhtml+xml=userapp-Firefox-RFQOIW.desktop;
 text/calendar=emacs-dwim.desktop;
 text/comma-separated-values=emacs-dwim.desktop;
 text/css=emacs-dwim.desktop;
@@ -94,27 +101,21 @@ text/x-vcard=emacs-dwim.desktop;
 text/xml=emacs-dwim.desktop;
 text/xml-external-parsed-entity=emacs-dwim.desktop;
 text/xml-svg=emacs-dwim.desktop;
+x-scheme-handler/chrome=userapp-Firefox-RFQOIW.desktop;
+x-scheme-handler/ftp=userapp-Firefox-RFQOIW.desktop;
 x-scheme-handler/http=firefox.desktop;userapp-Firefox-RFQOIW.desktop;
 x-scheme-handler/https=firefox.desktop;userapp-Firefox-RFQOIW.desktop;
-application/vnd.openxmlformats-officedocument.wordprocessingml.document=libreoffice-writer.desktop;
-x-scheme-handler/ftp=userapp-Firefox-RFQOIW.desktop;
-x-scheme-handler/chrome=userapp-Firefox-RFQOIW.desktop;
+x-scheme-handler/org-protocol=emacs-dwim.desktop;
+x-scheme-handler/txmt=txmt.desktop;
+[Default Applications]
 application/x-extension-htm=userapp-Firefox-RFQOIW.desktop;
 application/x-extension-html=userapp-Firefox-RFQOIW.desktop;
 application/x-extension-shtml=userapp-Firefox-RFQOIW.desktop;
-application/xhtml+xml=userapp-Firefox-RFQOIW.desktop;
-application/x-extension-xhtml=userapp-Firefox-RFQOIW.desktop;
 application/x-extension-xht=userapp-Firefox-RFQOIW.desktop;
-
-[Default Applications]
-x-scheme-handler/http=userapp-Firefox-RFQOIW.desktop
-x-scheme-handler/https=userapp-Firefox-RFQOIW.desktop
-x-scheme-handler/ftp=userapp-Firefox-RFQOIW.desktop
-x-scheme-handler/chrome=userapp-Firefox-RFQOIW.desktop
-text/html=userapp-Firefox-RFQOIW.desktop
-application/x-extension-htm=userapp-Firefox-RFQOIW.desktop
-application/x-extension-html=userapp-Firefox-RFQOIW.desktop
-application/x-extension-shtml=userapp-Firefox-RFQOIW.desktop
-application/xhtml+xml=userapp-Firefox-RFQOIW.desktop
-application/x-extension-xhtml=userapp-Firefox-RFQOIW.desktop
-application/x-extension-xht=userapp-Firefox-RFQOIW.desktop
+application/x-extension-xhtml=userapp-Firefox-RFQOIW.desktop;
+application/xhtml+xml=userapp-Firefox-RFQOIW.desktop;
+text/html=userapp-Firefox-RFQOIW.desktop;
+x-scheme-handler/chrome=userapp-Firefox-RFQOIW.desktop;
+x-scheme-handler/ftp=userapp-Firefox-RFQOIW.desktop;
+x-scheme-handler/http=userapp-Firefox-RFQOIW.desktop;
+x-scheme-handler/https=userapp-Firefox-RFQOIW.desktop;
