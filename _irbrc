@@ -1,3 +1,4 @@
+if false
 begin
   require 'rubygems'
   paths = `gemset debug ruby -e 'puts Gem.path'`.lines.collect(&:chop)
@@ -8,4 +9,5 @@ begin
   exit
 rescue LoadError => e
   warn "=> Unable to load pry"
+end
 end

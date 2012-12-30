@@ -1,26 +1,22 @@
 #!/bin/bash
-_within-bundled-project() {
-  local check_dir=$PWD
-  while [ "$(dirname $check_dir)" != "/" ]; do
-    [ -f "$check_dir/Gemfile" ] && return
-    check_dir="$(dirname $check_dir)"
-  done
-  false
-}
 
-if [ -n "RBENV_GEMSET_FILE" ]; then
-  exec rbenv exec gem "$@"
-elif _within-bundled-project; then
-  bundle exec `rbenv which gem` "$@"
-elif rbenv gemset active &> /dev/null; then
-  exec rbenv exec gem "$@"
+if [ "$1" = 'paths' ]; then
+  re ruby -e 'puts Gem.path.join("\n")'
+elif [ "$1" = 'la' ]; then
+  re gem list -a | re ruby -p -e "
+    paths = Gem.path
+    n, vs = \$_.chop.split(' ', 2)
+    vs = vs[1...-1].split(', ')
+    \$_ = vs.collect do |v|
+      basename = [n, v].join('-')
+      dir = Gem.path.find { |p| File.exists?(File.join(p, 'gems', basename))}
+      if vs.size == 1
+        %Q|#{n} #{dir}/gems/#{basename}|
+      else
+        %Q|#{basename} #{dir}/gems/#{basename}|
+      end
+    end.join(%Q(\n)) + %Q(\n)
+  "
 else
-  if [ -z "$GEM_PATH" ]; then
-    GEM_PATH="$HOME/.bundle"
-  else
-    GEM_PATH="$GEM_PATH:$HOME/.bundle"
-  fi
-  export GEM_PATH
-  exec `rbenv which gem` "$@"
+  re gem "$@"
 fi
-

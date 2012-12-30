@@ -12,8 +12,7 @@ function rbenv() {
   esac
 }
 
-alias ru='rbenv local'
-alias re='rbenv exec'
+alias rl='rbenv local'
 alias rv='vim .rbenv-vars'
 alias b='bundle exec'
 
