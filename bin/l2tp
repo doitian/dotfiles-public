@@ -92,7 +92,7 @@ main () {
       /etc/rc.d/openswan start
       /etc/rc.d/xl2tpd start
       ipsec auto --up L2TP-PSK
-      sleep 1
+      sleep 3
       echo "c vpn-connection" > /run/xl2tpd/l2tp-control
       ;;
   esac
