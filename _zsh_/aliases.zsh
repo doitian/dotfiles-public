@@ -1,5 +1,9 @@
 # -*- sh -*-
 OS_TYPE=`uname -s`
+CMD_OPEN='xopen'
+if which open &> /dev/null; then
+  CMD_OPEN='open'
+fi
 
 ##################################################
 # Editor
@@ -122,6 +126,11 @@ if which fasd > /dev/null 2>&1; then
   eval "$(fasd --init auto)"
   unalias z
   alias j='fasd_cd -d'
+  alias jj='fasd_cd -d -i'
+  alias sf='fasd -sif'
+  alias sd='fasd -sid'
+  alias o="fasd -e $CMD_OPEN -f"
+  alias oo="fasd -e $CMD_OPEN -f -i"
 fi
 
 alias md='mkdir -p'
@@ -148,6 +157,7 @@ alias free="free -m"
 alias ping="ping -c 5"
 alias more="less"
 alias ltail="less +F -R"
+alias lnum='less -N'
 alias w3mgo="w3m http://www.google.com"
 
 alias oneway="rsync -ltr --progress --delete"
@@ -181,7 +191,7 @@ function bcc () {
 alias m=mplayer
 alias mmm=vlc
 
-if ! which open &> /dev/null; then
+if [ "$CMD_OPEN" = 'xopen' ]; then
   alias open=xopen
 fi
 

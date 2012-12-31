@@ -465,7 +465,7 @@ mySmartFloatManageHook = composeOne . concat $
   , [ role =? x -?> doFloat' | x <- rFloat ]
   , [ (isDialog -?> doFloat') ] ]
   where
-    cFloat  = [ "Zenity", "Stardict", "Update-manager", "Shutter", "MPlayer", "Vlc" ]
+    cFloat  = [ "Zenity", "Stardict", "Update-manager", "Shutter", "MPlayer", "Vlc", "Recoll" ]
     rFloat  = [ "gimp-dock" ]
     ffCenter = [ "Manager", "Extension", "Download", "Dialog", "Browser", "Toplevel" ]
     unFloat = ask >>= doF . W.sink

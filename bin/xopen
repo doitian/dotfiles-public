@@ -11,9 +11,9 @@ for arg; do
 
   if [ -z "$arg" -o -d "$arg" ]; then
     if runningx; then
-      xranger &>/dev/null &
+      xranger "$arg" &>/dev/null &
     else
-      ranger
+      ranger "$arg"
     fi
   else
     if runningx; then

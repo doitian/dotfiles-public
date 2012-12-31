@@ -1,0 +1,8 @@
+#!/bin/bash
+
+CMD_OPEN=xopen
+if which open &> /dev/null; then
+  CMD_OPEN=open
+fi
+
+echo "$CMD_OPEN" "${1#file://}"
