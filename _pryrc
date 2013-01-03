@@ -58,6 +58,24 @@ default_command_set = Pry::CommandSet.new do
     Bundler.require(*groups)
   end
 
+  command 'rails', 'load rails environment' do
+    rails = File.join Dir.getwd, 'config', 'environment.rb'
+
+    if File.exist?(rails)
+      require rails
+
+      if Rails.version[0..0] == "2"
+        require 'console_app'
+        require 'console_with_helpers'
+      elsif Rails.version[0..0] == "3"
+        require 'rails/console/app'
+        require 'rails/console/helpers'
+      else
+        warn "[WARN] cannot load Rails console commands (Not on Rails2 or Rails3?)"
+      end
+    end
+  end
+
   command "gempath", "append new gem paths" do |*paths|
     Gem.path.concat(paths.collect { |p| File.expand_path(p) })
     Gem.refresh
@@ -100,4 +118,16 @@ begin
   end
 rescue LoadError => err
   puts "gem install hirb  # <-- highly recommended"
+end
+
+if defined?(Rails)
+  if Rails.version[0..0] == "2"
+    require 'console_app'
+    require 'console_with_helpers'
+  elsif Rails.version[0..0] == "3"
+    require 'rails/console/app'
+    require 'rails/console/helpers'
+  else
+    warn "[WARN] cannot load Rails console commands (Not on Rails2 or Rails3?)"
+  end
 end

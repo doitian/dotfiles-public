@@ -36,7 +36,7 @@ compdef _tmuxinator mux
 alias tss="tmuxinator start"
 alias cap='gemset deploy cap'
 alias capify='gemset deploy capify'
-alias rpry='gemset debug rails-console-pry -r awesome_print -r pry-doc -r hirb -r pry-nav'
+alias rpry='gemset debug rails-console-pry -r awesome_print -r pry-doc -r hirb -r pry-nav -r pry-git -r pry-stack_explorer'
 alias pry='gemset debug pry'
 alias irb='pry'
 alias sequel='gemset debug sequel'
