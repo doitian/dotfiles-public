@@ -1,9 +1,9 @@
 #!/bin/bash
 
 if [ "$1" = 'paths' ]; then
-  re ruby -e 'puts Gem.path.join("\n")'
+  rr ruby -e 'puts Gem.path.join("\n")'
 elif [ "$1" = 'la' ]; then
-  re gem list -a | re ruby -p -e "
+  rr gem list -a | rr ruby -p -e "
     paths = Gem.path
     n, vs = \$_.chop.split(' ', 2)
     vs = vs[1...-1].split(', ')
@@ -18,5 +18,5 @@ elif [ "$1" = 'la' ]; then
     end.join(%Q(\n)) + %Q(\n)
   "
 else
-  re gem "$@"
+  rr gem "$@"
 fi

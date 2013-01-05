@@ -37,3 +37,4 @@ dir
 node_modules
 chromedriver.log
 dump.rdb
+/bin

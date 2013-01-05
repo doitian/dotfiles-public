@@ -51,14 +51,13 @@ fi
 # Bundle Alias
 # from oh-my-zsh bundler plugin
 
-alias be="bundle exec"
 alias bi="bundle install"
 alias bl="bundle list"
 alias bp="bundle package"
 alias bu="bundle update"
 
 bundled_commands=(
-  cucumber guard nanoc rackup rails jeweler rake rspec shotgun spec spork thin
+  cucumber guard nanoc rackup rails jeweler rspec shotgun spork thin
   unicorn unicorn_rails knife
 )
 
