@@ -24,9 +24,9 @@ function _gemset() {
 }
 compdef _gemset gemset
 
-alias github='gemset tools github'
+alias hub='gemset tools hub'
 alias thor='gemset tools thor'
-alias gh=github
+alias gh=hub
 alias tmuxinator="gemset tools tmuxinator"
 alias vagrant="gemset tools vagrant"
 alias vmc="gemset tools vmc"
