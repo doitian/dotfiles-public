@@ -4,6 +4,10 @@ if [ -S .zeus.sock ]; then
   echo "zeus $*"
   exec zeus "$@"
 else
+  if ! [ "$1" = "start" ] && [ -f zeus.json ]; then
+    echo "zeus.json is found but zeus is not started yet" >&2
+  fi
+
   case "$1" in
     runner|r|console|c|server|s|generate|g)
       exec rr rails "$@"
