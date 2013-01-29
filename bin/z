@@ -9,7 +9,7 @@ else
   fi
 
   case "$1" in
-    runner|r|console|c|server|s|generate|g)
+    runner|r|console|c|server|s|generate|g|dbconsole)
       exec rr rails "$@"
       ;;
     rake|rspec)
