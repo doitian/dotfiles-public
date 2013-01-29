@@ -1,0 +1,16 @@
+#!/usr/bin/env zsh
+
+_within-bundled-project() {
+  local check_dir=$PWD
+  while [ "$(dirname $check_dir)" != "/" ]; do
+    [ -f "$check_dir/Gemfile" ] && return
+    check_dir="$(dirname $check_dir)"
+  done
+  false
+}
+
+if _within-bundled-project; then
+  exec zeus-maybe rails "$@"
+else
+  exec gemset generator rbenv exec rails "$@"
+fi

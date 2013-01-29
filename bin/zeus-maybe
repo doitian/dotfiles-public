@@ -1,0 +1,27 @@
+#!/usr/bin/env zsh
+
+# Run with zeus if available
+
+case "$1" in
+  rails)
+    case "$2" in
+      runner|r|console|c|server|s|generate|g|dbconsole)
+        shift
+        exec z "$@"
+        ;;
+      *)
+        exec rr "$@"
+        ;;
+    esac
+    ;;
+  rake|rspec)
+    exec z "$@"
+    ;;
+  test)
+    shift
+    exec z rspec "$@"
+    ;;
+  *)
+    exec rr "$@"
+    ;;
+esac

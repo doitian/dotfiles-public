@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ -S .zeus.sock ]; then
+  echo "zeus $*"
+  exec zeus "$@"
+else
+  case "$1" in
+    runner|r|console|c|server|s|generate|g)
+      exec rr rails "$@"
+      ;;
+    rake|rspec)
+      exec rr "$@"
+      ;;
+    test)
+      shift
+      exec rr rspec "$@"
+      ;;
+    *)
+      exec zeus "$@"
+      ;;
+  esac
+fi

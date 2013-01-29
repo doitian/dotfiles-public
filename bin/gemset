@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
 # unset global RBENV_GEMSET_FILE
 unset RBENV_GEMSET_FILE

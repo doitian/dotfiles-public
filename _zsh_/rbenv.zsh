@@ -57,7 +57,7 @@ alias bp="bundle package"
 alias bu="bundle update"
 
 bundled_commands=(
-  cucumber guard nanoc rackup rails jeweler rspec shotgun spork thin
+  cucumber guard nanoc rackup jeweler shotgun spork thin
   unicorn unicorn_rails knife
 )
 
@@ -79,7 +79,7 @@ bundler-exec() {
     bundle exec "$@"
   else
     case "$1" in
-      nanoc|rails)
+      nanoc)
         gemset generator "$@"
         ;;
       *)
