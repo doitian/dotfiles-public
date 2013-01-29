@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Execute command using python2 as default python
+if ! [ -x "$HOME/.python2/bin/python" ]; then
+  mkdir -p "$HOME/.python2/bin"
+  ln -nsf /usr/bin/python2 "$HOME/.python2/bin/python"
+fi
+
+export PATH="$HOME/.python2/bin:$PATH"
+
+exec "$@"

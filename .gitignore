@@ -4,4 +4,5 @@
 /_irssi_/*.autosave
 /_irssi_/config
 /_zsh_/cache
+!/bin
 *~
