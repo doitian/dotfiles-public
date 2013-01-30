@@ -18,6 +18,8 @@ _rexec() {
     bundle exec "$@"
   elif rbenv gemset active &> /dev/null; then
     exec rbenv exec "$@"
+  elif [ -n "$RBENV_GEMSET_MAYBE" ]; then
+    exec gemset "$RBENV_GEMSET_MAYBE" rbenv exec "$@"
   else
     if [ -z "$GEM_PATH" ]; then
       GEM_PATH="$HOME/.bundle"

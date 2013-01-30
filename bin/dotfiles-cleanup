@@ -1,0 +1,3 @@
+#!/bin/sh
+
+find "$HOME" -type l -xtype l -print0 | xargs -t -0 rm
