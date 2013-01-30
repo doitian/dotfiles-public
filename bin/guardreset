@@ -1,0 +1,5 @@
+#!/bin/bash
+
+emacsclient --eval '(set-face-attribute '\''mode-line nil :background "#1e2320" :foreground "#acbc90")'
+tmux set status-left-bg colour239
+
