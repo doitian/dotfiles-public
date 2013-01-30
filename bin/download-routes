@@ -1,11 +1,14 @@
 #!/usr/bin/env zsh
 
+ROUTES_SITE="http://chnroutes-dl.appspot.com/"
+ROUTES_DIR="$HOME/.routes"
+
 main () {
   local file_name
   local file_path
 
   mkdir -p "$ROUTES_DIR"
-  curl ${ROUTES_SITE} | sed -n 's/^.*href="(\/downloads[^"]+)">([^<]+).zip.*$/\2 \1/p' \
+  curl ${ROUTES_SITE} | sed -n -r -e 's/^.*href="(\/downloads[^"]+)">([^<]+).zip.*$/\2 \1/p' \
     | {
     while read file_name file_path; do
       mkdir -p "${ROUTES_DIR}/${file_name}"
