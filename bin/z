@@ -1,7 +1,6 @@
 #!/bin/bash
 
 if [ -S .zeus.sock ]; then
-  echo "zeus $*"
   exec zeus "$@"
 else
   if ! [ "$1" = "start" ] && [ -f zeus.json ]; then
