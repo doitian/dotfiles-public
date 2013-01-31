@@ -12,6 +12,8 @@ _within-bundled-project() {
 }
 
 _rexec() {
+  unset RUBYOPT
+
   if [ -n "$RBENV_GEMSET_FILE" ]; then
     exec rbenv exec "$@"
   elif _within-bundled-project; then

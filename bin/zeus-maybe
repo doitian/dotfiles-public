@@ -5,7 +5,7 @@
 case "$1" in
   rails)
     case "$2" in
-      runner|r|console|c|server|s|generate|g|dbconsole)
+      runner|r|console|c|server|s|generate|g|dbconsole|destroy|d)
         shift
         exec z "$@"
         ;;
