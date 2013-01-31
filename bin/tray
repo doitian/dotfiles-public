@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if pidof stalonetray &> /dev/null; then
+  killall stalonetray
+fi
+
+exec stalonetray &> /dev/null
