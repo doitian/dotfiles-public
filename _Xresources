@@ -78,13 +78,16 @@ scratchpad.boldFont:xft:Terminus-10:Bold,xft:WenQuanYi Micro Hei Mono-10:Bold
 
 URxvt.iso14755: false
 URxvt.iso14755_52: false
-URxvt*perl-ext-common:  default,matcher,-searchable-scrollback,url-select
-URxvt*keysym.C-M-u: perl:url-select:select_next
-URxvt*matcher.button:   1
-URxvt*urlLauncher: x-www-browser
 URxvt*iconFile: /usr/share/icons/Tango/32x32/apps/gnome-terminal.png
-URxvt*matcher.pattern.1:  \\B(/\\S+?):(\\d+)(?=:|$)
-URxvt*matcher.launcher.1: emacs-dwim -n +$2 $1
+URxvt*perl-ext-common:  default,matcher,keyboard-select,url-select,-searchable-scrollback
+URxvt*keysym.M-bracketright:  perl:keyboard-select:activate
+URxvt*keysym.M-bracketleft: perl:url-select:select_next
+URxvt*url-launcher: xopen
+URxvt*url-select.launcher: xopen
+URxvt*url-select.underline: true
+URxvt*matcher.button: 1
+URxvt*matcher.pattern.1: \\B(/\\S+:\\d+(?=:|$))
+URxvt*matcher.pattern.2: ((https?:\\/\\/|mailto:\\/\\/|www\\.)[\\w-]+\\.[\\w.\\/?&@#-=]*[\\w\\/-])
 
 ! Color section
 URxvt*background:  #3F3F3F
@@ -121,7 +124,7 @@ URxvt*color9: #DCA3A3
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 xpdf*foreground:     #111111
 xpdf*background:     #FCFCFC
-xpdf*urlCommand:     firefox -P default -new-tab %s
+xpdf*urlCommand:     x-www-browser
 xpdf*antialias:      yes
 xpdf*enableFreetype: yes
 
