@@ -389,7 +389,7 @@ withWorkspace' job = do sort <- fmap (.namedScratchpadFilterOutWorkspace) getSor
 
 myLayoutPrompt :: X ()
 myLayoutPrompt = do l <- dmenuXinerama layouts
-                    sendMessage $ JumpToLayout $ drop 2 l
+                    sendMessage $ JumpToLayout $ init $ drop 2 l
                       where
                         layouts = ["1.cols", "2.two", "3.rows", "4.tab", "5.grid", "6.big"]
 
