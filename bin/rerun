@@ -1,4 +1,3 @@
 #!/usr/bin/env zsh
 
-export RBENV_GEMSET_MAYBE="tools"
-exec rr rerun "$@"
+exec gemset tools rbenv exec rerun "$@"
