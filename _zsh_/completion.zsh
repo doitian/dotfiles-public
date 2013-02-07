@@ -77,6 +77,7 @@ bindkey "^I" expand-or-complete-with-dots
 compinit -u
 compdef _github gh=github
 compdef _sudo proxychains
+compdef _pacman yaourt
 
 # cach rake
 _rake () {
