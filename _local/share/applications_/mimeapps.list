@@ -3,3 +3,6 @@ text/plain=emacs-dwim.desktop
 inode/directory=pcmanfm.desktop
 x-scheme-handler/http=google-chrome.desktop
 x-scheme-handler/https=google-chrome.desktop
+
+[Added Associations]
+application/xml=google-chrome.desktop;
