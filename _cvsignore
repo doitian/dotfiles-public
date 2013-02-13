@@ -41,3 +41,4 @@ dump.rdb
 custom_plan.rb
 zeus.json
 .zeus.sock
+*.elc
