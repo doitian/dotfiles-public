@@ -5,11 +5,18 @@ if [[  "$-" != *i* ]]; then return 0; fi
 zstyle :omz:plugins:ssh-agent agent-forwarding on
 
 ZSH="$HOME/.zsh"
+OZSH="$HOME/.oh-my-zsh"
+
 for f in $ZSH/*.zsh; do
   [ -f "$f" ] && source "$f"
 done
 [ -f "$HOME/.xenv" ] && source "$HOME/.xenv"
 [ -f "$HOME/Dropbox/Secrets/secrets.sh" ] && source "$HOME/Dropbox/Secrets/secrets.sh"
+
+JIRA_RAPID_BOARD=yes
+for p (jira); do
+  [ -f "$OZSH/plugins/${p}/${p}.plugin.zsh" ] && source "$OZSH/plugins/${p}/${p}.plugin.zsh"
+done
 
 ##################################################
 # Command Edit

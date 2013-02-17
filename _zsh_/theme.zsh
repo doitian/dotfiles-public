@@ -35,7 +35,7 @@ function rbenv_prompt_info() {
   ruby_version=$(rbenv version 2> /dev/null) || return
   echo "‹$ruby_version" | sed 's/[ \t].*$/›/'
 }
-Function git_prompt_info() {
+function git_prompt_info() {
   local ref dirty
   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
   dirty='%{[32m%}'
