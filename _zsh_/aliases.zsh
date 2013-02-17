@@ -194,6 +194,9 @@ alias am="$HOME/codebase/automators/bin/automator"
 
 alias vtig="GIT_EDITOR=vim tig"
 
+alias urlencode='node -e "console.log(encodeURIComponent(process.argv[1]))"'
+alias urldecode='node -e "console.log(decodeURIComponent(process.argv[1]))"'
+
 ##################################################
 # Ext Aliases
 alias -s html=w3m
