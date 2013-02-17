@@ -71,8 +71,6 @@ alias tree='tree -CFA -I ".git" --dirsfirst'
 
 alias pu='pushd'
 alias po='popd'
-alias ...='cd ../..'
-alias -- -='cd -'
 
 if [ "$OS_TYPE" != "Darwin" ] && which ruby &> /dev/null; then
   alias rm="rm.rb -I"
@@ -81,12 +79,16 @@ alias mv="mv -i"
 alias cp="cp -i"
 
 alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
 alias cd..='cd ..'
 alias cd...='cd ../..'
 alias cd....='cd ../../..'
 alias cd.....='cd ../../../..'
 alias cd/='cd /'
 
+alias -- -='dirs -v'
 alias dv='dirs -v'
 alias 1='cd -'
 alias 2='cd +2'
