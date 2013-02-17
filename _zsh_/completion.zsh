@@ -1,6 +1,5 @@
 autoload -U compinit
 
-OZSH=$HOME/.oh-my-zsh
 fpath=(
   $ZSH/completions
   $OZSH/plugins/gem

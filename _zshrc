@@ -5,6 +5,8 @@ if [[  "$-" != *i* ]]; then return 0; fi
 zstyle :omz:plugins:ssh-agent agent-forwarding on
 
 ZSH="$HOME/.zsh"
+OZSH="$HOME/.oh-my-zsh"
+
 for f in $ZSH/*.zsh; do
   [ -f "$f" ] && source "$f"
 done

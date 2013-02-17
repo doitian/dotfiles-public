@@ -30,26 +30,59 @@ export LSCOLORS="exfxcxdxbxegedabagacad"
 # fi
 setopt prompt_subst
 
+if [ -f "$OZSH/plugins/gitfast/git-prompt.sh" ]; then
+  source "$OZSH/plugins/gitfast/git-prompt.sh"
+  GIT_PS1_SHOWUPSTREAM="auto"
+else
+  function __git_ps1_show_upstream () {}
+fi
+
 function rbenv_prompt_info() {
   local ruby_version
   ruby_version=$(rbenv version 2> /dev/null) || return
   echo "‹$ruby_version" | sed 's/[ \t].*$/›/'
 }
-Function git_prompt_info() {
+function __git_minutes_since_last_commit {
+  local now=`date +%s`
+  local last_commit=`git log --pretty=format:'%at' -1`
+  local seconds_since_last_commit=$((now-last_commit))
+  local minutes_since_last_commit=$((seconds_since_last_commit/60))
+  local readable_time
+  if ((minutes_since_last_commit < 60)); then
+    readable_time="${minutes_since_last_commit}m"
+  elif ((minutes_since_last_commit < 1440)); then
+    readable_time="$((minutes_since_last_commit/60))h"
+  else
+    readable_time="$((minutes_since_last_commit/1440))d"
+  fi
+
+  if ((minutes_since_last_commit < 30)); then
+    m="%{[32m%}${readable_time}"
+  elif ((minutes_since_last_commit < 120)); then
+    m="%{[1;33m%}${readable_time}"
+  else
+    m="%{[1;31m%}${readable_time}"
+  fi
+}
+function git_prompt_info() {
   local ref dirty
   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
   dirty='%{[32m%}'
   if [[ -n $(git status -s 2> /dev/null) ]]; then
     dirty='%{[1;31m%}'
   fi
-  echo "${dirty}(${ref#refs/heads/})"
-}
-function git_prompt_dirty() {
-  if [[ -n $(git status -s 2> /dev/null) ]]; then
-    :
+
+  local p=""
+  local m=""
+  __git_ps1_show_upstream
+  if [ -n "$p" ] && [ "$p" != "=" ]; then
+    p="%{[1;31m%}${p}"
   else
-    :
+    p=
   fi
+  __git_minutes_since_last_commit
+
+  echo "%{[34m%}(${m}%{[0;34m%}|${dirty}${ref#refs/heads/}${p}%{[00m%}%{[34m%})"
 }
 
 # reset 00
