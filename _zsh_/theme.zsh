@@ -44,7 +44,11 @@ function rbenv_prompt_info() {
 }
 function __git_minutes_since_last_commit {
   local now=`date +%s`
-  local last_commit=`git log --pretty=format:'%at' -1`
+  local last_commit=`git log --pretty=format:'%at' -1 2> /dev/null`
+  if [ -z "$last_commit" ]; then
+    m="%{[1;31m%}*"
+    return
+  fi
   local seconds_since_last_commit=$((now-last_commit))
   local minutes_since_last_commit=$((seconds_since_last_commit/60))
   local readable_time
