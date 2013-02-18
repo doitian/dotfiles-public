@@ -81,8 +81,6 @@ function git_prompt_info() {
   __git_ps1_show_upstream
   if [ -n "$p" ] && [ "$p" != "=" ]; then
     p="%{[1;31m%}${p}"
-  else
-    p=
   fi
   __git_minutes_since_last_commit
 
