@@ -1,0 +1,61 @@
+#!/bin/bash
+
+run_lan_ip() {
+	local -a all_nics
+  local nic
+  local lan_ip
+  all_nics=$(ifconfig 2>/dev/null | awk -F':' '/^[a-z]/ && !/^lo|^ppp/ { print $1 }')
+	for nic in ${all_nics[@]}; do
+		ipv4s_on_nic=$(ifconfig ${nic} 2>/dev/null | awk '$1 == "inet" { print $2 }')
+		for lan_ip in ${ipv4s_on_nic[@]}; do
+			[[ -n "${lan_ip}" ]] && break
+		done
+		[[ -n "${lan_ip}" ]] && break
+	done
+
+  echo "lan: ${lan_ip-N/A}"
+  
+}
+run_wan_ip() {
+  local tmp_file="/tmp/wan_ip${UID}.txt"
+	local wan_ip
+
+	if [ -f "$tmp_file" ]; then
+    if [ "$UNAME" = "Darwin" ]; then
+    	last_update=$(stat -f "%m" ${tmp_file})
+  	else
+    	last_update=$(stat -c "%Y" ${tmp_file})
+  	fi
+
+  	time_now=$(date +%s)
+  	update_period=900
+  	up_to_date=$(echo "(${time_now}-${last_update}) < ${update_period}" | bc)
+
+    if (( time_now - last_update < update_period )); then
+    	wan_ip=$(cat ${tmp_file})
+  	fi
+	fi
+
+	if [ -z "$wan_ip" ]; then
+  	wan_ip=$(curl --max-time 2 -s http://whatismyip.akamai.com/)
+
+  	if [ "$?" -eq "0" ]; then
+    	echo "${wan_ip}" > $tmp_file
+  	elif [ -f "${tmp_file}" ]; then
+    	wan_ip=$(cat "$tmp_file")
+  	fi
+	fi
+
+  echo "wan: ${wan_ip-N/A}"
+}
+
+main() {
+  run_lan_ip
+  run_wan_ip
+}
+
+if [ "$1" = "-" ]; then
+  main
+else
+  main | dmenu.sh | sed 's/^.*: //' | ctrlc
+fi
