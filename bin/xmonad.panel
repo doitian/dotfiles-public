@@ -106,6 +106,7 @@ user_content() {
     echo -n " ^i(${battery_icon}) $(echo $battery_percentage | gdbar -w $BAR_WIDTH -h $BAR_HEIGHT -fg $battery_fg -bg '#666') $battery_time "
   fi
 
+  local cpu_mem_action="urxvt -name htop -e htop"
   local -a current_cpu_stat
   current_cpu_stat=($(head -1 /proc/stat))
   local cpu_diff_user=$((current_cpu_stat[2] - LAST_CPU_STAT[2]))
@@ -122,7 +123,7 @@ user_content() {
     cpu_fg="#d8d820"
   fi
   local cpu_icon="$ICON_DIR/cpu.xbm"
-  echo -n " ^i(${cpu_icon}) $(echo $cpu_percentage | gdbar -w $BAR_WIDTH -h $BAR_HEIGHT -fg $cpu_fg -bg '#666') "
+  echo -n " ^ca(1,${cpu_mem_action})^i(${cpu_icon}) $(echo $cpu_percentage | gdbar -w $BAR_WIDTH -h $BAR_HEIGHT -fg $cpu_fg -bg '#666') "
 
   local -a mem_stat
   mem_stat=($(head -4 /proc/meminfo | awk '{print $2}'))
@@ -135,7 +136,7 @@ user_content() {
     mem_fg="#d8d820"
   fi
   local mem_icon="$ICON_DIR/mem.xbm"
-  echo -n " ^i(${mem_icon}) $(echo $mem_percentage | gdbar -w $BAR_WIDTH -h $BAR_HEIGHT -fg $mem_fg -bg '#666') "
+  echo -n " ^i(${mem_icon}) $(echo $mem_percentage | gdbar -w $BAR_WIDTH -h $BAR_HEIGHT -fg $mem_fg -bg '#666')^ca()"
 
   if [ -d "$HOME/Mail/INBOX" ]; then
     local cur=$(ls $HOME/Mail/INBOX/cur | wc -l)
