@@ -63,8 +63,8 @@ main () {
           -e "s/\{VPN_USERNAME\}/${VPN_USERNAME}/g" \
           -e "s/\{VPN_PASSWORD\}/${VPN_PASSWORD}/g" \
           "$file_src_path" > "$file_path"
-        chmod 600 "$file_path"
-        chown root: "$file_path"
+        chmod 640 "$file_path"
+        chown root:wheel "$file_path"
       done
 
       if [ -n "$route" ]; then
@@ -84,10 +84,10 @@ main () {
         "$L2TP_CONFIG_DIR/ip-down" \
         >> /etc/ppp/ip-down.d/50-l2tp.sh
 
-      chmod 500 /etc/ppp/ip-up.d/50-l2tp.sh
-      chown root: /etc/ppp/ip-up.d/50-l2tp.sh
-      chmod 500 /etc/ppp/ip-down.d/50-l2tp.sh
-      chown root: /etc/ppp/ip-down.d/50-l2tp.sh
+      chmod 540 /etc/ppp/ip-up.d/50-l2tp.sh
+      chown root:wheel /etc/ppp/ip-up.d/50-l2tp.sh
+      chmod 540 /etc/ppp/ip-down.d/50-l2tp.sh
+      chown root:wheel /etc/ppp/ip-down.d/50-l2tp.sh
 
       systemctl start openswan
       systemctl start xl2tpd
