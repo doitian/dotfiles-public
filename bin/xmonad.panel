@@ -8,7 +8,7 @@ LAPTOP_MODE=
 USER_CONTENT_WIDTH=380
 if which acpid &> /dev/null; then
   LAPTOP_MODE=1
-  USER_CONTENT_WIDTH=460
+  USER_CONTENT_WIDTH=540
 fi
 
 zmodload zsh/zselect
@@ -89,7 +89,7 @@ user_content() {
     local battery_status battery_percentage battery_time
     acpi -b | cut -d\   -f 3,4,5 | read battery_status battery_percentage battery_time
     battery_percentage=${battery_percentage%\%}
-    # battery_time=${battery_time%:*}
+    battery_time=${battery_time%:*}
 
     local battery_icon="$ICON_DIR/ac_01.xbm"
     if [ "$battery_status" = "Discharging" ]; then
@@ -104,6 +104,7 @@ user_content() {
       battery_fg="#d8d820"
     fi
     echo -n " ^i(${battery_icon}) $(echo $battery_percentage | gdbar -w $BAR_WIDTH -h $BAR_HEIGHT -fg $battery_fg -bg '#666') $battery_time "
+    IFS="$oifs"
   fi
 
   local cpu_mem_action="urxvt -name htop -e htop"
