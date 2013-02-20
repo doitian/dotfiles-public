@@ -5,10 +5,10 @@ BG='#262626'
 ICON_DIR="$HOME/Dropbox/Photos/dzen"
 
 LAPTOP_MODE=
-USER_CONTENT_WIDTH=180
+USER_CONTENT_WIDTH=380
 if which acpid &> /dev/null; then
   LAPTOP_MODE=1
-  USER_CONTENT_WIDTH=340
+  USER_CONTENT_WIDTH=460
 fi
 
 zmodload zsh/zselect
@@ -60,23 +60,30 @@ refresh () {
 BAR_WIDTH=40
 BAR_HEIGHT=8
 
+LAST_CPU_STAT=(cpu 0 0 0 0)
+
 user_content() {
   local oifs="$IFS"
-  if [ -n "$LAPTOP_MODE" ]; then
-    # network
-    local -a interfaces
-    local net_icon="$ICON_DIR/net_wired.xbm"
-    local net_action="urxvt -e wicd-curses"
-    interfaces=($(ifconfig | grep RUNNING | cut -d: -f1 | grep -v '^lo$'))
-    if [ "${#interfaces[@]}" = 0 ]; then
-      echo -n " ^ca(1,$net_action)^i($net_icon) ^bg(#8b0000)^fg(#cccccc) N/A ^bg()^fg()^ca()"
-    else
-      if echo "${interfaces[@]}" | grep -q 'wlan'; then
-        net_icon="$ICON_DIR/wifi_02.xbm"
-      fi
-      echo -n " ^ca(1,$net_action)^i($net_icon)  ${interfaces[*]} ^ca()"
+
+  # network
+  local net_icon="$ICON_DIR/net_wired.xbm"
+  local net_action="urxvt -e sudo netcfg-menu"
+  local profile=$(netcfg current)
+  local vpn=
+  if [ -z "$profile" ]; then
+    echo -n " ^ca(1,$net_action)^i($net_icon) ^bg(#8b0000)^fg(#cccccc) N/A ^bg()^fg()^ca()"
+  else
+    if ip link show wlan0 &> /dev/null; then
+      net_icon="$ICON_DIR/wifi_02.xbm"
+    fi
+    if ip link show ppp0 &> /dev/null; then
+      vpn="^fg(#008b00)"
     fi
 
+    echo -n " ^ca(1,$net_action)^i($net_icon)  ${vpn}${profile} ^fg()^ca()"
+  fi
+
+  if [ -n "$LAPTOP_MODE" ]; then
     # battery
     IFS=' ,'
     local battery_status battery_percentage battery_time
@@ -98,6 +105,39 @@ user_content() {
     fi
     echo -n " ^i(${battery_icon}) $(echo $battery_percentage | gdbar -w $BAR_WIDTH -h $BAR_HEIGHT -fg $battery_fg -bg '#666') $battery_time "
   fi
+
+  local cpu_mem_action="urxvt -name htop -e htop"
+  local -a current_cpu_stat
+  current_cpu_stat=($(head -1 /proc/stat))
+  local cpu_diff_user=$((current_cpu_stat[2] - LAST_CPU_STAT[2]))
+  local cpu_diff_system=$((current_cpu_stat[3] - LAST_CPU_STAT[3]))
+  local cpu_diff_nice=$((current_cpu_stat[4] - LAST_CPU_STAT[4]))
+  local cpu_diff_idle=$((current_cpu_stat[5] - LAST_CPU_STAT[5]))
+  LAST_CPU_STAT=(${current_cpu_stat[*]})
+  local cpu_percentage=$(( (cpu_diff_user + cpu_diff_system + cpu_diff_nice) * 100 / (cpu_diff_user + cpu_diff_system + cpu_diff_nice + cpu_diff_idle) ))
+
+  local cpu_fg="#008b00"
+  if [ "$cpu_percentage" -gt 75 ]; then
+    cpu_fg="#8b0000"
+  elif [ "$cpu_percentage" -gt 50 ]; then
+    cpu_fg="#d8d820"
+  fi
+  local cpu_icon="$ICON_DIR/cpu.xbm"
+  echo -n " ^ca(1,${cpu_mem_action})^i(${cpu_icon}) $(echo $cpu_percentage | gdbar -w $BAR_WIDTH -h $BAR_HEIGHT -fg $cpu_fg -bg '#666') "
+
+  local -a mem_stat
+  mem_stat=($(head -4 /proc/meminfo | awk '{print $2}'))
+  local mem_percentage=$(( (mem_stat[1] - mem_stat[2] - mem_stat[3] - mem_stat[4]) * 100 / mem_stat[1] ))
+
+  local mem_fg="#008b00"
+  if [ "$mem_percentage" -gt 75 ]; then
+    mem_fg="#8b0000"
+  elif [ "$mem_percentage" -gt 50 ]; then
+    mem_fg="#d8d820"
+  fi
+  local mem_icon="$ICON_DIR/mem.xbm"
+  echo -n " ^i(${mem_icon}) $(echo $mem_percentage | gdbar -w $BAR_WIDTH -h $BAR_HEIGHT -fg $mem_fg -bg '#666')^ca()"
+
   if [ -d "$HOME/Mail/INBOX" ]; then
     local cur=$(ls $HOME/Mail/INBOX/cur | wc -l)
     local new=$(ls $HOME/Mail/INBOX/new | wc -l)

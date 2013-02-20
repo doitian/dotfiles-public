@@ -11,7 +11,7 @@ L2TP_CONFIG_DIR="$HOME/Dropbox/Secrets/l2tp"
 # See http://github.com/doitian/vpn-config-sample
 main () {
   if [ -z "$1" ]; then
-    echo "Usage: l2tp stop | [--route] NAME"
+    echo "Usage: l2tp stop | connect | [--route] NAME"
     return 1
   fi
 
@@ -22,6 +22,13 @@ main () {
       systemctl stop xl2tpd
 
       ;;
+
+    connect)
+
+      echo "c vpn-connection" > /run/xl2tpd/l2tp-control
+
+      ;;
+
     *)
       local route=
       if [ "$1" = "--route" ]; then

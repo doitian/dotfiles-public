@@ -22,9 +22,9 @@ autoload colors; colors;
 #h     light grey
 #                1 2 3 4 5 6 7 8 9 0 1
 # zenburn
-# export LSCOLORS="ExGxFxdxCxEgEdHbagacad"
+export LSCOLORS="ExGxFxdxCxEgEdHbagacad"
 # twilight
-export LSCOLORS="exfxcxdxbxegedabagacad"
+#export LSCOLORS="exfxcxdxbxegedabagacad"
 # if [ "$OS_TYPE" = "Linux" -o "$OS_TYPE" = "CYGWIN_NT-5.1" ] && [ -f "$HOME/.zsh/dircolors.256dark" ]; then
 #   eval `dircolors $HOME/.zsh/dircolors.256dark`
 # fi
@@ -44,7 +44,11 @@ function rbenv_prompt_info() {
 }
 function __git_minutes_since_last_commit {
   local now=`date +%s`
-  local last_commit=`git log --pretty=format:'%at' -1`
+  local last_commit=`git log --pretty=format:'%at' -1 2> /dev/null`
+  if [ -z "$last_commit" ]; then
+    m="%{[1;31m%}*"
+    return
+  fi
   local seconds_since_last_commit=$((now-last_commit))
   local minutes_since_last_commit=$((seconds_since_last_commit/60))
   local readable_time
@@ -77,8 +81,6 @@ function git_prompt_info() {
   __git_ps1_show_upstream
   if [ -n "$p" ] && [ "$p" != "=" ]; then
     p="%{[1;31m%}${p}"
-  else
-    p=
   fi
   __git_minutes_since_last_commit
 

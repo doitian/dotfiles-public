@@ -158,7 +158,7 @@ alias x=extract
 
 function ls-colors()
 {
-  for i in $(seq 0 7); do
+  for i in {0..7}; do
     echo -e "  3$i: [7m[3${i}m       [00m"
     echo -e "1;3$i: [7m[1;3${i}m       [00m"
   done
