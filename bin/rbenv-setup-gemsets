@@ -2,7 +2,7 @@
 
 VAR_GEMSETS=(tools deploy debug generator)
 VAR_GEMS_tools=(hub tmuxinator vagrant vmc lolcat thor zeus gist rerun)
-VAR_GEMS_deploy=(bundler capistrano capistrano-ext)
+VAR_GEMS_deploy=(bundler capistrano capistrano-ext mina)
 VAR_GEMS_debug=(pry rails-console-pry awesome_print hirb sequel pry-doc yard pry-nav pry-git pry-stack_explorer puma)
 VAR_GEMS_generator=(rails nanoc)
 
