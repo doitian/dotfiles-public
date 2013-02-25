@@ -1,0 +1,18 @@
+#!/usr/bin/env zsh
+
+# Exec the command in tmux session tt with the specified window name
+
+if ! $(tmux has-session -t tt); then
+  env TMUX= tmux new-session -d -s tt
+fi
+
+if [ -z "$1" ]; then
+  if [ -z "$TMUX" ]; then
+    tmux -u attach-session -t tt
+  else
+    tmux -u switch-client -t tt
+  fi
+else
+  tmux send-keys -t tt: "$@" C-m
+fi
+

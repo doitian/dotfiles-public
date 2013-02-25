@@ -1,10 +1,13 @@
 #!/usr/bin/env zsh
 
-VAR_GEMSETS=(tools deploy debug generator)
-VAR_GEMS_tools=(hub tmuxinator vagrant vmc lolcat thor zeus gist rerun)
-VAR_GEMS_deploy=(bundler capistrano capistrano-ext mina)
+VAR_GEMSETS=(global zeus tools deploy debug generator passenger)
+VAR_GEMS_global=(bundler gem-browse)
+VAR_GEMS_zeus=(zeus)
+VAR_GEMS_tools=(hub tmuxinator vagrant vmc lolcat thor gist rerun)
+VAR_GEMS_deploy=(capistrano capistrano-ext mina)
 VAR_GEMS_debug=(pry rails-console-pry awesome_print hirb sequel pry-doc yard pry-nav pry-git pry-stack_explorer puma)
 VAR_GEMS_generator=(rails nanoc)
+VAR_GEMS_passenger=(passenger)
 
 export RBENV_GEMSET_FILE="/tmp/rbenv-setup-gemsets.$UID.rbenv-gemsets.tmp"
 touch "$RBENV_GEMSET_FILE"

@@ -13,17 +13,27 @@ if [ ! -d "$RBENV_ROOT" ] ; then
   set -x
   git clone git://github.com/sstephenson/rbenv.git $RBENV_ROOT
   set +x
-else
+elif [ -d "$RBENV_ROOT/.git"]
   set -x
   cd $RBENV_ROOT
   git pull
+  set +x
+else
+  set -x
+  git clone git://github.com/sstephenson/rbenv.git $RBENV_ROOT/rbenv
+  mv $RBENV_ROOT/rbenv/.git $RBENV_ROOT
+  cd $RBENV_ROOT
+  git checkout .
+  rm -r rbenv
   set +x
 fi
 
 # Install plugins:
 PLUGINS=( "sstephenson:rbenv-vars"
           "sstephenson:ruby-build"
-          "jamis:rbenv-gemset" )
+          "sstephenson:rbenv-default-gems"
+          "jamis:rbenv-gemset"
+          "tpope:rbenv-readline" )
 for plugin in ${PLUGINS[@]} ; do
 
   KEY=${plugin%%:*}
