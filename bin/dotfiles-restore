@@ -58,3 +58,6 @@ mkdir -p "$HOME/.mutt/cache/headers"
 mkdir -p "$HOME/.mutt/cache/bodies"
 mkdir -p "$HOME/.mutt/temp"
 mkdir -p "$HOME/.local/share/Trash"
+
+ln -snf "$HOME/.cvsignore" "$HOME/.agignore"
+
