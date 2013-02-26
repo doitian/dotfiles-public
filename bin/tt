@@ -1,18 +1,26 @@
 #!/usr/bin/env zsh
 
-# Exec the command in tmux session tt with the specified window name
+# Send keys to the active pane in the specified tmux session
 
-if ! $(tmux has-session -t tt); then
-  env TMUX= tmux new-session -d -s tt
+typeset session="$1"
+
+if [ -z "$session" ]; then
+  echo "Usage: tt session keys [....]" >&2
+  exit 1
+fi
+shift
+
+if ! $(tmux has-session -t "$session"); then
+  env TMUX= tmux new-session -d -s "$session"
 fi
 
 if [ -z "$1" ]; then
   if [ -z "$TMUX" ]; then
-    tmux -u attach-session -t tt
+    tmux -u attach-session -t "$session"
   else
-    tmux -u switch-client -t tt
+    tmux -u switch-client -t "$session"
   fi
 else
-  tmux send-keys -t tt: "$@" C-m
+  tmux send-keys -t "$session": "$@" C-m
 fi
 
