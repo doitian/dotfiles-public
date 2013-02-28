@@ -14,6 +14,7 @@ alias g="git"
 alias fp="file-picker"
 alias vi='vim'
 alias v='vim'
+alias view='vim -R'
 
 ##################################################
 # Command Edit
