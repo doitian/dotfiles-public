@@ -1,2 +1,3 @@
 bundler --pre
+bundler-audit
 
