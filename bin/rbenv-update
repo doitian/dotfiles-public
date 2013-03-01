@@ -13,7 +13,7 @@ if [ ! -d "$RBENV_ROOT" ] ; then
   set -x
   git clone git://github.com/sstephenson/rbenv.git $RBENV_ROOT
   set +x
-elif [ -d "$RBENV_ROOT/.git"]
+elif [ -d "$RBENV_ROOT/.git" ]; then
   set -x
   cd $RBENV_ROOT
   git pull
