@@ -112,7 +112,7 @@ _ovpn () {
 }
 
 _l2tp () {
-  compadd $(ls $L2TP_CONFIG_DIR | grep -v '^ip-\|^common$') connect stop '--route'
+  compadd $(ls $L2TP_CONFIG_DIR | grep -v '^ip-\|^common$') connect up down stop '--route'
 }
 
 compdef _ovpn ovpn

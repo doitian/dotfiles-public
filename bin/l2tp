@@ -23,6 +23,12 @@ main () {
 
       ;;
 
+    up|down)
+
+      ipsec auto --$1 L2TP-PSK
+
+      ;;
+
     connect)
 
       echo "c vpn-connection" > /run/xl2tpd/l2tp-control
