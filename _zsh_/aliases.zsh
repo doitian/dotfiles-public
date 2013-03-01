@@ -212,7 +212,7 @@ alias -s svg=geeqie
 # Dir Aliases
 cb=$HOME/codebase
 box=$HOME/Dropbox
-docs=$HOME/docs
+docs=$HOME/Documents
 dotfiles=$cb/dotfiles
 dotemacs=$HOME/.emacs.d
 dotvim=$HOME/.vim
