@@ -36,6 +36,12 @@ parse_log () {
 }
 
 refresh () {
+  echo -n '^tw()'
+  if [ -n "$NEW_MESSAGE" ]; then
+    NEW_MESSAGE=
+    echo -n '^fg(#8b0000)!^fg() '
+  fi
+
   local oifs="$IFS" current=1 content offset width
 
   IFS=.
@@ -59,7 +65,7 @@ refresh () {
 
 BAR_WIDTH=40
 BAR_HEIGHT=8
-
+NEW_MESSAGE=
 LAST_CPU_STAT=(cpu 0 0 0 0)
 
 user_content() {
@@ -164,11 +170,26 @@ update_user_content () {
   fi
 }
 
-[ -z "$DEBUG" ] && exec > >(dzen2 -fg "$FG" -bg "$BG" -ta l -e 'button3=' "$@")
+events='button3='
+# events='button1=menuprint;button3=;button4=scrollup:3;button5=scrolldown:3;entertitle=uncollapse;leavetitle=collapse;leaveslave=collapse'
+# -l 10
+[ -z "$DEBUG" ] && exec > >(dzen2 -fg "$FG" -bg "$BG" -ta l -e "$events" "$@")
+# [ -e "$HOME/.xmonad.fifo" ] || mkfifo "$HOME/.xmonad.fifo"
+# exec 3<> "$HOME/.xmonad.fifo"
+
 while true; do
   update_user_content
   refresh
+  # -r 3
   if zselect -t 6000 -A fd -r 0; then
-    parse_log
+    if [ "$fd[0]" = "r" ]; then
+      parse_log
+    fi
+    # if [ "$fd[3]" = "r" ]; then
+    #   NEW_MESSAGE=1
+    #   while read -t 0 <&3; do
+    #     echo "$REPLY"
+    #   done
+    # fi
   fi
 done

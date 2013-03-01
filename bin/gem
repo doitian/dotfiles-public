@@ -17,6 +17,9 @@ elif [ "$1" = 'la' ]; then
       end
     end.join(%Q(\n)) + %Q(\n)
   "
+elif [ "$1" = "cleanc" ]; then
+  shift
+  exec gem-cleanc "$@"
 else
   rr gem "$@"
 fi

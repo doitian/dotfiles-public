@@ -211,6 +211,7 @@ alias -s svg=geeqie
 ##################################################
 # Dir Aliases
 cb=$HOME/codebase
+dp=$HOME/Dump
 box=$HOME/Dropbox
 docs=$HOME/Documents
 dotfiles=$cb/dotfiles

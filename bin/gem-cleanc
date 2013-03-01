@@ -1,0 +1,17 @@
+#!/bin/bash
+
+clean-dirs() {
+  local dir
+  for dir; do
+    export GEM_HOME="$dir"
+    grep -l '\.extensions' "$dir"/specifications/*.gemspec | \
+      sed 's|.*/\(.*\)-.*\.gemspec|\1|' | uniq | \
+      xargs gem uninstall -aIx
+  done
+}
+
+if [ "$#" -eq 0 ]; then
+  clean-dirs "$GEM_HOME"
+else
+  clean-dirs "$@"
+fi
