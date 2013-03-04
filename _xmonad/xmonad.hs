@@ -430,8 +430,8 @@ myLayout = configurableNavigation (navigateColor myActiveBorderColor)
   where
     layouts  = cols' ||| twopane' ||| rows' ||| tabs' ||| grid' ||| big'
     cols'    = named "cols" $ layoutHints $ deco $ multiCol [1] 2 (3/100) (1/2)
-    twopane' = named "two"  $ layoutHints $ TwoPane (3/100) (3/7)
-    rows'    = named "rows" $ Mirror $ layoutHints $ deco $ multiCol [2] 3 (2/100) (4/7)
+    twopane' = named "two"  $ layoutHints $ deco $ TwoPane (3/100) (3/7)
+    rows'    = named "rows" $ layoutHints $ deco $ Mirror $ multiCol [2] 3 (2/100) (4/7)
     tabs'    = named "tab"  $ layoutHints $ tabs
     grid'    = named "grid" $ layoutHints $ deco $ Grid (16/10)
     big'     = named "big"  $ layoutHints $ deco $ Mirror $ OneBig (2/3) (2/3)
@@ -483,7 +483,6 @@ myShiftManageHook = composeOne . concat $
                     , ("Emacs", "3.emacs")
                     ]
       ]
-    , [ (resource =? "DTA" <&&> role =? "Manager" -?> doShift "0") ]
     ]
     where
       role = stringProperty "WM_WINDOW_ROLE"
