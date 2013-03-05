@@ -18,6 +18,7 @@ main () {
   case "$1" in
     stop)
 
+      ipsec auto --down L2TP-PSK
       systemctl stop openswan
       systemctl stop xl2tpd
 
