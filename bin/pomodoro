@@ -80,7 +80,7 @@ fi
 while true; do
   refresh
   if zselect -t 100 -r 0; then
-    if ! read -t 0 -A WORKSPACES; then
+    if ! read -t 0; then
       finish
       exit
     fi
