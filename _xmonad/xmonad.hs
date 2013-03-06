@@ -204,7 +204,7 @@ myKeys =  \conf -> mkKeymap conf $
     , ("M-p m", manPrompt mySP ) -- xmonad prompt
     , ("M-g", runOrRaise "window-go.sh" (resource =? "WindowGo" <&&> className =? "Gpicker")) -- window go
     , ("M-b", runOrRaise "window-bring.sh" (resource =? "WindowBring" <&&> className =? "Gpicker")) -- window bring
-    , ("M-<Return>", raiseMaybe (spawn "gmrun") (className =? "Gmrun")) -- gmrun
+    , ("M-<Space>", raiseMaybe (spawn "gmrun") (className =? "Gmrun")) -- gmrun
 
     , ("M-S-s", spawn "x-www-browser \"http://www.google.com/search?q=`xclip -o`\"") -- search selection
     , ("M-S-o", spawn "xopen -") -- open current selection
@@ -213,7 +213,6 @@ myKeys =  \conf -> mkKeymap conf $
     , ("M-o", runOrRaiseNext "google-chrome" (className =? "Firefox" <||> className =? "Google-chrome" <||> className =? "Chromium")) -- browser
     , ("M-i", runOrRaiseNext "emacs-dwim" (className =? "Emacs")) --emacs
     , ("M-u", runOrRaiseNext myTerminal (className =? myTerminalClass <&&> resource /=? "scratchpad")) -- raise next terminal
-    , ("M-<Space>", runOrRaiseNext "recoll" (className =? "Recoll")) -- raise next terminal
 
     , ("M-c t", raiseNextMaybe (spawn $ myTerminal ++ " -name htop -e htop") (resource =? "htop")) -- Top
     , ("M-c r", raiseNextMaybe (spawn "xranger") (resource =? "ranger")) -- File Browser

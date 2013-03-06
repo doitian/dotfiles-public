@@ -1,6 +1,6 @@
 #Terminal = gnome-terminal --start-factory-server --use-factory
 Terminal = urxvt
-TermExec = ${Terminal} -e
+TermExec = recoll -q
 AlwaysInTerm = ssh telnet ftp lynx mc vi vim mc top watch htop lftp
 
 Width = 400
