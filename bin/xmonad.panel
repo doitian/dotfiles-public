@@ -100,8 +100,10 @@ user_content() {
     local battery_icon="$ICON_DIR/ac_01.xbm"
     if [ "$battery_status" = "Discharging" ]; then
       battery_icon="$ICON_DIR/bat_full_01.xbm"
-    else
+    elif [ -n "$battery_time" ]; then
       battery_time="($battery_time)"
+    else
+      battery_time="(charged)"
     fi
     local battery_fg="#008b00"
     if [ "$battery_percentage" -lt 10 ]; then
