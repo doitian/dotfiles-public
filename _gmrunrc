@@ -13,14 +13,13 @@ TabTimeout = 0
 ShowDotFiles = 0
 TabTimeout = 0
 
-URL_http = mozilla -remote "openURL(%u, new-window)"
-URL_mailto = mozilla -remote "mailto(%s)"
-URL_man = ${TermExec} 'man %s'
-URL_info = ${TermExec} 'info %s'
-URL_pd = ${TermExec} 'perldoc %s'
-URL_file = thunar %s
-URL_readme = ${TermExec} 'less /usr/share/doc/%s/README'
-URL_info = ${TermExec} 'info %s'
+URL_http = x-www-browser '%u'
+URL_mailto = x-www-browser 'mailto:%s'
+URL_man = urxvt -e man '%s'
+#URL_info = urxvt -e info '%s'
+URL_info = urxvt -e info '%s'
+URL_file =  pcmanfm '%s'
+URL_readme = urxvt -e less /usr/share/doc/%s/README
 URL_sh = sh -c '%s'
 
 EXT:txt,cc,cpp,h,java,html,htm,epl,tex,latex,js,css,xml,xsl,am = emacsclient %s

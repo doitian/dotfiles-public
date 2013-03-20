@@ -200,6 +200,10 @@ alias vtig="GIT_EDITOR=vim tig"
 alias urlencode='node -e "console.log(encodeURIComponent(process.argv[1]))"'
 alias urldecode='node -e "console.log(decodeURIComponent(process.argv[1]))"'
 
+alias start="sudo systemctl start "
+alias stop="sudo systemctl stop "
+alias restart="sudo systemctl restart "
+
 ##################################################
 # Ext Aliases
 alias -s html=w3m
