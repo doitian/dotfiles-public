@@ -204,6 +204,8 @@ alias start="sudo systemctl start "
 alias stop="sudo systemctl stop "
 alias restart="sudo systemctl restart "
 
+
+
 ##################################################
 # Ext Aliases
 alias -s html=w3m
@@ -215,6 +217,7 @@ alias -s svg=geeqie
 ##################################################
 # Dir Aliases
 cb=$HOME/codebase
+gop=$GOPATH
 dp=$HOME/Dump
 box=$HOME/Dropbox
 docs=$HOME/Documents
@@ -222,3 +225,4 @@ dotfiles=$cb/dotfiles
 dotemacs=$HOME/.emacs.d
 dotvim=$HOME/.vim
 ohmyzsh=$HOME/.oh-my-zsh
+
