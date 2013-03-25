@@ -204,7 +204,8 @@ alias start="sudo systemctl start "
 alias stop="sudo systemctl stop "
 alias restart="sudo systemctl restart "
 
-
+alias igssh='l2tp --route igssh'
+alias vpncloud='l2tp --route igssh'
 
 ##################################################
 # Ext Aliases
