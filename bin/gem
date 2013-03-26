@@ -21,5 +21,9 @@ elif [ "$1" = "cleanc" ]; then
   shift
   exec gem-cleanc "$@"
 else
-  rr gem "$@"
+  if [ -n "$BUNDLE_GEMFILE" ]; then
+    rbenv exec gem "$@"
+  else
+    rr gem "$@"
+  fi
 fi

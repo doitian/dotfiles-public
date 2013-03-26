@@ -38,10 +38,16 @@ else
 fi
 
 function rbenv_prompt_info() {
-  local ruby_version
-  ruby_version=$(rbenv version 2> /dev/null) || return
-  echo "‹$ruby_version" | sed 's/[ \t].*$/›/'
+  local ruby_version gemset
+  ruby_version=$(rbenv version-name 2> /dev/null) || return
+  gemset=$(rbenv gemset active 2> /dev/null | awk '{print $1}')
+  if [ -n "$gemset" ]; then
+    gemset="%{[0;34m%}|%{[1;31m%}$gemset%{[0m%}"
+  fi
+
+  echo "‹$ruby_version$gemset›"
 }
+
 function __git_minutes_since_last_commit {
   local now=`date +%s`
   local last_commit=`git log --pretty=format:'%at' -1 2> /dev/null`
