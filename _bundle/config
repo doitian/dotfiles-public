@@ -1,4 +1,4 @@
 ---
-BUNDLE_PATH: ~/.bundle
+BUNDLE_PATH: ~/.bundle/default
 BUNDLE_WITHOUT: production:deploy:deployment
 BUNDLE_BIN: bin

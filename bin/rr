@@ -23,10 +23,15 @@ _rexec() {
   elif [ -n "$RBENV_GEMSET_MAYBE" ]; then
     exec gemset "$RBENV_GEMSET_MAYBE" rbenv exec "$@"
   else
+    typeset GEM_VERSION=`rbenv version | awk '{print $1}'`
+    if ! [ -d "$HOME/.bundle/$GEM_VERSION" ]; then
+      GEM_VERSION=default
+    fi
+
     if [ -z "$GEM_PATH" ]; then
-      GEM_PATH="$HOME/.bundle"
+      GEM_PATH="$HOME/.bundle/$GEM_VERSION"
     else
-      GEM_PATH="$GEM_PATH:$HOME/.bundle"
+      GEM_PATH="$GEM_PATH:$HOME/.bundle/$GEM_VERSION"
     fi
     export GEM_PATH
     typeset command="$1"
