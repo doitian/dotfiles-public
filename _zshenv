@@ -14,6 +14,11 @@ export EMACSCLIENT=emacsclient
 export SURFRAW_text_browser=w3m
 export SURFRAW_browser=x-www-browser
 export GOPATH="$HOME/.go"
+export WORKON_HOME="$HOME/.workon"
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+if [ -f /usr/bin/python2 ]; then
+  export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python2
+fi
 
 if [ "$(uname -s)" = "CYGWIN_NT-5.1" ]; then
   if [ "$TERM" = "rxvt-unicode" ]; then

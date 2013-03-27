@@ -1,0 +1,21 @@
+#!/usr/bin/env zsh
+
+if which workon_cwd &> /dev/null; then
+  # if workon_cwd is defined, and virtualenv is detected, this script should
+  # never be called. If this script is called, it means system python should
+  # be used.
+  exec /usr/bin/python "$@"
+fi
+
+if [ -z "$VIRTUAL_ENV" ]; then
+  source "$HOME/.zsh/virtualenv.zsh"
+  if which workon_cwd &> /dev/null; then
+    workon_cwd
+  fi
+fi
+
+if [ -x "$VIRTUAL_ENV/bin/python" ]; then
+  exec "$VIRTUAL_ENV/bin/python" "$@"
+else
+  exec /usr/bin/python "$@"
+fi
