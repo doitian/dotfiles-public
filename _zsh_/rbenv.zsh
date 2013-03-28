@@ -13,7 +13,7 @@ function rbenv() {
 }
 
 function rbundle() {
-  exec bundle install --path "$HOME/.bndle/$(rbenv version-name)" "$@"
+  bundle install --path "$HOME/.bundle/$(rbenv version-name)" "$@"
 }
 
 alias rl='rbenv local'
