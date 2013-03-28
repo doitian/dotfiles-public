@@ -183,6 +183,8 @@ alias mmm=vlc
 
 alias ssh="TERM=xterm-256color ssh"
 
+alias mk=make
+
 alias cmr=cmus-remote
 
 alias am="$HOME/codebase/automators/bin/automator"
