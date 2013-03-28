@@ -20,6 +20,10 @@ alias rl='rbenv local'
 alias rv='vim .rbenv-vars'
 alias b='bundle exec'
 
+function rbundle() {
+  exec bundle --path "$HOME/.bundle/$(rbenv version-name)" "$@"
+}
+
 function _gemset() {
   local -a _actions _gemsets
   _actions=(active create delete file list version)
