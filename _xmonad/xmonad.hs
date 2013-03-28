@@ -495,11 +495,6 @@ myManageHook = insertPosition Below Newer
                <+> manageDocks
 
 -- Helper functions to fullscreen the window
-fullFloat, tileWin :: Window -> X ()
-fullFloat w = windows $ W.float w r
-    where r = W.RationalRect 0 0 1 1
-tileWin w = windows $ W.sink w
-
 evHook :: Event -> X All
 evHook (ClientMessageEvent _ _ _ dpy win typ dat) = do
   state <- getAtom "_NET_WM_STATE"
@@ -519,10 +514,12 @@ evHook (ClientMessageEvent _ _ _ dpy win typ dat) = do
   when (typ == state && (fromIntegral fullsc) `elem` tail dat) $ do
     when (action == add || (action == toggle && not isFull)) $ do
          io $ changeProperty32 dpy win state ptype propModeReplace [fromIntegral fullsc]
-         fullFloat win
+         when (not isFull) $ do
+           sendMessage (Toggle RFULL)
     when (head dat == remove || (action == toggle && isFull)) $ do
          io $ changeProperty32 dpy win state ptype propModeReplace []
-         tileWin win
+         when (isFull) $ do
+           sendMessage (Toggle RFULL)
 
   -- It shouldn't be necessary for xmonad to do anything more with this event
   return $ All False
