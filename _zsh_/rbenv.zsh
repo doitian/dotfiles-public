@@ -12,6 +12,10 @@ function rbenv() {
   esac
 }
 
+function rbundle() {
+  exec bundle install --path "$HOME/.bndle/$(rbenv version-name)" "$@"
+}
+
 alias rl='rbenv local'
 alias rv='vim .rbenv-vars'
 alias b='bundle exec'
