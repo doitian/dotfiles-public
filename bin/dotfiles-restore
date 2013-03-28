@@ -59,5 +59,10 @@ mkdir -p "$HOME/.mutt/cache/bodies"
 mkdir -p "$HOME/.mutt/temp"
 mkdir -p "$HOME/.local/share/Trash"
 
+# bin links
+ln -snf "$BACKUP_DIR/bin/tools" "$HOME/bin/pt"
+ln -snf "$BACKUP_DIR/bin/tools" "$HOME/bin/ghi"
+ln -snf "$BACKUP_DIR/bin/xopen" "$HOME/bin/open"
+
 ln -snf "$HOME/.cvsignore" "$HOME/.agignore"
 

@@ -1,9 +1,5 @@
 # -*- sh -*-
 OS_TYPE=`uname -s`
-CMD_OPEN='xopen'
-if which open &> /dev/null; then
-  CMD_OPEN='open'
-fi
 
 ##################################################
 # Editor
@@ -123,8 +119,8 @@ if which fasd > /dev/null 2>&1; then
   alias jj='fasd_cd -d -i'
   alias sf='fasd -sif'
   alias sd='fasd -sid'
-  alias o="fasd -e $CMD_OPEN -f"
-  alias oo="fasd -e $CMD_OPEN -f -i"
+  alias o="fasd -e open -f"
+  alias oo="fasd -e open -f -i"
 fi
 
 alias md='mkdir -p'
@@ -184,10 +180,6 @@ function bcc () {
 
 alias m=mplayer
 alias mmm=vlc
-
-if [ "$CMD_OPEN" = 'xopen' ]; then
-  alias open=xopen
-fi
 
 alias ssh="TERM=xterm-256color ssh"
 

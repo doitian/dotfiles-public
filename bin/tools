@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# if linked with another name, use that name as first argument
+
+main() {
+  typeset linkname=$(basename "$1")
+  shift
+
+  if [ "$linkname" != 'tools' ]; then
+    exec gemset --global tools rbenv exec "$linkname" "$@"
+  else
+    exec gemset --global tools "$@"
+  fi
+}
+
+main "$0" "$@"

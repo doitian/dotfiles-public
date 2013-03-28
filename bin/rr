@@ -40,4 +40,9 @@ _rexec() {
   fi
 }
 
+if [ "$1" = "--global" ]; then
+  export RBENV_VERSION=$(rbenv global)
+  shift
+fi
+
 _rexec "$@"

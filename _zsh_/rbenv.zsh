@@ -28,21 +28,20 @@ function _gemset() {
 }
 compdef _gemset gemset
 
-alias hub='gemset tools hub'
-alias thor='gemset tools thor'
-alias gh=hub
-alias tmuxinator="gemset tools tmuxinator"
-alias vagrant="gemset tools vagrant"
-alias vmc="gemset tools vmc"
-alias lolcat="gemset tools lolcat"
+alias hub='gemset --global tools hub'
+alias thor='gemset --global tools thor'
+alias tmuxinator="gemset --global tools tmuxinator"
+alias vagrant="gemset --global tools vagrant"
+alias vmc="gemset --global tools vmc"
+alias lolcat="gemset --global tools lolcat"
 alias mux="tmuxinator"
 compdef _tmuxinator mux
 alias tss="tmuxinator start"
-alias cap='gemset deploy cap'
-alias capify='gemset deploy capify'
-alias mina='gemset deploy mina'
+alias cap='gemset --global deploy cap'
+alias capify='gemset --global deploy capify'
+alias mina='gemset --global deploy mina'
 alias rpry='gemset debug rails-console-pry -r awesome_print -r pry-doc -r hirb -r pry-nav -r pry-git -r pry-stack_explorer'
-alias pry='gemset debug pry'
+alias pry='gemset --global debug pry'
 alias irb='pry'
 alias sequel='gemset debug sequel'
 alias puma='gemset debug puma'

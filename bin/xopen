@@ -1,7 +1,6 @@
 #!/bin/zsh
-UNAME=`uname -s`
-if [ "$UNAME" = "Darwin" ]; then
-    exec open "$@"
+if [ -x /usr/bin/open ]; then
+  exec /usr/bin/open "$@"
 fi
 
 for arg; do

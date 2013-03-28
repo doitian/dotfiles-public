@@ -1,5 +1,10 @@
 #!/usr/bin/env zsh
 
+if [ "$1" = "--global" ]; then
+  export RBENV_VERSION=$(rbenv global)
+  shift
+fi
+
 # unset global RBENV_GEMSET_FILE
 unset RBENV_GEMSET_FILE
 # unset RUBYOPT set by Bundler
