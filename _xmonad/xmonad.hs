@@ -205,7 +205,7 @@ myKeys =  \conf -> mkKeymap conf $
     , ("M-p m", manPrompt mySP ) -- xmonad prompt
     , ("M-g", runOrRaise "window-go.sh" (resource =? "WindowGo" <&&> className =? "Gpicker")) -- window go
     , ("M-b", runOrRaise "window-bring.sh" (resource =? "WindowBring" <&&> className =? "Gpicker")) -- window bring
-    , ("M-<Space>", raiseMaybe (spawn "gmrun") (className =? "Gmrun")) -- gmrun
+    , ("M-C-<Space>", raiseMaybe (spawn "gmrun") (className =? "Gmrun")) -- gmrun
 
     , ("M-S-s", spawn "x-www-browser \"http://www.google.com/search?q=`xclip -o`\"") -- search selection
     , ("M-S-o", spawn "xopen -") -- open current selection

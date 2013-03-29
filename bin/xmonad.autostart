@@ -29,6 +29,7 @@ run_daemon xscreensaver -no-splash
 run_daemon clipit
 run_daemon fcitx
 run_daemon pcmanfm -d
+run_daemon kupfer --no-splash
 
 if [ -z "$NO_IM" ]; then
   : #run_daemon pidgin
