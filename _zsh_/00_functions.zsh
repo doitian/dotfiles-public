@@ -163,3 +163,18 @@ function ls-colors()
     echo -e "1;3$i: [7m[1;3${i}m       [00m"
   done
 }
+function ls-256colors() {
+  for i in {0..255} ; do
+    printf "\x1b[38;5;${i}mcolour${i}\n"
+  done
+}
+
+function hex2color() {
+  local decimal=$(bash -c "let x=0x$1; echo \$x")
+  echo $decimal
+  local red=$((decimal / 256 / 256))
+  local green=$((decimal / 256 % 256))
+  local blue=$((decimal % 256))
+  echo $red $green $blue
+  echo $(( blue & 0xC0 + ((green & 0xE0) >> 2) + ((red & 0xE0) >> 5)))
+}
