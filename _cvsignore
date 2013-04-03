@@ -45,3 +45,4 @@ zeus.json
 .jira-url
 _obj
 .pt
+*.pyc
