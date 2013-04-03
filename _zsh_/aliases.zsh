@@ -201,6 +201,8 @@ alias restart="sudo systemctl restart "
 alias igssh='l2tp --route igssh'
 alias vpncloud='l2tp --route igssh'
 
+alias dj=django
+
 ##################################################
 # Ext Aliases
 alias -s html=w3m
