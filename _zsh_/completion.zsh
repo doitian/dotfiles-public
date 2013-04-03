@@ -117,3 +117,8 @@ _l2tp () {
 
 compdef _ovpn ovpn
 compdef _l2tp l2tp
+
+for file in $OZSH/plugins/django/django.plugin.zsh; do
+  [ -f $file ] && source $file
+done
+
