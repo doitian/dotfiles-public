@@ -24,7 +24,9 @@ function _gemset() {
   local -a _actions _gemsets
   _actions=(active create delete file list version)
   _gemsets=($(rbenv gemset list | grep '^ ' | uniq))
-  _arguments ":action: _values actions ${_actions} ${_gemsets}" '*::arguments: _sudo'
+  _arguments -s : \
+    --global \
+    ":action: _values actions ${_actions} ${_gemsets}" '*::arguments: _sudo'
 }
 compdef _gemset gemset
 
