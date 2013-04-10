@@ -8,7 +8,7 @@ set activate+=paste
 
 let mapleader = ","
 
-command! resource :source .vimperatorrc
+command! resource :source ~/.vimperatorrc
 
 " history
 map <A-[> H
