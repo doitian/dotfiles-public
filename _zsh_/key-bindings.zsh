@@ -1,7 +1,8 @@
 # TODO: Explain what some of this does..
 
 bindkey -e
-bindkey '\ew' kill-region
+bindkey '\ew' copy-region-as-kill
+bindkey '^W' kill-region
 bindkey '\er' backward-kill-word
 bindkey -s '\el' "-"
 bindkey -s '\eu' "_"
