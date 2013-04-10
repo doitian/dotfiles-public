@@ -63,6 +63,9 @@ mkdir -p "$HOME/.local/share/Trash"
 ln -snf "$BACKUP_DIR/bin/tools" "$HOME/bin/pt"
 ln -snf "$BACKUP_DIR/bin/tools" "$HOME/bin/ghi"
 ln -snf "$BACKUP_DIR/bin/xopen" "$HOME/bin/open"
+ln -snf "$BACKUP_DIR/bin/firefox-launcher" "$HOME/bin/firefox-default"
+ln -snf "$BACKUP_DIR/bin/firefox-launcher" "$HOME/bin/firefox-dta"
+ln -snf "$BACKUP_DIR/bin/firefox-launcher" "$HOME/bin/firefox-dev"
 
 ln -snf "$HOME/.cvsignore" "$HOME/.agignore"
 

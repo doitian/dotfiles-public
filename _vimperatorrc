@@ -1,15 +1,14 @@
 set editor=vimperator-editor
 set defsearch=-g
 set gui=none
-
+set wildmode=list:full
 set newtab=all
-set activate+=paste
 set popups=resized
-set hintchars="asdfg;lkjh"
-set focuscontent
-set messagetimeout=1000
+set activate+=paste
 
-" colorscheme zenburn
+let mapleader = ","
+
+command! resource :source .vimperatorrc
 
 " history
 map <A-[> H
@@ -35,24 +34,15 @@ imap <A-{> <ESC>gT
 cmap <A-}> <ESC>gt
 cmap <A-{> <ESC>gT
 
-map <C-A-}> :tabmove +1<return>
-map <C-A-{> :tabmove -1<return>
-imap <C-A-}> <ESC>:tabmove +1<return>
-imap <C-A-{> <ESC>:tabmove -1<return>
-cmap <C-A-}> <ESC>:tabmove +1<return>
-cmap <C-A-{> <ESC>:tabmove -1<return>
-
-map <C-b> :tabmove 
-
 " move
 map <BS> <C-b>
 map <C-n> <C-v><Down>
 map <C-p> <C-v><Up>
 
-" quote
-map <C-q> <A-b>
-imap <C-q> <A-b>
-cmap <C-q> <A-b>
+" no quit
+map <C-q> <Nop>
+imap <C-q> <Nop>
+cmap <C-q> <Nop>
 
 nmap <A-Space> gi
 
@@ -91,17 +81,27 @@ imap <A-r> <C-BS>
 imap <C-h> <BS>
 
 " helper
-map E <C-S-e><C-z>
-map x :open x-
-map s :open -
-map ! :open x-q<return>
+nmap <leader>B :set gui=invbookmarks<CR>
+nmap <leader>b :set gui=invtabs<CR>
+nmap <leader>d :bdelete -select right<Space>
+nmap <leader>D :bdelete! -select right<Space>
+nmap <leader>l :open x-later<CR>
+nmap <leader>a :open x-pin<CR>
+nmap <leader>r :open x-org<CR>
 
-" Keys
-" set passkeys+=mail.google.com:'jkxseopnUI<CR><Esc>/?,gi,gl,*r,*u,*n,*a'
-" set passkeys+=www.google.com/reader:'jknpomNPOASD<SPC><BS>'
-" set passkeys+=groups.google.com:'ojkJKnpNPhfaAcs/,gl,gm,gs'
-" set passkeys+=pinboard.in/add:'<Tab>'
+nmap <A-b> i<C-b>
+nmap E <C-S-e><C-z>
+nmap x :open x-
+nmap s :open -
 
-" Plugins
-loadplugins
+" default qmarks
+silent qmark m https://mail.google.com/mail
+silent qmark l http://www.instapaper.com/u
+silent qmark b http://www.pinboard.in
+silent qmark h https://github.com
+silent qmark y https://news.ycombinator.com/
+silent qmark t https://twitter.com/doitian/fav
 
+silent ignorekeys add www\\.google\\.com/reader
+silent ignorekeys add mail\\.google\\.com
+silent ignorekeys add trello\\.com
