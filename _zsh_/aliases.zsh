@@ -6,7 +6,6 @@ OS_TYPE=`uname -s`
 alias e="emacs-dwim"
 alias et="emacs-dwim -t"
 alias en="emacs-dwim -n"
-alias g="git"
 alias fp="file-picker"
 alias vi='vim'
 alias v='vim'
@@ -42,6 +41,18 @@ alias yU="yaourt -Syu --aur --noconfirm"
 alias yc="yaourt -Sc"
 alias yD="yaourt -Qdt"
 alias yd="yaourt -Rcs"
+
+##################################################
+# Git
+alias g="git"
+alias gst="git st"
+alias ga="git add"
+alias gaa="git add -A"
+alias gau="git add -u"
+alias gl="git l"
+alias gll="git ll"
+alias glll="git lll"
+alias glg="git lg"
 
 ##################################################
 # File & Direcotry
