@@ -1,0 +1,7 @@
+PS1(">> ");
+edit author "Ian Yang"
+edit home ~/.octave
+edit license pd
+edit mode async
+
+addpath("~/.octave");
