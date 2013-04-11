@@ -1,5 +1,5 @@
 # -- THEME AUTO-WRITTEN BY gtk-theme-switch2 DO NOT EDIT
-include "/usr/share/themes/Zukitwo-Dark/gtk-2.0/gtkrc"
+include "/usr/share/themes/oxygen-gtk/gtk-2.0/gtkrc"
 
 include "/home/ian/.gtkrc-2.0.mine"
 

@@ -70,7 +70,7 @@ finish () {
   exit 0
 }
 
-[ -z "$DEBUG" ] && exec > >(dzen2 -x -200 -y -30 -fn "WenQuanYi Micro Hei-22" -w 200 -h 30 -fg "$FG" -bg "$BG")
+[ -z "$DEBUG" ] && exec > >(dzen2 -x -201 -y 1 -fn "WenQuanYi Micro Hei-20" -w 200 -h 30 -fg "$FG" -bg "$BG")
 
 if [ -n "$SOUND" ]; then
   mplayer -loop 0 ~/Dropbox/resources/audio/dita.mp3 &> /dev/null &
