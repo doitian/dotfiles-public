@@ -88,6 +88,8 @@ nmap <leader>D :bdelete! -select right<Space>
 nmap <leader>l :open x-later<CR>
 nmap <leader>a :open x-pin<CR>
 nmap <leader>r :open x-org<CR>
+nmap <leader>s :noscript toggletemp<CR>
+nmap <leader>S :noscript popup<CR>
 
 nmap <A-b> i<C-b>
 nmap E <C-S-e><C-z>
@@ -101,6 +103,7 @@ silent qmark b http://www.pinboard.in
 silent qmark h https://github.com
 silent qmark y https://news.ycombinator.com/
 silent qmark t https://twitter.com/doitian/fav
+silent qmark r http://www.feedly.com/home
 
 silent ignorekeys add www\\.google\\.com/reader
 silent ignorekeys add mail\\.google\\.com

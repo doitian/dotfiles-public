@@ -16,7 +16,7 @@
 #
 function launch() {
   typeset profile="$1"
-  typeset url="${2-about:home}"
+  typeset url="${2-about:newtab}"
 
   typeset firefox=firefox
   if [ -n "$profile" ]; then
