@@ -1,4 +1,4 @@
-gtk-icon-theme-name = "Faenza"
+gtk-icon-theme-name = "oxygen"
 
 gtk-font-name = "DejaVu Sans 11"
 style "user-font" {

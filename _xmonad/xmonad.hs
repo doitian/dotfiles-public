@@ -453,7 +453,7 @@ myFloatManageHook = composeOne . concat $
     , [ className =? x -?> doMaster | x <- masters ]
     ]
     where
-      cCenter = [ "Gmrun", "Gpicker", "Gcolor2", "Volti" ]
+      cCenter = [ "Gmrun", "Gpicker", "Gcolor2", "Volti", "Kupfer.py" ]
       masters = [ "Emacs" ]
       doCenterFloat' = doCenterFloat <+> doMaster
       doMaster = doF W.shiftMaster

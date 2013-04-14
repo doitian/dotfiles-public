@@ -20,6 +20,8 @@ run_daemon () {
     return 1
 }
 
+# run_daemon unclutter
+# run_daemon xcompmgr -c -C
 run_daemon volti
 #run_daemon trayer --edge right --widthtype request --transparent true --SetDockType true --SetPartialStrut true
 

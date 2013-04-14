@@ -3,6 +3,8 @@ text/plain=emacs-dwim.desktop
 inode/directory=pcmanfm.desktop
 x-scheme-handler/http=firefox-default.desktop
 x-scheme-handler/https=firefox-default.desktop
+application/zip=7zFM.desktop;
 
 [Added Associations]
 application/xml=firefox-default.desktop;
+application/zip=7zFM.desktop;

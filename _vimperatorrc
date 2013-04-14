@@ -83,8 +83,21 @@ imap <A-r> <C-BS>
 imap <C-h> <BS>
 
 " helper
-nmap <leader>B :set gui=invbookmarks<CR>
-nmap <leader>b :set gui=invtabs<CR>
+nmap e; :tabgroups<Space> 
+nmap ea :tabgroups add<Space> 
+nmap el :tabgroups list<CR>
+nmap eo :tabgroups pulltab<Space>
+nmap ep :tabgroups pushtab<Space>
+nmap ed :tabgroups rm<Space>
+nmap ee :tabgroups switch<Space>
+nmap en :tabgroups switch<Tab><Space>
+
+nmap e; :tabgroups<Space> 
+nmap e; :tabgroups<Space> 
+nmap e; :tabgroups<Space> 
+nmap <leader>gb :set gui=invbookmarks<CR>
+nmap <leader>gt :set gui=invtabs<CR>
+nmap <leader>gn :set gui=invnavigation<CR>
 nmap <leader>d :bdelete -select right<Space>
 nmap <leader>D :bdelete! -select right<Space>
 nmap <leader>l :open x-later<CR>
@@ -92,8 +105,12 @@ nmap <leader>a :open x-pin<CR>
 nmap <leader>r :open x-org<CR>
 nmap <leader>s :noscript toggletemp<CR>
 nmap <leader>S :noscript popup<CR>
+nmap <leader>/ :nohighlight<CR>
+nmap <leader>b :emenu View.Sidebar.Bookmarks<CR>
+nmap <leader>h :emenu View.Sidebar.History<CR>
+nmap <leader>l :emenu View.Sidebar.History<CR>
 
-nmap <A-b> i<C-b>
+nmap <A-b> :emenu View.Sidebar.Bookmarks<CR>
 nmap E <C-S-e><C-z>
 nmap x :open x-
 nmap s :open -

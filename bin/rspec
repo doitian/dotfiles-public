@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env zsh
 
 if [ -n "$1" ]; then
-  typeset filename="${1%:*}"
+  typeset filename="${@[-1]%:*}"
   if ! grep -qrF -e 'spec_helper' "$filename"; then
     exec gemset rspec rbenv exec rspec "$@"
   fi
