@@ -140,16 +140,16 @@ CSS
 style -name=myHackerNews news.ycombinator.com,news.dbanotes.net <<CSS
   body > center { max-width: 56em; margin: 1em auto; }
   .title, td > center > a  {
-    font-size: 16pt !important;
-    line-height: 16pt !important;
+    font-size: 14pt !important;
+    line-height: 14pt !important;
   }
   .comhead {
-    font-size: 12pt !important;
+    font-size: 10pt !important;
   }
   .subtext {
-    padding-top: 1em !important;
-    font-size: 10pt !important;
-    line-height: 12pt !important;
+    padding-top: 0.25em !important;
+    font-size: 8pt !important;
+    line-height: 10pt !important;
   }
   .comment {
     font-size: 12pt !important;
@@ -163,11 +163,11 @@ style -name=myHackerNews news.ycombinator.com,news.dbanotes.net <<CSS
     margin: 0 4pt;
   }
   td > center > a > img {
-    width: 15px;
-    height: 15px;
+    width: 12px;
+    height: 12px;
   }
 
   td > table > tbody > tr:nth-child(3n) {
-    height: 20px !important;
+    height: 10px !important;
   }
 CSS
