@@ -95,3 +95,16 @@ function ls-256colors() {
     printf "\x1b[38;5;${i}mcolour${i}\n"
   done
 }
+
+function ws {
+  local name="$1"
+  if [ -z "$name" ]; then
+    name=$(basename $(git rev-parse --show-toplevel 2> /dev/null))
+  fi
+  if [ -z "$name" ]; then
+    echo "requires a name or in git repository"
+    exit 1
+  fi
+  mkdir -p "$HOME/workspace/$name"
+  ln -nsf "$HOME/workspace/$name" workspace
+}

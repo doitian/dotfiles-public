@@ -46,3 +46,4 @@ zeus.json
 _obj
 .pt
 *.pyc
+/workspace
