@@ -47,3 +47,4 @@ _obj
 .pt
 *.pyc
 /workspace
+octave-core
