@@ -39,6 +39,7 @@ fi
 
 chmod -R u=rwX,go= $HOME/Dropbox/Secrets
 ln -snf "$HOME/Dropbox/Secrets/secrets.el" "$HOME/.emacs.d/secrets.el"
+ln -snf "$HOME/Dropbox/Documents/abbrev_defs" "$HOME/.emacs.d/abbrev_defs"
 ln -snf "$HOME/Dropbox/Secrets/irssi.pl" "$HOME/.irssi/config"
 ln -snf "$HOME/Dropbox/Secrets/gitconfig" "$HOME/.gitconfig"
 ln -snf "$HOME/Dropbox/Secrets/xunlei.lixian.config" "$HOME/.xunlei.lixian.config"

@@ -466,7 +466,7 @@ mySmartFloatManageHook = composeOne . concat $
   , [ (isDialog -?> doFloat') ] ]
   where
     cFloat  = [ "Zenity", "Stardict", "Update-manager", "Shutter", "MPlayer", "Vlc", "Parole" ]
-    rFloat  = [ "gimp-dock" ]
+    rFloat  = [ "gimp-dock", "Ediff" ]
     ffCenter = [ "Manager", "Extension", "Download", "Dialog", "Browser", "Toplevel" ]
     unFloat = ask >>= doF . W.sink
     doFullFloat' = doFullFloat <+> doMaster
