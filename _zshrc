@@ -11,7 +11,6 @@ for f in $ZSH/*.zsh; do
   [ -f "$f" ] && source "$f"
 done
 [ -f "$HOME/.xenv" ] && source "$HOME/.xenv"
-[ -f "$HOME/Dropbox/Secrets/secrets.sh" ] && source "$HOME/Dropbox/Secrets/secrets.sh"
 
 JIRA_RAPID_BOARD=yes
 for p (jira); do
