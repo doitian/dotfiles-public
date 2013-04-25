@@ -108,3 +108,5 @@ function ws {
   mkdir -p "$HOME/workspace/$name"
   ln -nsf "$HOME/workspace/$name" workspace
 }
+
+function hs { [ -z "$1" ] && history || (history | grep "$@") }

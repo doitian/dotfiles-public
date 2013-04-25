@@ -14,6 +14,7 @@ alias view='vim -R'
 ##################################################
 # Command Edit
 alias h=history
+alias hsi="hs -i"
 alias hl="history"
 alias hr="history -n"
 alias :q="exit"
