@@ -15,7 +15,7 @@ for arg; do
       ranger "$arg"
     fi
   elif echo "$arg" | grep -q ":[0-9]\+$"; then
-    emacs-dwim -n +"${arg##*:}" "${arg%:*}"
+    emacs-dwim +"${arg##*:}" "${arg%:*}" &> /dev/null &
   else
     if runningx; then
       local app=xdg-open
