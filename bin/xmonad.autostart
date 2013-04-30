@@ -20,14 +20,9 @@ run_daemon () {
     return 1
 }
 
-# run_daemon unclutter
-# run_daemon xcompmgr -c -C
-run_daemon volti
-#run_daemon trayer --edge right --widthtype request --transparent true --SetDockType true --SetPartialStrut true
-
 LC_ALL= LC_CTYPE=zh_CN.UTF-8 run_daemon emacs --daemon
+run_daemon volti
 run_daemon xscreensaver -no-splash
-#run_daemon parcellite
 run_daemon clipit
 run_daemon fcitx
 run_daemon pcmanfm -d
@@ -49,8 +44,6 @@ if which dropbox > /dev/null 2>&1; then
         fi
     ) &
 fi
-
-# $HOME/bin/start_msg.sh
 
 env | grep '^DBUS_SESSION_BUS_ADDRESS=\|^XAUTHORITY=\|^SSH_AUTH_SOCK=' > ~/.xenv
 echo "export DBUS_SESSION_BUS_ADDRESS XAUTHORITY SSH_AUTH_SOCK" >> ~/.xenv

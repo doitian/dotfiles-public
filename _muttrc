@@ -80,7 +80,7 @@ hdr_order from: to: cc: date: subject:                          # and in this or
 mailboxes +INBOX +drafts +starred +archive
 
 # always sourced
-#source $alias_file                                              # required for functionality
+source $alias_file                                              # required for functionality
 source ~/.mutt/colors.muttrc                                    # source colors file
 source ~/.mutt/ianyme.muttrc
 set mbox = +archive

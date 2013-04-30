@@ -110,3 +110,7 @@ function ws {
 }
 
 function hs { [ -z "$1" ] && history || (history | grep "$@") }
+
+function nocaps {
+  setxkbmap -option ctrl:nocaps
+}

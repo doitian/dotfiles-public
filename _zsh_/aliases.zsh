@@ -233,7 +233,6 @@ gop=$GOPATH
 dp=$HOME/Dump
 box=$HOME/Dropbox
 docs=$HOME/Documents
-dotfiles=$cb/dotfiles
 dotemacs=$HOME/.emacs.d
 dotvim=$HOME/.vim
 ohmyzsh=$HOME/.oh-my-zsh
