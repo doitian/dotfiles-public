@@ -130,10 +130,14 @@ silent ignorekeys add trello\\.com
 
 " userstyles
 
-" Fix toolbar icons in status bar
+colorscheme default
 delstyle
 
-style -name=myToolbarButton chrome://* <<CSS
+highlight Normal -append font-size: 11pt;
+highlight PromptText -append padding-top: 4px !important;
+
+style -name=myFirefox chrome://* <<CSS
+  #liberator-statusline { min-height: 28px !important; }
   #liberator-statusline:not([customizing="true"]) :-moz-any(toolbarbutton) { height: 24px !important; }
 CSS
 
