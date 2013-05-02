@@ -36,4 +36,17 @@ export RUBY_HEAP_SLOTS_GROWTH_FACTOR=1
 export RUBY_GC_MALLOC_LIMIT=1000000000
 export RUBY_HEAP_FREE_MIN=500000
 
-export PATH="$HOME/bin:$HOME/.play/play-default:$HOME/.rbenv/shims:$HOME/.rbenv/bin:$HOME/.cabal/bin:$HOME/.node-packages/bin:$GOPATH/bin:$PATH"
+# perl
+export PERL_LOCAL_LIB_ROOT="$PERL_LOCAL_LIB_ROOT:$HOME/.perl5";
+export PERL_MB_OPT="--install_base $HOME/.perl5";
+export PERL_MM_OPT="INSTALL_BASE=$HOME/.perl5";
+export PERL5LIB="$HOME/.perl5/lib/perl5:$PERL5LIB";
+
+export PATH="$HOME/bin\
+:$HOME/.rbenv/shims:$HOME/.rbenv/bin\
+:$HOME/.cabal/bin\
+:$HOME/.node-packages/bin\
+:$GOPATH/bin\
+:$HOME/.play/play-default\
+:$HOME/.perl5/bin\
+:$PATH"
