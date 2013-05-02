@@ -72,7 +72,7 @@ abstracts = {
   hilight = "%_$*%_";
 
   # any kind of error message, default is bright red
-  error = "%R$*%n";
+  error = "%r$*%n";
 
   # channel name is printed
   channel = "%_$*%_";
@@ -134,7 +134,7 @@ abstracts = {
   #  pubmsgmenick = "%K{msgnick $0 $1-%K}%n";
   #  pubmsghinick = "%K{msgnick $1 $0$2-%n%K}%n";
   #  ownprivmsgnick = "%K{msgnick  $*%K}%n";
-  #  privmsgnick = "%K{msgnick  %R$*%K}%n";
+  #  privmsgnick = "%K{msgnick  %r$*%K}%n";
 
   # $0 = nick mode, $1 = nick
   ownmsgnick = "{msgnick $0 $1-}";
@@ -156,17 +156,17 @@ abstracts = {
   msgchannel = "%K:%c$*%n";
 
   # private message, $0 = nick, $1 = host
-  privmsg = "[%R$0%K(%r$1-%K)%n] ";
+  privmsg = "[%r$0%K(%r$1-%K)%n] ";
 
   # private message from you, $0 = "msg", $1 = target nick
-  ownprivmsg = "[%r$0%K(%R$1-%K)%n] ";
+  ownprivmsg = "[%r$0%K(%r$1-%K)%n] ";
 
   # own private message in query
   ownprivmsgnick = "{msgnick  $*}";
   ownprivnick = "%_$*%n";
 
   # private message in query
-  privmsgnick = "{msgnick  %R$*%n}";
+  privmsgnick = "{msgnick  %r$*%n}";
 
   ##
   ## Actions (/ME stuff)
@@ -200,14 +200,14 @@ abstracts = {
   whois = "%# $[8]0 : $1-";
 
   # notices
-  ownnotice = "[%r$0%K(%R$1-%K)]%n ";
+  ownnotice = "[%r$0%K(%r$1-%K)]%n ";
   notice = "%K-%M$*%K-%n ";
   pubnotice_channel = "%K:%m$*";
   pvtnotice_host = "%K(%m$*%K)";
   servernotice = "%g!$*%n ";
 
   # CTCPs
-  ownctcp = "[%r$0%K(%R$1-%K)] ";
+  ownctcp = "[%r$0%K(%r$1-%K)] ";
   ctcp = "%g$*%n";
 
   # wallops
@@ -216,7 +216,7 @@ abstracts = {
   wallop_action = "%_ * $*%n ";
 
   # netsplits
-  netsplit = "%R$*%n";
+  netsplit = "%r$*%n";
   netjoin = "%C$*%n";
 
   # /names list
@@ -234,7 +234,7 @@ abstracts = {
 
   # DCC chat, own msg/action
   dccownmsg = "[%r$0%K($1-%K)%n] ";
-  dccownnick = "%R$*%n";
+  dccownnick = "%r$*%n";
   dccownquerynick = "%_$*%n";
   dccownaction = "{action $*}";
   dccownaction_target = "{action_core $0}%K:%c$1%n ";
