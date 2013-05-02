@@ -10,4 +10,4 @@ if [ -n "$1" ]; then
     shift
 fi
 
-mvn -B -D"${var_type}"="${var_name}" -Dfull=true -Ddetail=true help:describe "$@" | pager
+mvn -B -D"${var_type}"="${var_name}" -Dfull=true -Ddetail=true help:describe "$@" | less
