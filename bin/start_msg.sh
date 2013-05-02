@@ -3,9 +3,11 @@
 if ! tmux has-session -t msg; then
   env TMUX= tmux start-server \; set-option -g base-index 1 \; new-session -d -s msg -n daemons
   tmux new-window -t msg -n mutt
+  tmux new-window -t msg -n irssi
 
   tmux send-keys -t msg:1 "cd ~/codebase/daemons; foreman start" C-m
   tmux send-keys -t msg:2 "cd ~/Mail; mutt" C-m
+  tmux send-keys -t msg:3 "cd ~/.irssi; irssi" C-m
 
   set-window-option -t msg:1 monitor-activity off
   set-window-option -t msg:1 monitor-silence 600

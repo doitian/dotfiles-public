@@ -75,6 +75,8 @@ URxvt.font:xft:Terminus-12,xft:WenQuanYi Micro Hei Mono-12
 URxvt.boldFont:xft:Terminus-12:Bold,xft:WenQuanYi Micro Hei Mono-12:Bold
 scratchpad.font:xft:Terminus-10,xft:WenQuanYi Micro Hei Mono-10
 scratchpad.boldFont:xft:Terminus-10:Bold,xft:WenQuanYi Micro Hei Mono-10:Bold
+msg.font:xft:Inconsolata-14,xft:WenQuanYi Micro Hei-12
+msg.boldFont:xft:Inconsolata-14:Bold,xft:WenQuanYi Micro Hei-12:Bold
 
 URxvt.meta8: false
 URxvt.iso14755: false
