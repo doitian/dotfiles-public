@@ -1,4 +1,4 @@
-personal_ws-1.1 en 21 
+personal_ws-1.1 en 24 
 DZen
 IP
 acyclic
@@ -9,6 +9,7 @@ TCP
 Firefox
 refactor
 Univariate
+invertibility
 TODO
 Plugins
 param
@@ -18,5 +19,7 @@ Inbox
 summarization
 outerend
 NFS
+Covariant
+nonvariant
 ian
 Solr
