@@ -4,8 +4,6 @@ set show-all-if-ambiguous on
 "\e/":menu-complete
 "\C-x#":possible-filename-completions
 "\e#":complete-filename
-#"\eu":"_"
-#"\el":"-"
-"\eU":upcase-word
-"\eL":downcase-word
-#"\er":backward-kill-word
+#"\eU":upcase-word
+#"\eL":downcase-word
+"\e[3~":backward-kill-word

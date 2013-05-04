@@ -35,7 +35,7 @@ bindkey '^[[Z' reverse-menu-complete
 bindkey '^?' backward-delete-char
 bindkey "^[[3~" delete-char
 bindkey "^[3;5~" delete-char
-bindkey "\e[3~" delete-char
+bindkey "\e[3~" backward-kill-word
 
 bindkey -s '^X^Z' '%-^M'
 #bindkey '^[e' expand-cmd-path

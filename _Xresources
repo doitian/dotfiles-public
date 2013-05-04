@@ -87,7 +87,7 @@ URxvt*keysym.M-bracketright:  perl:keyboard-select:activate
 URxvt*keysym.M-bracketleft: perl:url-select:select_next
 URxvt*keysym.M-l: -
 URxvt*keysym.M-u: _
-URxvt*keysym.M-r: \027
+URxvt*keysym.M-r: \033\177
 URxvt*url-launcher: xopen
 URxvt*url-select.launcher: xopen
 URxvt*url-select.underline: true
