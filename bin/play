@@ -3,14 +3,18 @@
 set -e
 
 PLAY_VERSION=${PLAY_VERSION-global}
-PLAY_DIR="$HOME/.play"
+Play_DIR="$HOME/.play"
 PYTHON=python
 if [ -x /usr/bin/python2 ]; then
     PYTHON=/usr/bin/python2
 fi
 
 function play_exec {
-    exec $PYTHON "$PLAY_DIR/play-$PLAY_VERSION/play" "$@"
+    if head -n 1 "$PLAY_DIR/play-$PLAY_VERSION/play" |grep python; then
+      exec $PYTHON "$PLAY_DIR/play-$PLAY_VERSION/play" "$@"
+    else
+      "$PLAY_DIR/play-$PLAY_VERSION/play" "$@"
+    fi
 }
 
 function play_global_version {

@@ -1,4 +1,4 @@
-personal_ws-1.1 en 24 
+personal_ws-1.1 en 31 
 DZen
 IP
 acyclic
@@ -7,8 +7,10 @@ ACL
 ORBit
 TCP
 Firefox
+instantiations
 refactor
 Univariate
+Combinatorial
 invertibility
 TODO
 Plugins
@@ -18,8 +20,13 @@ startup
 Inbox
 summarization
 outerend
+Discriminative
 NFS
 Covariant
 nonvariant
 ian
+Variational
+Posteriori
+Undirected
 Solr
+Independencies
