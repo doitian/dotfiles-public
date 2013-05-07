@@ -3,7 +3,7 @@
 set -e
 
 PLAY_VERSION=${PLAY_VERSION-global}
-Play_DIR="$HOME/.play"
+PLAY_DIR="$HOME/.play"
 PYTHON=python
 if [ -x /usr/bin/python2 ]; then
     PYTHON=/usr/bin/python2
