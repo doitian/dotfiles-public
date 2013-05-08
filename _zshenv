@@ -1,4 +1,5 @@
 #!/usr/bin/env zsh
+export PAGER=/usr/bin/less
 export LANG=en_US.UTF-8
 export LC_CTYPE=$LANG
 export LC_ALL=$LANG
@@ -41,6 +42,9 @@ export PERL_LOCAL_LIB_ROOT="$PERL_LOCAL_LIB_ROOT:$HOME/.perl5";
 export PERL_MB_OPT="--install_base $HOME/.perl5";
 export PERL_MM_OPT="INSTALL_BASE=$HOME/.perl5";
 export PERL5LIB="$HOME/.perl5/lib/perl5:$PERL5LIB";
+
+# R
+export R_LIBS="$HOME/.rlibs"
 
 export PATH="$HOME/bin\
 :$HOME/.rbenv/shims:$HOME/.rbenv/bin\
