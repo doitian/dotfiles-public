@@ -114,6 +114,7 @@ nmap <A-b> :emenu View.Sidebar.Bookmarks<CR>
 nmap E <C-S-e><C-z>
 nmap x :open x-
 nmap s :open -
+nmap S :tabopen -
 
 " default qmarks
 silent qmark m https://mail.google.com/mail
