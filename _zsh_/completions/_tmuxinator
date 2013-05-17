@@ -24,7 +24,7 @@ else
   (( CURRENT -- ))
   case "$words[1]" in
     start|open|delete|copy)
-      projectlist=($(find $HOME/.tmuxinator -name '*.yml' -printf "%P\n" | sed 's/\.yml$//'))
+      projectlist=($(find -H $HOME/.tmuxinator -name '*.yml' -printf "%P\n" | sed 's/\.yml$//'))
       _describe -t projectlist 'tmuxinator project' projectlist && ret=0
       ;;
     *)

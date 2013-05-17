@@ -28,3 +28,4 @@ export GDK_NATIVE_WINDOWS=1
 export GDK_USE_XFT=1
 #export GNOME_DESKTOP_SESSION_ID=Default
 export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on'
+export GPODDER_HOME="$HOME/.gpodder"
