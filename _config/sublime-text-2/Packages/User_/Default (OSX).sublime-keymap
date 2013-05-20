@@ -1,2 +1,72 @@
 [
+  // Override Emacs bindings
+  { "keys": ["home"], "command": "move_to", "args": {"to": "bol", "extend": false} },
+  { "keys": ["end"], "command": "move_to", "args": {"to": "eol", "extend": false} },
+  { "keys": ["shift+end"], "command": "move_to", "args": {"to": "eol", "extend": true} },
+  { "keys": ["shift+home"], "command": "move_to", "args": {"to": "bol", "extend": true } },
+  { "keys": ["ctrl+x", "ctrl+x"], "command": "user_switch_sels"},
+  { "keys": ["ctrl+x", "ctrl+w"], "command": "prompt_save_as" },
+  { "keys": ["ctrl+x", "ctrl+n"], "command": "new_file" },
+  { "keys": ["alt+s", "alt+s"], "command": "show_overlay", "args": {"overlay": "goto", "show_files": true} },
+  { "keys": ["alt+x"], "command": "show_overlay", "args": {"overlay": "command_palette"} },
+  { "keys": ["alt+s", "p", "p"], "command": "prompt_select_project" },
+
+  // My Opinioned Bindigns
+  { "keys": ["alt+u"], "command": "insert", "args": {"characters": "_"} },
+  { "keys": ["alt+u"], "command": "upper_case", "context": [
+      { "key": "sbp_emacs_has_mark", "operator": "equal", "operand": true }
+  ]},
+  { "keys": ["alt+l"], "command": "insert", "args": {"characters": "-"} },
+  { "keys": ["alt+l"], "command": "lower_case", "context": [
+      { "key": "sbp_emacs_has_mark", "operator": "equal", "operand": true }
+  ]},
+  { "keys": ["alt+r"], "command": "delete_word", "args": { "forward": false } },
+
+  // Search & Replace
+  { "keys": ["alt+s", "v", "a"], "command": "show_panel", "args": {"panel": "replace"} },
+  { "keys": ["alt+g"], "command": "show_overlay", "args": {"overlay": "goto", "show_files": true, "text" : ":"}},
+  { "keys": ["alt+r"], "command": "toggle_regex", "context":
+    [
+      { "key": "setting.is_widget", "operator": "equal", "operand": true }
+    ]
+  },
+  { "keys": ["alt+w"], "command": "toggle_whole_word", "context":
+    [
+      { "key": "setting.is_widget", "operator": "equal", "operand": true }
+    ]
+  },
+  { "keys": ["ctrl+,", "a"], "command": "find_all_under" },
+  { "keys": ["alt+s", "8"], "command": "slurp_find_string" },
+  { "keys": ["ctrl+x", "f"], "command": "sbp_find_file_at_point" },
+  { "keys": ["alt+m", "<character>"], "command": "user_move_to_character", "args": {"forward": true}},
+  { "keys": ["alt+shift+m", "<character>"], "command": "user_move_to_character", "args": {"forward": false}},
+  { "keys": ["alt+m", "alt+u"], "command": "user_move_to_character", "args": {"character": "_"}},
+  { "keys": ["alt+m", "alt+l"], "command": "user_move_to_character", "args": {"character": "-"}},
+
+  // Bookmarks
+  // { "keys": ["f2"], "command": "next_bookmark" },
+  // { "keys": ["shift+f2"], "command": "prev_bookmark" },
+  // { "keys": ["ctrl+f2"], "command": "toggle_bookmark" },
+  // { "keys": ["ctrl+shift+f2"], "command": "clear_bookmarks" },
+  // { "keys": ["alt+f2"], "command": "select_all_bookmarks" },
+
+  // Rectangles
+  { "keys": ["ctrl+,", "t"], "command": "sbp_rectangle_insert" },
+  { "keys": ["ctrl+,", "d"], "command": "sbp_rectangle_delete" },
+
+  // Registers
+  { "keys": ["ctrl+,", "s"], "command": "sbp_register_store" },
+  { "keys": ["ctrl+,", "i"], "command": "sbp_register_insert" },
+
+  { "keys": ["ctrl+,", " "], "command": "sbp_point_to_register" },
+  { "keys": ["ctrl+,", "j"], "command": "sbp_point_from_register" },
+
+  // Multiple Cursors
+  { "keys": ["ctrl+,", "ctrl+n"], "command": "find_under_expand" },
+  { "keys": ["ctrl+,", "ctrl+k"], "command": "find_under_expand_skip" },
+  { "keys": ["ctrl+,", "ctrl+space"], "command": "toggle_in_selection", "context":
+    [
+      { "key": "setting.is_widget", "operator": "equal", "operand": true }
+    ]
+  }
 ]
