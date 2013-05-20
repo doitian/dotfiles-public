@@ -5,6 +5,11 @@
   { "keys": ["shift+end"], "command": "move_to", "args": {"to": "eol", "extend": true} },
   { "keys": ["shift+home"], "command": "move_to", "args": {"to": "bol", "extend": true } },
   { "keys": ["ctrl+x", "ctrl+x"], "command": "user_switch_sels"},
+  { "keys": ["ctrl+x", "ctrl+w"], "command": "prompt_save_as" },
+  { "keys": ["ctrl+x", "ctrl+n"], "command": "new_file" },
+  { "keys": ["alt+s", "alt+s"], "command": "show_overlay", "args": {"overlay": "goto", "show_files": true} },
+  { "keys": ["alt+x"], "command": "show_overlay", "args": {"overlay": "command_palette"} },
+  { "keys": ["alt+s", "p", "p"], "command": "prompt_select_project" },
 
   // My Opinioned Bindigns
 	{ "keys": ["alt+u"], "command": "insert", "args": {"characters": "_"} },
