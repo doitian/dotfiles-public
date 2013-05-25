@@ -50,3 +50,4 @@ _obj
 octave-core
 .ensime
 .ensime_lucene
+*.beam
