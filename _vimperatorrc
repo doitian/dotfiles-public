@@ -27,7 +27,6 @@ map <C-j> gt<ESC>
 map <C-k> gT<ESC>
 map <C-.> gb<ESC>
 map <C-,> gB<ESC>
-map D :tabdetach<return>
 
 map <A-}> gt
 map <A-{> gT
@@ -100,6 +99,7 @@ nmap <leader>gt :set gui=invtabs<CR>
 nmap <leader>gn :set gui=invnavigation<CR>
 nmap <leader>d :bdelete -select right<Space>
 nmap <leader>D :bdelete! -select right<Space>
+nmap <leader>N :tabdetach<return>
 nmap <leader>l :open x-later<CR>
 nmap <leader>p :open x-pin<CR>
 nmap <leader>r :open x-org<CR>
