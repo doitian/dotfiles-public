@@ -43,6 +43,7 @@ function launch() {
 }
 
 EXECUTABLE_BASENAME=$(basename "$0")
+exec &> /dev/null
 if [ "$EXECUTABLE_BASENAME" = firefox-launcher ] || [ "${EXECUTABLE_BASENAME#firefox-}" = "$EXECUTABLE_BASENAME" ]; then
   launch "$@"
 else
