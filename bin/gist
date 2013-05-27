@@ -1,4 +1,16 @@
 #!/usr/bin/env zsh
 
+set -e
 export RBENV_GEMSET_MAYBE="tools"
-exec rr gist "$@"
+
+GIST_ARG_COPY="-c"
+GIST_ARG_OPEN=
+if which runningx &> /dev/null && runningx; then
+    GIST_ARG_OPEN="-o"
+fi
+
+if which rlwrap &> /dev/null; then
+    exec rlwrap rr gist $GIST_ARG_COPY $GIST_ARG_OPEN "$@"
+else
+    exec rr gist $GIST_ARG_COPY $GIST_ARG_OPEN "$@"
+fi
