@@ -49,6 +49,10 @@ export PERL5LIB="$HOME/.perl5/lib/perl5:$PERL5LIB";
 # R
 export R_LIBS="$HOME/.rlibs"
 
+# Android
+export ANDROID_HOME=/opt/android-sdk
+export ANDROID_SWT=/usr/share/java
+
 export PATH="$HOME/bin\
 :$HOME/.rbenv/shims:$HOME/.rbenv/bin\
 :$HOME/.cabal/bin\
@@ -56,4 +60,5 @@ export PATH="$HOME/bin\
 :$GOPATH/bin\
 :$HOME/.play/play-default\
 :$HOME/.perl5/bin\
+:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools\
 :$PATH"
