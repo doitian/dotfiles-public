@@ -451,6 +451,7 @@ myFloatManageHook = composeOne . concat $
       ]
     , [ className =? x -?> doCenterFloat' | x <- cCenter ]
     , [ className =? x -?> doMaster | x <- masters ]
+    , [ resource =? "sun-awt-X11-XFramePeer" -?> unFloat ]
     ]
     where
       cCenter = [ "Gmrun", "Gpicker", "Gcolor2", "Volti", "Kupfer.py" ]
@@ -458,7 +459,8 @@ myFloatManageHook = composeOne . concat $
       doCenterFloat' = doCenterFloat <+> doMaster
       doMaster = doF W.shiftMaster
       role = stringProperty "WM_WINDOW_ROLE"
-      
+      unFloat = ask >>= doF . W.sink
+
 mySmartFloatManageHook = composeOne . concat $
   [ [ (isFullscreen -?> doFullFloat') ]
   , [ className =? x -?> doFloat' | x <- cFloat ]
@@ -467,8 +469,6 @@ mySmartFloatManageHook = composeOne . concat $
   where
     cFloat  = [ "Zenity", "Stardict", "Update-manager", "Shutter", "MPlayer", "Vlc", "Parole" ]
     rFloat  = [ "gimp-dock", "Ediff" ]
-    ffCenter = [ "Manager", "Extension", "Download", "Dialog", "Browser", "Toplevel" ]
-    unFloat = ask >>= doF . W.sink
     doFullFloat' = doFullFloat <+> doMaster
     doFloat' = doFloat <+> doMaster
     doMaster = doF W.shiftMaster
