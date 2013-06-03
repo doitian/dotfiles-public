@@ -13,7 +13,7 @@ done
 [ -f "$HOME/.xenv" ] && source "$HOME/.xenv"
 
 JIRA_RAPID_BOARD=yes
-for p (jira); do
+for p in jira django; do
   [ -f "$OZSH/plugins/${p}/${p}.plugin.zsh" ] && source "$OZSH/plugins/${p}/${p}.plugin.zsh"
 done
 

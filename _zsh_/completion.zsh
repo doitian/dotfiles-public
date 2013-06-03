@@ -2,10 +2,6 @@ autoload -U compinit
 
 fpath=(
   $ZSH/completions
-  $OZSH/plugins/gem
-  $OZSH/plugins/github
-  $OZSH/plugins/bundler
-  $OZSH/plugins/extract
   $fpath
 )
 zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b'
@@ -117,8 +113,3 @@ _l2tp () {
 
 compdef _ovpn ovpn
 compdef _l2tp l2tp
-
-for file in $OZSH/plugins/django/django.plugin.zsh; do
-  [ -f $file ] && source $file
-done
-

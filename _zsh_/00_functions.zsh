@@ -109,6 +109,22 @@ function ws {
   ln -nsf "$HOME/workspace/$name" workspace
 }
 
+function ep {
+  local name="$1"
+  if [ -z "$name" ]; then
+    name=$(basename $(git rev-parse --show-toplevel 2> /dev/null))
+  fi
+  if [ -z "$name" ]; then
+    echo "requires a name or in git repository"
+    exit 1
+  fi
+  if ! [ -f "$HOME/Dropbox/dotfiles/eproject/$name" ]; then
+    touch .eproject
+    cp .eproject "$HOME/Dropbox/dotfiles/eproject/$name"
+  fi
+  ln -nsf "$HOME/Dropbox/dotfiles/eproject/$name" .eproject
+}
+
 function hs { [ -z "$1" ] && history || (history | grep "$@") }
 
 function nocaps {

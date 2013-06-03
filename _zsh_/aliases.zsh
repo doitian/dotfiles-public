@@ -217,6 +217,12 @@ alias vpncloud='l2tp stop; l2tp --route igssh'
 
 alias dj=django
 
+alias vboxmanage=VBoxManage
+alias vboxheadless=VBoxHeadless
+
+alias vbox=VBoxManage
+alias vheadless=VBoxHeadless
+
 ##################################################
 # Ext Aliases
 alias -s html=w3m
