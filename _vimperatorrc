@@ -1,5 +1,5 @@
 set editor=vimperator-editor
-set defsearch=-ddg
+set defsearch=-g
 set gui=none,bookmarks,tabs
 set wildmode=list:full
 set newtab=all
