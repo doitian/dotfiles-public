@@ -185,6 +185,10 @@ pads = [ NS "term"
          (myTerminal ++ " -name music -e sh -l -c '$HOME/bin/start_cmus.sh attach'")
          (resource =? "music" <&&> className =? myTerminalClass)
          (customFloating $ W.RationalRect 0 0.02 0.6 0.98)
+       , NS "speedbar"
+         ("emacsclient -e '(speedbar +1)'")
+         (resource =? "speedbar" <&&> className =? "Emacs")
+         (customFloating $ W.RationalRect 0 0.02 0.3 0.98)
        ]
 
 -- unused char
@@ -195,6 +199,8 @@ myKeys =  \conf -> mkKeymap conf $
     , ("M-`", namedScratchpadAction pads "term") -- quake terminal
     , ("M-m", namedScratchpadAction pads "msg") -- quake msg
     , ("M-S-m", namedScratchpadAction pads "music") -- quake music
+    , ("M-S-i", namedScratchpadAction pads "speedbar") -- Emacs Speedbar
+    , ("M-C-i", namedScratchpadAction pads "speedbar") -- Emacs Speedbar
 
     -- prompt
     , ("M-p g", windowPromptGoto myWaitSP) -- window go prompt
@@ -448,6 +454,7 @@ myFloatManageHook = composeOne . concat $
       , (className =? "Screenkey" -?> doIgnore)
       , (className =? "stalonetray" -?> doIgnore)
       , (role =? "gimp-toolbox" -?> doMaster)
+      , (resource =? "Ediff" -?> doFloat')
       ]
     , [ className =? x -?> doCenterFloat' | x <- cCenter ]
     , [ className =? x -?> doMaster | x <- masters ]
@@ -460,6 +467,7 @@ myFloatManageHook = composeOne . concat $
       doMaster = doF W.shiftMaster
       role = stringProperty "WM_WINDOW_ROLE"
       unFloat = ask >>= doF . W.sink
+      doFloat' = doFloat <+> doMaster
 
 mySmartFloatManageHook = composeOne . concat $
   [ [ (isFullscreen -?> doFullFloat') ]
