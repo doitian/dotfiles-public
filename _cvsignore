@@ -32,6 +32,7 @@ doc/tags
 .emacs.desktop.lock
 .emacs.bmk
 .eproject
+.eproject-files
 project.org
 dir
 node_modules
