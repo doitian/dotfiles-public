@@ -217,7 +217,7 @@ myKeys =  \conf -> mkKeymap conf $
     , ("M-S-o", spawn "xopen -") -- open current selection
 
     -- app
-    , ("M-o", runOrRaiseNext "firefox-launcher" (className =? "Firefox" <||> className =? "Google-chrome" <||> className =? "Chromium")) -- browser
+    , ("M-o", runOrRaiseNext "google-chrome" (className =? "Firefox" <||> className =? "Google-chrome" <||> className =? "Chromium")) -- browser
     , ("M-i", runOrRaiseNext "emacs-dwim" (className =? "Emacs")) --emacs
     , ("M-u", runOrRaiseNext myTerminal (className =? myTerminalClass <&&> resource /=? "scratchpad")) -- raise next terminal
 
@@ -455,6 +455,7 @@ myFloatManageHook = composeOne . concat $
       , (className =? "stalonetray" -?> doIgnore)
       , (role =? "gimp-toolbox" -?> doMaster)
       , (resource =? "Ediff" -?> doFloat')
+      , (className =? "Google-chrome" <&&> role =? "pop-up" -?> doFloat')
       ]
     , [ className =? x -?> doCenterFloat' | x <- cCenter ]
     , [ className =? x -?> doMaster | x <- masters ]

@@ -1,10 +1,10 @@
 [Default Applications]
 text/plain=emacs-dwim.desktop
 inode/directory=pcmanfm.desktop
-x-scheme-handler/http=firefox-default.desktop
-x-scheme-handler/https=firefox-default.desktop
+x-scheme-handler/http=google-chrome.desktop
+x-scheme-handler/https=google-chrome.desktop
 application/zip=7zFM.desktop;
 
 [Added Associations]
-application/xml=firefox-default.desktop;
+application/xml=google-chrome.desktop;
 application/zip=7zFM.desktop;

@@ -223,6 +223,12 @@ alias vboxheadless=VBoxHeadless
 alias vbox=VBoxManage
 alias vheadless=VBoxHeadless
 
+alias ap=apack
+alias al=als
+alias au=aunpack
+alias ac=acat
+alias ad=adiff
+
 ##################################################
 # Ext Aliases
 alias -s html=w3m
