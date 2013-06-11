@@ -1,10 +1,11 @@
-remove Lock = Caps_Lock
-keysym Caps_Lock = Control_L
+keycode 66 = Control_L
+keycode 135 = Control_R
+keycode 105 = Hyper_R
+
 add Control = Control_L
-keysym Menu = Control_R
 add Control = Control_R
-keysym Control_R = Hyper_R
 add mod3 = Hyper_R
 
 keycode 418 = Page_Up
 keycode 419 = Page_Down
+
