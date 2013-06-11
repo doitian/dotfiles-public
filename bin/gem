@@ -10,7 +10,9 @@ elif [ "$1" = 'la' ]; then
     \$_ = vs.collect do |v|
       basename = [n, v].join('-')
       dir = Gem.path.find { |p| File.exists?(File.join(p, 'gems', basename))}
-      if vs.size == 1
+      if dir.nil?
+        %Q|#{n} #{Gem.loaded_specs[n].gem_dir}|
+      elsif vs.size == 1
         %Q|#{n} #{dir}/gems/#{basename}|
       else
         %Q|#{basename} #{dir}/gems/#{basename}|
