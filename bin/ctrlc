@@ -3,4 +3,8 @@
 # echo ~/.ssh/id_rsa.pub | ctrlc
 # Then CTRL-v in Chrome
 
-exec xclip -selection clipboard "$@"
+if [ -x /usr/bin/pbcopy ]; then
+  exec pbcopy "$@"
+else
+  exec xclip -selection clipboard "$@"
+fi

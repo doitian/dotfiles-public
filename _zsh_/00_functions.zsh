@@ -51,20 +51,6 @@ function vman() {
   fi
 }
 
-# tmux-new-or-attach(session)
-function tmux-new-or-attach() {
-  local session="$1"
-  if ! $(tmux has-session -t "$session"); then
-    env TMUX= tmux new-session -d -s "$session"
-  fi
-
-  if [ -z "$TMUX" ]; then
-    tmux -u attach-session -t "$session"
-  else
-    tmux -u switch-client -t "$session"
-  fi
-}
-
 # take
 # Create directory and cd to it
 function take() {

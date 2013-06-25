@@ -1,4 +1,4 @@
 #!/usr/bin/env zsh
 
-export RBENV_GEMSET_MAYBE="generator"
+export RBENV_GEMSET_MAYBE="tools"
 exec zeus-maybe rails "$@"

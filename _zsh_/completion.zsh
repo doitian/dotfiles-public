@@ -2,6 +2,7 @@ autoload -U compinit
 
 fpath=(
   $ZSH/completions
+  /usr/local/share/zsh-completions
   $fpath
 )
 zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b'

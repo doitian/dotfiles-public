@@ -39,9 +39,9 @@ alias lolcat="gemset --global tools lolcat"
 alias mux="tmuxinator"
 compdef _tmuxinator mux
 alias tss="tmuxinator start"
-alias cap='gemset --global deploy cap'
-alias capify='gemset --global deploy capify'
-alias mina='gemset --global deploy mina'
+alias cap='gemset --global tools cap'
+alias capify='gemset --global tools capify'
+alias mina='gemset --global tools mina'
 alias rpry='gemset debug rails-console-pry -r awesome_print -r pry-doc -r hirb -r pry-nav -r pry-git -r pry-stack_explorer'
 alias pry='gemset --global debug pry'
 alias irb='pry'
@@ -87,7 +87,7 @@ bundler-exec() {
   else
     case "$1" in
       nanoc)
-        gemset generator "$@"
+        gemset tools "$@"
         ;;
       *)
         "$@"

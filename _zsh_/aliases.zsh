@@ -6,6 +6,11 @@ OS_TYPE=`uname -s`
 alias e="emacs-dwim"
 alias et="emacs-dwim -t"
 alias en="emacs-dwim -n"
+if [ "$OS_TYPE" = "Darwin" ]; then
+  alias e="emacs-dwim.mac"
+  alias et="emacs-dwim.mac -t"
+  alias en="emacs-dwim.mac -n"
+fi
 alias fp="file-picker"
 alias vi='vim'
 alias v='vim'
