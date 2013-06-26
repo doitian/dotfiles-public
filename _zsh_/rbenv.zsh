@@ -49,6 +49,7 @@ alias sequel='gemset debug sequel'
 alias puma='gemset debug puma'
 alias puma3000='gemset debug puma -p 3000'
 alias ey='gemset --global tools ey'
+alias powder='gemset --global tools powder'
 
 if [ -f $HOME/.rbenv/completions/rbenv.zsh ]; then
   source $HOME/.rbenv/completions/rbenv.zsh

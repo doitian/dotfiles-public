@@ -2,7 +2,7 @@
 
 bindkey -e
 bindkey '\ew' copy-region-as-kill
-bindkey '^W' kill-region
+bindkey '^W' backward-kill-word
 bindkey '\er' backward-kill-word
 bindkey -s '\el' "-"
 bindkey -s '\eu' "_"

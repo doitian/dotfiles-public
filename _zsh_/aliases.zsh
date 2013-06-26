@@ -213,9 +213,38 @@ alias vtig="GIT_EDITOR=vim tig"
 alias urlencode='node -e "console.log(encodeURIComponent(process.argv[1]))"'
 alias urldecode='node -e "console.log(decodeURIComponent(process.argv[1]))"'
 
-alias start="sudo systemctl start "
-alias stop="sudo systemctl stop "
-alias restart="sudo systemctl restart "
+if which systemctl &> /dev/null; then
+  alias start="sudo systemctl start "
+  alias stop="sudo systemctl stop "
+  alias restart="sudo systemctl restart "
+else
+  function start() {
+    case "$1" in
+      mysql)
+        mysql.server start
+        ;;
+      pg|postgres)
+        pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start
+        ;;
+      *)
+        echo 'Usage: start mysql|pg|postgres'
+        ;;
+    esac
+  }
+  function stop() {
+    case "$1" in
+      mysql)
+        mysql.server stop
+        ;;
+      pg|postgres)
+        pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log stop
+        ;;
+      *)
+        echo 'Usage: stop mysql|pg|postgres'
+        ;;
+    esac
+  }
+fi
 
 alias igssh='l2tp stop; l2tp --route igssh'
 alias vpncloud='l2tp stop; l2tp --route igssh'
