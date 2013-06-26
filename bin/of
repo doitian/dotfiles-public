@@ -1,4 +1,0 @@
-#!/bin/bash
-
-export RBENV_VERSION="1.9.3-p429"
-gemset tools rbenv exec of "$@"
