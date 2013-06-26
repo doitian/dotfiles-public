@@ -2,10 +2,8 @@
 	"color_scheme": "Packages/Color Scheme - Default/Monokai.tmTheme",
 	"font_size": 15,
 	"highlight_line": false,
-	"ignored_packages":
-	[
-		"Vintage"
-	],
+	"ignored_packages":	[],
+  "vintage_start_in_command_mode": true,
 	"tab_size": 2,
 	"translate_tabs_to_spaces": true,
 	"use_tab_stops": true
