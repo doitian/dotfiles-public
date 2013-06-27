@@ -5,3 +5,4 @@ edit license pd
 edit mode async
 
 addpath("~/.octave");
+setenv("GNUTERM", "X11");

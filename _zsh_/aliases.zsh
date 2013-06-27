@@ -6,11 +6,6 @@ OS_TYPE=`uname -s`
 alias e="emacs-dwim"
 alias et="emacs-dwim -t"
 alias en="emacs-dwim -n"
-if [ "$OS_TYPE" = "Darwin" ]; then
-  alias e="emacs-dwim.mac"
-  alias et="emacs-dwim.mac -t"
-  alias en="emacs-dwim.mac -n"
-fi
 alias fp="file-picker"
 alias vi='vim'
 alias v='vim'
@@ -226,6 +221,9 @@ else
       pg|postgres)
         pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start
         ;;
+      redis)
+        redis-server /usr/local/etc/redis.conf
+        ;;
       *)
         echo 'Usage: start mysql|pg|postgres'
         ;;
@@ -238,6 +236,9 @@ else
         ;;
       pg|postgres)
         pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log stop
+        ;;
+      redis)
+        killall redis-server
         ;;
       *)
         echo 'Usage: stop mysql|pg|postgres'
