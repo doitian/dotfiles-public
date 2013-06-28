@@ -83,8 +83,12 @@ alias tree='tree -CFA -I ".git" --dirsfirst'
 alias pu='pushd'
 alias po='popd'
 
-if [ "$OS_TYPE" != "Darwin" ] && which ruby &> /dev/null; then
-  alias rm="rm.rb -I"
+if which ruby &> /dev/null; then
+  if [ "$OS_TYPE" = "Darwin" ]; then
+    alias rm="$HOME/.rm-trash/rm.rb"
+  else
+    alias rm="rm.rb -I"
+  fi
 fi
 alias mv="mv -i"
 alias cp="cp -i"

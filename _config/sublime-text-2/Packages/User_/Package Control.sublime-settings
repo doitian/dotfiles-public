@@ -2,6 +2,7 @@
 	"installed_packages":
 	[
 		"Package Control",
-		"sublemacspro"
+		"sublemacspro",
+		"Theme - Flatland"
 	]
 }

@@ -33,6 +33,9 @@ _rexec() {
     else
       GEM_PATH="$GEM_PATH:$HOME/.bundle/$GEM_VERSION"
     fi
+    if [ -d "$HOME/.bundle/$GEM_VERSION/ruby/1.9.1" ]; then
+      GEM_PATH="$GEM_PATH:$HOME/.bundle/$GEM_VERSION/ruby/1.9.1"
+    fi
     export GEM_PATH
     typeset command="$1"
     shift

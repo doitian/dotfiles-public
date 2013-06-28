@@ -1,0 +1,35 @@
+#! /bin/bash
+# classifies a list of mirrors by ping response speed.
+# dump input from stdin, such as:
+#  ping.test < mirror_list
+# usage (options allowed):
+#  ping.test    ---> list sorted by response speed in ms.
+#  ping.test -q  ---> outputs [ONLY] the fastest server.
+#  ping.test -v  ---> verbose mode.
+
+# cmdline options:
+while getopts ":qv" opt; do
+  case $opt in
+      q) exec 2>/dev/null ;; # quiet mode; only outputs fastest server.
+      v) verbose=1 ;;        # full output.
+      *) echo >&2 "ERROR: CMDLINE opts allowed are -q or -v" && exit 1;;
+  esac
+done
+
+# sorting
+PING_atempts=5 # change 
+echo >&2 "Be patient, this might take a while..."
+LIST="$(while read mirror; do echo >&2 "Testing \"$mirror\"";
+    speed="$(ping -q -c $PING_atempts $mirror 2>&1 |\
+    awk -F '/' '{if(/^round-trip /){print $5}}')" # rtts avg 
+    printf "%-25s ----> %s\n" $mirror $speed; done;)"
+SORTED_LIST=$(echo "$LIST" | sort -k 3)
+
+# output
+if [ "$verbose" == "1" ]; then
+    echo >&2 "Sorting results, time is in ms:"
+    echo "${SORTED_LIST}"
+else
+    echo "${SORTED_LIST}" | sed -n "1s/ .*//p"
+fi
+

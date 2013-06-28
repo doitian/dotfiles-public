@@ -1,6 +1,7 @@
 #!/usr/bin/env zsh
 
-VAR_GEMSETS=(global rspec zeus tools deploy debug generator passenger)
+#VAR_GEMSETS=(global rspec zeus tools deploy debug passenger)
+VAR_GEMSETS=(global rspec zeus tools deploy debug)
 VAR_GEMS_global=(bundler gem-browse)
 VAR_GEMS_zeus=(zeus)
 VAR_GEMS_rspec=(rspec)
