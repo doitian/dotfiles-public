@@ -45,28 +45,13 @@
 				"args": {
 					"dir_limit_depth": 3
 				}
-			},
-      {
-        "name": "newline",
-        "type": "string",
-        "contents": "\n",
-        "highlight_group": ["newline"],
-        "draw_hard_divider": false,
-        "draw_soft_divider": false
-      },
-      {
-        "name": "prompt",
-        "type": "string",
-        "contents": "$ ",
-        "highlight_group": ["prompt"],
-        "draw_hard_divider": false,
-        "draw_soft_divider": false
-      }
+			}
 		],
 		"right": [
 			{
 				"module": "powerline.segments.shell",
-				"name": "last_pipe_status"
+				"name": "last_pipe_status",
+				"after": "↩"
 			}
 		]
 	}

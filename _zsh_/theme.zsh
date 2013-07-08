@@ -31,6 +31,9 @@ autoload colors; colors;
 setopt prompt_subst
 
 source ~/.powerline/powerline/bindings/zsh/powerline.zsh
+
+PROMPT="$PROMPT
+%{[1;32m%}➥ %{[00m%}"
 return
 
 if [ -f "$OZSH/plugins/gitfast/git-prompt.sh" ]; then

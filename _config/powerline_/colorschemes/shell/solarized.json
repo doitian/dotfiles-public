@@ -16,8 +16,6 @@
 		"hostname":           { "fg": "oldlace", "bg": "darkgreencopper" },
 		"exit_fail":          { "fg": "oldlace", "bg": "red" },
 		"exit_success":       { "fg": "oldlace", "bg": "green" },
-		"environment":        { "fg": "oldlace", "bg": "green" },
-		"newline":            { "fg": "oldlace", "bg": "iterm2bg" },
-		"prompt":             { "fg": "gray61", "bg": "royalblue5" }
+		"environment":        { "fg": "oldlace", "bg": "green" }
 	}
 }
