@@ -1,0 +1,74 @@
+{
+	"default_module": "powerline.segments.common",
+	"segment_data": {
+		"hostname": {
+			"before": " ",
+			"args": {
+				"only_if_ssh": true
+			}
+		},
+		"virtualenv": {
+			"before": "ⓔ "
+		},
+		"rbenv": {
+			"before": "◈ "
+		},
+		"branch": {
+			"before": " ",
+			"args": {
+				"status_colors": true
+			}
+		}
+	},
+	"segments": {
+		"left": [
+			{
+				"name": "hostname"
+			},
+			{
+				"name": "user"
+			},
+			{
+				"name": "virtualenv"
+			},
+			{
+				"module": "powerlinex.segment.rbenv",
+        "draw_inner_divider": true,
+				"name": "rbenv"
+			},
+			{
+				"module": "powerlinex.segment.git-branch-osx",
+				"name": "branch"
+			},
+			{
+				"name": "cwd",
+				"args": {
+					"dir_limit_depth": 3
+				}
+			},
+      {
+        "name": "newline",
+        "type": "string",
+        "contents": "\n",
+        "highlight_group": ["newline"],
+        "draw_hard_divider": false,
+        "draw_soft_divider": false
+      },
+      {
+        "name": "prompt",
+        "type": "string",
+        "contents": "$ ",
+        "highlight_group": ["prompt"],
+        "draw_hard_divider": false,
+        "draw_soft_divider": false
+      }
+		],
+		"right": [
+			{
+				"module": "powerline.segments.shell",
+				"name": "last_pipe_status"
+			}
+		]
+	}
+}
+

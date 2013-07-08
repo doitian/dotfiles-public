@@ -30,6 +30,9 @@ autoload colors; colors;
 # fi
 setopt prompt_subst
 
+source ~/.powerline/powerline/bindings/zsh/powerline.zsh
+return
+
 if [ -f "$OZSH/plugins/gitfast/git-prompt.sh" ]; then
   source "$OZSH/plugins/gitfast/git-prompt.sh"
   GIT_PS1_SHOWUPSTREAM="auto"

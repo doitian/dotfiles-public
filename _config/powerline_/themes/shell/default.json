@@ -1,0 +1,56 @@
+{
+	"default_module": "powerline.segments.common",
+	"segment_data": {
+		"hostname": {
+			"before": " ",
+			"args": {
+				"only_if_ssh": true
+			}
+		},
+		"virtualenv": {
+			"before": "ⓔ "
+		},
+		"rbenv": {
+			"before": "◈ "
+		},
+		"branch": {
+			"before": " ",
+			"args": {
+				"status_colors": true
+			}
+		}
+	},
+	"segments": {
+		"left": [
+			{
+				"name": "hostname"
+			},
+			{
+				"name": "user"
+			},
+			{
+				"name": "virtualenv"
+			},
+			{
+				"module": "powerlinex.segment.rbenv",
+				"name": "rbenv"
+			},
+			{
+				"name": "cwd",
+				"args": {
+					"dir_limit_depth": 3
+				}
+			}
+		],
+		"right": [
+			{
+				"module": "powerline.segments.shell",
+				"name": "last_pipe_status"
+			},
+			{
+				"module": "powerlinex.segment.git-branch-osx",
+				"name": "branch"
+			}
+		]
+	}
+}

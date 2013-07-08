@@ -49,6 +49,9 @@ export PERL5LIB="$HOME/.perl5/lib/perl5:$PERL5LIB";
 # R
 export R_LIBS="$HOME/.rlibs"
 
+# Python
+export PYTHONPATH="$HOME/.pylibs"
+
 # Android
 if [ -d "$HOME/Applications/adt" ]; then
   export ANDROID_HOME="$HOME/Applications/adt/sdk"
@@ -67,4 +70,5 @@ export PATH="$HOME/bin\
 :$HOME/.perl5/bin\
 :/usr/local/heroku/bin\
 :$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools\
+:$HOME/Library/Python/2.7/bin\
 :$PATH"
