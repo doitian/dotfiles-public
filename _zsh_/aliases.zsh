@@ -217,38 +217,12 @@ if which systemctl &> /dev/null; then
   alias stop="sudo systemctl stop "
   alias restart="sudo systemctl restart "
 else
-  function start() {
-    case "$1" in
-      mysql)
-        mysql.server start
-        ;;
-      pg|postgres)
-        pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start
-        ;;
-      redis)
-        redis-server /usr/local/etc/redis.conf
-        ;;
-      *)
-        echo 'Usage: start mysql|pg|postgres'
-        ;;
-    esac
-  }
-  function stop() {
-    case "$1" in
-      mysql)
-        mysql.server stop
-        ;;
-      pg|postgres)
-        pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log stop
-        ;;
-      redis)
-        killall redis-server
-        ;;
-      *)
-        echo 'Usage: stop mysql|pg|postgres'
-        ;;
-    esac
-  }
+  alias start.mysql="mysql.server start"
+  alias start.pg="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start"
+  alias start.redis="redis-server /usr/local/etc/redis.conf"
+  alias stop.mysql="mysql.server stop"
+  alias stop.pg="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log stop"
+  alias stop.redis="killall redis-server"
 fi
 
 alias igssh='l2tp stop; l2tp --route igssh'

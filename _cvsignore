@@ -52,3 +52,5 @@ octave-core
 .ensime
 .ensime_lucene
 *.beam
+*.sublime-project
+*.sublime-workspace

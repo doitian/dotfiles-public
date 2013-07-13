@@ -33,7 +33,8 @@ setopt prompt_subst
 source ~/.powerline/powerline/bindings/zsh/powerline.zsh
 
 PROMPT="$PROMPT
-%{[1;32m%}➥ %{[00m%}"
+%(1j.[%j] .)%{[1;32m%}➥ %{[00m%}"
+
 return
 
 if [ -f "$OZSH/plugins/gitfast/git-prompt.sh" ]; then
@@ -43,8 +44,6 @@ else
   function __git_ps1_show_upstream () {}
 fi
 
-function dev_env_prompt_info() {
-  if [ -n "${CD_VIRTUAL_ENV}" ]; then
     echo "‹py-$(python --version 2>&1 | awk '{print $2}')|${CD_VIRTUAL_ENV}›"
   else
     rbenv_prompt_info
