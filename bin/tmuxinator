@@ -1,0 +1,6 @@
+#!/bin/sh
+
+TMUXINATOR_GEM_ROOT="$(ls -d $(rbenv root)/versions/$(rbenv global)/gemsets/tools/gems/tmuxinator* | head -1)"
+
+exec /usr/bin/ruby -I "$TMUXINATOR_GEM_ROOT/lib" "$TMUXINATOR_GEM_ROOT/bin/tmuxinator" "$@"
+

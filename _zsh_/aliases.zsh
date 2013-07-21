@@ -9,6 +9,9 @@ alias en="emacs-dwim -n"
 alias fp="file-picker"
 alias vi='vim'
 alias v='vim'
+function tv() {
+  tmux neww "vim $*"
+}
 alias view='vim -R'
 
 ##################################################
@@ -25,6 +28,7 @@ alias ts=tmux-new-or-attach
 alias t="tmux"
 alias tl="tmux ls"
 alias tn="tmux neww"
+alias mux="tmuxinator"
 alias tss="tmuxinator start"
 
 ##################################################
@@ -220,9 +224,13 @@ else
   alias start.mysql="mysql.server start"
   alias start.pg="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start"
   alias start.redis="redis-server /usr/local/etc/redis.conf"
+  alias start.mongo="mongod --fork"
+  alias start.memcache="memcached -d"
   alias stop.mysql="mysql.server stop"
   alias stop.pg="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log stop"
   alias stop.redis="killall redis-server"
+  alias stop.mongo="killall mongod"
+  alias stop.memcache="killall memcached"
 fi
 
 alias igssh='l2tp stop; l2tp --route igssh'

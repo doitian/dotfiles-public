@@ -32,13 +32,9 @@ compdef _gemset gemset
 
 alias hub='gemset --global tools hub'
 alias thor='gemset --global tools thor'
-alias tmuxinator="gemset --global tools tmuxinator"
 alias vagrant="gemset --global tools vagrant"
 alias vmc="gemset --global tools vmc"
 alias lolcat="gemset --global tools lolcat"
-alias mux="tmuxinator"
-compdef _tmuxinator mux
-alias tss="tmuxinator start"
 alias cap='gemset --global tools cap'
 alias capify='gemset --global tools capify'
 alias mina='gemset --global tools mina'

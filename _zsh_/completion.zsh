@@ -71,6 +71,7 @@ bindkey "^I" expand-or-complete-with-dots
 ##################################################
 # Simple completion definitions 
 compinit -u
+compdef _tmuxinator mux
 compdef _github gh=github
 compdef _sudo proxychains
 compdef _pacman yaourt=pacman
