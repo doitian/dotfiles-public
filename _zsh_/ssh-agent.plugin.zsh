@@ -20,6 +20,9 @@
 #   Agent forwarding support based on ideas from
 #   Florent Thoumie and Jonas Pfenniger
 #
+if echo "$SSH_AUTH_SOCK" | grep -q "Listeners"; then
+  unset SSH_AUTH_SOCK
+fi
 
 local _plugin__ssh_env=$HOME/.ssh/environment-$HOST
 local _plugin__forwarding
@@ -59,4 +62,3 @@ fi
 unfunction _plugin__start_agent
 unset _plugin__forwarding
 unset _plugin__ssh_env
-

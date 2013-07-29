@@ -2,6 +2,10 @@
 
 if [[  "$-" != *i* ]]; then return 0; fi
 
+if [ -z "$OS_TYPE" ]; then
+  export OS_TYPE=$(uname -s)
+fi
+
 zstyle :omz:plugins:ssh-agent agent-forwarding on
 
 ZSH="$HOME/.zsh"
@@ -10,7 +14,9 @@ OZSH="$HOME/.oh-my-zsh"
 for f in $ZSH/*.zsh; do
   [ -f "$f" ] && source "$f"
 done
-[ -f "$HOME/.xenv" ] && source "$HOME/.xenv"
+if [ "$OS_TYPE" != "Darwin" ]; then
+  [ -f "$HOME/.xenv" ] && source "$HOME/.xenv"
+fi
 
 JIRA_RAPID_BOARD=yes
 for p in jira django; do
