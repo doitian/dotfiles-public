@@ -13,8 +13,6 @@ fi
 export ALTERNATE_EDITOR="vim"
 export GREP_OPTIONS='--color=auto'
 export GREP_COLOR='1;32'
-export EMACS=emacs
-export EMACSCLIENT=emacsclient
 export SURFRAW_text_browser=w3m
 export SURFRAW_browser=x-www-browser
 export GOPATH="$HOME/.go"

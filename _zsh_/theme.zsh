@@ -30,12 +30,12 @@ autoload colors; colors;
 # fi
 setopt prompt_subst
 
-source ~/.powerline/powerline/bindings/zsh/powerline.zsh
-
-PROMPT="$PROMPT
+if [ -z "$EMACS" ]; then
+  source ~/.powerline/powerline/bindings/zsh/powerline.zsh
+  PROMPT="$PROMPT
 %(1j.[%j] .)%{[1;32m%}➥ %{[00m%}"
-
-return
+  return
+fi
 
 if [ -f "$OZSH/plugins/gitfast/git-prompt.sh" ]; then
   source "$OZSH/plugins/gitfast/git-prompt.sh"
@@ -44,6 +44,8 @@ else
   function __git_ps1_show_upstream () {}
 fi
 
+function dev_env_prompt_info() {
+  if [ -n "${CD_VIRTUAL_ENV}" ]; then
     echo "‹py-$(python --version 2>&1 | awk '{print $2}')|${CD_VIRTUAL_ENV}›"
   else
     rbenv_prompt_info
@@ -87,6 +89,7 @@ function __git_minutes_since_last_commit {
     m="%{[1;31m%}${readable_time}"
   fi
 }
+
 function git_prompt_info() {
   local ref dirty
   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
@@ -127,5 +130,5 @@ if [[ -n "$SSH_CLIENT"  ||  -n "$SSH2_CLIENT" ]]; then
   PR_SSH_INDICATOR='%{[1;33m%}'
 fi
 
-PROMPT='%{[47m%}%{[34m%}╭─%{[00m%}'"$PR_ROOT_INDICATOR"'%n%{[00m%}@'"$PR_SSH_INDICATOR"'%m%{[00m%} %{[1;34m%}%~ %{[00m%}$(git_prompt_info) %{[33m%}$(dev_env_prompt_info)%(?..%{[31m%} %? ↵%{[00m%})%{[00m%}
-%{[47m%}%{[34m%}╰─'"$PR_ROOT_INDICATOR"'➤%{[00m%} '
+PROMPT='%{[47m%}%{[34m%}╭─ %{[00m%}'"$PR_ROOT_INDICATOR"'%n%{[00m%}@'"$PR_SSH_INDICATOR"'%m%{[00m%} %{[1;34m%}%~ %{[00m%}$(git_prompt_info) %{[33m%}$(dev_env_prompt_info)%(?..%{[31m%} %? ↵%{[00m%})%{[00m%}
+%{[47m%}%{[34m%}╰─'"$PR_ROOT_INDICATOR"'%{[00m%} '

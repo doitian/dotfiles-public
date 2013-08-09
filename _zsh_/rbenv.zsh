@@ -15,6 +15,7 @@ function rbenv() {
 function rbundle() {
   bundle install --path "$HOME/.bundle/$(rbenv version-name)" "$@"
 }
+alias hbundle='bundle install --path vendor/bundle'
 
 alias rl='rbenv local'
 alias rv='vim .rbenv-vars'
@@ -47,7 +48,6 @@ alias puma='gemset debug puma'
 alias puma3000='gemset debug puma -p 3000'
 alias ey='gemset --global tools ey'
 alias powder='gemset --global tools powder'
-alias sass='gemset --global tools sass'
 alias bootstrapers='gemset --global tools bootstrapers'
 
 if [ -f $HOME/.rbenv/completions/rbenv.zsh ]; then

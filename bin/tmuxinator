@@ -1,6 +1,21 @@
 #!/bin/sh
 
-TMUXINATOR_GEM_ROOT="$(ls -d $(rbenv root)/versions/$(rbenv global)/gemsets/tools/gems/tmuxinator* | head -1)"
+# $ ls -d $(rbenv root)/versions/$(rbenv global)/gemsets/tools/gems/{tmuxinator,thor,erubis,activesupport,i18n}*/lib
+# /Users/ian/.rbenv/versions/2.0.0-p247/gemsets/tools/gems/activesupport-3.2.11/lib
+# /Users/ian/.rbenv/versions/2.0.0-p247/gemsets/tools/gems/activesupport-4.0.0/lib
+# /Users/ian/.rbenv/versions/2.0.0-p247/gemsets/tools/gems/erubis-2.7.0/lib
+# /Users/ian/.rbenv/versions/2.0.0-p247/gemsets/tools/gems/i18n-0.6.4/lib
+# /Users/ian/.rbenv/versions/2.0.0-p247/gemsets/tools/gems/thor-0.18.1/lib
+# /Users/ian/.rbenv/versions/2.0.0-p247/gemsets/tools/gems/tmuxinator-0.6.2/lib
 
-exec /usr/bin/ruby -I "$TMUXINATOR_GEM_ROOT/lib" "$TMUXINATOR_GEM_ROOT/bin/tmuxinator" "$@"
+VAR_TMUXINATOR="$HOME/.rbenv/versions/2.0.0-p247/gemsets/tools/gems/tmuxinator-0.6.2/bin/tmuxinator"
+VAR_GEMS=(
+ -I $HOME/.rbenv/versions/2.0.0-p247/gemsets/tools/gems/activesupport-3.2.11/lib
+ -I $HOME/.rbenv/versions/2.0.0-p247/gemsets/tools/gems/activesupport-4.0.0/lib
+ -I $HOME/.rbenv/versions/2.0.0-p247/gemsets/tools/gems/erubis-2.7.0/lib
+ -I $HOME/.rbenv/versions/2.0.0-p247/gemsets/tools/gems/i18n-0.6.4/lib
+ -I $HOME/.rbenv/versions/2.0.0-p247/gemsets/tools/gems/thor-0.18.1/lib
+ -I $HOME/.rbenv/versions/2.0.0-p247/gemsets/tools/gems/tmuxinator-0.6.2/lib
+)
+exec "$HOME/.rbenv/versions/2.0.0-p247/bin/ruby" "${VAR_GEMS[@]}" "$VAR_TMUXINATOR" "$@"
 
