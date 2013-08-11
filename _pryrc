@@ -1,23 +1,28 @@
 # -*- ruby -*-
 Pry.config.theme = 'zenburn'
-Pry.editor = proc { |file, line| "emacs-dwim #{file} +#{line}" }
+Pry.editor = proc { |file, line| "emacs-dwim +#{line} #{file}" }
 Pry.prompt = [proc { |obj, nest_level, _| "#{RUBY_VERSION} (#{obj}):#{nest_level} > " }, proc { |obj, nest_level, _| "#{RUBY_VERSION} (#{obj}):#{nest_level} * " }]
 
 # == PLUGINS ===
 # awesome_print gem: great syntax colorized printing
 # look at ~/.aprc for more settings for awesome_print
+if ENV['TERM'] == 'emacs'
+  # no pagination
+  Pry.config.print = proc { |output, value| output.puts "=> #{value.inspect}" }
+  Pry.config.pager = false
+  Pry.config.color = false
+end
+
 begin
   require 'awesome_print'
   # The following line enables awesome_print for all pry output,
   # and it also enables paging
-  if ENV['EMACS']
+  if ENV['TERM'] == 'emacs'
     # no pagination
     Pry.config.print = proc { |output, value| output.puts value.ai }
   else
     Pry.config.print = proc {|output, value| Pry::Helpers::BaseHelpers.stagger_output("=> #{value.ai}", output)}
   end
-
-  # If you want awesome_print without automatic pagination, use the line below
 rescue LoadError => err
   puts "gem install awesome_print  # <-- highly recommended"
 end
