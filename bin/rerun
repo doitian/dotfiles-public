@@ -1,3 +1,0 @@
-#!/usr/bin/env zsh
-
-exec gemset tools rbenv exec rerun "$@"

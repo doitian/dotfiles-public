@@ -42,7 +42,7 @@ alias yC="yaourt -C"
 alias ys="yaourt -Ss"
 alias yl="yaourt -Ql"
 alias yi="yaourt -Qi"
-alias yo="yaourt -Qo"
+alias yO="yaourt -Qo"
 alias yu="yaourt -Syu --aur"
 alias yU="yaourt -Syu --aur --noconfirm"
 alias yc="yaourt -Sc"
@@ -169,8 +169,10 @@ alias free="free -m"
 alias ping="ping -c 5"
 alias more="less"
 alias ltail="less +F -R"
+alias lr="less -R"
 alias lnum='less -N'
 alias w3mgo="w3m http://www.google.com"
+alias p=pygmentize
 
 alias oneway="rsync -ltr --progress --delete"
 alias archive="rsync -ltr --progress"
@@ -226,11 +228,13 @@ else
   alias start.redis="redis-server /usr/local/etc/redis.conf"
   alias start.mongo="mongod --fork"
   alias start.memcache="memcached -d"
+  alias start.confluence="/opt/atlassian-confluence-5.2.3/bin/start-confluence.sh"
   alias stop.mysql="mysql.server stop"
   alias stop.pg="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log stop"
   alias stop.redis="killall redis-server"
   alias stop.mongo="killall mongod"
   alias stop.memcache="killall memcached"
+  alias stop.confluence="/opt/atlassian-confluence-5.2.3/bin/stop-confluence.sh"
 fi
 
 alias igssh='l2tp stop; l2tp --route igssh'

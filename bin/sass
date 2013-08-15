@@ -1,2 +1,0 @@
-#!/bin/bash
-exec gemset tools rbenv exec sass "$@"

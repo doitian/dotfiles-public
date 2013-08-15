@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -x
+
+DIR=.
+if [ -d "$1" ]; then
+  DIR="$1"
+  shift
+fi
+PORT=${1:-8000}
+
+ruby -run -e httpd "${DIR}" -p ${PORT} &
+open http://localhost:${PORT}
+wait $!
