@@ -11,10 +11,7 @@
 			"before": "ⓔ  "
 		},
 		"branch": {
-			"before": " ",
-			"args": {
-				"status_colors": true
-			}
+			"before": " "
 		}
 	},
 	"segments": {
@@ -29,7 +26,6 @@
 				"name": "virtualenv"
 			},
 			{
-				"module": "powerlinex.segment.git-branch-osx",
 				"name": "branch"
 			},
 			{

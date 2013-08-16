@@ -8,16 +8,8 @@
 			}
 		},
 		"virtualenv": {
-			"before": "ⓔ "
-		},
-		"rbenv": {
-			"before": "◈ "
 		},
 		"branch": {
-			"before": " ",
-			"args": {
-				"status_colors": true
-			}
 		}
 	},
 	"segments": {
@@ -32,10 +24,6 @@
 				"name": "virtualenv"
 			},
 			{
-				"module": "powerlinex.segment.rbenv",
-				"name": "rbenv"
-			},
-			{
 				"name": "cwd",
 				"args": {
 					"dir_limit_depth": 3
@@ -48,7 +36,6 @@
 				"name": "last_pipe_status"
 			},
 			{
-				"module": "powerlinex.segment.git-branch-osx",
 				"name": "branch"
 			}
 		]
