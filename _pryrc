@@ -15,13 +15,11 @@ end
 
 begin
   require 'awesome_print'
-  # The following line enables awesome_print for all pry output,
-  # and it also enables paging
-  if ENV['TERM'] == 'emacs'
-    # no pagination
-    Pry.config.print = proc { |output, value| output.puts value.ai }
+  if AwesomePrint.respond_to?(:pry!)
+    AwesomePrint.pry!
   else
-    Pry.config.print = proc {|output, value| Pry::Helpers::BaseHelpers.stagger_output("=> #{value.ai}", output)}
+    Pry.config.print = proc { |output, value| output.puts value.ai }
+    # Pry.config.print = proc {|output, value| Pry::Helpers::BaseHelpers.stagger_output("=> #{value.ai}", output)}
   end
 rescue LoadError => err
   puts "gem install awesome_print  # <-- highly recommended"
@@ -118,13 +116,23 @@ end
 
 begin
   require 'hirb'
-  require 'hirb/import_object'
-  extend Hirb::Console
 
-  remember_old_print = Pry.config.print || Pry::DEFAULT_PRINT
-  Pry.config.print = proc do |output, value|
-    Hirb::View.view_or_page_output(value) || remember_old_print.call(output, value)
+  Hirb::View.instance_eval do
+    def enable_output_method
+      @output_method = true
+      @old_print = Pry.config.print
+      Pry.config.print = proc do |output, value|
+        Hirb::View.view_or_page_output(value) || @old_print.call(output, value)
+      end
+    end
+
+    def disable_output_method
+      Pry.config.print = @old_print
+      @output_method = nil
+    end
   end
+
+  Hirb.enable
 rescue LoadError => err
   puts "gem install hirb  # <-- highly recommended"
 end
