@@ -143,6 +143,7 @@ if which fasd > /dev/null 2>&1; then
   alias sd='fasd -sid'
   alias o="fasd -e open -f"
   alias oo="fasd -e open -f -i"
+  alias ee="fasd -e emacs-dwim -f -i"
 fi
 
 alias md='mkdir -p'
@@ -172,7 +173,6 @@ alias ltail="less +F -R"
 alias lr="less -R"
 alias lnum='less -N'
 alias w3mgo="w3m http://www.google.com"
-alias p=pygmentize
 
 alias oneway="rsync -ltr --progress --delete"
 alias archive="rsync -ltr --progress"

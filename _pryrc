@@ -3,6 +3,8 @@ Pry.config.theme = 'zenburn'
 Pry.editor = proc { |file, line| "emacs-dwim +#{line} #{file}" }
 Pry.prompt = [proc { |obj, nest_level, _| "#{RUBY_VERSION} (#{obj}):#{nest_level} > " }, proc { |obj, nest_level, _| "#{RUBY_VERSION} (#{obj}):#{nest_level} * " }]
 
+# Color ansi code is messed up in pager.
+Pry.config.pager = false
 # == PLUGINS ===
 # awesome_print gem: great syntax colorized printing
 # look at ~/.aprc for more settings for awesome_print
