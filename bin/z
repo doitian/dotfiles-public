@@ -2,6 +2,8 @@
 
 if [ -S .zeus.sock ]; then
   exec zeus "$@"
+elif [ -S tmp/spring/spring ]; then
+  exec spring "$@"
 else
   if ! [ "$1" = "start" ] && [ -f zeus.json ]; then
     echo "zeus.json is found but zeus is not started yet" >&2
