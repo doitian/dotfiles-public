@@ -54,3 +54,4 @@ octave-core
 *.beam
 *.sublime-project
 *.sublime-workspace
+.git-wtfrc
