@@ -60,6 +60,15 @@ zstyle ':completion:*:*:*:users' ignored-patterns \
 # ... unless we really want to.
 zstyle '*' single-ignored show
 
+# git
+zstyle ':completion:*:*:git:*' user-commands col:'Change of lines.'
+zstyle ':completion:*:*:git:*' user-commands add-dir-tree:'Stage a directory.'
+zstyle ':completion:*:*:git:*' user-commands rbranch:'Remote branch.'
+zstyle ':completion:*:*:git:*' user-commands remote-hg:'Add HG repo as remote.'
+zstyle ':completion:*:*:git:*' user-commands large-blob:'Search for large blob objects.'
+zstyle ':completion:*:*:git:*' user-commands submodule-rm:'Remove submodule.'
+zstyle ':completion:*:*:git:*' user-commands wtf:'Details status of the repository.'
+
 expand-or-complete-with-dots() {
   echo -n "\e[31m......\e[0m"
   zle expand-or-complete
