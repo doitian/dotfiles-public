@@ -59,6 +59,9 @@ else
   export ANDROID_SWT=/usr/share/java
 fi
 
+# vagrant
+export VAGRANT_DEFAULT_PROVIDER=parallels
+
 export PATH="$HOME/bin\
 :$HOME/.rbenv/shims:$HOME/.rbenv/bin\
 :$HOME/.cabal/bin\

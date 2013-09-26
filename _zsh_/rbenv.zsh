@@ -33,7 +33,6 @@ compdef _gemset gemset
 
 alias hub='gemset --global tools hub'
 alias thor='gemset --global tools thor'
-alias vagrant="gemset --global tools vagrant"
 alias vmc="gemset --global tools vmc"
 alias lolcat="gemset --global tools lolcat"
 alias cap='gemset --global tools cap'
