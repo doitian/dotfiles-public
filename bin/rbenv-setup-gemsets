@@ -5,7 +5,7 @@ VAR_GEMS_global=(bundler gem-browse)
 VAR_GEMS_zeus=(zeus)
 VAR_GEMS_spring=(spring)
 VAR_GEMS_rspec=(rspec)
-VAR_GEMS_tools=(hub tmuxinator vmc lolcat thor gist rerun pt ghi hcl rails nanoc capistrano capistrano-ext mina powder sass bootstrappers)
+VAR_GEMS_tools=(hub tmuxinator vmc lolcat thor gist rerun pt ghi hcl rails nanoc capistrano capistrano-ext mina powder sass bootstrappers tunnels)
 VAR_GEMS_debug=(pry rails-console-pry awesome_print hirb sequel pg mysql2 sqlite3 pry-doc yard pry-nav pry-git pry-stack_explorer puma)
 VAR_GEMS_passenger=(passenger)
 
