@@ -55,3 +55,4 @@ octave-core
 *.sublime-project
 *.sublime-workspace
 .git-wtfrc
+.vagrant
