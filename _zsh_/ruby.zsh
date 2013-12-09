@@ -30,6 +30,11 @@ rbenv() {
 }
 
 alias hbundle='bundle install --path vendor/bundle'
+sbundle() {
+  name="${1-system}"
+  shift
+  bundle install --path "$HOME/.gem/bundle/$name" "$@"
+}
 alias b='bundle exec'
 alias irb='pry'
 alias bi="bundle install"
