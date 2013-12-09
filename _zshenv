@@ -64,8 +64,7 @@ fi
 export VAGRANT_DEFAULT_PROVIDER=parallels
 
 export PATH="$HOME/bin\
-:$HOME/.rbenv/shims:$HOME/.rbenv/bin\
-:$HOME/.cabal/bin\
+:$HOME/.rbenv/bin:$HOME/.rbenv/shims\
 :$HOME/.node-packages/bin\
 :$GOPATH/bin\
 :$HOME/.play/play-default\

@@ -29,12 +29,13 @@ else
 fi
 
 # Install plugins:
-PLUGINS=( "sstephenson:rbenv-vars"
-          "sstephenson:ruby-build"
+PLUGINS=( "sstephenson:ruby-build"
           "sstephenson:rbenv-default-gems"
-          "jamis:rbenv-gemset"
           "tpope:rbenv-readline"
-          "dcarley:rbenv-sudo" )
+          "dcarley:rbenv-sudo"
+          "tpope:rbenv-communal-gems"
+          "tpope:rbenv-aliases"
+          "sstephenson:rbenv-gem-rehash" )
 for plugin in ${PLUGINS[@]} ; do
 
   KEY=${plugin%%:*}

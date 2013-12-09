@@ -32,13 +32,13 @@ def rbenv(pl, segment_info):
 
     segments = [{
         'contents': version,
-        'highlight_group': ['rbenv:version'],
-        'divider_highlight_group': 'rbenv:divider',
+        'highlight_group': ['ruby:version'],
+        'divider_highlight_group': 'ruby:divider',
         'draw_inner_divider': True,
     }]
     if gemset:
         segments.append({
             'contents': gemset,
-            'highlight_group': ['rbenv:gemset']
+            'highlight_group': ['ruby:gemset']
         })
     return segments

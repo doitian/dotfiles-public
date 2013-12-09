@@ -10,7 +10,7 @@ if [ -x /usr/bin/open ]; then
 fi
 
 if which rlwrap &> /dev/null; then
-    exec rlwrap gemset --global tools rbenv exec gist $GIST_ARG_COPY $GIST_ARG_OPEN "$@"
+    exec rlwrap gist $GIST_ARG_COPY $GIST_ARG_OPEN "$@"
 else
-    exec gemset --global tools rbenv exec gist $GIST_ARG_COPY $GIST_ARG_OPEN "$@"
+    exec gist $GIST_ARG_COPY $GIST_ARG_OPEN "$@"
 fi
