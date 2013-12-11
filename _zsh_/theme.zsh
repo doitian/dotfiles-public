@@ -132,9 +132,3 @@ fi
 
 PROMPT='%{[47m%}%{[34m%}╭─ %{[00m%}'"$PR_ROOT_INDICATOR"'%n%{[00m%}@'"$PR_SSH_INDICATOR"'%m%{[00m%} %{[1;34m%}%~ %{[00m%}$(git_prompt_info) %{[33m%}$(dev_env_prompt_info)%(?..%{[31m%} %? ↵%{[00m%})%{[00m%}
 %{[47m%}%{[34m%}╰─'"$PR_ROOT_INDICATOR"'%{[00m%} '
-
-if [ -f ~/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
-  source ~/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-else
-  echo 'zsh-syntax-highlighting not installed'
-fi
