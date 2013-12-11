@@ -35,7 +35,10 @@ PLUGINS=( "sstephenson:ruby-build"
           "dcarley:rbenv-sudo"
           "tpope:rbenv-communal-gems"
           "tpope:rbenv-aliases"
-          "sstephenson:rbenv-gem-rehash" )
+          "sstephenson:rbenv-gem-rehash"
+          "ianheggie:rbenv-binstubs"
+          "jf:rbenv-gemset" )
+
 for plugin in ${PLUGINS[@]} ; do
 
   KEY=${plugin%%:*}

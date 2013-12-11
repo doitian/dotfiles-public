@@ -1,4 +1,5 @@
 bundler --pre
 bundler-audit
 gem-browse
+gem-man
 

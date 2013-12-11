@@ -60,6 +60,7 @@ alias gl="git l"
 alias gll="git ll"
 alias glll="git lll"
 alias glg="git lg"
+alias gh="hub"
 
 ##################################################
 # File & Direcotry
@@ -83,6 +84,12 @@ alias l.='ls -d .*'
 # absolute ls
 alias als='ls -d `pwd`/*'
 alias tree='tree -CFA -I ".git" --dirsfirst'
+alias sgrep='grep -R -n -H -C 5 --exclude-dir={.git,.svn,CVS} '
+
+alias dud='du --max-depth=1 -h'
+alias duf='du -sh *'
+alias fd='find . -type d -name'
+alias ff='find . -type f -name'
 
 alias pu='pushd'
 alias po='popd'
@@ -96,6 +103,7 @@ if which ruby &> /dev/null; then
 fi
 alias mv="mv -i"
 alias cp="cp -i"
+alias cpv="rsync -poghb --backup-dir=/tmp/rsync -e /dev/null --progress --"
 
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -173,6 +181,7 @@ alias ltail="less +F -R"
 alias lr="less -R"
 alias lnum='less -N'
 alias w3mgo="w3m http://www.google.com"
+alias sortnr='sort -n -r'
 
 alias oneway="rsync -ltr --progress --delete"
 alias archive="rsync -ltr --progress"
@@ -217,6 +226,10 @@ alias vtig="GIT_EDITOR=vim tig"
 
 alias urlencode='node -e "console.log(encodeURIComponent(process.argv[1]))"'
 alias urldecode='node -e "console.log(decodeURIComponent(process.argv[1]))"'
+encode64(){ echo -n $1 | base64 }
+decode64(){ echo -n $1 | base64 --decode }
+alias e64=encode64
+alias d64=decode64
 
 if which systemctl &> /dev/null; then
   alias start="sudo systemctl start "

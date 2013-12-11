@@ -1,13 +1,14 @@
-compctl -k _rbenv rbenv
+export RBENV_SHELL=zsh
+compctl -K _rbenv rbenv
 
 _rbenv() {
   local words completions
-  read -ca words
+  read -cA words
 
   if [ "${#words}" -eq 2 ]; then
     completions="$(rbenv commands)"
   else
-    completions="$(rbenv completions ${words[2,-1]})"
+    completions="$(rbenv completions ${words[2,-2]})"
   fi
 
   reply=("${(ps:\n:)completions}")
@@ -28,6 +29,16 @@ rbenv() {
     command rbenv "$command" "$@";;
   esac
 }
+
+function _gemset() {
+  local -a _actions _gemsets
+  _actions=(active create delete file list version)
+  _gemsets=($(rbenv gemset list | grep '^ ' | uniq))
+  _arguments -s : \
+    --global \
+    ":action: _values actions ${_actions} ${_gemsets}" '*::arguments: _sudo'
+}
+compdef _gemset gemset
 
 alias hbundle='bundle install --path vendor/bundle'
 sbundle() {
