@@ -185,6 +185,10 @@ alias sortnr='sort -n -r'
 
 alias oneway="rsync -ltr --progress --delete"
 alias archive="rsync -ltr --progress"
+alias rsync-copy="rsync -av --progress -h"
+alias rsync-move="rsync -av --progress -h --remove-source-files"
+alias rsync-update="rsync -avu --progress -h"
+alias rsync-synchronize="rsync -avu --delete --progress -h"
 
 alias wcat='wget -q -0 -'
 alias dog=wcat

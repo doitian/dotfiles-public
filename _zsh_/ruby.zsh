@@ -53,39 +53,32 @@ alias bl="bundle list"
 alias bp="bundle package"
 alias bu="bundle update"
 
-bundled_commands=(
-  cucumber guard nanoc rackup jeweler shotgun thin
-  unicorn unicorn_rails knife
-)
-
-_bundler-installed() {
-  which bundle > /dev/null 2>&1
-}
-
-_within-bundled-project() {
-  local check_dir=$PWD
-  while [ "$(dirname $check_dir)" != "/" ]; do
-    [ -f "$check_dir/Gemfile" ] && return
-    check_dir="$(dirname $check_dir)"
-  done
-  false
-}
-
-bundler-exec() {
-  if _bundler-installed && _within-bundled-project; then
-    bundle exec "$@"
+function _rails_command () {
+  if [ -e "script/server" ]; then
+    ruby script/$@
+  elif [ -e "script/rails" ]; then
+    ruby script/rails $@
+  elif [ -e "bin/rails" ]; then
+    bin/rails $@
   else
-    case "$1" in
-      *)
-        "$@"
-        ;;
-    esac
+    rails $@
   fi
 }
 
-compdef _sudo bundler-exec
+function _rake_command () {
+  if [ -e "bin/rake" ]; then
+    bin/rake $@
+  else
+    rake $@
+  fi
+}
 
-## Main program
-for cmd in $bundled_commands; do
-  alias $cmd="bundler-exec $cmd"
-done
+alias rails='_rails_command'
+compdef _rails_command=rails
+
+alias rake='noglob _rake_command'
+compdef _rake_command=rake
+
+alias brake='noglob bundle exec rake' # execute the bundled rake gem
+alias srake='noglob sudo rake' # noglob must come before sudo
+alias sbrake='noglob sudo bundle exec rake' # altogether now ... 

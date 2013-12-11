@@ -29,14 +29,14 @@ else
       echo stopped
       ;;
     runner|r|console|c|server|s|generate|g|dbconsole|destroy|d)
-      exec bundle exec rails "$@"
+      exec rails "$@"
       ;;
     rake|rspec)
-      exec bundle exec "$@"
+      exec "$@"
       ;;
     test)
       shift
-      exec bundle exec rspec "$@"
+      exec rspec "$@"
       ;;
     *)
       exec zeus "$@"

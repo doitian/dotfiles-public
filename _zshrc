@@ -19,7 +19,7 @@ if [ "$OS_TYPE" != "Darwin" ]; then
 fi
 
 JIRA_RAPID_BOARD=yes
-for p in jira django; do
+for p in jira django safe-paste; do
   [ -f "$OZSH/plugins/${p}/${p}.plugin.zsh" ] && source "$OZSH/plugins/${p}/${p}.plugin.zsh"
 done
 
