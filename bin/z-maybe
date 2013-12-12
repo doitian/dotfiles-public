@@ -3,23 +3,8 @@
 # Run with zeus or spring if available
 
 case "$1" in
-  rails)
-    case "$2" in
-      runner|r|console|c|server|s|generate|g|dbconsole|destroy|d)
-        shift
-        exec z "$@"
-        ;;
-      *)
-        exec "$@"
-        ;;
-    esac
-    ;;
-  rake|rspec)
+  rails|rake|rspec|cucumber|testunit)
     exec z "$@"
-    ;;
-  test)
-    shift
-    exec z rspec "$@"
     ;;
   *)
     exec "$@"

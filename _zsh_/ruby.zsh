@@ -79,6 +79,8 @@ compdef _rails_command=rails
 alias rake='noglob _rake_command'
 compdef _rake_command=rake
 
+compdef _sudo=z
+
 alias brake='noglob bundle exec rake' # execute the bundled rake gem
 alias srake='noglob sudo rake' # noglob must come before sudo
 alias sbrake='noglob sudo bundle exec rake' # altogether now ... 

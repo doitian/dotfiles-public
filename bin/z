@@ -1,22 +1,35 @@
 #!/bin/bash
 
 if [ -S .zeus.sock ]; then
-  if [ "$1" = status ]; then
-    echo 'running'
-  else
-    exec zeus "$@"
-  fi
+  case "$1" in
+    status)
+      echo 'running'
+      ;;
+    rails)
+      shift
+      exec zeus "$@"
+      ;;
+    rake|start)
+      exec zeus "$@"
+      ;;
+    testunit|rspec|cucumber)
+      exec zeus test "$@"
+      ;;
+    *)
+      exec "$@"
+      ;;
+  esac
 elif [ -f config/spring.rb ]; then
   case "$1" in
-    runner|r|console|c|server|s|generate|g|dbconsole|destroy|d)
-      exec spring rails "$@"
+    rails|rake|cucumber|rspec|testunit)
+      exec spring "$@"
       ;;
     start)
       spring rake -T &> /dev/null
       spring status
       ;;
     *)
-      exec spring "$@"
+      exec "$@"
       ;;
   esac
 else
@@ -28,18 +41,16 @@ else
     status)
       echo stopped
       ;;
-    runner|r|console|c|server|s|generate|g|dbconsole|destroy|d)
-      exec rails "$@"
-      ;;
-    rake|rspec)
-      exec "$@"
-      ;;
-    test)
-      shift
-      exec rspec "$@"
+    start)
+      if [ -f config/spring.rb ]; then
+        spring rake -T &> /dev/null
+        sprint status
+      else
+        zeus start
+      fi
       ;;
     *)
-      exec zeus "$@"
+      exec "$@"
       ;;
   esac
 fi
