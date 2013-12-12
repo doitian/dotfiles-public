@@ -1,0 +1,3 @@
+#!/bin/bash
+
+exec itags -R . $(bundle list --paths)
