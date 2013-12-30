@@ -49,6 +49,7 @@ sbundle() {
 alias b='bundle exec'
 alias irb='pry'
 alias bi="bundle install"
+alias bib="bundle install --binstubs"
 alias bl="bundle list"
 alias bp="bundle package"
 alias bu="bundle update"

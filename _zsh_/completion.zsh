@@ -85,6 +85,11 @@ compdef _github gh=github
 compdef _sudo proxychains
 compdef _pacman yaourt=pacman
 
+_tmux-new-or-attach () {
+  compadd $(tmux list-session | awk -F: '{print $1}')
+}
+compdef _tmux-new-or-attach tmux-new-or-attach
+
 # cach rake
 _rake () {
   if [ -f Rakefile ]; then
