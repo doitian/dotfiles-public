@@ -66,10 +66,12 @@ export VAGRANT_DEFAULT_PROVIDER=parallels
 export PATH="$HOME/bin\
 :$HOME/.rbenv/bin:$HOME/.rbenv/shims\
 :$HOME/.node-packages/bin\
-:$GOPATH/bin\
-:$HOME/.play/play-default\
-:$HOME/.perl5/bin\
-:/usr/local/heroku/bin\
 :$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools\
-:$HOME/Library/Python/2.7/bin\
 :$PATH"
+
+# Not used recently
+# :$GOPATH/bin\
+# :$HOME/.play/play-default\
+# :$HOME/.perl5/bin\
+# :$HOME/Library/Python/2.7/bin\
+
