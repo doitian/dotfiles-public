@@ -290,4 +290,5 @@ docs=$HOME/Documents
 dotemacs=$HOME/.emacs.d
 dotvim=$HOME/.vim
 ohmyzsh=$HOME/.oh-my-zsh
+org=$HOME/Dropbox/g/org
 
