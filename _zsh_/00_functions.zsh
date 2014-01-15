@@ -51,6 +51,12 @@ function vman() {
   fi
 }
 
+# pman
+# Open man page in Preview
+pman {
+  man -t "$@" | open -f -a /Applications/Preview.app
+}
+
 # take
 # Create directory and cd to it
 function take() {
