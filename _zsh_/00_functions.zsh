@@ -53,7 +53,7 @@ function vman() {
 
 # pman
 # Open man page in Preview
-pman {
+function pman() {
   man -t "$@" | open -f -a /Applications/Preview.app
 }
 
