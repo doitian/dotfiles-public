@@ -10,3 +10,174 @@ image/* ; geeqie %s &> /dev/null &; copiousoutput; test=runningx
 audio/* ; mplayer %s ; copiousoutput
 video/* ; mplayer %s ; copiousoutput
 application/msword ; lowriter %s ; test=runningx
+x-content/win32-software; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-exe::install" '%s'; \
+    description="CrossOver (Install)"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-exe; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-exe::install" '%s'; \
+    description="CrossOver (Install)"; \
+    test=test -n "$DISPLAY"
+application/x-ms-shortcut; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-lnk::run" '%s'; \
+    description="CrossOver (Run)"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-lnk; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-lnk::run" '%s'; \
+    description="CrossOver (Run)"; \
+    test=test -n "$DISPLAY"
+application/x-win-lnk; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-lnk::run" '%s'; \
+    description="CrossOver (Run)"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-msi; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-msi::install" '%s'; \
+    description="CrossOver (Install)"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-rtf; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_msword" '%s'; \
+    description="Microsoft Word"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-wbk; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_msword" '%s'; \
+    description="Microsoft Word"; \
+    test=test -n "$DISPLAY"
+application/msword; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_msword" '%s'; \
+    description="Microsoft Word"; \
+    test=test -n "$DISPLAY"
+application/vnd.ms-word; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_msword" '%s'; \
+    description="Microsoft Word"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-dot; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_msword" '%s'; \
+    description="Microsoft Word"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-xlt; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-excel" '%s'; \
+    description="Microsoft Excel"; \
+    test=test -n "$DISPLAY"
+application/vnd.ms-excel; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-excel" '%s'; \
+    description="Microsoft Excel"; \
+    test=test -n "$DISPLAY"
+application/msexcel; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-excel" '%s'; \
+    description="Microsoft Excel"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-xla; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-excel" '%s'; \
+    description="Microsoft Excel"; \
+    test=test -n "$DISPLAY"
+application/x-msexcel; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-excel" '%s'; \
+    description="Microsoft Excel"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-xls; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-excel" '%s'; \
+    description="Microsoft Excel"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-docm; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-word.document.macroEnabled.12" '%s'; \
+    description="Microsoft Word"; \
+    test=test -n "$DISPLAY"
+application/vnd.ms-word.document.macroEnabled.12; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-word.document.macroEnabled.12" '%s'; \
+    description="Microsoft Word"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-docx; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.openxmlformats-officedocument.wordprocessingml.document" '%s'; \
+    description="Microsoft Word"; \
+    test=test -n "$DISPLAY"
+application/vnd.openxmlformats-officedocument.wordprocessingml.document; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.openxmlformats-officedocument.wordprocessingml.document" '%s'; \
+    description="Microsoft Word"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-dothtml; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_x-crossover-dothtml" '%s'; \
+    description="Microsoft Word"; \
+    test=test -n "$DISPLAY"
+application/vnd.ms-word.template.macroEnabled.12; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-word.template.macroEnabled.12" '%s'; \
+    description="Microsoft Word"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-dotm; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-word.template.macroEnabled.12" '%s'; \
+    description="Microsoft Word"; \
+    test=test -n "$DISPLAY"
+application/vnd.openxmlformats-officedocument.wordprocessingml.template; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.openxmlformats-officedocument.wordprocessingml.template" '%s'; \
+    description="Microsoft Word"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-dotx; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.openxmlformats-officedocument.wordprocessingml.template" '%s'; \
+    description="Microsoft Word"; \
+    test=test -n "$DISPLAY"
+application/vnd.ms-powerpoint; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-powerpoint" '%s'; \
+    description="Microsoft PowerPoint"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-pot; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-powerpoint" '%s'; \
+    description="Microsoft PowerPoint"; \
+    test=test -n "$DISPLAY"
+application/x-mspowerpoint; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-powerpoint" '%s'; \
+    description="Microsoft PowerPoint"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-pwz; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-powerpoint" '%s'; \
+    description="Microsoft PowerPoint"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-ppt; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-powerpoint" '%s'; \
+    description="Microsoft PowerPoint"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-pps; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-powerpoint" '%s'; \
+    description="Microsoft PowerPoint"; \
+    test=test -n "$DISPLAY"
+application/mspowerpoint; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-powerpoint" '%s'; \
+    description="Microsoft PowerPoint"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-pothtml; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_x-crossover-pothtml" '%s'; \
+    description="Microsoft PowerPoint"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-potx; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.openxmlformats-officedocument.presentationml.template" '%s'; \
+    description="Microsoft PowerPoint"; \
+    test=test -n "$DISPLAY"
+application/vnd.openxmlformats-officedocument.presentationml.template; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.openxmlformats-officedocument.presentationml.template" '%s'; \
+    description="Microsoft PowerPoint"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-ppthtml; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_x-crossover-ppthtml" '%s'; \
+    description="Microsoft PowerPoint"; \
+    test=test -n "$DISPLAY"
+application/vnd.openxmlformats-officedocument.presentationml.presentation; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.openxmlformats-officedocument.presentationml.presentation" '%s'; \
+    description="Microsoft PowerPoint"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-pptx; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.openxmlformats-officedocument.presentationml.presentation" '%s'; \
+    description="Microsoft PowerPoint"; \
+    test=test -n "$DISPLAY"
+application/vnd.openxmlformats-officedocument.presentationml.slide; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.openxmlformats-officedocument.presentationml.slide" '%s'; \
+    description="Microsoft PowerPoint"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-sldx; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.openxmlformats-officedocument.presentationml.slide" '%s'; \
+    description="Microsoft PowerPoint"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-thmx; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-officetheme" '%s'; \
+    description="Microsoft PowerPoint"; \
+    test=test -n "$DISPLAY"
+application/vnd.ms-officetheme; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-officetheme" '%s'; \
+    description="Microsoft PowerPoint"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-xlam; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-excel.addin.macroEnabled.12" '%s'; \
+    description="Microsoft Excel"; \
+    test=test -n "$DISPLAY"
+application/vnd.ms-excel.addin.macroEnabled.12; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-excel.addin.macroEnabled.12" '%s'; \
+    description="Microsoft Excel"; \
+    test=test -n "$DISPLAY"
+application/vnd.ms-excel.sheet.binary.macroEnabled.12; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-excel.sheet.binary.macroEnabled.12" '%s'; \
+    description="Microsoft Excel"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-xlsb; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-excel.sheet.binary.macroEnabled.12" '%s'; \
+    description="Microsoft Excel"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-xlshtml; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_x-crossover-xlshtml" '%s'; \
+    description="Microsoft Excel"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-xlsm; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-excel.sheet.macroEnabled.12" '%s'; \
+    description="Microsoft Excel"; \
+    test=test -n "$DISPLAY"
+application/vnd.ms-excel.sheet.macroEnabled.12; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-excel.sheet.macroEnabled.12" '%s'; \
+    description="Microsoft Excel"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-xlsx; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.openxmlformats-officedocument.spreadsheetml.sheet" '%s'; \
+    description="Microsoft Excel"; \
+    test=test -n "$DISPLAY"
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.openxmlformats-officedocument.spreadsheetml.sheet" '%s'; \
+    description="Microsoft Excel"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-xlthtml; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_x-crossover-xlthtml" '%s'; \
+    description="Microsoft Excel"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-xltm; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-excel.template.macroEnabled.12" '%s'; \
+    description="Microsoft Excel"; \
+    test=test -n "$DISPLAY"
+application/vnd.ms-excel.template.macroEnabled.12; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.ms-excel.template.macroEnabled.12" '%s'; \
+    description="Microsoft Excel"; \
+    test=test -n "$DISPLAY"
+application/vnd.openxmlformats-officedocument.spreadsheetml.template; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.openxmlformats-officedocument.spreadsheetml.template" '%s'; \
+    description="Microsoft Excel"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-xltx; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.openxmlformats-officedocument.spreadsheetml.template" '%s'; \
+    description="Microsoft Excel"; \
+    test=test -n "$DISPLAY"

@@ -2,10 +2,6 @@
 .rbenv-vars
 .rbenv-gemsets
 .rbenv-version
-vendor/bundle
-client_vendor/bundle
-host_vendor/bundle
-*/vendor/bundle
 .DS_Store
 .bundle
 db/*.sqlite3
@@ -31,14 +27,10 @@ doc/tags
 .emacs.desktop
 .emacs.desktop.lock
 .emacs.bmk
-.eproject
-.eproject-files
 project.org
-dir
 node_modules
 chromedriver.log
 dump.rdb
-/bin
 custom_plan.rb
 zeus.json
 .zeus.sock
@@ -56,3 +48,4 @@ octave-core
 *.sublime-workspace
 .git-wtfrc
 .vagrant
+.projectile
