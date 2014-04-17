@@ -243,7 +243,7 @@ else
   alias start.mysql="mysql.server start"
   alias start.pg="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start"
   alias start.redis="redis-server /usr/local/etc/redis.conf"
-  alias start.mongo="mongod --fork"
+  alias start.mongo="mongod --config /usr/local/etc/mongod.conf --fork"
   alias start.memcache="memcached -d"
   alias start.confluence="/opt/atlassian-confluence-5.2.3/bin/start-confluence.sh"
   alias stop.mysql="mysql.server stop"

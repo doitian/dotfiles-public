@@ -10,24 +10,6 @@ image/* ; geeqie %s &> /dev/null &; copiousoutput; test=runningx
 audio/* ; mplayer %s ; copiousoutput
 video/* ; mplayer %s ; copiousoutput
 application/msword ; lowriter %s ; test=runningx
-x-content/win32-software; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-exe::install" '%s'; \
-    description="CrossOver (Install)"; \
-    test=test -n "$DISPLAY"
-application/x-crossover-exe; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-exe::install" '%s'; \
-    description="CrossOver (Install)"; \
-    test=test -n "$DISPLAY"
-application/x-ms-shortcut; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-lnk::run" '%s'; \
-    description="CrossOver (Run)"; \
-    test=test -n "$DISPLAY"
-application/x-crossover-lnk; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-lnk::run" '%s'; \
-    description="CrossOver (Run)"; \
-    test=test -n "$DISPLAY"
-application/x-win-lnk; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-lnk::run" '%s'; \
-    description="CrossOver (Run)"; \
-    test=test -n "$DISPLAY"
-application/x-crossover-msi; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-msi::install" '%s'; \
-    description="CrossOver (Install)"; \
-    test=test -n "$DISPLAY"
 application/x-crossover-rtf; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_msword" '%s'; \
     description="Microsoft Word"; \
     test=test -n "$DISPLAY"
@@ -180,4 +162,22 @@ application/vnd.openxmlformats-officedocument.spreadsheetml.template; "/Users/ia
     test=test -n "$DISPLAY"
 application/x-crossover-xltx; "/Users/ian/Library/Application Support/CrossOver/Bottles/Microsoft Office 2010/desktopdata/cxassoc/Scripts/CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.openxmlformats-officedocument.spreadsheetml.template" '%s'; \
     description="Microsoft Excel"; \
+    test=test -n "$DISPLAY"
+x-content/win32-software; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-exe::install" '%s'; \
+    description="CrossOver (Install)"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-exe; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-exe::install" '%s'; \
+    description="CrossOver (Install)"; \
+    test=test -n "$DISPLAY"
+application/x-ms-shortcut; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-lnk::run" '%s'; \
+    description="CrossOver (Run)"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-lnk; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-lnk::run" '%s'; \
+    description="CrossOver (Run)"; \
+    test=test -n "$DISPLAY"
+application/x-win-lnk; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-lnk::run" '%s'; \
+    description="CrossOver (Run)"; \
+    test=test -n "$DISPLAY"
+application/x-crossover-msi; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-msi::install" '%s'; \
+    description="CrossOver (Install)"; \
     test=test -n "$DISPLAY"

@@ -1,17 +1,5 @@
 video/tp tp
 
-application/x-crossover-exe exe
-# X-Created-By-mcap-CrossOver-0:application_x-crossover-exe=application_x-crossover-exe::install;application_x-crossover-exe::run
-x-content/win32-software 
-# X-Created-By-mcap-CrossOver-0:x-content_win32-software=application_x-crossover-exe::install
-application/x-crossover-lnk lnk
-# X-Created-By-mcap-CrossOver-0:application_x-crossover-lnk=application_x-crossover-lnk::run
-application/x-ms-shortcut 
-# X-Created-By-mcap-CrossOver-0:application_x-ms-shortcut=application_x-crossover-lnk::run
-application/x-win-lnk 
-# X-Created-By-mcap-CrossOver-0:application_x-win-lnk=application_x-crossover-lnk::run
-application/x-crossover-msi msi
-# X-Created-By-mcap-CrossOver-0:application_x-crossover-msi=application_x-crossover-msi::install
 application/x-crossover-xsl xsl
 # X-Created-By-mcap-CrossOver-8BDECE96-AF93-437A-86A5-AB36ADB62FF1:application_x-crossover-xsl=text_xml
 text/xml 
@@ -233,3 +221,15 @@ application/x-crossover-xltx xltx
 # X-Created-By-mcap-CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_x-crossover-xltx=application_vnd.openxmlformats-officedocument.spreadsheetml.template;application_vnd.openxmlformats-officedocument.spreadsheetml.template::viewprotected;application_vnd.openxmlformats-officedocument.spreadsheetml.template::open;application_vnd.openxmlformats-officedocument.spreadsheetml.template::print;application_vnd.openxmlformats-officedocument.spreadsheetml.template::openasreadonly;application_vnd.openxmlformats-officedocument.spreadsheetml.template::edit
 application/vnd.openxmlformats-officedocument.spreadsheetml.template 
 # X-Created-By-mcap-CrossOver-7DB197ED-1EB1-4FB1-AD81-5A8BB07697CD:application_vnd.openxmlformats-officedocument.spreadsheetml.template=application_vnd.openxmlformats-officedocument.spreadsheetml.template;application_vnd.openxmlformats-officedocument.spreadsheetml.template::viewprotected;application_vnd.openxmlformats-officedocument.spreadsheetml.template::open;application_vnd.openxmlformats-officedocument.spreadsheetml.template::print;application_vnd.openxmlformats-officedocument.spreadsheetml.template::openasreadonly;application_vnd.openxmlformats-officedocument.spreadsheetml.template::edit
+application/x-crossover-exe exe
+# X-Created-By-mcap-CrossOver-0:application_x-crossover-exe=application_x-crossover-exe::install;application_x-crossover-exe::run
+x-content/win32-software 
+# X-Created-By-mcap-CrossOver-0:x-content_win32-software=application_x-crossover-exe::install
+application/x-crossover-lnk lnk
+# X-Created-By-mcap-CrossOver-0:application_x-crossover-lnk=application_x-crossover-lnk::run
+application/x-ms-shortcut 
+# X-Created-By-mcap-CrossOver-0:application_x-ms-shortcut=application_x-crossover-lnk::run
+application/x-win-lnk 
+# X-Created-By-mcap-CrossOver-0:application_x-win-lnk=application_x-crossover-lnk::run
+application/x-crossover-msi msi
+# X-Created-By-mcap-CrossOver-0:application_x-crossover-msi=application_x-crossover-msi::install
