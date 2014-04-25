@@ -97,11 +97,11 @@ function ws {
     echo "requires a name or in git repository"
     exit 1
   fi
-  mkdir -p "$HOME/workspace/$name"
-  ln -nsf "$HOME/workspace/$name" workspace
+  mkdir -p "$HOME/Projects/$name/workspace"
+  ln -nsf "$HOME/Projects/$name/workspace" workspace
 }
 
-function ep {
+function dir-locals {
   local name="$1"
   if [ -z "$name" ]; then
     name=$(basename $(git rev-parse --show-toplevel 2> /dev/null))
@@ -110,11 +110,11 @@ function ep {
     echo "requires a name or in git repository"
     exit 1
   fi
-  if ! [ -f "$HOME/Dropbox/dotfiles/eproject/$name" ]; then
-    touch .eproject
-    cp .eproject "$HOME/Dropbox/dotfiles/eproject/$name"
+  if ! [ -f "$HOME/Dropbox/dotfiles/dir-locals/$name.el" ]; then
+    touch .dir-locals.el
+    cp .dir-locals.el "$HOME/Dropbox/dotfiles/dir-locals/$name.el"
   fi
-  ln -nsf "$HOME/Dropbox/dotfiles/eproject/$name" .eproject
+  ln -nsf "$HOME/Dropbox/dotfiles/dir-locals/$name.el" .dir-locals.el
 }
 
 function hs { [ -z "$1" ] && history || (history | grep "$@") }
