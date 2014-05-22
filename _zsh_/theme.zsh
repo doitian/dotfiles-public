@@ -33,7 +33,7 @@ setopt prompt_subst
 if [ -z "$EMACS" ] && [ "$TERM" = xterm-256color ]; then
   source ~/.powerline/powerline/bindings/zsh/powerline.zsh
   PROMPT="$PROMPT
-%(1j.[%j] .)%{[1;32m%}➥ %{[00m%}"
+%{[1;32m%}➥ %{[00m%}"
   return
 fi
 

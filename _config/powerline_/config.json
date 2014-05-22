@@ -25,7 +25,11 @@
 		},
 		"shell": {
 			"colorscheme": "solarized",
-			"theme": "two_lines"
+			"theme": "two_lines",
+			"local_themes": {
+				"continuation": "continuation",
+				"select": "select"
+			}
 		},
 		"tmux": {
 			"colorscheme": "default",
@@ -37,7 +41,12 @@
 			"local_themes": {
 				"cmdwin": "cmdwin",
 				"help": "help",
-				"quickfix": "quickfix"
+				"quickfix": "quickfix",
+
+				"powerline.matchers.plugin.nerdtree.nerdtree": "plugin_nerdtree",
+				"powerline.matchers.plugin.ctrlp.ctrlp": "plugin_ctrlp",
+				"powerline.matchers.plugin.gundo.gundo": "plugin_gundo",
+				"powerline.matchers.plugin.gundo.gundo_preview": "plugin_gundo-preview"
 			}
 		},
 		"wm": {

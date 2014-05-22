@@ -23,6 +23,10 @@
 	"segments": {
 		"left": [
 			{
+				"module": "powerline.segments.shell",
+				"name": "mode"
+			},
+			{
 				"name": "hostname"
 			},
 			{
@@ -37,7 +41,6 @@
 				"name": "rbenv"
 			},
 			{
-				"module": "powerlinex.segment.git-branch-osx",
 				"name": "branch"
 			},
 			{
@@ -45,6 +48,10 @@
 				"args": {
 					"dir_limit_depth": null
 				}
+			},
+			{
+				"module": "powerline.segments.shell",
+				"name": "jobnum"
 			}
 		],
 		"right": [
