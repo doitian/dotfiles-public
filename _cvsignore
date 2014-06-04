@@ -49,3 +49,4 @@ octave-core
 .git-wtfrc
 .vagrant
 .projectile
+.rebar

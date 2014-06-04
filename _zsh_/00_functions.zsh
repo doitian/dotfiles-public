@@ -97,8 +97,8 @@ function ws {
     echo "requires a name or in git repository"
     exit 1
   fi
-  mkdir -p "$HOME/Projects/$name/workspace"
-  ln -nsf "$HOME/Projects/$name/workspace" workspace
+  mkdir -p "$HOME/Desktop/$name/workspace"
+  ln -nsf "$HOME/Desktop/$name/workspace" workspace
 }
 
 function dir-locals {
