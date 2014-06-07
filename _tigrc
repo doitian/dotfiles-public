@@ -1,5 +1,1 @@
-set show-id = yes
 set tab-size = 2
-
-bind generic < move-first-line
-bind generic > move-last-line
