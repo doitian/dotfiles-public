@@ -98,7 +98,9 @@ function ws {
     exit 1
   fi
   mkdir -p "$HOME/Desktop/$name/workspace"
+  mkdir -p "$HOME/Dropbox/workspace/$name"
   ln -nsf "$HOME/Desktop/$name/workspace" workspace
+  ln -nsf "$HOME/Dropbox/workspace/$name" "$HOME/Desktop/$name/workspace/dropbox"
 }
 
 function dir-locals {
