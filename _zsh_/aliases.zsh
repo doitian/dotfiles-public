@@ -287,11 +287,12 @@ alias -s svg=geeqie
 cb=$HOME/codebase
 ws=$HOME/workspace
 gop=$GOPATH
-dp=$HOME/Dump
 box=$HOME/Dropbox
 docs=$HOME/Documents
+dl=$HOME/Downloads
 dotemacs=$HOME/.emacs.d
 dotvim=$HOME/.vim
 ohmyzsh=$HOME/.oh-my-zsh
 org=$HOME/Dropbox/g/org
+pj=$HOME/Documents/3pjgames
 

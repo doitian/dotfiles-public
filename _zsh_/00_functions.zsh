@@ -97,10 +97,11 @@ function ws {
     echo "requires a name or in git repository"
     exit 1
   fi
-  mkdir -p "$HOME/Desktop/$name/workspace"
+  local localname=${2:-workspace}
+  mkdir -p "$HOME/Documents/workspace/$name"
   mkdir -p "$HOME/Dropbox/workspace/$name"
-  ln -nsf "$HOME/Desktop/$name/workspace" workspace
-  ln -nsf "$HOME/Dropbox/workspace/$name" "$HOME/Desktop/$name/workspace/dropbox"
+  ln -nsf "$HOME/Documents/workspace/$name" "$localname"
+  ln -nsf "$HOME/Dropbox/workspace/$name" "$HOME/Documents/workspace/$name/dropbox"
 }
 
 function dir-locals {
