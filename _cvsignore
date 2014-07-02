@@ -50,3 +50,5 @@ octave-core
 .vagrant
 .projectile
 .rebar
+project.org
+.generate-ctags
