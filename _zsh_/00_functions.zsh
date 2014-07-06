@@ -8,6 +8,15 @@ function ecd() {
   eval "cd $(head -1 ~/.emacs.d/data/pwd)"
 }
 
+# List recent modified files
+function lt() {
+  if [ -n "$1" ]; then
+    ls -ltrsa "$@" | tail
+  else
+    ls -ltrsad * | tail
+  fi
+}
+
 # proot(skip = 0)
 #
 # Go up until .git directory found.
