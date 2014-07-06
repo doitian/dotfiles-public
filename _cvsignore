@@ -52,3 +52,5 @@ octave-core
 .rebar
 project.org
 .generate-ctags
+*.marked
+.Ulysses-Group.plist
