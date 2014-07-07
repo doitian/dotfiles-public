@@ -100,8 +100,10 @@ alias po='popd'
 if which ruby &> /dev/null; then
   if [ "$OS_TYPE" = "Darwin" ]; then
     alias rm="$HOME/.rm-trash/rm.rb"
-  else
+  elif which rm.rb &> /dev/null; then
     alias rm="rm.rb -I"
+  else
+    alias rm="rm -I"
   fi
 fi
 alias mv="mv -i"

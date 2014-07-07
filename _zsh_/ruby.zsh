@@ -75,7 +75,7 @@ function _rake_command () {
 }
 
 alias rails='_rails_command'
-compdef _rails_command=rails
+compdef _rails_command=rails &> /dev/null || true
 
 alias rake='noglob _rake_command'
 compdef _rake_command=rake
