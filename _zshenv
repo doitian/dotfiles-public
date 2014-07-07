@@ -22,7 +22,9 @@ export VIRTUAL_ENV_DISABLE_PROMPT=1
 if [ -f /usr/bin/python2 ]; then
   export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python2
 fi
-export JAVA_HOME=$(/usr/libexec/java_home)
+if [ -f /usr/libexec/java_home ]; then
+  export JAVA_HOME=$(/usr/libexec/java_home)
+fi
 export GROOVY_HOME=/usr/local/opt/groovy
 
 if [ "$(uname -s)" = "CYGWIN_NT-5.1" ]; then
