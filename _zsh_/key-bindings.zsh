@@ -1,14 +1,16 @@
 # TODO: Explain what some of this does..
 
 bindkey -e
-bindkey '\ew' copy-region-as-kill
-#bindkey '^W' backward-kill-word
-bindkey '^W' kill-region
-bindkey '\er' backward-kill-word
-bindkey -s '\el' "-"
-bindkey -s '\eu' "_"
-bindkey '\eU' up-case-word
-bindkey '\eL' down-case-word
+if ! [ -f "$HOME/.prefer_vim" ]; then
+  bindkey '\ew' copy-region-as-kill
+  #bindkey '^W' backward-kill-word
+  bindkey '^W' kill-region
+  bindkey '\er' backward-kill-word
+  bindkey -s '\el' "-"
+  bindkey -s '\eu' "_"
+  bindkey '\eU' up-case-word
+  bindkey '\eL' down-case-word
+fi
 bindkey '^r' history-incremental-search-backward
 bindkey "^[[5~" up-line-or-history
 bindkey "^[[6~" down-line-or-history
