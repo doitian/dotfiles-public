@@ -27,7 +27,7 @@ if [ -f /usr/libexec/java_home ]; then
 fi
 export GROOVY_HOME=/usr/local/opt/groovy
 
-if [ "$(uname -s)" = "CYGWIN_NT-5.1" ]; then
+if [ "$(uname -s)" = "CYGWIN_NT-5.1" ] || [ -f "$HOME/.prefer_vim" ]; then
   if [ "$TERM" = "rxvt-unicode" ]; then
     export TERM=rxvt-256color
   fi
