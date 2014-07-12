@@ -6,10 +6,6 @@ if ! [ -f "$HOME/.prefer_vim" ]; then
   #bindkey '^W' backward-kill-word
   bindkey '^W' kill-region
   bindkey '\er' backward-kill-word
-  bindkey -s '\el' "-"
-  bindkey -s '\eu' "_"
-  bindkey '\eU' up-case-word
-  bindkey '\eL' down-case-word
 fi
 bindkey '^r' history-incremental-search-backward
 bindkey "^[[5~" up-line-or-history
