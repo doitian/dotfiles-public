@@ -47,7 +47,9 @@ sbundle() {
   bundle install --path "$HOME/.gem/bundle/$name" "$@"
 }
 alias b='bundle exec'
-alias irb='pry'
+if which pry &> /dev/null; then
+  alias irb='pry'
+fi
 alias bi="bundle install"
 alias bib="bundle install --binstubs"
 alias bl="bundle list"
