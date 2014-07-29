@@ -8,7 +8,6 @@ alias et="emacs-dwim -t"
 alias en="emacs-dwim -n"
 alias fp="file-picker"
 alias vi='vim'
-alias v='vim'
 function tv() {
   tmux neww "vim $*"
 }
@@ -157,6 +156,10 @@ if which fasd > /dev/null 2>&1; then
   alias o="fasd -e open -f"
   alias oo="fasd -e open -f -i"
   alias ee="fasd -e emacs-dwim -f -i"
+  alias v="fasd -e vim -f"
+  alias vv="fasd -e vim -f -i"
+  alias gv="fasd -e 'gvim --remote' -f"
+  alias gvv="fasd -e 'gvim --remote' -f -i"
 fi
 
 alias md='mkdir -p'
