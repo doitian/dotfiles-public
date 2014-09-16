@@ -254,6 +254,7 @@ else
   alias start.mongo="mongod --config /usr/local/etc/mongod.conf --fork"
   alias start.memcache="memcached -d"
   alias start.confluence="/opt/atlassian-confluence-5.2.3/bin/start-confluence.sh"
+  alias start.pow="sudo pfctl -e"
   alias stop.mysql="mysql.server stop"
   alias stop.pg="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log stop"
   alias stop.redis="killall redis-server"
