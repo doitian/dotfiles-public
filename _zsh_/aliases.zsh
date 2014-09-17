@@ -291,7 +291,7 @@ alias -s svg=geeqie
 ##################################################
 # Dir Aliases
 cb=$HOME/codebase
-ws=$HOME/workspace
+ws=$HOME/Documents/workspace
 gop=$GOPATH
 box=$HOME/Dropbox
 docs=$HOME/Documents
