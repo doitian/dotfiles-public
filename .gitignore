@@ -6,3 +6,5 @@
 /_zsh_/cache
 !/bin
 *~
+
+.DS_Store
