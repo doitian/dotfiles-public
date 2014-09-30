@@ -6,14 +6,14 @@ if [ -f "$wrapsource" ]; then
 
   function workon_cwd {
     # Check that this is a Git repo
-    typeset PROJECT_ROOT=`git rev-parse --show-toplevel 2> /dev/null`
+    typeset PROJECT_ROOT="$(git rev-parse --show-toplevel 2> /dev/null)"
     typeset ENV_NAME=
     typeset ENV_ACTIVATE=
     if (( $? == 0 )); then
       # Check for virtualenv name override
-      ENV_NAME=`basename "$PROJECT_ROOT"`
+      ENV_NAME=$(basename "$PROJECT_ROOT")
       if [ -f "$PROJECT_ROOT/.venv" ]; then
-        ENV_NAME=`cat "$PROJECT_ROOT/.venv"`
+        ENV_NAME=$(cat "$PROJECT_ROOT/.venv")
       fi
       # Activate the environment only if it is not already active
       if [ -n "$ENV_NAME" ]; then

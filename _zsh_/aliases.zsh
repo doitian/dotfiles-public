@@ -297,6 +297,7 @@ box=$HOME/Dropbox
 docs=$HOME/Documents
 dl=$HOME/Downloads
 dotemacs=$HOME/.emacs.d
+dotsubl="$HOME/Library/Application Support/Sublime Text 3/Packages"
 dotvim=$HOME/.vim
 ohmyzsh=$HOME/.oh-my-zsh
 org=$HOME/Dropbox/g/org
