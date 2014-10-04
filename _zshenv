@@ -5,9 +5,6 @@ export LANG=en_US.UTF-8
 export LC_CTYPE=$LANG
 export LC_ALL=$LANG
 export RUBYLIB=$HOME/.rubylib
-export FCEDIT="emacs-dwim -t"
-export VISUAL="emacs-dwim -t"
-export EDITOR="emacs-dwim"
 if [ -x "/usr/bin/x-www-browser" ]; then
   export BROWSER="/usr/bin/x-www-browser"
 fi
@@ -34,6 +31,13 @@ if [ "$(uname -s)" = "CYGWIN_NT-5.1" ] || [ -f "$HOME/.prefer_vim" ]; then
   export EDITOR="vim"
   export FCEDIT="vim"
   export VISUAL="vim"
+else
+  # export FCEDIT="subl -w"
+  # export VISUAL="subl -w"
+  # export EDITOR="subl -w"
+  export FCEDIT="emacs-dwim -t"
+  export VISUAL="emacs-dwim -t"
+  export EDITOR="emacs-dwim"
 fi
 
 # ruby perf
@@ -75,4 +79,3 @@ export PATH="$HOME/bin\
 # :$HOME/.play/play-default\
 # :$HOME/.perl5/bin\
 # :$HOME/Library/Python/2.7/bin\
-
