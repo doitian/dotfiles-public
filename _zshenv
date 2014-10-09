@@ -35,9 +35,12 @@ else
   # export FCEDIT="subl -w"
   # export VISUAL="subl -w"
   # export EDITOR="subl -w"
-  export FCEDIT="emacs-dwim -t"
-  export VISUAL="emacs-dwim -t"
-  export EDITOR="emacs-dwim"
+  # export FCEDIT="emacs-dwim -t"
+  # export VISUAL="emacs-dwim -t"
+  # export EDITOR="emacs-dwim"
+  export EDITOR="vim"
+  export FCEDIT="vim"
+  export VISUAL="vim"
 fi
 
 # ruby perf

@@ -8,6 +8,7 @@ alias et="emacs-dwim -t"
 alias en="emacs-dwim -n"
 alias fp="file-picker"
 alias vi='vim'
+alias :e=vim
 function tv() {
   tmux neww "vim $*"
 }
