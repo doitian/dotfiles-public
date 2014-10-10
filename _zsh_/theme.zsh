@@ -30,7 +30,7 @@ autoload colors; colors;
 # fi
 setopt prompt_subst
 
-if [ -d ~/.powerline ] && [ -z "$EMACS" ] && [ "$TERM" = xterm-256color ]; then
+if [ -d ~/.powerline ] && [ -z "$EMACS" ] && [ "$TERM" = xterm-256color ] && [ -f ~/.powerline/powerline/bindings/zsh/powerline.zsh ]; then
   source ~/.powerline/powerline/bindings/zsh/powerline.zsh
   PROMPT="$PROMPT
 %{[1;32m%}➥ %{[00m%}"
