@@ -5,6 +5,14 @@ fpath=(
   /usr/local/share/zsh-completions
   $fpath
 )
+if [ -d "$OZSH" ]; then
+  fpath=(
+    $OZSH/plugins/docker
+    $OZSH/plugins/mix
+    $OZSH/plugins/rebar
+    $fpath
+  )
+fi
 zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b'
 
 unsetopt menu_complete
@@ -78,7 +86,7 @@ zle -N expand-or-complete-with-dots
 bindkey "^I" expand-or-complete-with-dots
 
 ##################################################
-# Simple completion definitions 
+# Simple completion definitions
 compinit -u
 compdef _tmuxinator mux
 compdef _github gh=github
