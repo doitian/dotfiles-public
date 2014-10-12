@@ -5,7 +5,11 @@ function main() {
   local session="$1"
   shift
   if ! $(tmux has-session -t "$session"); then
-    env TMUX= tmux new-session -d -s "$session" "$@"
+    if [ -f "$HOME/.tmuxinator/$session.yml" ]; then
+      exec tmuxinator start "$session"
+    else
+      env TMUX= tmux new-session -d -s "$session" "$@"
+    fi
   fi
 
   if [ -z "$TMUX" ]; then

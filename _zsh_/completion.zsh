@@ -94,7 +94,7 @@ compdef _sudo proxychains
 compdef _pacman yaourt=pacman
 
 _tmux-new-or-attach () {
-  compadd $(tmux list-session | awk -F: '{print $1}')
+  compadd $(tmux list-session &> /dev/null| awk -F: '{print $1}'; find -L ~/.tmuxinator -name '*.yml' | sed -e 's:.*/::' -e 's:.yml$::')
 }
 compdef _tmux-new-or-attach tmux-new-or-attach
 
