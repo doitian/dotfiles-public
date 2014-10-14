@@ -4,7 +4,7 @@ echo $# args: | tee -a "/tmp/echo-args$UID"
 
 id=1
 for a; do
-    echo -ne "$id\t"
+    printf "$id\t"
     echo "|$a|"
     let id=id+1
 done | tee -a "/tmp/echo-args$UID"
