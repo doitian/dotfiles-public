@@ -1,1 +1,3 @@
 set tab-size = 2
+bind generic + !git commit --amend
+bind generic Y !@bash -c "echo -n %(commit) | pbcopy"
