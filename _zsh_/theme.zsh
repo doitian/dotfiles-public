@@ -45,11 +45,7 @@ else
 fi
 
 function dev_env_prompt_info() {
-  if [ -n "${CD_VIRTUAL_ENV}" ]; then
-    echo "‹py-$(python --version 2>&1 | awk '{print $2}')|${CD_VIRTUAL_ENV}›"
-  else
-    rbenv_prompt_info
-  fi
+  rbenv_prompt_info
 }
 
 function rbenv_prompt_info() {
