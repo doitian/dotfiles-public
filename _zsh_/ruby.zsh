@@ -14,7 +14,7 @@ _rbenv() {
   reply=("${(ps:\n:)completions}")
 }
 
-rbenv rehash 2>/dev/null
+#rbenv rehash 2>/dev/null
 rbenv() {
   typeset command
   command="$1"
@@ -47,9 +47,6 @@ sbundle() {
   bundle install --path "$HOME/.gem/bundle/$name" "$@"
 }
 alias b='bundle exec'
-if which pry &> /dev/null; then
-  alias irb='pry'
-fi
 alias bi="bundle install"
 alias bib="bundle install --binstubs"
 alias bl="bundle list"
