@@ -300,7 +300,8 @@ dl=$HOME/Downloads
 dotemacs=$HOME/.emacs.d
 dotsubl="$HOME/Library/Application Support/Sublime Text 3/Packages"
 dotvim=$HOME/.vim
-ohmyzsh=$HOME/.oh-my-zsh
+omz=$HOME/.oh-my-zsh
+omzp=$HOME/.oh-my-zsh/plugins
 org=$HOME/Dropbox/g/org
 pj=$HOME/Documents/3pjgames
 
