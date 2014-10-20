@@ -11,7 +11,7 @@ when 'open'
   line = params['line'] || '1'
   column = params['column'] || '1'
 
-  system('emacs-dwim', '-n', "+#{line}:#{column}", file)
+  system('mvim', file, "+#{line}")
 else
   STDERROR.puts "unknown action #{uri.host}"
   exit(1)

@@ -1,7 +1,0 @@
-#!/bin/sh
-
-if [ -f manage.py ]; then
-  python manage.py "$@"
-else
-  django-admin.py "$@"
-fi
