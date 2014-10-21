@@ -1,3 +1,0 @@
-#!/bin/bash
-
-exec ctags -e -f TAGS --tag-relative "$@"
