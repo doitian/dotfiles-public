@@ -10,19 +10,19 @@ image/* ; geeqie %s &> /dev/null &; copiousoutput; test=runningx
 audio/* ; mplayer %s ; copiousoutput
 video/* ; mplayer %s ; copiousoutput
 application/msword ; lowriter %s ; test=runningx
-x-content/win32-software; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-exe::install" '%s'; \
-    description="CrossOver (Install)"; \
-    test=test -n "$DISPLAY"
 application/x-crossover-exe; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-exe::install" '%s'; \
     description="CrossOver (Install)"; \
     test=test -n "$DISPLAY"
-application/x-ms-shortcut; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-lnk::run" '%s'; \
+x-content/win32-software; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-exe::install" '%s'; \
+    description="CrossOver (Install)"; \
+    test=test -n "$DISPLAY"
+application/x-win-lnk; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-lnk::run" '%s'; \
     description="CrossOver (Run)"; \
     test=test -n "$DISPLAY"
 application/x-crossover-lnk; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-lnk::run" '%s'; \
     description="CrossOver (Run)"; \
     test=test -n "$DISPLAY"
-application/x-win-lnk; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-lnk::run" '%s'; \
+application/x-ms-shortcut; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-lnk::run" '%s'; \
     description="CrossOver (Run)"; \
     test=test -n "$DISPLAY"
 application/x-crossover-msi; "/Users/ian/Library/Application Support/CrossOver/desktopdata/CrossOver-0/cxassoc/Scripts/CrossOver-0:application_x-crossover-msi::install" '%s'; \
