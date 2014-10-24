@@ -116,7 +116,7 @@ fi
 
 local PR_SSH_INDICATOR=
 if [[ -n "$SSH_CLIENT"  ||  -n "$SSH2_CLIENT" ]]; then
-  PR_SSH_INDICATOR='%{[1;33m%}'
+  PR_SSH_INDICATOR='%{[33m%}'
 fi
 
 PROMPT='%{[34m%}╭─%{[00m%} '"$PR_ROOT_INDICATOR"'%n%{[00m%}@'"$PR_SSH_INDICATOR"'%m%{[00m%} %{[1;34m%}%~ %{[00m%}$(git_prompt_info) %{[33m%}$(dev_env_prompt_info)%(?..%{[31m%} %? ↵%{[00m%})%{[00m%}
