@@ -30,13 +30,6 @@ autoload colors; colors;
 # fi
 setopt prompt_subst
 
-if [ -d ~/.powerline ] && [ -z "$EMACS" ] && [ "$TERM" = xterm-256color ] && [ -f ~/.powerline/powerline/bindings/zsh/powerline.zsh ]; then
-  source ~/.powerline/powerline/bindings/zsh/powerline.zsh
-  PROMPT="$PROMPT
-%{[1;32m%}➥ %{[00m%}"
-  return
-fi
-
 if [ -f "$OZSH/plugins/gitfast/git-prompt.sh" ]; then
   source "$OZSH/plugins/gitfast/git-prompt.sh"
   GIT_PS1_SHOWUPSTREAM="auto"
@@ -126,5 +119,5 @@ if [[ -n "$SSH_CLIENT"  ||  -n "$SSH2_CLIENT" ]]; then
   PR_SSH_INDICATOR='%{[1;33m%}'
 fi
 
-PROMPT='%{[47m%}%{[34m%}╭─ %{[00m%}'"$PR_ROOT_INDICATOR"'%n%{[00m%}@'"$PR_SSH_INDICATOR"'%m%{[00m%} %{[1;34m%}%~ %{[00m%}$(git_prompt_info) %{[33m%}$(dev_env_prompt_info)%(?..%{[31m%} %? ↵%{[00m%})%{[00m%}
-%{[47m%}%{[34m%}╰─'"$PR_ROOT_INDICATOR"'$%{[00m%} '
+PROMPT='╭─ '"$PR_ROOT_INDICATOR"'%n%{[00m%}@'"$PR_SSH_INDICATOR"'%m%{[00m%} %{[1;34m%}%~ %{[00m%}$(git_prompt_info) %{[33m%}$(dev_env_prompt_info)%(?..%{[31m%} %? ↵%{[00m%})%{[00m%}
+╰'"$PR_ROOT_INDICATOR"'$%{[00m%} '

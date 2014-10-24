@@ -80,9 +80,3 @@ setopt no_correct
 
 # remeber parent TTY
 export TMUX_TTY="$TTY"
-
-# if [ -f "$HOME/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
-#   . "$HOME/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-# else
-#   echo 'zsh-syntax-highlighting not installed'
-# fi

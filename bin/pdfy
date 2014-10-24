@@ -3,7 +3,7 @@
 for file; do
   case $(echo "$file" | perl -pe 'y/A-Z/a-z/') in
     *.xlsx|*.xls|*.doc|*.docx|*.ppt|*.pptx)
-      loffice --headless --convert-to pdf "$file"
+      /Applications/LibreOffice.app/Contents/MacOS/soffice --headless --convert-to pdf "$file"
       ;;
     *)
       echo "Cannot convert $file to PDF" >&2
