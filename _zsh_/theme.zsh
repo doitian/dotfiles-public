@@ -73,9 +73,9 @@ function __git_minutes_since_last_commit {
   if ((minutes_since_last_commit < 30)); then
     m="%{[32m%}${readable_time}"
   elif ((minutes_since_last_commit < 120)); then
-    m="%{[1;33m%}${readable_time}"
+    m="%{[33m%}${readable_time}"
   else
-    m="%{[1;31m%}${readable_time}"
+    m="%{[31m%}${readable_time}"
   fi
 }
 
@@ -84,7 +84,7 @@ function git_prompt_info() {
   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
   dirty='%{[32m%}'
   if [[ -n $(git status -s 2> /dev/null) ]]; then
-    dirty='%{[1;31m%}'
+    dirty='%{[31m%}'
   fi
 
   local p=""
@@ -119,5 +119,5 @@ if [[ -n "$SSH_CLIENT"  ||  -n "$SSH2_CLIENT" ]]; then
   PR_SSH_INDICATOR='%{[1;33m%}'
 fi
 
-PROMPT='╭─ '"$PR_ROOT_INDICATOR"'%n%{[00m%}@'"$PR_SSH_INDICATOR"'%m%{[00m%} %{[1;34m%}%~ %{[00m%}$(git_prompt_info) %{[33m%}$(dev_env_prompt_info)%(?..%{[31m%} %? ↵%{[00m%})%{[00m%}
-╰'"$PR_ROOT_INDICATOR"'$%{[00m%} '
+PROMPT='%{[34m%}╭─%{[00m%} '"$PR_ROOT_INDICATOR"'%n%{[00m%}@'"$PR_SSH_INDICATOR"'%m%{[00m%} %{[1;34m%}%~ %{[00m%}$(git_prompt_info) %{[33m%}$(dev_env_prompt_info)%(?..%{[31m%} %? ↵%{[00m%})%{[00m%}
+%{[34m%}╰'"$PR_ROOT_INDICATOR"'$%{[00m%} '
