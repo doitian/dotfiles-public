@@ -10,15 +10,10 @@ if [ -x "/usr/bin/x-www-browser" ]; then
 fi
 export ALTERNATE_EDITOR="vim"
 export GREP_OPTIONS='--color=auto'
-export GREP_COLOR='1;32'
+# export GREP_COLOR='33'
 export SURFRAW_text_browser=w3m
 export SURFRAW_browser=x-www-browser
 export GOPATH="$HOME/.go"
-export WORKON_HOME="$HOME/.workon"
-export VIRTUAL_ENV_DISABLE_PROMPT=1
-if [ -f /usr/bin/python2 ]; then
-  export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python2
-fi
 if [ -f /usr/libexec/java_home ]; then
   export JAVA_HOME=$(/usr/libexec/java_home)
 fi
@@ -59,9 +54,6 @@ export PERL5LIB="$HOME/.perl5/lib/perl5:$PERL5LIB";
 # R
 export R_LIBS="$HOME/.rlibs"
 
-# Python
-export PYTHONPATH="$HOME/.pylibs"
-
 # Android
 if [ -d "$HOME/Applications/adt" ]; then
   export ANDROID_HOME="$HOME/Applications/adt/sdk"
@@ -74,11 +66,10 @@ fi
 export PATH="$HOME/bin\
 :$HOME/.rbenv/bin:$HOME/.rbenv/shims\
 :$HOME/.node-packages/bin\
-:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools\
 :$PATH"
 
 # Not used recently
+# :$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools\
 # :$GOPATH/bin\
 # :$HOME/.play/play-default\
 # :$HOME/.perl5/bin\
-# :$HOME/Library/Python/2.7/bin\
