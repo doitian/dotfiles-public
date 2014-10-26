@@ -1,8 +1,0 @@
-#!/bin/bash
-
-ffmpeg -isync \
-  -f alsa -ac 2 -i hw:0,0 \
-  -f x11grab -r 12 -s hd720 -i :0.0 \
-  -strict experimental \
-  -f mp4 -vcodec libx264 -acodec aac \
-  out.mp4

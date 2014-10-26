@@ -4,7 +4,6 @@ export LESS='--RAW-CONTROL-CHARS --quiet --HILITE-UNREAD --ignore-case --long-pr
 export LANG=en_US.UTF-8
 export LC_CTYPE=$LANG
 export LC_ALL=$LANG
-export RUBYLIB=$HOME/.rubylib
 if [ -x "/usr/bin/x-www-browser" ]; then
   export BROWSER="/usr/bin/x-www-browser"
 fi

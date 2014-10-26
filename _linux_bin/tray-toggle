@@ -1,7 +1,0 @@
-#!/bin/sh
-
-if pidof stalonetray &> /dev/null; then
-  killall stalonetray
-else
-  exec stalonetray &> /dev/null
-fi

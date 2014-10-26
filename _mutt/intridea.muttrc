@@ -1,3 +1,0 @@
-set from = 'ian@intridea.com'
-set sendmail = '/usr/bin/msmtp -a intridea
-set signature = '~/.signature.intridea'

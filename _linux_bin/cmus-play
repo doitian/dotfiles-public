@@ -1,4 +1,0 @@
-#!/bin/sh
-
-start_cmus.sh
-cmus-remote -n -p -q "$@"

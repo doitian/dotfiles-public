@@ -1,5 +1,0 @@
-#!/bin/bash
-
-FONT_SIZE=${1-32}
-FONT_FAMILY=${2-Terminus}
-exec urxvt -fn "xft:$FONT_FAMILY-$FONT_SIZE" -fb "xft:$FONT_FAMILY-$FONT_SIZE"

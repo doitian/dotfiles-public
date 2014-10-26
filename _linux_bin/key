@@ -1,4 +1,0 @@
-#!/bin/sh
-
-xev | \
-sed -n -e '/Super_L\|Shift_L/ !s/.*\(keycode .*(keysym.[^)]*)\).*/\1/p'

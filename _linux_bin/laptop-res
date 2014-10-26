@@ -1,2 +1,0 @@
-#!/bin/sh
-xrandr --output LVDS1 --mode 1366x768 --output DP1 --mode 1920x1080 --left-of LVDS1
