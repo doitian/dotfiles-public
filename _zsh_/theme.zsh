@@ -1,3 +1,7 @@
+if [ "$TERM" = dumb ]; then
+  return 0
+fi
+
 autoload colors; colors;
 
 #1.   directory
