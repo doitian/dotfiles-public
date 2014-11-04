@@ -303,5 +303,5 @@ dotvim=$HOME/.vim
 omz=$HOME/.oh-my-zsh
 omzp=$HOME/.oh-my-zsh/plugins
 org=$HOME/Dropbox/g/org
-pj=$HOME/Documents/3pjgames
+pj=$HOME/Documents/svn
 

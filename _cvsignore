@@ -55,3 +55,5 @@ project.org
 .generate-ctags
 *.marked
 .Ulysses-Group.plist
+*.swo
+*.swn

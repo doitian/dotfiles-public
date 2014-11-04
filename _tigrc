@@ -2,3 +2,4 @@ set tab-size = 2
 set line-graphics = utf-8
 bind generic + !git commit --amend
 bind generic Y !@bash -c "echo -n %(commit) | pbcopy"
+bind generic K !git difftool %(commit)~ %(commit)
