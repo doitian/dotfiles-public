@@ -52,6 +52,7 @@ alias yd="yaourt -Rcs"
 ##################################################
 # Git
 alias g="git"
+function gi() { curl -k "https://www.gitignore.io/api/$1" }
 alias gst="git st"
 alias ga="git add"
 alias gaa="git add -A"

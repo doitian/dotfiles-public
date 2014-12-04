@@ -126,4 +126,4 @@ if [[ -n "$SSH_CLIENT"  ||  -n "$SSH2_CLIENT" ]]; then
 fi
 
 PROMPT='%{[34m%}╭─%{[00m%} '"$PR_ROOT_INDICATOR"'%n%{[00m%}@'"$PR_SSH_INDICATOR"'%m%{[00m%} %{[1;34m%}%~ %{[00m%}$(git_prompt_info) %{[33m%}$(dev_env_prompt_info)%(?..%{[31m%} %? ↵%{[00m%})%{[00m%}
-%{[34m%}╰'"$PR_ROOT_INDICATOR$PR_ROOT_PROMPT"'%{[00m%} '
+%{[34m%}╰'"$PR_ROOT_INDICATOR"'%(1j.[%j].)'"$PR_ROOT_PROMPT"'%{[00m%} '
