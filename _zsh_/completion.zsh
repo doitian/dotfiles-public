@@ -103,37 +103,10 @@ _rake () {
   if [ -f Rakefile ]; then
     if ! [ -f .rake_tasks~ ] || [ Rakefile -nt .rake_tasks~ ]; then
       echo "\nGenerating .rake_tasks~..." >&2
-      bundler-exec rake --silent --tasks | cut -d " " -f 2 > .rake_tasks~
+      rake --silent --tasks | cut -d " " -f 2 > .rake_tasks~
     fi
     compadd `cat .rake_tasks~`
   fi
 }
 
 compdef _rake rake
-
-# cap cache
-function _cap () {
-  if [ -f config/deploy.rb ]; then
-    if ! [ -f .cap_tasks~ ] || [ config/deploy.rb -nt .cap_tasks~ ]; then
-      echo "\nGenerating .cap_tasks~..." >&2
-      gemset deploy cap -T | grep '^cap ' | cut -d " " -f 2 > .cap_tasks~
-    fi
-    compadd `cat .cap_tasks~`
-  fi
-}
-
-compdef _cap cap
-
-L2TP_CONFIG_DIR="$HOME/Dropbox/Secrets/l2tp"
-OVPN_CONFIG_DIR="$HOME/Dropbox/Secrets/openvpn"
-
-_ovpn () {
-  compadd $(ls $OVPN_CONFIG_DIR) '--route'
-}
-
-_l2tp () {
-  compadd $(ls $L2TP_CONFIG_DIR | grep -v '^ip-\|^common$') connect up down stop '--route'
-}
-
-compdef _ovpn ovpn
-compdef _l2tp l2tp

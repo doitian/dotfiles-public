@@ -21,7 +21,7 @@ run_wan_ip() {
 	local wan_ip
 
 	if [ -f "$tmp_file" ]; then
-    if [ "$UNAME" = "Darwin" ]; then
+    if [ "$(uname)" = "Darwin" ]; then
     	last_update=$(stat -f "%m" ${tmp_file})
   	else
     	last_update=$(stat -c "%Y" ${tmp_file})
@@ -54,8 +54,4 @@ main() {
   run_wan_ip
 }
 
-if [ "$1" = "-" ]; then
-  main
-else
-  main | dmenu.sh | sed 's/^.*: //' | ctrlc
-fi
+main
