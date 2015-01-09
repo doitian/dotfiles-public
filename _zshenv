@@ -81,3 +81,12 @@ export PATH="$HOME/bin\
 # :$GOPATH/bin\
 # :$HOME/.play/play-default\
 # :$HOME/.perl5/bin\
+
+if [ -f "$HOME/.safe_path_secret" ]; then
+  function mksafepath() {
+    if [ -d .git ]; then
+      mkdir -p ".git/$(cat $HOME/.safe_path_secret)"
+    fi
+  }
+  export PATH=".git/$(cat $HOME/.safe_path_secret)/../../bin:$PATH"
+fi

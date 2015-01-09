@@ -52,39 +52,3 @@ alias bib="bundle install --binstubs"
 alias bl="bundle list"
 alias bp="bundle package"
 alias bu="bundle update"
-
-function _rails_command () {
-  if [ -e "script/server" ]; then
-    ruby script/$@
-  elif [ -e "script/rails" ]; then
-    ruby script/rails $@
-  elif [ -e "bin/rails" ]; then
-    bin/rails $@
-  else
-    rails $@
-  fi
-}
-
-function _rake_command () {
-  if [ -e "bin/rake" ]; then
-    bin/rake $@
-  else
-    rake $@
-  fi
-}
-
-alias rails='_rails_command'
-compdef _rails_command=rails &> /dev/null || true
-
-alias rake='noglob _rake_command'
-compdef _rake_command=rake
-
-compdef _sudo z
-
-alias zrails="z rails"
-alias zrake="z rake"
-alias zrspec="z rspec"
-
-alias brake='noglob bundle exec rake' # execute the bundled rake gem
-alias srake='noglob sudo rake' # noglob must come before sudo
-alias sbrake='noglob sudo bundle exec rake' # altogether now ... 
