@@ -98,15 +98,7 @@ alias ff='find . -type f -name'
 alias pu='pushd'
 alias po='popd'
 
-if which ruby &> /dev/null; then
-  if [ "$OS_TYPE" = "Darwin" ]; then
-    alias rm="$HOME/.rm-trash/rm.rb"
-  elif which rm.rb &> /dev/null; then
-    alias rm="rm.rb -I"
-  else
-    alias rm="rm -I"
-  fi
-fi
+alias rm="rm -i"
 alias mv="mv -i"
 alias cp="cp -i"
 alias cpv="rsync -poghb --backup-dir=/tmp/rsync -e /dev/null --progress --"
