@@ -2,11 +2,6 @@
 Pry.config.theme = 'zenburn'
 Pry.prompt = [proc { |obj, nest_level, _| "#{RUBY_VERSION} (#{obj}):#{nest_level} > " }, proc { |obj, nest_level, _| "#{RUBY_VERSION} (#{obj}):#{nest_level} * " }]
 
-# Color ansi code is messed up in pager.
-Pry.config.pager = false
-# == PLUGINS ===
-# awesome_print gem: great syntax colorized printing
-# look at ~/.aprc for more settings for awesome_print
 if ENV['TERM'] == 'emacs'
   # no pagination
   Pry.config.print = proc { |output, value| output.puts "=> #{value.inspect}" }
@@ -14,18 +9,56 @@ if ENV['TERM'] == 'emacs'
   Pry.config.color = false
 end
 
+# Color ansi code is messed up in pager.
+#Pry.config.pager = false
+
+# == PLUGINS ===
+# awesome_print gem: great syntax colorized printing
+# look at ~/.aprc for more settings for awesome_print
 begin
   require 'awesome_print'
   if AwesomePrint.respond_to?(:pry!)
     AwesomePrint.pry!
   else
-    Pry.config.print = proc { |output, value| output.puts value.ai }
-    # Pry.config.print = proc {|output, value| Pry::Helpers::BaseHelpers.stagger_output("=> #{value.ai}", output)}
+    # Pry.config.print = proc { |output, value| output.puts value.ai }
+    Pry.config.print = proc {|output, value| Pry::Helpers::BaseHelpers.stagger_output("=> #{value.ai}", output)}
   end
 rescue LoadError => err
   puts "gem install awesome_print  # <-- highly recommended"
 end
 
+begin
+  require 'hirb'
+
+  Hirb::View.instance_eval do
+    def enable_output_method
+      @output_method = true
+      @old_print = Pry.config.print
+      Pry.config.print = proc do |output, value|
+        Hirb::View.view_or_page_output(value) || @old_print.call(output, value)
+      end
+    end
+
+    def disable_output_method
+      Pry.config.print = @old_print
+      @output_method = nil
+    end
+  end
+
+  Hirb.enable
+rescue LoadError => err
+  puts "gem install hirb  # <-- highly recommended"
+end
+
+if defined?(Rails)
+  if Rails.version[0..0] == "2"
+    require 'console_app'
+    require 'console_with_helpers'
+  elsif Rails.version[0..0] == "3" || Rails.version[0..0] == "4"
+    require 'rails/console/app'
+    require 'rails/console/helpers'
+  end
+end
 # === CUSTOM COMMANDS ===
 # from: https://gist.github.com/1297510
 default_command_set = Pry::CommandSet.new do
@@ -115,35 +148,13 @@ class Hash
   end
 end
 
-begin
-  require 'hirb'
-
-  Hirb::View.instance_eval do
-    def enable_output_method
-      @output_method = true
-      @old_print = Pry.config.print
-      Pry.config.print = proc do |output, value|
-        Hirb::View.view_or_page_output(value) || @old_print.call(output, value)
-      end
+# === Patch ===
+require 'pry/rubygem'
+require 'pry/commands/gem_open'
+class Pry::Command::GemOpen
+  def process(gem)
+    Dir.chdir(Pry::Rubygem.spec(gem).full_gem_path) do
+      Pry::Editor.new(_pry_).invoke_editor(".", 0, false)
     end
-
-    def disable_output_method
-      Pry.config.print = @old_print
-      @output_method = nil
-    end
-  end
-
-  Hirb.enable
-rescue LoadError => err
-  puts "gem install hirb  # <-- highly recommended"
-end
-
-if defined?(Rails)
-  if Rails.version[0..0] == "2"
-    require 'console_app'
-    require 'console_with_helpers'
-  elsif Rails.version[0..0] == "3" || Rails.version[0..0] == "4"
-    require 'rails/console/app'
-    require 'rails/console/helpers'
   end
 end
