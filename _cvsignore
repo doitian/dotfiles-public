@@ -58,3 +58,4 @@ project.org
 .UlyssesRoot
 *.swo
 *.swn
+.sw?

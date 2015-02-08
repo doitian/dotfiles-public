@@ -1,0 +1,7 @@
+# Basic Options
+--recurse=yes
+--tag-relative=yes
+--exclude=.git
+--exclude=tmp
+--exclude=.svn
+--exclude=log
