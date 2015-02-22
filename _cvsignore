@@ -37,14 +37,11 @@ _obj
 *.pyc
 /workspace
 octave-core
-.ensime
-.ensime_lucene
 *.beam
 *.sublime-project
 *.sublime-workspace
 .git-wtfrc
 .vagrant
-.projectile
 .rebar
 *.marked
 .Ulysses-Group.plist
