@@ -52,3 +52,4 @@ done
 fresh aria2.conf --file=~/.aria2/aria2.conf
 fresh bundle.config --file=~/.bundle/config
 fresh subversion.config --file=~/.subversion/config
+fresh rbenv/default-gems --file=~/.rbenv/default-gems
