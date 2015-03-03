@@ -1,3 +1,0 @@
-#!/bin/sh
-
-find "$HOME" -type l -exec test ! -e '{}' \;  -print -delete
