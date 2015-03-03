@@ -1,27 +1,41 @@
-# vim: ft=sh
+# vim:ft=sh:
 fresh freshshell/fresh bin/fresh --bin
 
-fresh zshrc --file
-fresh zshenv --file
-fresh zprofile --file
+### shell.sh
 
-# fresh robbyrussell/oh-my-zsh lib/bzr.zsh
-fresh robbyrussell/oh-my-zsh lib/completion.zsh
-fresh robbyrussell/oh-my-zsh lib/directories.zsh
-fresh robbyrussell/oh-my-zsh lib/functions.zsh
-# fresh robbyrussell/oh-my-zsh lib/git.zsh
-fresh robbyrussell/oh-my-zsh lib/grep.zsh
-fresh robbyrussell/oh-my-zsh lib/history.zsh
-fresh robbyrussell/oh-my-zsh lib/key-bindings.zsh
-fresh robbyrussell/oh-my-zsh lib/misc.zsh
-# fresh robbyrussell/oh-my-zsh lib/nvm.zsh
-# fresh robbyrussell/oh-my-zsh lib/prompt_info_functions.zsh
-fresh robbyrussell/oh-my-zsh lib/spectrum.zsh
-fresh robbyrussell/oh-my-zsh lib/termsupport.zsh
-fresh robbyrussell/oh-my-zsh lib/theme-and-appearance.zsh
+# bzr git nvm prompt_info_functions
+for l in completion directories functions grep history key-bindings misc spectrum termsupport theme-and-appearance; do
+  fresh robbyrussell/oh-my-zsh "lib/${l}.zsh"
+done
 
 for p in jira safe-paste terminalapp ssh-agent; do
   fresh robbyrussell/oh-my-zsh "plugins/${p}/${p}.plugin.zsh"
 done
 
 fresh 'zsh/*.zsh'
+
+### bin
+for f in ~/.dotfiles/bin/*; do
+  f=$(basename "$f")
+  fresh bin/$(basename "$f") --bin
+done
+
+# MacOSX file cannot be symbol linked
+mkdir -p ~/Library/KeyBindings
+mkdir -p ~/.MacOSX
+cp -f ~/.dotfiles/Library/KeyBindings/DefaultKeyBinding.dict ~/Library/KeyBindings/
+cp -f ~/.dotfiles/MacOSX/environment.plist ~/.MacOSX/
+
+### vim
+fresh vimrc --file
+fresh gmarik/vundle . --file=~/.vim/bundle/vundle/
+
+### config files
+for f in ~/.dotfiles/_*; do
+  f=$(basename "$f")
+  fresh "$f" --file="~/.${f#_}"
+done
+
+fresh aria2.conf --file=~/.aria2/aria2.conf
+fresh bundle.config --file=~/.bundle/config
+fresh subversion.config --file=~/.subversion/config

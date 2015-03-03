@@ -1,7 +1,0 @@
-#!/bin/bash
-
-PYTHON=python
-if [ -x /usr/bin/python2 ]; then
-  PYTHON=python2
-fi
-exec PYTHON ~/.thunder/lixian_cli.py "$@"
