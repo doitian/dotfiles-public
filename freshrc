@@ -20,6 +20,18 @@ for f in ~/.dotfiles/bin/*; do
   fresh bin/$(basename "$f") --bin
 done
 
+### private dotfiles
+PRIVATE_REPO=git@github.com:doitian/dotfiles-private.git
+for f in gitconfig vim-spell-en.utf-8.add; do
+  fresh $PRIVATE_REPO "$f" --file
+done
+for f in ssh/config gem/credentials; do
+  fresh $PRIVATE_REPO "$f" --file="~/.$f"
+done
+for f in glcl glmr; do
+  fresh $PRIVATE_REPO "bin/$f" --bin
+done
+
 # MacOSX file cannot be symbol linked
 mkdir -p ~/Library/KeyBindings
 mkdir -p ~/.MacOSX
@@ -27,6 +39,7 @@ cp -f ~/.dotfiles/Library/KeyBindings/DefaultKeyBinding.dict ~/Library/KeyBindin
 cp -f ~/.dotfiles/MacOSX/environment.plist ~/.MacOSX/
 
 ### vim
+mkdir -p ~/.vim/backup
 fresh vimrc --file
 fresh gmarik/vundle . --file=~/.vim/bundle/vundle/
 
