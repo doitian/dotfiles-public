@@ -204,9 +204,10 @@ gop=$GOPATH
 box=$HOME/Dropbox
 docs=$HOME/Documents
 dl=$HOME/Downloads
-dotemacs=$HOME/.emacs.d
-dotsubl="$HOME/Library/Application Support/Sublime Text 3/Packages"
-dotvim=$HOME/.vim
 omz=$HOME/.fresh/source/robbyrussell/oh-my-zsh
 omzp=$omz/plugins
 pj=$HOME/Documents/svn
+fs=$HOME/.fresh/source
+dotfiles=$HOME/.dotfiles
+dotfilesp=$HOME/.fresh/source/doitian/dotfiles-private
+
