@@ -25,17 +25,13 @@ autoload colors; colors;
 #g     cyan
 #h     light grey
 #                1 2 3 4 5 6 7 8 9 0 1
-# zenburn
-#export LSCOLORS="ExGxFxdxCxEgEdHbagacad"
-# twilight
-#export LSCOLORS="exfxcxdxbxegedabagacad"
-# if [ "$OS_TYPE" = "Linux" -o "$OS_TYPE" = "CYGWIN_NT-5.1" ] && [ -f "$HOME/.zsh/dircolors.256dark" ]; then
-#   eval `dircolors $HOME/.zsh/dircolors.256dark`
+# if [ "$OS_TYPE" = "Linux" -o "$OS_TYPE" = "CYGWIN_NT-5.1" ] && [ -f "$HOME/.dotfiles/zsh/dircolors.256dark" ]; then
+#   eval `dircolors $HOME/.dotfiles/zsh/dircolors.256dark`
 # fi
 setopt prompt_subst
 
-if [ -f "$OZSH/plugins/gitfast/git-prompt.sh" ]; then
-  source "$OZSH/plugins/gitfast/git-prompt.sh"
+if [ -f "$ZSH/plugins/gitfast/git-prompt.sh" ]; then
+  source "$ZSH/plugins/gitfast/git-prompt.sh"
   GIT_PS1_SHOWUPSTREAM="auto"
 else
   function __git_ps1_show_upstream () {}

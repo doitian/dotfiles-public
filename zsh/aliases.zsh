@@ -1,6 +1,4 @@
 # -*- sh -*-
-OS_TYPE=`uname -s`
-
 ##################################################
 # Editor
 alias e="emacs-dwim"
@@ -32,24 +30,6 @@ alias mux="tmuxinator"
 alias tss="tmuxinator start"
 
 ##################################################
-# Yaourt
-alias y="yaourt"
-alias yy="yaourt -S"
-alias yyy="yaourt -Sy"
-alias yY="yaourt -S --noconfirm"
-alias yyY="yaourt -S --noconfirm"
-alias yC="yaourt -C"
-alias ys="yaourt -Ss"
-alias yl="yaourt -Ql"
-alias yi="yaourt -Qi"
-alias yO="yaourt -Qo"
-alias yu="yaourt -Syu --aur"
-alias yU="yaourt -Syu --aur --noconfirm"
-alias yc="yaourt -Sc"
-alias yD="yaourt -Qdt"
-alias yd="yaourt -Rcs"
-
-##################################################
 # Git
 alias g="git"
 function gi() { curl -k "https://www.gitignore.io/api/$1" }
@@ -66,78 +46,19 @@ alias glll="git lll"
 alias glg="git lg"
 alias gh="hub"
 
-##################################################
-# File & Direcotry
-if [ "$TERM" != "dumb" ] || [ -n "$EMACS" ]; then
-  if [ "$OS_TYPE" = "Linux" -o "$OS_TYPE" = "CYGWIN_NT-5.1" ]; then
-    #eval "`dircolors -b`"
-    alias ls='ls --color=tty'
-  else
-    alias ls='ls -G'
-  fi
-
-  # alias grep='grep --color'
-fi
-
-alias lsa='ls -lah'
-alias lld='ls -l | grep "^d"'
-alias ll='ls -l'
-alias la='ls -A'
-alias l='ls -CF'
-alias l.='ls -d .*'
 # absolute ls
 alias als='ls -d `pwd`/*'
 alias tree='tree -CFA -I ".git" --dirsfirst'
-alias sgrep='grep -R -n -H -C 5 --exclude-dir={.git,.svn,CVS} '
 
 alias dud='du --max-depth=1 -h'
 alias duf='du -sh *'
 alias fd='find . -type d -name'
 alias ff='find . -type f -name'
 
-alias pu='pushd'
-alias po='popd'
-
 alias rm="rm -i"
 alias mv="mv -i"
 alias cp="cp -i"
 alias cpv="rsync -poghb --backup-dir=/tmp/rsync -e /dev/null --progress --"
-
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias .....='cd ../../../..'
-alias cd..='cd ..'
-alias cd...='cd ../..'
-alias cd....='cd ../../..'
-alias cd.....='cd ../../../..'
-alias cd/='cd /'
-
-alias -- -='dirs -v'
-alias dv='dirs -v'
-alias 1='cd -'
-alias 2='cd +2'
-alias 3='cd +3'
-alias 4='cd +4'
-alias 5='cd +5'
-alias 6='cd +6'
-alias 7='cd +7'
-alias 8='cd +8'
-alias 9='cd +9'
-
-cd () {
-  if   [[ "x$*" == "x..." ]]; then
-    cd ../..
-  elif [[ "x$*" == "x...." ]]; then
-    cd ../../..
-  elif [[ "x$*" == "x....." ]]; then
-    cd ../../..
-  elif [[ "x$*" == "x......" ]]; then
-    cd ../../../..
-  else
-    builtin cd "$@"
-  fi
-}
 
 # fasd
 if which fasd > /dev/null 2>&1; then
@@ -161,8 +82,6 @@ alias rd=rmdir
 
 ##################################################
 # System
-alias _='sudo'
-
 alias psg="ps auxw | grep -i"
 
 if which htop > /dev/null 2>&1; then
@@ -226,8 +145,6 @@ alias mk=make
 
 alias cmr=cmus-remote
 
-alias am="$HOME/codebase/automators/bin/automator"
-
 alias vtig="GIT_EDITOR=vim tig"
 
 alias urlencode='node -e "console.log(encodeURIComponent(process.argv[1]))"'
@@ -256,9 +173,6 @@ else
   alias stop.memcache="killall memcached"
   alias stop.confluence="/opt/atlassian-confluence-5.2.3/bin/stop-confluence.sh"
 fi
-
-alias igssh='l2tp stop; l2tp --route igssh'
-alias vpncloud='l2tp stop; l2tp --route igssh'
 
 alias dj=django
 
@@ -293,8 +207,6 @@ dl=$HOME/Downloads
 dotemacs=$HOME/.emacs.d
 dotsubl="$HOME/Library/Application Support/Sublime Text 3/Packages"
 dotvim=$HOME/.vim
-omz=$HOME/.oh-my-zsh
-omzp=$HOME/.oh-my-zsh/plugins
-org=$HOME/Dropbox/g/org
+omz=$HOME/.fresh/source/robbyrussell/oh-my-zsh
+omzp=$omz/plugins
 pj=$HOME/Documents/svn
-

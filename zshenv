@@ -1,5 +1,4 @@
 #!/usr/bin/env zsh
-export PAGER=/usr/bin/less
 export LESS='--RAW-CONTROL-CHARS --quiet --HILITE-UNREAD --ignore-case --long-prompt'
 export LANG=en_US.UTF-8
 export LC_CTYPE=$LANG
