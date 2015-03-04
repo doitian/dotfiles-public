@@ -27,16 +27,18 @@ fresh https://gist.github.com/7435890.git patch-edid.rb --bin
 fresh jamesottaway/tmux-up tmux-up --bin
 
 ### private dotfiles
-PRIVATE_REPO=git@github.com:doitian/dotfiles-private.git
-for f in gitconfig vim-spell-en.utf-8.add; do
-  fresh $PRIVATE_REPO "$f" --file
-done
-for f in ssh/config gem/credentials; do
-  fresh $PRIVATE_REPO "$f" --file="~/.$f"
-done
-for f in glcl glmr; do
-  fresh $PRIVATE_REPO "bin/$f" --bin
-done
+if [ -f ~/.dotfiles-private ]; then
+  PRIVATE_REPO=$(cat ~/.dotfiles-private)
+  for f in gitconfig vim-spell-en.utf-8.add; do
+    fresh $PRIVATE_REPO "$f" --file
+  done
+  for f in ssh/config gem/credentials; do
+    fresh $PRIVATE_REPO "$f" --file="~/.$f"
+  done
+  for f in glcl glmr; do
+    fresh $PRIVATE_REPO "bin/$f" --bin
+  done
+fi
 
 # MacOSX file cannot be symbol linked
 mkdir -p ~/Library/KeyBindings
@@ -47,7 +49,7 @@ cp -f ~/.dotfiles/MacOSX/environment.plist ~/.MacOSX/
 ### vim
 mkdir -p ~/.vim/backup
 fresh vimrc --file
-fresh gmarik/vundle . --file=~/.vim/bundle/vundle/
+fresh gmarik/Vundle.vim . --file=~/.vim/bundle/Vundle.vim/
 
 ### config files
 for f in ~/.dotfiles/_*; do
