@@ -1,10 +1,3 @@
-/_vim_/.netrwhist
-/_vim_/doc/tags
-/_irssi_/*.log
-/_irssi_/*.autosave
-/_irssi_/config
-/_zsh_/cache
-!/bin
 *~
-
 .DS_Store
+/private

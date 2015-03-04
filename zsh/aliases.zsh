@@ -22,12 +22,17 @@ alias :q="exit"
 
 ##################################################
 # TMUX
-alias ts=tmux-new-or-attach
 alias t="tmux"
 alias tl="tmux ls"
 alias tn="tmux neww"
-alias mux="tmuxinator"
-alias tss="tmuxinator start"
+function ts() {
+  case "x$1" in
+    x-*) tmux new "$@" ;;
+    x) tmux new ;;
+    *) tmux new -s "$@" ;;
+  esac
+}
+alias tu="tmux-up-dwim"
 
 ##################################################
 # Git

@@ -1,12 +1,11 @@
 #!/bin/bash
 
-# tmux-new-or-attach(session)
 function main() {
   local session="$1"
   shift
   if ! $(tmux has-session -t "$session"); then
-    if [ -f "$HOME/.tmuxinator/$session.yml" ]; then
-      exec tmuxinator start "$session"
+    if [ -f "$HOME/.tmux-up/${session}.conf" ]; then
+      exec TMUX= tmux-up "$HOME/.tmux-up/${session}.conf"
     else
       env TMUX= tmux new-session -d -s "$session" "$@"
     fi
