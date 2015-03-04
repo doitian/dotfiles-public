@@ -25,14 +25,9 @@ alias :q="exit"
 alias t="tmux"
 alias tl="tmux ls"
 alias tn="tmux neww"
-function ts() {
-  case "x$1" in
-    x-*) tmux new "$@" ;;
-    x) tmux new ;;
-    *) tmux new -s "$@" ;;
-  esac
-}
-alias tu="tmux-up-dwim"
+alias ts="tmux new -s"
+alias ta="tmux attach -t"
+alias tu="tmux-up"
 
 ##################################################
 # Git

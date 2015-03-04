@@ -15,15 +15,16 @@ done
 fresh 'zsh/*.zsh'
 
 fresh Tarrasch/zsh-bd bd.zsh
-fresh michaelklishin/git-wtf git-wtf --bin
-fresh https://gist.github.com/7435890.git patch-edid.rb --bin
-fresh jamesottaway/tmux-up tmux-up --bin
 
 ### bin
 for f in ~/.dotfiles/bin/*; do
   f=$(basename "$f")
   fresh bin/$(basename "$f") --bin
 done
+
+fresh michaelklishin/git-wtf git-wtf --bin
+fresh https://gist.github.com/7435890.git patch-edid.rb --bin
+fresh jamesottaway/tmux-up tmux-up --bin
 
 ### private dotfiles
 PRIVATE_REPO=git@github.com:doitian/dotfiles-private.git
