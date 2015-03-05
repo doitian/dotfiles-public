@@ -48,3 +48,4 @@ octave-core
 .UlyssesRoot
 .sw?
 *.swo
+.tmux.conf
