@@ -1,7 +1,7 @@
 RUBY_VERSION := 2.1.5
-BREW_FORMULAE := ansible ant atool colordiff coreutils ctags duti elixir fasd fswatch gist git git-number gmp htop-osx hub imagemagick "macvim --override-system-vim" mariadb mongodb msgpack multimarkdown node ossp-uuid p7zip pidof pngquant postgresql pstree reattach-to-user-namespace rebar redis rlwrap subversion tag terminal-notifier the_silver_searcher tig tmux unrar watch zsh-completions
+BREW_FORMULAE := ansible ant atool colordiff coreutils ctags duti elixir fasd fswatch gist git git-number gmp htop-osx hub imagemagick "macvim --override-system-vim" mariadb mongodb msgpack multimarkdown node ossp-uuid p7zip pidof pngquant postgresql pstree reattach-to-user-namespace rebar redis rlwrap subversion tag terminal-notifier the_silver_searcher tig tmux unrar watch zsh-completions lua luarocks
 PIP_PACKAGES := percol redis httpie Pygments
-NPM_PACKAGES := js-beautify
+NPM_PACKAGES := js-beautify bower
 
 fresh:
 	fresh
@@ -24,7 +24,8 @@ homebrew:
 	$(foreach formula,$(BREW_FORMULAE),brew install $(formula);)
 
 pip:
-	sudo pip install $(PIP_PACKAGES)
+	sudo easy_install pip
+	sudo pip install --upgrade $(PIP_PACKAGES)
 
 npm:
 	npm install -g $(NPM_PACKAGES)

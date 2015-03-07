@@ -25,6 +25,7 @@ done
 fresh michaelklishin/git-wtf git-wtf --bin
 fresh https://gist.github.com/7435890.git patch-edid.rb --bin
 fresh jamesottaway/tmux-up tmux-up --bin
+fresh 3pjgames/skynetvm skynetvm --bin
 
 ### private dotfiles
 if [ -f ~/.dotfiles-private ]; then
