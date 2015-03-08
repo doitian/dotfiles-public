@@ -36,7 +36,7 @@ function vman() {
   if (($#)); then
     title='man:'
     for arg in $@; do
-      if ! grep -q '^[0-9]\+\|\(-.*\)$' <<< "$arg" ; then
+      if ! echo "$arg" | grep -q '^[0-9]\+\|\(-.*\)$'; then
         title="$title $arg"
       fi
     done

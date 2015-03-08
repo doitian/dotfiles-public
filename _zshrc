@@ -3,9 +3,10 @@
 if [[  "$-" != *i* ]]; then return 0; fi
 
 ZSH_CUSTOM="$HOME/.dotfiles/zsh"
-ZSH_CACHE_DIR="$ZSH/cache/"
 ZSH="$HOME/.fresh/source/robbyrussell/oh-my-zsh"
+ZSH_CACHE_DIR="$HOME/.zcompcache"
 JIRA_RAPID_BOARD=yes
+COMPLETION_WAITING_DOTS=true
 
 zstyle :omz:plugins:ssh-agent agent-forwarding on
 

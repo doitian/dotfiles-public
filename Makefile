@@ -2,6 +2,7 @@ RUBY_VERSION := 2.1.5
 BREW_FORMULAE := ansible ant atool colordiff coreutils ctags duti elixir fasd fswatch gist git git-number gmp htop-osx hub imagemagick "macvim --override-system-vim" mariadb mongodb msgpack multimarkdown node ossp-uuid p7zip pidof pngquant postgresql pstree reattach-to-user-namespace rebar redis rlwrap subversion tag terminal-notifier the_silver_searcher tig tmux unrar watch zsh-completions lua luarocks
 PIP_PACKAGES := percol redis httpie Pygments
 NPM_PACKAGES := js-beautify bower
+GEM_PACKAGES := dotenv
 
 fresh:
 	fresh
@@ -9,7 +10,7 @@ fresh:
 install:
 	./install.sh
 
-bootstrap: xcode homebrew install rbenv vim pip npm
+bootstrap: xcode homebrew install rbenv vim pip npm gem
 	mkdir ~/codebase
 
 xcode:
@@ -30,6 +31,9 @@ pip:
 npm:
 	npm install -g $(NPM_PACKAGES)
 
+gem:
+	sudo /usr/bin/gem install $(GEM_PACKAGES)
+
 rbenv:
 	~/bin/rbenv-update
 	rbenv install -s $(RUBY_VERSION)
@@ -38,4 +42,4 @@ rbenv:
 vim:
 	vim +PluginInstall +qall
 
-.PHONY: fresh install bootstrap xcode homebrew rbenv vim pip npm
+.PHONY: fresh install bootstrap xcode homebrew rbenv vim pip npm gem
