@@ -8,7 +8,7 @@ for l in completion directories functions grep history key-bindings misc spectru
   fresh robbyrussell/oh-my-zsh "lib/${l}.zsh"
 done
 
-for p in jira safe-paste terminalapp ssh-agent rake-fast; do
+for p in jira safe-paste brew ssh-agent rake-fast; do
   fresh robbyrussell/oh-my-zsh "plugins/${p}/${p}.plugin.zsh"
 done
 
