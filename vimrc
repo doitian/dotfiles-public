@@ -460,8 +460,8 @@ noremap <silent> <leader>lbe :BufExplorer<CR>
 noremap <silent> <leader>lbs :BufExplorerHorizontalSplit<CR>
 noremap <silent> <leader>lbv :BufExplorerVerticalSplit<CR>
 
-nnoremap <silent> <leader>m :Dispatch<CR>
-nnoremap <silent> <leader>M :Dispatch!<CR>
+nnoremap <silent> <leader>m :Make<CR>
+nnoremap <silent> <leader>M :Make!<CR>
 
 nnoremap <silent> <leader>n :nohlsearch<CR>
 
@@ -493,7 +493,9 @@ nnoremap <leader>tm :Make<cr>
 nnoremap <leader>tb :Make!<cr>
 nnoremap <leader>to :Copen<cr>
 nnoremap <leader>td :Dispatch<space>
-nnoremap <leader>ts :Start<space>
+nnoremap <leader>tt :Dispatch<cr>
+nnoremap <leader>tr :Start<space>
+nnoremap <leader>ts :Start!<space>
 nnoremap <leader>tf :Focus<space>
 
 nnoremap <leader>u :GundoToggle<CR>
