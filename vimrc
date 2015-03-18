@@ -489,13 +489,13 @@ vnoremap <silent> <leader>sX :call ToggleTodoStatus(1)<cr>
 " Strip all trailing whitespace from a file
 nnoremap <silent> <leader>sw :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<cr>
 
-nnoremap <leader>tm :Make<cr>
-nnoremap <leader>tb :Make!<cr>
 nnoremap <leader>to :Copen<cr>
 nnoremap <leader>td :Dispatch<space>
+nnoremap <leader>tD :Dispatch!<space>
 nnoremap <leader>tt :Dispatch<cr>
-nnoremap <leader>tr :Start<space>
-nnoremap <leader>ts :Start!<space>
+nnoremap <leader>tT :Dispatch!<cr>
+nnoremap <leader>ts :Start<space>
+nnoremap <leader>tb :Start!<space>
 nnoremap <leader>tf :Focus<space>
 
 nnoremap <leader>u :GundoToggle<CR>
