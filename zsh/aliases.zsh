@@ -13,14 +13,6 @@ function tv() {
 alias view='vim -R'
 
 ##################################################
-# Command Edit
-alias h=history
-alias hsi="hs -i"
-alias hl="history"
-alias hr="history -n"
-alias :q="exit"
-
-##################################################
 # TMUX
 alias t="tmux"
 alias tl="tmux ls"
@@ -32,17 +24,9 @@ alias tu="tmux-up"
 ##################################################
 # Git
 alias g="git"
-alias gst="git st"
-alias ga="git add"
-alias gaa="git add -A"
-alias gau="git add -u"
 alias gn="git number -s"
 alias gna="git number add"
 alias gnc="git number -c"
-alias gl="git l"
-alias gll="git ll"
-alias glll="git lll"
-alias glg="git lg"
 alias gh="hub"
 
 # absolute ls
@@ -76,8 +60,7 @@ if which fasd > /dev/null 2>&1; then
   alias gvv="fasd -e 'gvim --remote' -f -i"
 fi
 
-alias md='mkdir -p'
-alias rd=rmdir
+alias di='dirs -v | head -n 10'
 
 ##################################################
 # System
