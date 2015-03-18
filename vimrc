@@ -44,6 +44,7 @@ Plugin 'tpope/vim-projectionist'
 Plugin 'tpope/vim-rails'
 Plugin 'tpope/vim-repeat'
 Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-unimpaired'
 Plugin 'tpope/vim-vinegar'
 Plugin 'vim-ruby/vim-ruby'
 
@@ -424,8 +425,6 @@ vnoremap <silent> <leader>d "_d
 
 nnoremap <silent> <leader>f :SyntasticNext<CR>
 nnoremap <leader>F :SyntasticNext!<CR>
-nnoremap <silent> ]l :lnext<CR>
-nnoremap <silent> [l :lprevious<CR>
 
 " shortcut to jump to next conflict marker
 nnoremap <leader>g. :e <C-R>=expand('%:h').'/'<cr>
@@ -463,8 +462,6 @@ noremap <silent> <leader>lbv :BufExplorerVerticalSplit<CR>
 
 nnoremap <silent> <leader>m :Dispatch<CR>
 nnoremap <silent> <leader>M :Dispatch!<CR>
-nnoremap <silent> ]e :cnext<CR>
-nnoremap <silent> [e :cprevious<CR>
 
 nnoremap <silent> <leader>n :nohlsearch<CR>
 
