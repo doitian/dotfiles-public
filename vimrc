@@ -82,6 +82,8 @@ set bg=dark
 hi MatchParen cterm=bold ctermbg=none ctermfg=red gui=bold guibg=NONE guifg=red
 
 " Plugins Options {{{1
+let g:bufExplorerDisableDefaultKeyMapping = 1
+
 let g:ctrlp_root_markers = []
 let g:ctrlp_working_path_mode = 'a'
 let g:ctrlp_map = '<leader>,'
@@ -457,6 +459,8 @@ nmap <silent> <leader>lm :marks<cr>
 nmap <silent> <leader>lr :registers<cr>
 nmap <silent> <leader>l@ :registers<cr>
 noremap <silent> <leader>lbe :BufExplorer<CR>
+noremap <silent> <leader>lbt :ToggleBufExplorer<CR>
+noremap <silent> <leader>lbb :ToggleBufExplorer<CR>
 noremap <silent> <leader>lbs :BufExplorerHorizontalSplit<CR>
 noremap <silent> <leader>lbv :BufExplorerVerticalSplit<CR>
 
@@ -526,13 +530,6 @@ nnoremap <leader>: ,
 
 " Filetype specific handling {{{1
 filetype indent plugin on
-augroup yaml_header_matters
-  au!
-
-  autocmd filetype markdown syntax region frontmatter start=/\%^---$/ end=/^---$/
-  autocmd filetype markdown highlight link frontmatter Comment
-augroup end
-
 augroup restore_position
   au!
   autocmd FileType text setlocal textwidth=78
@@ -541,6 +538,15 @@ augroup restore_position
     \   exe "normal! g`\"" |
     \ endif
 augroup END
+
+augroup mardown_ft
+  au!
+
+  autocmd filetype markdown syntax region frontmatter start=/\%^---$/ end=/^---$/
+  autocmd filetype markdown highlight link frontmatter Comment
+  autocmd filetype markdown let b:dispatch = 'mmd %'
+augroup end
+
 
 augroup javascript_ft
   au!
