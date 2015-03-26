@@ -146,7 +146,6 @@ else
   alias start.redis="redis-server /usr/local/etc/redis.conf"
   alias start.mongo="mongod --config /usr/local/etc/mongod.conf --fork"
   alias start.memcache="memcached -d"
-  alias start.pow="sudo pfctl -e"
   alias start.es="elasticsearch -d --config=/usr/local/opt/elasticsearch/config/elasticsearch.yml"
   alias stop.mysql="mysql.server stop"
   alias stop.pg="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log stop"
