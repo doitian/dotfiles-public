@@ -144,6 +144,8 @@ let g:projectionist_heuristics = {
       \ }}
 
 " Functions & Commands {{{1
+command! -bar -nargs=1 OpenURL :!open <args>
+
 function! EchoError(msg)
   execute "normal \<Esc>"
   echohl ErrorMsg
