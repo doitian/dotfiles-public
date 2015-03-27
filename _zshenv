@@ -60,9 +60,15 @@ fi
 
 # Cocos2d-x
 
-export COCOS_X_ROOT="$HOME/Library/cocos/cocos2d-x-3.4"
-export COCOS_TEMPLATES_ROOT="$COCOS_X_ROOT/templates"
-export COCOS_CONSOLE_ROOT="$COCOS_X_ROOT/tools/cocos2d-console/bin"
+export ANT_ROOT="/usr/local/bin"
+function use_cocos() {
+  export COCOS_X_ROOT="$HOME/Library/cocos/cocos2d-x-$1"
+  export COCOS_TEMPLATES_ROOT="$COCOS_X_ROOT/templates"
+  export COCOS_CONSOLE_ROOT="$COCOS_X_ROOT/tools/cocos2d-console/bin"
+  export PATH=$(echo "$PATH" | sed "s;$HOME/Library/cocos/cocos2d-x-[^/]*/tools/cocos2d-console/bin:;;")
+  export PATH="$COCOS_CONSOLE_ROOT:$PATH"
+}
+use_cocos 3.4
 
 # Add environment variable ANDROID_SDK_ROOT for cocos2d-x
 export ANDROID_SDK_ROOT=/Users/ian/Library/Android/sdk
@@ -72,7 +78,6 @@ export PATH=$ANDROID_SDK_ROOT/tools:$ANDROID_SDK_ROOT/platform-tools:$PATH
 export PATH="$HOME/bin\
 :$HOME/.rbenv/bin:$HOME/.rbenv/shims\
 :$HOME/.node-packages/bin\
-:$COCOS_CONSOLE_ROOT\
 :$PATH\
 :$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$NDK_ROOT\
 "
