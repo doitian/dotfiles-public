@@ -29,6 +29,8 @@ alias gna="git number add"
 alias gnc="git number -c"
 alias gh="hub"
 
+##################################################
+# File
 # absolute ls
 alias als='ls -d `pwd`/*'
 alias tree='tree -CFA -I ".git" --dirsfirst'
@@ -119,7 +121,6 @@ function bcc () {
 }
 
 alias m=mplayer
-alias mmm=vlc
 
 alias ssh="TERM=xterm-256color ssh"
 
@@ -169,13 +170,7 @@ alias au=aunpack
 alias ac=acat
 alias ad=adiff
 
-##################################################
-# Ext Aliases
-alias -s html=w3m
-alias -s pdf=zathura
-alias -s png=geeqie
-alias -s jpg=geeqie
-alias -s svg=geeqie
+alias fg=' fg'
 
 ##################################################
 # Dir Aliases
