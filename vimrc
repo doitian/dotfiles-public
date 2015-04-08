@@ -116,7 +116,7 @@ let g:rails_projections = {
       \   ]
       \ }}
 let g:projectionist_heuristics = {
-      \ "Rakefile" : {
+      \ "Rakefile&!config/environment.rb" : {
       \   "lib/*.rb": {
       \     "type": "lib",
       \     "template": ["class {camelcase|capitalize|colons}"],
