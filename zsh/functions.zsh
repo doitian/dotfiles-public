@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # List recent modified files
-function lt() {
+function lslt() {
   if [ -n "$1" ]; then
     ls -ltrsa "$@" | tail
   else
