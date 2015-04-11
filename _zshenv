@@ -70,18 +70,20 @@ function use_cocos() {
 }
 use_cocos 3.4
 
-# Add environment variable ANDROID_SDK_ROOT for cocos2d-x
-export ANDROID_SDK_ROOT=/Users/ian/Library/Android/sdk
-export PATH=$ANDROID_SDK_ROOT:$PATH
-export PATH=$ANDROID_SDK_ROOT/tools:$ANDROID_SDK_ROOT/platform-tools:$PATH
+_PATH_UPDATED=
+if which fresh &> /dev/null; then
+  _PATH_UPDATED=1
+fi
 
-export PATH="$HOME/bin\
+if [ -z "$_PATH_UPDATED" ]; then
+  export PATH="$HOME/bin\
 :$HOME/.rbenv/bin:$HOME/.rbenv/shims\
 :$HOME/.node-packages/bin\
 :$PATH\
 :$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$NDK_ROOT\
 :/Applications/Unity/MonoDevelop.app/Contents/Frameworks/Mono.framework/Versions/Current/bin\
 "
+fi
 
 if [ -f "$HOME/.safe_path_secret" ]; then
   function mksafepath() {
@@ -89,5 +91,7 @@ if [ -f "$HOME/.safe_path_secret" ]; then
       mkdir -p ".git/$(cat $HOME/.safe_path_secret)"
     fi
   }
-  export PATH=".git/$(cat $HOME/.safe_path_secret)/../../bin:$PATH"
+  if [ -z "$_PATH_UPDATED" ]; then
+    export PATH=".git/$(cat $HOME/.safe_path_secret)/../../bin:$PATH"
+  fi
 fi
