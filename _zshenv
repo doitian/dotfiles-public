@@ -80,6 +80,7 @@ export PATH="$HOME/bin\
 :$HOME/.node-packages/bin\
 :$PATH\
 :$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$NDK_ROOT\
+:/Applications/Unity/MonoDevelop.app/Contents/Frameworks/Mono.framework/Versions/Current/bin\
 "
 
 if [ -f "$HOME/.safe_path_secret" ]; then
