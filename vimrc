@@ -33,6 +33,7 @@ Plugin 'scrooloose/syntastic'
 Plugin 'sjl/gundo.vim'
 Plugin 'slim-template/vim-slim'
 Plugin 'thinca/vim-visualstar'
+Plugin 'tikhomirov/vim-glsl'
 Plugin 'tommcdo/vim-exchange'
 Plugin 'tomtom/tcomment_vim'
 Plugin 'tpope/vim-abolish'
@@ -47,7 +48,6 @@ Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-unimpaired'
 Plugin 'tpope/vim-vinegar'
 Plugin 'vim-ruby/vim-ruby'
-
 " Plugin 'SirVer/ultisnips'
 " Plugin 'honza/vim-snippets
 
