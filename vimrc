@@ -48,6 +48,7 @@ Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-unimpaired'
 Plugin 'tpope/vim-vinegar'
 Plugin 'vim-ruby/vim-ruby'
+Plugin 'vim-scripts/cg.vim'
 " Plugin 'SirVer/ultisnips'
 " Plugin 'honza/vim-snippets
 
@@ -562,7 +563,22 @@ augroup jinjia2_ft
   autocmd BufNewFile,BufRead *.j2 set ft=jinja
 augroup END
 
-augroup spell
+augroup misc_ft
+  au!
+
+  autocmd BufNewFile,BufRead *.shader set ft=cg
+  autocmd filetype cg syntax keyword shaderlabmarker CGPROGRAM ENDCG 
+  autocmd filetype glsl syntax keyword shaderlabmarker GLSLPROGRAM ENDGLSL
+  autocmd filetype cg,glsl syntax keyword shaderlabblock Shader Properties SubShader Tags FallBack Blend Range
+  autocmd filetype cg,glsl syntax keyword shaderlabfunc UnpackNormal
+  autocmd filetype cg,glsl syntax keyword shaderlabtype 2D Float Integer
+  autocmd filetype cg,glsl highlight link shaderlabmarker PreProc
+  autocmd filetype cg,glsl highlight link shaderlabblock Statement
+  autocmd filetype cg,glsl highlight link shaderlabfunc Statement
+  autocmd filetype cg,glsl highlight link shaderlabtype Type
+augroup END
+
+augroup spell_ft
   au!
   autocmd FileType gitcommit setlocal spell
 augroup END
