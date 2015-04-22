@@ -91,6 +91,7 @@ let g:ctrlp_map = '<leader>,'
 let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/](\.(git|hg|svn)|_build)$',
+  \ 'file': '\v\.(meta)$',
   \ }
 let g:ctrlp_extensions = ['Z', 'F']
 let g:ctrlp_buftag_types = {

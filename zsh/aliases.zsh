@@ -32,7 +32,6 @@ alias gh="hub"
 ##################################################
 # File
 # absolute ls
-alias als='ls -d `pwd`/*'
 alias tree='tree -CFA -I ".git" --dirsfirst'
 
 alias dud='du --max-depth=1 -h'
