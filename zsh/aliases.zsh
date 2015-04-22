@@ -101,10 +101,6 @@ if [ -x /usr/bin/colordiff ]; then
   alias diff=colordiff
 fi
 
-if yri --version > /dev/null 2>&1; then
-  alias ri="yri"
-fi
-
 alias ibc="{echo 'scale=6';cat} | bc"
 function bcc () {
   local scale=6
