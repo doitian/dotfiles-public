@@ -170,7 +170,7 @@ alias fg=' fg'
 ##################################################
 # Dir Aliases
 cb=$HOME/codebase
-ws=$HOME/Documents/workspace
+og=$HOME/Documents/Ongoing
 gop=$GOPATH
 box=$HOME/Dropbox
 docs=$HOME/Documents
@@ -178,7 +178,6 @@ dl=$HOME/Downloads
 omz=$HOME/.fresh/source/robbyrussell/oh-my-zsh
 omzp=$omz/plugins
 pj=$HOME/Documents/svn
-fs=$HOME/.fresh/source
 dotfiles=$HOME/.dotfiles
 dotfilesp=$HOME/.fresh/source/doitian/dotfiles-private
 
