@@ -145,7 +145,7 @@ else
   alias start.es="elasticsearch -d --config=/usr/local/opt/elasticsearch/config/elasticsearch.yml"
   alias stop.mysql="mysql.server stop"
   alias stop.pg="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log stop"
-  alias stop.redis="killall redis-server"
+  alias stop.redis="pkill redis-server"
   alias stop.mongo="killall mongod"
   alias stop.memcache="killall memcached"
   alias stop.es="pkill -f org.elasticsearch.bootstrap.Elasticsearch"
