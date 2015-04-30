@@ -551,20 +551,13 @@ augroup mardown_ft
   autocmd filetype markdown let b:dispatch = 'mmd %'
 augroup end
 
-
-augroup javascript_ft
-  au!
-
-  autocmd BufNewFile,BufRead *.json set ft=javascript
-augroup END
-
 augroup jinjia2_ft
   au!
 
   autocmd BufNewFile,BufRead *.j2 set ft=jinja
 augroup END
 
-augroup misc_ft
+augroup cg_ft
   au!
 
   autocmd BufNewFile,BufRead *.shader set ft=cg
