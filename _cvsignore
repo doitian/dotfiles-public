@@ -12,7 +12,7 @@ tmp/
 \#*
 .\#*
 *~
-*swp
+*.swp
 TAGS
 tags
 *flymake.rb
