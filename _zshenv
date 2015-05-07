@@ -11,26 +11,13 @@ export GREP_OPTIONS='--color=auto'
 if [ -f /usr/libexec/java_home ]; then
   export JAVA_HOME=$(/usr/libexec/java_home)
 fi
-# export GROOVY_HOME=/usr/local/opt/groovy
 
-if [ "$(uname -s)" = "CYGWIN_NT-5.1" ] || [ -f "$HOME/.prefer_vim" ]; then
-  if [ "$TERM" = "rxvt-unicode" ]; then
-    export TERM=rxvt-256color
-  fi
-  export EDITOR="vim"
-  export FCEDIT="vim"
-  export VISUAL="vim"
-else
-  # export FCEDIT="subl -w"
-  # export VISUAL="subl -w"
-  # export EDITOR="subl -w"
-  # export FCEDIT="emacs-dwim -t"
-  # export VISUAL="emacs-dwim -t"
-  # export EDITOR="emacs-dwim"
-  export EDITOR="vim"
-  export FCEDIT="vim"
-  export VISUAL="vim"
+if [ "$TERM" = "rxvt-unicode" ]; then
+  export TERM=rxvt-256color
 fi
+export EDITOR="vim"
+export FCEDIT="vim"
+export VISUAL="vim"
 
 # ruby perf
 export RUBY_GC_HEAP_INIT_SLOTS=1000000
@@ -80,11 +67,13 @@ function mksafepath() {
   fi
 }
 
+export NVM_DIR="$HOME/.nvm"
+
 if ! which fresh &> /dev/null; then
   export PATH=".git/$SAFE_PATH_SECRET/../../bin\
 :$HOME/bin\
 :$HOME/.rbenv/bin:$HOME/.rbenv/shims\
-:$HOME/.node-packages/bin\
+:$NVM_DIR/versions/io.js/v2.0.0/bin\
 :/PATH/\
 :$PATH\
 :$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$NDK_ROOT\
