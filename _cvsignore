@@ -47,6 +47,8 @@ octave-core
 .Ulysses-Group.plist
 .UlyssesRoot
 .sw?
+.sv?
+.su?
 *.swo
 .tmux.conf
 SpaceNavigator
