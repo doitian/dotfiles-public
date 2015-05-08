@@ -1,6 +1,6 @@
 RUBY_VERSION := 2.1.5
-BREW_FORMULAE := ansible ant atool colordiff coreutils ctags duti elixir fasd fswatch gist git git-number gmp htop-osx hub imagemagick "macvim --override-system-vim" mariadb mongodb msgpack multimarkdown ossp-uuid p7zip pidof pngquant postgresql pstree reattach-to-user-namespace rebar redis rlwrap subversion tag terminal-notifier the_silver_searcher tig tmux unrar watch zsh-completions lua luarocks bash nvm
-PIP_PACKAGES := percol redis httpie Pygments
+BREW_FORMULAE := ansible ant atool colordiff coreutils ctags duti elixir fasd fswatch gist git git-number gmp htop-osx hub imagemagick "macvim --override-system-vim" mariadb mongodb msgpack multimarkdown ossp-uuid p7zip pidof pngquant postgresql pstree reattach-to-user-namespace rebar redis rlwrap subversion tag terminal-notifier the_silver_searcher tig tmux unrar watch zsh-completions lua luarocks bash nvm fpp
+PIP_PACKAGES := redis httpie Pygments
 NPM_PACKAGES := js-beautify
 GEM_PACKAGES := dotenv
 
