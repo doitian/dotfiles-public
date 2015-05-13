@@ -11,6 +11,7 @@ function tv() {
   tmux neww "vim $*"
 }
 alias view='vim -R'
+alias ctrlp='vim +CtrlP'
 
 ##################################################
 # TMUX
