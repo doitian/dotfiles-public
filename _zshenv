@@ -73,7 +73,7 @@ if ! which fresh &> /dev/null; then
   export PATH=".git/$SAFE_PATH_SECRET/../../bin\
 :$HOME/bin\
 :$HOME/.rbenv/bin:$HOME/.rbenv/shims\
-:$NVM_DIR/versions/io.js/v2.0.0/bin\
+:$NVM_DIR/versions/default/bin\
 :/PATH/\
 :$PATH\
 :$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$NDK_ROOT\

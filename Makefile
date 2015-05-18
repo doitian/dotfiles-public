@@ -29,6 +29,7 @@ pip:
 	sudo pip install --upgrade $(PIP_PACKAGES)
 
 npm:
+	ln -snf io.js/v2.0.0 /usr/local/opt/nvm/versions/default
 	source /usr/local/opt/nvm/nvm.sh && nvm install iojs
 	source /usr/local/opt/nvm/nvm.sh && npm install -g $(NPM_PACKAGES)
 

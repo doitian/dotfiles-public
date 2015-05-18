@@ -3,6 +3,6 @@
 <plist version="1.0">
 <dict>
 	<key>PATH</key>
-  <string>/Users/ian/bin:/Users/ian/.rbenv/bin:/Users/ian/.rbenv/shims:/Users/ian/.node-packages/bin:/Users/ian/Library/cocos/cocos2d-x-3.4/tools/cocos2d-console/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/texbin:/Users/ian/Library/Android/sdk/tools:/Users/ian/Library/Android/sdk/platform-tools:/Users/ian/Library/Android/ndk:/Applications/Unity/MonoDevelop.app/Contents/Frameworks/Mono.framework/Versions/Current/bin</string>
+  <string>/Users/ian/Library/cocos/cocos2d-x-3.4/tools/cocos2d-console/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/texbin:/usr/local/opt/nvm/versions/io.js/v2.0.0/bin:/Users/ian/bin:/Users/ian/.rbenv/bin:/Users/ian/.rbenv/shims:/Users/ian/Library/Android/sdk/tools:/Users/ian/Library/Android/sdk/platform-tools:/Users/ian/Library/Android/ndk:/Applications/Unity/MonoDevelop.app/Contents/Frameworks/Mono.framework/Versions/Current/bin</string>
 </dict>
 </plist>
