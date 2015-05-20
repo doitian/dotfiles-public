@@ -27,6 +27,8 @@ Plugin 'kana/vim-textobj-user'
 Plugin 'kchmck/vim-coffee-script'
 Plugin 'kien/ctrlp.vim'
 Plugin 'mattn/emmet-vim'
+Plugin 'mxw/vim-jsx'
+Plugin 'pangloss/vim-javascript'
 Plugin 'rizzatti/dash.vim'
 Plugin 'rking/ag.vim'
 Plugin 'scrooloose/syntastic'
@@ -576,6 +578,13 @@ augroup END
 augroup spell_ft
   au!
   autocmd FileType gitcommit setlocal spell
+augroup END
+
+augroup jsx_ft
+  au!
+
+  autocmd BufNewFile,BufRead *.react.js let b:jsx_ext_found = 1
+  autocmd BufNewFile,BufRead *.react.js set filetype=javascript.jsx
 augroup END
 
 autocmd FileType netrw setl bufhidden=wipe
