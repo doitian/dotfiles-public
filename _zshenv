@@ -76,7 +76,6 @@ if ! which fresh &> /dev/null; then
 :$NVM_DIR/versions/default/bin\
 :/PATH/\
 :$PATH\
-:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$NDK_ROOT\
-:/Applications/Unity/MonoDevelop.app/Contents/Frameworks/Mono.framework/Versions/Current/bin\
+:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$NDK_ROOT
 "
 fi
