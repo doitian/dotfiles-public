@@ -69,10 +69,13 @@ function mksafepath() {
 
 export NVM_DIR="/usr/local/opt/nvm"
 
+export GOPATH="$HOME/.go"
+
 if ! which fresh &> /dev/null; then
   export PATH=".git/$SAFE_PATH_SECRET/../../bin\
 :$HOME/bin\
 :$HOME/.rbenv/bin:$HOME/.rbenv/shims\
+:$HOME/.go/bin\
 :$NVM_DIR/versions/default/bin\
 :/PATH/\
 :$PATH\
