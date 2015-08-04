@@ -77,7 +77,7 @@ if ! which fresh &> /dev/null; then
 :$HOME/.rbenv/bin:$HOME/.rbenv/shims\
 :$HOME/.go/bin\
 :$NVM_DIR/versions/default/bin\
-:/PATH/\
+:/PATH\
 :$PATH\
 :$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$NDK_ROOT
 "
