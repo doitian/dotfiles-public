@@ -8,11 +8,8 @@ function tmux-docker() {
   tmux set-environment -u DOCKER_CERT_PATH
   tmux set-environment -u DOCKER_TLS_VERIFY
   mkdir -p ~/.boot2docker
-  if [ ! -f ~/.boot2docker/boot2docker.iso ]; then
-    cp /usr/local/share/boot2docker/boot2docker.iso ~/.boot2docker/
-  fi
   /usr/local/bin/boot2docker init
-  /usr/local/bin/boot2docker up && export DOCKER_HOST=tcp://$(/usr/local/bin/boot2docker ip 2>/dev/null):2375
+  /usr/local/bin/boot2docker up && export DOCKER_HOST=tcp://$(/usr/local/bin/boot2docker ip 2>/dev/null):2376 && export DOCKER_CERT_PATH="$HOME/.boot2docker/certs/boot2docker-vm" && export DOCKER_TLS_VERIFY=1
   tmux set-environment DOCKER_HOST "$DOCKER_HOST"
   docker version
 }
