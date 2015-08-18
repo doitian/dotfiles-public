@@ -8,7 +8,7 @@ ZSH_CACHE_DIR="$HOME/.zcompcache"
 JIRA_RAPID_BOARD=yes
 COMPLETION_WAITING_DOTS=true
 
-fpath=($ZSH/plugins/brew $fpath)
+fpath=($ZSH/plugins/brew $ZSH/plugins/docker $fpath)
 
 zstyle :omz:plugins:ssh-agent agent-forwarding on
 
