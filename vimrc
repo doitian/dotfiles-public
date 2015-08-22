@@ -542,7 +542,7 @@ augroup restore_position
   au!
   autocmd FileType text setlocal textwidth=78
   autocmd BufReadPost *
-    \ if line("'\"") > 1 && line("'\"") <= line("$") |
+    \ if line("'\"") > 1 && line("'\"") <= line("$") && &filetype != "gitcommit" |
     \   exe "normal! g`\"" |
     \ endif
 augroup END
