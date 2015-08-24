@@ -70,6 +70,7 @@ function mksafepath() {
 export NVM_DIR="/usr/local/opt/nvm"
 
 export GOPATH="$HOME/.go"
+export GO15VENDOREXPERIMENT=1
 
 if ! which fresh &> /dev/null; then
   export PATH=".git/$SAFE_PATH_SECRET/../../bin\
