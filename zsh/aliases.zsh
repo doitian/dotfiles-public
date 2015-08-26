@@ -162,6 +162,8 @@ alias vheadless=VBoxHeadless
 
 alias fg=' fg'
 
+alias gofresh="$GOPATH/bin/fresh"
+
 ##################################################
 # Dir Aliases
 cb=$HOME/codebase
