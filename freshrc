@@ -1,4 +1,6 @@
 # vim:ft=sh:
+VAR_UNAME=$(uname -s)
+
 fresh freshshell/fresh bin/fresh --bin
 
 ### shell.sh
@@ -31,9 +33,14 @@ fresh StreakyCobra/gws src/gws --bin
 ### private dotfiles
 if [ -f ~/.dotfiles-private ]; then
   PRIVATE_REPO=$(cat ~/.dotfiles-private)
-  for f in gitconfig vim-spell-en.utf-8.add; do
+  for f in vim-spell-en.utf-8.add; do
     fresh $PRIVATE_REPO "$f" --file
   done
+  fresh $PRIVATE_REPO gitconfig --file="~/.gitconfig"
+  if [ "$VAR_UNAME" = "Darwin" ]; then
+    fresh $PRIVATE_REPO gitconfig_mac --file="~/.gitconfig"
+  fi
+
   for f in ssh/config gem/credentials; do
     fresh $PRIVATE_REPO "$f" --file="~/.$f"
   done
