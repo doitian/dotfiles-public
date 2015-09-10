@@ -67,8 +67,6 @@ function mksafepath() {
   fi
 }
 
-export NVM_DIR="/usr/local/opt/nvm"
-
 export GOPATH="$HOME/.go"
 export GO15VENDOREXPERIMENT=1
 
@@ -77,7 +75,7 @@ if ! which fresh &> /dev/null; then
 :$HOME/bin\
 :$HOME/.rbenv/bin:$HOME/.rbenv/shims\
 :$HOME/.go/bin\
-:$NVM_DIR/versions/default/bin\
+:$HOME/.node-packages/bin\
 :/PATH\
 :$PATH\
 :/usr/local/sbin\

@@ -1,5 +1,5 @@
 RUBY_VERSION := 2.1.5
-BREW_FORMULAE := ansible ant atool bash boot2docker colordiff coreutils ctags dos2unix duti editorconfig fasd fpp gettext gist git git-number gmp htop-osx hub imagemagick jq lua "macvim --override-system-vim" mariadb mongodb mtr multimarkdown nvm ossp-uuid p7zip pidof pngquant postgresql pstree pv reattach-to-user-namespace redis rlwrap ssh-copy-id subversion tag terminal-notifier the_silver_searcher tig tmux unrar watch zsh-completions
+BREW_FORMULAE := ansible ant atool bash boot2docker colordiff coreutils ctags dos2unix duti editorconfig fasd fpp gettext gist git git-number gmp htop-osx hub imagemagick jq lua "macvim --override-system-vim" mariadb mongodb mtr multimarkdown ossp-uuid p7zip pidof pngquant postgresql pstree pv reattach-to-user-namespace redis rlwrap ssh-copy-id subversion tag terminal-notifier the_silver_searcher tig tmux unrar watch zsh-completions
 PIP_PACKAGES := redis httpie Pygments percol
 NPM_PACKAGES := js-beautify eslint eslint-plugin-react jsonlint rtail
 GEM_PACKAGES := dotenv mdless
@@ -29,9 +29,7 @@ pip:
 	sudo pip install --upgrade $(PIP_PACKAGES)
 
 npm:
-	ln -snf io.js/v2.0.0 /usr/local/opt/nvm/versions/default
-	source /usr/local/opt/nvm/nvm.sh && nvm install iojs
-	source /usr/local/opt/nvm/nvm.sh && npm install -g $(NPM_PACKAGES)
+	npm install -g $(NPM_PACKAGES)
 
 gem:
 	sudo /usr/bin/gem install $(GEM_PACKAGES)

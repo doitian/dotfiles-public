@@ -5,7 +5,7 @@ fresh freshshell/fresh bin/fresh --bin
 
 ### shell.sh
 
-# bzr git nvm prompt_info_functions
+# bzr git prompt_info_functions
 for l in completion directories functions grep history key-bindings misc spectrum termsupport theme-and-appearance; do
   fresh robbyrussell/oh-my-zsh "lib/${l}.zsh"
 done
