@@ -223,6 +223,8 @@ command! Sw w !sudo tee % >/dev/null
 command! Reload :source ~/.vimrc | :filetype detect | :nohl
 command! Clear :CtrlPClearCache | :bufdo bd | :silent! argd * | :nohl
 
+command! -complete=dir -nargs=1 Tcd :tabnew | :lcd <args>
+
 " Toggle [ ] and [x]
 function! ToggleTodoStatus(clear)
   let _s = @/
