@@ -69,9 +69,9 @@ function ws {
   fi
   local localname=${2:-workspace}
   mkdir -p "$HOME/Documents/workspace/$name"
-  mkdir -p "$HOME/Dropbox/workspace/$name"
+  mkdir -p "$HOME/icloud/workspace/$name"
   ln -nsf "$HOME/Documents/workspace/$name" "$localname"
-  ln -nsf "$HOME/Dropbox/workspace/$name" "$HOME/Documents/workspace/$name/dropbox"
+  ln -nsf "$HOME/icloud/workspace/$name" "$HOME/Documents/workspace/$name/icloud"
 }
 
 function hs { [ -z "$1" ] && history || (history | grep "$@") }
