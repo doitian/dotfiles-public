@@ -103,10 +103,11 @@ let g:ctrlp_buftag_types = {
 
 " syntastic
 let g:syntastic_mode_map = { "mode": "passive",
-                           \ "active_filetypes": ["javascript", "json", "ruby", "go"],
+                           \ "active_filetypes": ["javascript", "json", "ruby", "go", "lua"],
                            \ "passive_filetypes": [] }
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_javascript_checkers = ['eslint']
+let g:syntastic_lua_checkers = ['luacheck', 'luac']
 
 let g:user_emmet_settings = {
       \ 'indentation' : '  '
