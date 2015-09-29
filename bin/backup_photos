@@ -1,0 +1,6 @@
+#!/bin/bash
+
+WDMyCloud=root@192.168.1.5
+
+rsync -ltr --progress --delete "/Volumes/Passport/百度云同步盘/Photos/" $WDMyCloud:/DataVolume/shares/Public/Shared Pictures/
+
