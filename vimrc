@@ -123,6 +123,16 @@ let g:rails_projections = {
       \   ]
       \ }}
 let g:projectionist_heuristics = {
+      \ "Luafile|src/lualib|src/*.lua" : {
+      \   "src/*.lua": {
+      \     "type": "lib",
+      \     "alternate": "spec/{}_spec.lua"
+      \   },
+      \   "spec/*_spec.lua": {
+      \     "type": "test",
+      \     "alternate": "src/{}.lua"
+      \   }
+      \ },
       \ "Rakefile&!config/environment.rb" : {
       \   "lib/*.rb": {
       \     "type": "lib",
