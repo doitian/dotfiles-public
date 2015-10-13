@@ -1,5 +1,6 @@
 RUBY_VERSION := 2.1.5
 BREW_FORMULAE := ansible ant atool bash boot2docker colordiff coreutils ctags dos2unix duti editorconfig fasd fpp gettext gist git git-number gmp htop-osx hub imagemagick jq lua "macvim --override-system-vim" mariadb mongodb mtr multimarkdown ossp-uuid p7zip pidof pngquant postgresql pstree pv reattach-to-user-namespace redis rlwrap ssh-copy-id subversion tag terminal-notifier the_silver_searcher tig tmux unrar watch zsh-completions
+CASK_FORMULAE := google-chrome evernote
 PIP_PACKAGES := redis httpie Pygments percol
 NPM_PACKAGES := js-beautify eslint eslint-plugin-react jsonlint rtail
 GEM_PACKAGES := dotenv mdless
@@ -23,6 +24,8 @@ homebrew:
 	fi
 	brew update
 	$(foreach formula,$(BREW_FORMULAE),brew install $(formula);)
+	brew install caskroom/cask/brew-cask
+	$(foreach formula,$(CASK_FORMULAE),brew cask install $(formula);)
 
 pip:
 	sudo easy_install pip
