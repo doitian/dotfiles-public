@@ -73,11 +73,4 @@ fresh rbenv/default-gems --file=~/.rbenv/default-gems
 ### GFW
 
 fresh Leask/Flora_Pac flora_pac --bin
-
-if ! [ -f ~/bin/routes-up.sh ]; then
-  curl -o ~/bin/routes-up.sh http://dl.saber.li/freedom-routes/mac/routes-up.sh
-fi
-if ! [ -f ~/bin/routes-down.sh ]; then
-  curl -o ~/bin/routes-down.sh http://dl.saber.li/freedom-routes/mac/routes-down.sh
-fi
-chmod +x ~/bin/routes*.sh
+fresh fivesheep/chnroutes chnroutes.py --bin

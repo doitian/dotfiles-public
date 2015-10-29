@@ -1,0 +1,26 @@
+#!/bin/bash
+
+case "x$1" in
+  x|xpull)
+    cd ~/bin
+    python chnroutes.py -p mac
+    chmod +x ip-*
+    ;;
+  xup)
+    sudo ~/bin/ip-up
+    ;;
+  xdown)
+    sudo ~/bin/ip-down
+    ;;
+  xenable)
+    sudo cp -f ~/bin/ip-up /etc/ppp/
+    sudo cp -f ~/bin/ip-down /etc/ppp/
+    ;;
+  xdisable)
+    sudo rm -f /etc/ppp/ip-up
+    sudo rm -f /etc/ppp/ip-down
+    ;;
+  *)
+    echo 'myroute pull|up|down|enable|disable'
+    ;;
+esac
