@@ -5,6 +5,12 @@ case "x$1" in
     cd ~/bin
     python chnroutes.py -p mac
     chmod +x ip-*
+    if [ -f ~/.ip-up ]; then
+      cat ~/.ip-up >> ip-up
+    fi
+    if [ -f ~/.ip-down ]; then
+      cat ~/.ip-down >> ip-down
+    fi
     ;;
   xup)
     sudo ~/bin/ip-up

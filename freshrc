@@ -74,3 +74,4 @@ fresh rbenv/default-gems --file=~/.rbenv/default-gems
 
 fresh Leask/Flora_Pac flora_pac --bin
 fresh fivesheep/chnroutes chnroutes.py --bin
+fresh git@gist.github.com:24b093637e39f0bd3df3.git check_vpn.py --bin
