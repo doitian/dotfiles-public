@@ -1,0 +1,4 @@
+patch:
+  style/horizontal: true
+  style/font_point: 18
+  style/corner_radius: 10

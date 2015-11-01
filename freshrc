@@ -70,6 +70,11 @@ fresh bundle.config --file=~/.bundle/config
 fresh subversion.config --file=~/.subversion/config
 fresh rbenv/default-gems --file=~/.rbenv/default-gems
 
+for f in ~/.dotfiles/Library/Rime/*.yaml; do
+  f=$(basename "$f")
+  fresh "Library/Rime/$f" --file=~/Library/Rime/$f
+done
+
 ### GFW
 
 fresh Leask/Flora_Pac flora_pac --bin
