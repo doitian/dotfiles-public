@@ -43,7 +43,7 @@ if [ -f ~/.dotfiles-private ]; then
   for f in ssh/config gem/credentials; do
     fresh $PRIVATE_REPO "$f" --file="~/.$f"
   done
-  for f in glcl glmr; do
+  for f in glcl glmr qput; do
     fresh $PRIVATE_REPO "bin/$f" --bin
   done
 fi
