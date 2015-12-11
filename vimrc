@@ -233,6 +233,7 @@ command! Sw w !sudo tee % >/dev/null
 
 command! Reload :source ~/.vimrc | :filetype detect | :nohl
 command! Clear :CtrlPClearCache | :bufdo bd | :silent! argd * | :nohl
+command! Unlink :call delete(expand('%')) | :bdelete!
 
 command! -complete=dir -nargs=1 Tcd :tabnew | :lcd <args>
 
@@ -380,10 +381,6 @@ map <space> <Plug>(easymotion-prefix)
 
 inoremap <C-U> <C-G>u<C-U>
 
-cnoremap %p <C-R>=expand('%:p')<cr>
-cnoremap %h <C-R>=expand('%:h').'/'<cr>
-cnoremap %t <C-R>=expand('%:t')<cr>
-cnoremap %% <C-R>=expand('%')<cr>
 noremap <leader>%p i<C-R>=expand('%:p')<cr><Esc>
 noremap <leader>%h i<C-R>=expand('%:h').'/'<cr><Esc>
 noremap <leader>%t i<C-R>=expand('%:t')<cr><Esc>
