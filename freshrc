@@ -41,7 +41,7 @@ if [ -f ~/.dotfiles-private ]; then
     fresh $PRIVATE_REPO gitconfig_mac --file="~/.gitconfig"
   fi
 
-  for f in ssh/config gem/credentials; do
+  for f in ssh/config gem/credentials qrsbox/qrsbox.conf; do
     fresh $PRIVATE_REPO "$f" --file="~/.$f"
   done
   for f in glcl glmr qput; do
