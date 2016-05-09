@@ -133,25 +133,6 @@ decode64(){ echo -n $1 | base64 --decode }
 alias e64=encode64
 alias d64=decode64
 
-if which systemctl &> /dev/null; then
-  alias start="sudo systemctl start "
-  alias stop="sudo systemctl stop "
-  alias restart="sudo systemctl restart "
-else
-  alias start.mysql="mysql.server start"
-  alias start.pg="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start"
-  alias start.redis="redis-server /usr/local/etc/redis.conf"
-  alias start.mongo="mongod --config /usr/local/etc/mongod.conf --fork"
-  alias start.memcache="memcached -d"
-  alias start.es="elasticsearch -d --config=/usr/local/opt/elasticsearch/config/elasticsearch.yml"
-  alias stop.mysql="mysql.server stop"
-  alias stop.pg="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log stop"
-  alias stop.redis="pkill redis-server"
-  alias stop.mongo="killall mongod"
-  alias stop.memcache="killall memcached"
-  alias stop.es="pkill -f org.elasticsearch.bootstrap.Elasticsearch"
-fi
-
 alias dj=django
 
 alias vboxmanage=VBoxManage
