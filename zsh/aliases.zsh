@@ -116,8 +116,6 @@ function bcc () {
   } | bc
 }
 
-alias m=mplayer
-
 alias ssh="TERM=xterm-256color ssh"
 
 alias mk=make
