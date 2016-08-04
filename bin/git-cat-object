@@ -1,0 +1,14 @@
+#!/usr/bin/env python
+
+import zlib
+import sys
+
+def cat_one(file):
+  with open(file, 'r') as file_in:
+    store = zlib.decompress(file_in.read())
+    header, content = store.split("\0", 1)
+    object_type, size = header.split(' ', 1) 
+    print "Type: %s\nSize: %s\nContent Below:\n%s" % (object_type, size, content)
+
+for file in sys.argv[1:]:
+  cat_one(file)
