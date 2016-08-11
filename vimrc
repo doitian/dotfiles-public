@@ -29,7 +29,7 @@ Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
 Plug 'rizzatti/dash.vim'
 Plug 'rking/ag.vim'
-Plug 'scrooloose/syntastic', { 'for': syntastic_active_modes }
+Plug 'scrooloose/syntastic', { 'for': syntastic_active_modes, 'on': [ 'SyntasticNext' ] }
 Plug 'sjl/gundo.vim'
 Plug 'slim-template/vim-slim'
 Plug 'thinca/vim-visualstar'
