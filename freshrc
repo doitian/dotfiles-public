@@ -58,7 +58,7 @@ cp -f ~/.dotfiles/MacOSX/environment.plist ~/.MacOSX/
 ### vim
 mkdir -p ~/.vim/backup
 fresh vimrc --file
-fresh gmarik/Vundle.vim . --file=~/.vim/bundle/Vundle.vim/
+fresh junegunn/vim-plug plug.vim --file=~/.vim/autoload/plug.vim
 
 ### config files
 for f in ~/.dotfiles/_*; do
