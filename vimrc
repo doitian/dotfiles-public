@@ -5,7 +5,9 @@ set nocompatible
 scriptencoding utf-8
 set encoding=utf-8
 
-" Vundle {{{1
+let syntastic_active_modes = ["javascript", "json", "ruby", "go", "lua"]
+
+" Plug {{{1
 call plug#begin('~/.vim/plugged')
 
 Plug 'Lokaltog/vim-easymotion'
@@ -27,7 +29,7 @@ Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
 Plug 'rizzatti/dash.vim'
 Plug 'rking/ag.vim'
-Plug 'scrooloose/syntastic'
+Plug 'scrooloose/syntastic', { 'for': syntastic_active_modes }
 Plug 'sjl/gundo.vim'
 Plug 'slim-template/vim-slim'
 Plug 'thinca/vim-visualstar'
@@ -97,7 +99,7 @@ let g:ctrlp_buftag_types = {
 
 " syntastic
 let g:syntastic_mode_map = { "mode": "passive",
-                           \ "active_filetypes": ["javascript", "json", "ruby", "go", "lua"],
+                           \ "active_filetypes": syntastic_active_modes,
                            \ "passive_filetypes": [] }
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_javascript_checkers = ['eslint']
