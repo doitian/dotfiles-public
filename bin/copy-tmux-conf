@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cat ~/.tmux.conf | grep -v '#NOREMOTE' | sed 's/^#REMOTE //' | ssh "$@" "cat > ~/.tmux.conf"

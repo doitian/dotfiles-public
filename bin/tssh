@@ -1,3 +1,5 @@
 #!/bin/bash
 
-ssh -t "$@" 'tmux -L ian attach || tmux -L ian start-server\; set-option -g base-index 1\; set-option -g pane-base-index 1\; set-window-option -g mode-keys vi\; new -d -s default\; send-keys clear C-j\; attach'
+TMUX_SOCKET=ian
+
+ssh -t "$@" "tmux -L $TMUX_SOCKET attach || tmux -L $TMUX_SOCKET start-server\\; new -d -s default\\; send-keys clear C-j\\; attach"
