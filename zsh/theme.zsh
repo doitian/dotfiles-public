@@ -15,6 +15,6 @@ setopt prompt_subst
 # cyan 36
 # white 37
 
-RPROMPT='%(1j.%{[43m%}%{[1;30m%} %%%j %{[00m%}.)%(?..%{[41m%}%{[1;30m%} !%? %{[00m%})'
+RPROMPT='%(1j.%K{black}%F{yellow}'$'\ue0b2''%F{white}%K{yellow} %j .)%(?..%F{red}%(1j|%K{yellow}|%K{black})'$'\ue0b2''%F{white}%K{red} %? %f%k'
 PROMPT='
-%{[32m%}%(4~|%-1~/…/%2~|%~) %(!.%{[31m%}#.$)%{[00m%} '
+%F{white}%K{blue} %(4~|%-1~/…/%2~|%~) %F{blue}%K{white}'$'\ue0b0'' %k%F{white}'$'\ue0b0'' %f%k'
