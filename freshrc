@@ -30,10 +30,11 @@ done
 fresh michaelklishin/git-wtf git-wtf --bin
 fresh jamesottaway/tmux-up tmux-up --bin
 fresh StreakyCobra/gws src/gws --bin
-fresh anishathalye/git-remote-dropbox git-remote-dropbox --bin
+fresh anishathalye/git-remote-dropbox git_remote_dropbox/__init__.py --bin="~/bin/git-remote-dropbox"
 
 ### private dotfiles
 if [ -f ~/.dotfiles-private ]; then
+  PATH="$HOME/.fresh/build.new/bin:$PATH"
   PRIVATE_REPO=$(cat ~/.dotfiles-private)
   for f in vim-spell-en.utf-8.add; do
     fresh $PRIVATE_REPO "$f" --file
