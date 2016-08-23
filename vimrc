@@ -428,6 +428,7 @@ nnoremap <silent> <leader>3 <C-w>o<C-w>v<C-w>w:b#<CR><C-w>w
 nnoremap <leader>a :A<cr>
 
 " b subword
+call camelcasemotion#CreateMotionMappings('<leader>')
 
 nnoremap <silent> <leader>cd :cd %:h<CR>
 nnoremap <silent> <leader>cc :bd<cr>
