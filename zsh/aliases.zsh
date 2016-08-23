@@ -29,6 +29,7 @@ alias gn="git number -s"
 alias gna="git number add"
 alias gnc="git number -c"
 alias gh="hub"
+alias gst="git status"
 
 ##################################################
 # File

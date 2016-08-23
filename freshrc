@@ -1,5 +1,8 @@
 # vim:ft=sh:
 VAR_UNAME=$(uname -s)
+if [ -z "${TMUX_REMOTE_THEME-}" ]; then
+  rm -f ~/.tmux.conf
+fi
 
 fresh freshshell/fresh bin/fresh --bin
 
@@ -10,7 +13,7 @@ for l in completion directories functions grep history key-bindings misc spectru
   fresh robbyrussell/oh-my-zsh "lib/${l}.zsh"
 done
 
-for p in jira safe-paste brew ssh-agent rake-fast; do
+for p in safe-paste brew ssh-agent rake-fast; do
   fresh robbyrussell/oh-my-zsh "plugins/${p}/${p}.plugin.zsh"
 done
 
@@ -81,3 +84,8 @@ done
 fresh Leask/Flora_Pac flora_pac --bin
 fresh fivesheep/chnroutes chnroutes.py --bin
 fresh git@gist.github.com:24b093637e39f0bd3df3.git check_vpn.py --bin
+
+if [ -n "${TMUX_REMOTE_THEME-}" ]; then
+  rm -f ~/.tmux.conf
+  cat ~/.dotfiles/_tmux.conf | grep -v '#NOREMOTE' | sed 's/^#REMOTE //' | grep -v '^#' | grep -v '^ *$' > ~/.tmux.conf
+fi

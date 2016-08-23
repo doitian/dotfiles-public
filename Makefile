@@ -13,6 +13,8 @@ install:
 bootstrap: xcode homebrew install rbenv vim pip gem npm
 	mkdir ~/codebase
 
+bootlinux: install vim npm
+
 xcode:
 	xcode-select --install || true
 
@@ -40,6 +42,6 @@ rbenv:
 	rbenv global $(RUBY_VERSION)
 
 vim:
-	vim +PluginInstall +qall
+	vim +PlugInstall +qall
 
-.PHONY: fresh install bootstrap xcode homebrew rbenv vim pip npm gem
+.PHONY: fresh install bootstrap bootlinux xcode homebrew rbenv vim pip npm gem
