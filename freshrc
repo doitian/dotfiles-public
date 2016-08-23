@@ -28,7 +28,6 @@ for f in ~/.dotfiles/bin/*; do
 done
 
 fresh michaelklishin/git-wtf git-wtf --bin
-fresh https://gist.github.com/7435890.git patch-edid.rb --bin
 fresh jamesottaway/tmux-up tmux-up --bin
 fresh StreakyCobra/gws src/gws --bin
 fresh anishathalye/git-remote-dropbox git-remote-dropbox --bin
@@ -83,7 +82,6 @@ done
 
 fresh Leask/Flora_Pac flora_pac --bin
 fresh fivesheep/chnroutes chnroutes.py --bin
-fresh git@gist.github.com:24b093637e39f0bd3df3.git check_vpn.py --bin
 
 if [ -n "${TMUX_REMOTE_THEME-}" ]; then
   rm -f ~/.tmux.conf
