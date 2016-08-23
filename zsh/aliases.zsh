@@ -127,8 +127,12 @@ alias vtig="GIT_EDITOR=vim tig"
 
 alias urlencode='node -e "console.log(encodeURIComponent(process.argv[1]))"'
 alias urldecode='node -e "console.log(decodeURIComponent(process.argv[1]))"'
-encode64(){ echo -n $1 | base64 }
-decode64(){ echo -n $1 | base64 --decode }
+function encode64() {
+  echo -n $1 | base64
+}
+function decode64() {
+  echo -n $1 | base64 --decode
+}
 alias e64=encode64
 alias d64=decode64
 
