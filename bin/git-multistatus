@@ -1,0 +1,36 @@
+#!/bin/bash
+
+main() {
+  local dirty_color="\e[31m"
+  local clean_color="\e[32m"
+
+  local git_status
+  for repo; do
+    if [ -n "$GIT_MULTISTATUS_EXPAND" ]; then
+      repo="$(eval echo "$repo")"
+    fi
+
+    if [ -n "$(git -C "$repo" status --porcelain --ignore-submodules=dirty)" ]; then
+      git_status="${dirty_color} Dirty "
+    else
+      git_status="${clean_color} Clean "
+    fi
+    printf "%b\e[0m\t%s\n" "$git_status" "$(realpath "$repo")"
+  done
+}
+
+: ${GIT_MULTISTATUS_FILE=$HOME/.git_multistatus.conf}
+
+if [ "$1" = "-f" ]; then
+  shift
+  for file; do
+    GIT_MULTISTATUS_EXPAND=1 xargs -L1 "$0" < "$file"
+  done
+  exit 0
+fi
+
+if [ "$#" -gt 0 ]; then
+  main "$@"
+elif [ -f "${GIT_MULTISTATUS_FILE}" ]; then
+  GIT_MULTISTATUS_EXPAND=1 xargs -L1 "$0" < "$GIT_MULTISTATUS_FILE"
+fi
