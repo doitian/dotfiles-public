@@ -1,0 +1,12 @@
+#!/bin/bash
+
+ssh "$@" "
+  set -x
+  curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  test -f ~/.vimrc || (
+    echo \"call plug#begin('~/.vim/plugged')\"
+    echo \"Plug 'tpope/vim-sensible'\"
+    echo \"call plug#end()\"
+  ) > ~/.vimrc
+	vim +PlugInstall +qall
+"

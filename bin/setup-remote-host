@@ -3,17 +3,9 @@
 function main() {
   local ssh_options=(-o "ControlPath /tmp/setup-remote-host-%r@%h:%p" -o "ControlPersist 15m" -o "ControlMaster auto")
 
-  copy-tmux-conf "${ssh_options[@]}" "$@"
-  cat ~/.dotfiles/zsh/aliases.zsh | ssh "${ssh_options[@]}" "$@" "cat > ~/.alias.sh"
-  ssh "${ssh_options[@]}" "$@" "mkdir -p ~/.vim/autoload"
-  cat ~/.vim/autoload/plug.vim | ssh "${ssh_options[@]}" "$@" "cat > ~/.vim/autoload/plug.vim"
-  echo "
-set nocompatible
-scriptencoding utf-8
-set encoding=utf-8
-call plug#begin('~/.vim/plugged')
-Plug 'tpope/vim-sensible'
-" | ssh "${ssh_options[@]}" "$@" "cat > ~/.vimrc"
+  setup-remote-tmux "${ssh_options[@]}" "$@"
+  setup-remote-vim "${ssh_options[@]}" "$@"
+  setup-remote-shell "${ssh_options[@]}" "$@"
 }
 
 main "$@"

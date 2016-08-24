@@ -6,6 +6,7 @@ scriptencoding utf-8
 set encoding=utf-8
 
 let syntastic_active_modes = ["javascript", "json", "ruby", "go", "lua"]
+command! -bang -nargs=? SyntasticNext call SyntasticNext(<bang>0)
 
 " Plug {{{1
 call plug#begin('~/.vim/plugged')
@@ -31,7 +32,6 @@ Plug 'rizzatti/dash.vim'
 Plug 'rking/ag.vim'
 Plug 'scrooloose/syntastic', { 'for': syntastic_active_modes, 'on': [ 'SyntasticNext' ] }
 Plug 'sjl/gundo.vim'
-Plug 'slim-template/vim-slim'
 Plug 'thinca/vim-visualstar'
 Plug 'tommcdo/vim-exchange'
 Plug 'tomtom/tcomment_vim'
@@ -185,7 +185,6 @@ function! QFixToggle(forced)
   endif
 endfunction
 
-command! -bang -nargs=? SyntasticNext call SyntasticNext(<bang>0)
 function! SyntasticNext(forced)
   if g:SyntasticLoclist.current().isEmpty() || a:forced != 0
     write
