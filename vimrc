@@ -11,41 +11,40 @@ command! -bang -nargs=? SyntasticNext call SyntasticNext(<bang>0)
 " Plug {{{1
 call plug#begin('~/.vim/plugged')
 
-Plug 'Lokaltog/vim-easymotion'
+Plug 'Lokaltog/vim-easymotion' " ,<space>
 Plug 'altercation/vim-colors-solarized'
 Plug 'amiorin/ctrlp-z'
-Plug 'bkad/CamelCaseMotion'
+Plug 'bkad/CamelCaseMotion' " ,w ,b ,e
 Plug 'bling/vim-airline'
 Plug 'editorconfig/editorconfig-vim'
-Plug 'edkolev/erlang-motions.vim'
 Plug 'fatih/vim-go'
-Plug 'jlanzarotta/bufexplorer'
-Plug 'junegunn/vim-easy-align'
-Plug 'kana/vim-textobj-indent'
-Plug 'kana/vim-textobj-lastpat'
+Plug 'jlanzarotta/bufexplorer' " ,lb
+Plug 'junegunn/vim-easy-align' " Enter in visual mode
+Plug 'kana/vim-textobj-indent' " ai ii aI iI
+Plug 'kana/vim-textobj-lastpat' " a/ i/ a? i?
 Plug 'kana/vim-textobj-user'
 Plug 'kien/ctrlp.vim'
 Plug 'mattn/emmet-vim'
 Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
-Plug 'rizzatti/dash.vim'
+Plug 'rizzatti/dash.vim' " ,h ,H
 Plug 'rking/ag.vim'
-Plug 'scrooloose/syntastic', { 'for': syntastic_active_modes, 'on': [ 'SyntasticNext' ] }
-Plug 'sjl/gundo.vim'
-Plug 'thinca/vim-visualstar'
-Plug 'tommcdo/vim-exchange'
-Plug 'tomtom/tcomment_vim'
-Plug 'tpope/vim-abolish'
-Plug 'tpope/vim-dispatch'
+Plug 'scrooloose/syntastic', { 'for': syntastic_active_modes, 'on': [ 'SyntasticNext' ] } " ,f ,F
+Plug 'sjl/gundo.vim' " ,u
+Plug 'thinca/vim-visualstar' " * # g* g#
+Plug 'tommcdo/vim-exchange' " gx gX
+Plug 'tomtom/tcomment_vim' " gc
+Plug 'tpope/vim-abolish' " :A :S
+Plug 'tpope/vim-dispatch' " ,t
 Plug 'tpope/vim-endwise'
-Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive' " git client
 Plug 'tpope/vim-markdown'
 Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-unimpaired'
-Plug 'tpope/vim-vinegar'
+Plug 'tpope/vim-surround' " ys s
+Plug 'tpope/vim-unimpaired' " various [, ] mappings
+Plug 'tpope/vim-vinegar' " file explorer
 Plug 'vim-ruby/vim-ruby'
 " Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets
 
