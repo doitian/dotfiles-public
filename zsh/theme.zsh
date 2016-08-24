@@ -17,6 +17,7 @@ setopt prompt_subst
 
 ZSH_THEME_GIT_PROMPT_DIRTY="*"
 ZSH_THEME_GIT_PROMPT_CLEAN=""
+GIT_PS1_SHOWUPSTREAM="auto"
 
 function git_prompt_info() {
   local info="$(__git_ps1 "%s")"
