@@ -1,25 +1,23 @@
 #!/bin/bash
 
-main() {
-  local dirty_color="\e[31m"
-  local clean_color="\e[32m"
+: ${GIT_MULTISTATUS_FILE=$HOME/.git_multistatus.conf}
 
-  local git_status
+main() {
+  local dirty="\e[31mdirty"
+  local clean="\e[32mclean"
+
   for repo; do
     if [ -n "$GIT_MULTISTATUS_EXPAND" ]; then
       repo="$(eval echo "$repo")"
     fi
 
     if [ -n "$(git -C "$repo" status --porcelain --ignore-submodules=dirty)" ]; then
-      git_status="${dirty_color} Dirty "
+      printf "%b\e[0m\t%s\n" "${dirty}" "$(realpath "$repo")"
     else
-      git_status="${clean_color} Clean "
+      printf "%b\e[0m\t%s\n" "${clean}" "$(realpath "$repo")"
     fi
-    printf "%b\e[0m\t%s\n" "$git_status" "$(realpath "$repo")"
   done
 }
-
-: ${GIT_MULTISTATUS_FILE=$HOME/.git_multistatus.conf}
 
 if [ "$1" = "-f" ]; then
   shift
