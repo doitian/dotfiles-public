@@ -9,13 +9,14 @@ fresh freshshell/fresh bin/fresh --bin
 ### shell.sh
 
 # bzr git prompt_info_functions
-for l in completion directories functions grep history key-bindings misc spectrum termsupport theme-and-appearance; do
+for l in completion directories functions grep history key-bindings git misc spectrum termsupport theme-and-appearance; do
   fresh robbyrussell/oh-my-zsh "lib/${l}.zsh"
 done
 
 for p in safe-paste brew ssh-agent rake-fast; do
   fresh robbyrussell/oh-my-zsh "plugins/${p}/${p}.plugin.zsh"
 done
+fresh robbyrussell/oh-my-zsh "plugins/gitfast/git-prompt.sh"
 
 fresh 'zsh/*.zsh'
 
