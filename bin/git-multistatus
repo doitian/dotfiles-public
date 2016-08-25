@@ -6,19 +6,14 @@ source "$ZSH/lib/git.zsh"
 source "$ZSH/plugins/gitfast/git-prompt.sh"
 
 main() {
-  local GIT_PS1_SHOWUPSTREAM="verbose,name"
-  local ZSH_THEME_GIT_PROMPT_DIRTY="*"
-  local ZSH_THEME_GIT_PROMPT_CLEAN=""
+  local GIT_PS1_SHOWUPSTREAM="auto"
+  local ZSH_THEME_GIT_PROMPT_DIRTY="\e[31m"
+  local ZSH_THEME_GIT_PROMPT_CLEAN="\e[32m"
   local dirty
 
   for repo; do
     cd "$repo"
-
-    if [ -n "$(parse_git_dirty)" ]; then
-      printf "%b\e[0m\t%s\n" "\e[31m$(__git_ps1 '%s')" "$(realpath "$repo")"
-    else
-      printf "%b\e[0m\t%s\n" "\e[32m$(__git_ps1 '%s')" "$(realpath "$repo")"
-    fi
+    printf "%b\t\e[0m %s\n" "$(parse_git_dirty)$(__git_ps1 '%s')" "$(realpath "$repo")"
   done
 }
 
