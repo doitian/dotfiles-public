@@ -1,19 +1,26 @@
 #!/usr/bin/env zsh
 
-ZSH=~/.fresh/source/robbyrussell/oh-my-zsh
+set -e
 
+ZSH=~/.fresh/source/robbyrussell/oh-my-zsh
 source "$ZSH/lib/git.zsh"
 source "$ZSH/plugins/gitfast/git-prompt.sh"
 
 main() {
   local GIT_PS1_SHOWUPSTREAM="auto"
-  local ZSH_THEME_GIT_PROMPT_DIRTY="\e[31m"
-  local ZSH_THEME_GIT_PROMPT_CLEAN="\e[32m"
-  local dirty
+  local ZSH_THEME_GIT_PROMPT_DIRTY="D"
+  local ZSH_THEME_GIT_PROMPT_CLEAN="C"
+  local reset_color=
+
+  if [ -t 1 ]; then
+    ZSH_THEME_GIT_PROMPT_DIRTY="\e[31mD"
+    ZSH_THEME_GIT_PROMPT_CLEAN="\e[32mC"
+    reset_color="\e[0m"
+  fi
 
   for repo; do
-    cd "$repo"
-    printf "%b\t\e[0m %s\n" "$(parse_git_dirty)$(__git_ps1 '%s')" "$(realpath "$repo")"
+    abrepo="$(realpath "$repo")"
+    ( cd "$repo" && printf "%b\t%s${reset_color}\t%s\n" "$(parse_git_dirty)" "$(__git_ps1 '%s')" "$abrepo" )
   done
 }
 
