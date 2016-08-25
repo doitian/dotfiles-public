@@ -1,34 +1,25 @@
-#!/bin/bash
+#!/usr/bin/env zsh
 
-: ${GIT_MULTISTATUS_FILE=$HOME/.git_multistatus.conf}
+ZSH=~/.fresh/source/robbyrussell/oh-my-zsh
+
+source "$ZSH/lib/git.zsh"
+source "$ZSH/plugins/gitfast/git-prompt.sh"
 
 main() {
-  local dirty="\e[31mdirty"
-  local clean="\e[32mclean"
+  local GIT_PS1_SHOWUPSTREAM="verbose,name"
+  local ZSH_THEME_GIT_PROMPT_DIRTY="*"
+  local ZSH_THEME_GIT_PROMPT_CLEAN=""
+  local dirty
 
   for repo; do
-    if [ -n "$GIT_MULTISTATUS_EXPAND" ]; then
-      repo="$(eval echo "$repo")"
-    fi
+    cd "$repo"
 
-    if [ -n "$(git -C "$repo" status --porcelain --ignore-submodules=dirty)" ]; then
-      printf "%b\e[0m\t%s\n" "${dirty}" "$(realpath "$repo")"
+    if [ -n "$(parse_git_dirty)" ]; then
+      printf "%b\e[0m\t%s\n" "\e[31m$(__git_ps1 '%s')" "$(realpath "$repo")"
     else
-      printf "%b\e[0m\t%s\n" "${clean}" "$(realpath "$repo")"
+      printf "%b\e[0m\t%s\n" "\e[32m$(__git_ps1 '%s')" "$(realpath "$repo")"
     fi
   done
 }
 
-if [ "$1" = "-f" ]; then
-  shift
-  for file; do
-    GIT_MULTISTATUS_EXPAND=1 xargs -L1 "$0" < "$file"
-  done
-  exit 0
-fi
-
-if [ "$#" -gt 0 ]; then
-  main "$@"
-elif [ -f "${GIT_MULTISTATUS_FILE}" ]; then
-  GIT_MULTISTATUS_EXPAND=1 xargs -L1 "$0" < "$GIT_MULTISTATUS_FILE"
-fi
+main "$@"
