@@ -45,7 +45,7 @@ function cloudify() {
   local path target
   for f; do
     path="$(realpath "$f")"
-    target="$(cloudify_path "$f")"
+    target="$(cloudify_path "$path")"
     if [ -f "$target" ] && [ -z "$CLOUDIFY_FORCE" ]; then
       echo "$f is already in the cloud, use -f to force overwriting" >&2
     else
