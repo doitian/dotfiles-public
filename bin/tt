@@ -1,26 +1,45 @@
 #!/usr/bin/env zsh
 
-# Send keys to the active pane in the specified tmux session
+set -e
 
-typeset session="$1"
+function main() {
+  local target
+  case "$1" in
+    -s)
+      target="$(env TMUX= tmux new-session -d -P)"
+      ;;
+    -n)
+      target="$(env TMUX= tmux new-window -d -P)"
+      ;;
+    -h|-v)
+      target="$(env TMUX= tmux split-window -d $1 -P)"
+      ;;
+    *)
+      target="$1"
+      ;;
+  esac
 
-if [ -z "$session" ]; then
-  echo "Usage: tt session keys [....]" >&2
-  exit 1
-fi
-shift
+  local session="${target%%:*}"
+  session="${session#=}"
 
-if ! $(tmux has-session -t "=$session"); then
-  env TMUX= tmux new-session -d -s "$session"
-fi
-
-if [ -z "$1" ]; then
-  if [ -z "$TMUX" ]; then
-    tmux -u attach-session -t "=$session"
-  else
-    tmux -u switch-client -t "=$session"
+  if ! $(tmux has-session -t "$target"); then
+    if [ -n "$session" ]; then
+      env TMUX= tmux new-session -d -s "$session"
+    else
+      env TMUX= tmux new-session -d
+    fi
   fi
-else
-  tmux send-keys -t "=$session": "$@" C-m
-fi
 
+  shift || true
+  if [ -z "$1" ]; then
+    if [ -z "$TMUX" ]; then
+      tmux -u attach-session -t "$target"
+    else
+      tmux -u switch-client -t "$target"
+    fi
+  else
+    tmux send-keys -t "$target" "$@" C-m
+  fi
+}
+
+main "$@"
