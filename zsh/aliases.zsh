@@ -21,6 +21,7 @@ alias tn="tmux neww"
 alias ts="tmux new -s"
 alias ta="tmux attach -t"
 alias tu="tmux-up"
+alias tc="tmux-clean"
 
 ##################################################
 # Git

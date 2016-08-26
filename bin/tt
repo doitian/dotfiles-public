@@ -3,34 +3,66 @@
 set -e
 
 function main() {
+  local attach
   local target
-  case "$1" in
-    -s)
-      target="$(env TMUX= tmux new-session -d -P)"
-      ;;
-    -n)
-      target="$(env TMUX= tmux new-window -d -P)"
-      ;;
-    -h|-v)
-      target="$(env TMUX= tmux split-window -d $1 -P)"
-      ;;
-    *)
-      target="$1"
-      ;;
-  esac
+  while [ "$#" -gt 0 ]; do
+    case "$1" in
+      -S)
+        shift
+        target="$(env TMUX= tmux new-session -d -P)"
+        ;;
+      -s)
+        shift
+        target="$(env TMUX= tmux new-session -d -P -s "$1")"
+        shift
+        ;;
+      -n)
+        shift
+        target="$(env TMUX= tmux new-window -d -P)"
+        ;;
+      -N)
+        shift
+        target="$(env TMUX= tmux new-window -d -P -n "$1")"
+        shift
+        ;;
+      -h|-v)
+        target="$(env TMUX= tmux split-window -d $1 -P)"
+        shift
+        ;;
+      -a)
+        shift
+        attach=true
+        ;;
+      -t)
+        shift
+        target="$1"
+        shift
+        ;;
+      *)
+        break
+        ;;
+    esac
+  done
+
+  if [ -z "$target" ]; then
+    echo "require a target" >&2
+    exit 2
+  fi
 
   local session="${target%%:*}"
   session="${session#=}"
 
-  if ! $(tmux has-session -t "$target"); then
-    if [ -n "$session" ]; then
-      env TMUX= tmux new-session -d -s "$session"
-    else
+  local has_session_result="$(tmux has-session -t "$target" 2>&1)"
+  local has_session_status="$?"
+  if ! [ "$has_session_status" = 0 ]; then
+    if [ -z "$session" ]; then
       env TMUX= tmux new-session -d
+    else
+      echo "$has_session_result" >&2
+      exit "$has_session_status"
     fi
   fi
 
-  shift || true
   if [ -z "$1" ]; then
     if [ -z "$TMUX" ]; then
       tmux -u attach-session -t "$target"
@@ -38,8 +70,23 @@ function main() {
       tmux -u switch-client -t "$target"
     fi
   else
-    tmux send-keys -t "$target" "$@" C-m
+    if [ "$1" = "--" ]; then
+      shift
+      tmux send-keys -t "$target" "$*" C-m
+    else
+      tmux send-keys -t "$target" "$@" C-m
+    fi
+
+    if [ -n "$attach" ]; then
+      if [ -z "$TMUX" ]; then
+        tmux -u attach-session -t "$target"
+      else
+        tmux -u switch-client -t "$target"
+      fi
+    fi
   fi
+
+  echo "$target"
 }
 
 main "$@"
