@@ -1,3 +1,0 @@
-#!/bin/sh
-
-rsync -aP "$HOME/Library/Application Support/Alfred 2/Alfred.alfredpreferences/" "$HOME/icloud/Backups/Alfred.alfredpreferences/"

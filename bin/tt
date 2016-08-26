@@ -10,17 +10,17 @@ if [ -z "$session" ]; then
 fi
 shift
 
-if ! $(tmux has-session -t "$session"); then
+if ! $(tmux has-session -t "=$session"); then
   env TMUX= tmux new-session -d -s "$session"
 fi
 
 if [ -z "$1" ]; then
   if [ -z "$TMUX" ]; then
-    tmux -u attach-session -t "$session"
+    tmux -u attach-session -t "=$session"
   else
-    tmux -u switch-client -t "$session"
+    tmux -u switch-client -t "=$session"
   fi
 else
-  tmux send-keys -t "$session": "$@" C-m
+  tmux send-keys -t "=$session": "$@" C-m
 fi
 
