@@ -1,8 +1,5 @@
 # vim:ft=sh:
 VAR_UNAME=$(uname -s)
-if [ -z "${TMUX_REMOTE_THEME-}" ]; then
-  rm -f ~/.tmux.conf
-fi
 
 fresh freshshell/fresh bin/fresh --bin
 
@@ -81,8 +78,3 @@ done
 
 fresh Leask/Flora_Pac flora_pac --bin
 fresh fivesheep/chnroutes chnroutes.py --bin
-
-if [ -n "${TMUX_REMOTE_THEME-}" ]; then
-  rm -f ~/.tmux.conf
-  cat ~/.dotfiles/_tmux.conf | grep -v '#NOREMOTE' | sed 's/^#REMOTE //' | grep -v '^#' | grep -v '^ *$' > ~/.tmux.conf
-fi
