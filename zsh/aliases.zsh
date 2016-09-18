@@ -126,8 +126,6 @@ alias cmr=cmus-remote
 
 alias vtig="GIT_EDITOR=vim tig"
 
-alias urlencode='node -e "console.log(encodeURIComponent(process.argv[1]))"'
-alias urldecode='node -e "console.log(decodeURIComponent(process.argv[1]))"'
 function encode64() {
   echo -n $1 | base64
 }

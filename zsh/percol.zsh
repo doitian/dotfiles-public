@@ -17,6 +17,7 @@ function pattach() {
     fi
   fi
 }
+
 function ppgrep() {
   if [[ $1 == "" ]]; then
     PERCOL=percol
