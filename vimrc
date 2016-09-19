@@ -18,7 +18,6 @@ Plug 'bkad/CamelCaseMotion' " ,w ,b ,e
 Plug 'bling/vim-airline'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'fatih/vim-go'
-Plug 'jlanzarotta/bufexplorer' " ,lb
 Plug 'junegunn/vim-easy-align' " Enter in visual mode
 Plug 'kana/vim-textobj-indent' " ai ii aI iI
 Plug 'kana/vim-textobj-lastpat' " a/ i/ a? i?
@@ -48,6 +47,10 @@ Plug 'tpope/vim-unimpaired' " various [, ] mappings
 Plug 'tpope/vim-vinegar' " file explorer
 Plug 'vim-ruby/vim-ruby'
 " Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets
+
+if v:version > 703
+  Plug 'jlanzarotta/bufexplorer' " ,lb
+endif
 
 call plug#end()
 
@@ -318,7 +321,10 @@ set incsearch
 set listchars=tab:▸\ ,trail:·,extends:>,precedes:<,nbsp:·
 set pastetoggle=<F12>
 set fileformats="unix,dos,mac"
-set formatoptions+=1j
+
+if v:version > 703
+  set formatoptions+=1j
+endif
 
 set foldmethod=marker
 set foldlevelstart=0
