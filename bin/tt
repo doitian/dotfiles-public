@@ -44,11 +44,6 @@ function main() {
     esac
   done
 
-  if [ -z "$target" ]; then
-    echo "require a target" >&2
-    exit 2
-  fi
-
   local session="${target%%:*}"
   session="${session#=}"
 
