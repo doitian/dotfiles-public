@@ -1,10 +1,12 @@
 #!/usr/bin/env zsh
 
 set -e
+[ -n "$DEBUG" ] && set -x
 
 function main() {
   local attach
   local target
+  local creation_opts
   while [ "$#" -gt 0 ]; do
     case "$1" in
       -S)
@@ -18,15 +20,15 @@ function main() {
         ;;
       -n)
         shift
-        target="$(env TMUX= tmux new-window -d -P)"
+        target="$(env TMUX= tmux new-window -d -P "${creation_opts[@]}")"
         ;;
       -N)
         shift
-        target="$(env TMUX= tmux new-window -d -P -n "$1")"
+        target="$(env TMUX= tmux new-window -d -P -n "$1" "${creation_opts[@]}")"
         shift
         ;;
       -h|-v)
-        target="$(env TMUX= tmux split-window -d $1 -P)"
+        target="$(env TMUX= tmux split-window -d $1 -P "${creation_opts[@]}")"
         shift
         ;;
       -a)
@@ -36,6 +38,7 @@ function main() {
       -t)
         shift
         target="$1"
+        creation_opts=(-t "$1")
         shift
         ;;
       *)
