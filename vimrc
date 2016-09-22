@@ -6,7 +6,6 @@ scriptencoding utf-8
 set encoding=utf-8
 
 let syntastic_active_modes = ["javascript", "json", "ruby", "go", "lua"]
-command! -bang -nargs=? SyntasticNext call SyntasticNext(<bang>0)
 
 " Plug {{{1
 call plug#begin('~/.vim/plugged')
@@ -28,7 +27,7 @@ Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
 Plug 'rizzatti/dash.vim' " ,h ,H
 Plug 'rking/ag.vim'
-Plug 'scrooloose/syntastic', { 'for': syntastic_active_modes, 'on': [ 'SyntasticNext' ] } " ,f ,F
+Plug 'scrooloose/syntastic', { 'for': syntastic_active_modes } " ,f ,F
 Plug 'sjl/gundo.vim' " ,u
 Plug 'thinca/vim-visualstar' " * # g* g#
 Plug 'tommcdo/vim-exchange' " gx gX
@@ -73,6 +72,7 @@ if has("mac")
   let g:airline_powerline_fonts=1
 endif
 let g:airline#extensions#obsession#enabled = 1
+let g:airline#extensions#syntastic#enabled = 1
 
 if &t_Co > 2 || has("gui_running")
   syntax on
@@ -189,7 +189,11 @@ function! QFixToggle(forced)
   endif
 endfunction
 
+command! -bang -nargs=? SyntasticNext call SyntasticNext(<bang>0)
 function! SyntasticNext(forced)
+  if !exists('g:loaded_syntastic_plugin')
+    call plug#load('syntastic')
+  endif
   if g:SyntasticLoclist.current().isEmpty() || a:forced != 0
     write
     SyntasticCheck
