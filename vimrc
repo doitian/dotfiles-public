@@ -72,6 +72,7 @@ set noshowmode
 if has("mac")
   let g:airline_powerline_fonts=1
 endif
+let g:airline#extensions#obsession#enabled = 1
 
 if &t_Co > 2 || has("gui_running")
   syntax on
