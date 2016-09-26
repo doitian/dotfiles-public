@@ -11,7 +11,7 @@ function debug() {
 }
 
 
-: ${CLOUDIFY_TARGET_icloud="$HOME/Library/Mobile Documents/com~apple~CloudDocs/root/Locations"}
+: ${CLOUDIFY_TARGET_icloud="$HOME/Documents/Locations"}
 : ${CLOUDIFY_TARGET_onedrive="$HOME/OneDrive/Locations"}
 : ${CLOUDIFY_TARGET_dropbox="$HOME/Dropbox/Locations"}
 : ${CLOUDIFY_TARGET_DIRECTORY="$CLOUDIFY_TARGET_icloud"}

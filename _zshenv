@@ -47,6 +47,7 @@ fi
 
 export ANT_ROOT="/usr/local/bin"
 
+# safe path
 SAFE_PATH_SECRET=safe
 if [ -f "$HOME/.safe_path_secret" ]; then
   SAFE_PATH_SECRET=$(cat $HOME/.safe_path_secret)
@@ -57,8 +58,12 @@ function mksafepath() {
   fi
 }
 
+# golang
 export GOPATH="$HOME/.go"
 export GO15VENDOREXPERIMENT=1
+
+# fzf
+export FZF_DEFAULT_COMMAND="ag -g ''"
 
 if ! which fresh &> /dev/null; then
   export PATH=".git/$SAFE_PATH_SECRET/../../bin\

@@ -39,29 +39,38 @@ alias tree='tree -CFA -I ".git" --dirsfirst'
 
 alias dud='du --max-depth=1 -h'
 alias duf='du -sh *'
-alias fd='find . -type d -name'
-alias ff='find . -type f -name'
 
 alias rm="rm -i"
 alias mv="mv -i"
 alias cp="cp -i"
 alias cpv="rsync -poghb --backup-dir=/tmp/rsync -e /dev/null --progress --"
 
-# fasd
+# fzf & fasd
 if which fasd > /dev/null 2>&1; then
   eval "$(fasd --init auto)"
   unalias z
-  alias j='fasd_cd -d'
-  alias jj='fasd_cd -d -i'
-  alias sf='fasd -sif'
-  alias sd='fasd -sid'
-  alias o="fasd -e open -f"
-  alias oo="fasd -e open -f -i"
-  alias ee="fasd -e emacs-dwim -f -i"
-  alias v="fasd -e vim -f"
-  alias vv="fasd -e vim -f -i"
-  alias gv="fasd -e 'gvim --remote' -f"
-  alias gvv="fasd -e 'gvim --remote' -f -i"
+  unalias zz
+  unalias f
+  unalias a
+  unalias s
+  unalias sf
+  unalias sd
+  unalias d
+
+  function ffzf() {
+    fasd "$@" | fzf -1 -0
+  }
+
+  function j() {
+    local dir="$(fasd -Rdl "$@" | fzf -1 -0)"
+    if [ -n "$dir" ]; then
+      cd "$dir"
+    fi
+  }
+
+  alias f="ffzf -Rfl"
+  alias ff="FZF_DEFAULT_OPTS=-m ffzf -Rfl"
+  alias d="ffzf -Rdl"
 fi
 
 alias di='dirs -v | head -n 10'
@@ -152,7 +161,6 @@ alias gofresh="$GOPATH/bin/fresh"
 cb=$HOME/codebase
 og=$HOME/Documents/Ongoing
 gop=$GOPATH
-ic=$HOME/icloud
 docs=$HOME/Documents
 dl=$HOME/Downloads
 omz=$HOME/.fresh/source/robbyrussell/oh-my-zsh

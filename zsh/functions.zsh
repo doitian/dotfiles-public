@@ -58,22 +58,6 @@ function pman() {
   man -t "$@" | open -f -a /Applications/Preview.app
 }
 
-function ws {
-  local name="$1"
-  if [ -z "$name" ]; then
-    name=$(basename $(git rev-parse --show-toplevel 2> /dev/null))
-  fi
-  if [ -z "$name" ]; then
-    echo "requires a name or in git repository"
-    exit 1
-  fi
-  local localname=${2:-workspace}
-  mkdir -p "$HOME/Documents/workspace/$name"
-  mkdir -p "$HOME/icloud/workspace/$name"
-  ln -nsf "$HOME/Documents/workspace/$name" "$localname"
-  ln -nsf "$HOME/icloud/workspace/$name" "$HOME/Documents/workspace/$name/icloud"
-}
-
 function hs { [ -z "$1" ] && history || (history | grep "$@") }
 
 function nocaps {
