@@ -73,6 +73,7 @@ if ! which fresh &> /dev/null; then
 :$HOME/.node-packages/bin\
 :/PATH\
 :$PATH\
+:/usr/local/bin\
 :/usr/local/sbin\
 :$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$NDK_ROOT
 "
