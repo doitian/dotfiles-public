@@ -89,6 +89,7 @@ hi MatchParen cterm=bold ctermbg=none ctermfg=red gui=bold guibg=NONE guifg=red
 
 " Plugins Options {{{1
 let g:netrw_preview   = 1
+let g:netrw_liststyle = 3
 let g:netrw_winsize   = 30
 
 let g:bufExplorerDisableDefaultKeyMapping = 1
@@ -481,8 +482,7 @@ nnoremap <silent> <leader>I :CtrlPBufTagAll<CR>
 
 " UNUSED j, k
 
-nmap <silent> <leader>ll <Plug>VinegarUp
-nmap <silent> <leader>lv <Plug>VinegarVerticalSplitUp
+nmap <silent> <leader>ll :Lexplore<CR>
 nmap <silent> <leader>lt :tags<CR>
 nmap <silent> <leader>lm :marks<cr>
 nmap <silent> <leader>lr :registers<cr>
@@ -608,5 +608,3 @@ augroup jsx_ft
   autocmd BufNewFile,BufRead *.react.js let b:jsx_ext_found = 1
   autocmd BufNewFile,BufRead *.react.js set filetype=javascript.jsx
 augroup END
-
-autocmd FileType netrw setl bufhidden=wipe
