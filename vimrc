@@ -53,6 +53,8 @@ endif
 
 call plug#end()
 
+set rtp+=/usr/local/opt/fzf
+
 " Theme {{{1
 if has("gui_running")
   set guifont=Source\ Code\ Pro\ Medium:h16

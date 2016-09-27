@@ -54,7 +54,6 @@ cp -f ~/.dotfiles/MacOSX/environment.plist ~/.MacOSX/
 mkdir -p ~/.vim/backup
 fresh vimrc --file
 fresh junegunn/vim-plug plug.vim --file=~/.vim/autoload/plug.vim
-fresh junegunn/fzf . --file=~/.fzf/
 
 ### config files
 for f in ~/.dotfiles/_*; do
@@ -76,8 +75,3 @@ done
 
 fresh Leask/Flora_Pac flora_pac --bin
 fresh fivesheep/chnroutes chnroutes.py --bin
-
-### fresh_after_build
-fresh_after_build() {
-  cd ~/.fzf/ && chmod +x install && ./install --all --no-update-rc
-}

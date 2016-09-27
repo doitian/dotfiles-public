@@ -1,5 +1,6 @@
 RUBY_VERSION := 2.1.5
 BREW_FORMULAE := ansible ant atool bash colordiff coreutils ctags dos2unix duti editorconfig fasd gettext gist git git-number gmp htop-osx hub imagemagick jq lua "macvim --override-system-vim" mariadb mongodb mtr multimarkdown ossp-uuid p7zip pidof pngquant postgresql pstree pv redis rlwrap subversion tag the_silver_searcher tig tmux unrar watch zsh-completions pandoc
+CASK_FORMULAE := evernote chromium omnifocus omnigraffle omnioutliner vitamin-r microsoft-office medis paw alfred surge bartender a-better-finder-rename bmglyph boom carbon-copy-cloner cleanmymac cyberduck dropzone fluid hazel hype istat-menus keyboard-maestro little-snitch marked paragon-ntfs physicseditor sketch slicy snagit adobe-photoshop-cc adobe-photoshop-lightroom spriteilluminator sublime-text textexpander texturepacker 1password xscope fork
 PIP_PACKAGES := redis httpie Pygments
 NPM_PACKAGES := js-beautify eslint eslint-plugin-react jsonlint rtail
 GEM_PACKAGES := dotenv mdless
