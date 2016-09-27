@@ -480,7 +480,7 @@ nnoremap <silent> <leader>I :CtrlPBufTagAll<CR>
 
 nmap <silent> <leader>ll <Plug>VinegarUp
 nmap <silent> <leader>lv <Plug>VinegarVerticalSplitUp
-nmap <silent> <leader>lt :TagbarToggle<CR>
+nmap <silent> <leader>lt :tags<CR>
 nmap <silent> <leader>lm :marks<cr>
 nmap <silent> <leader>lr :registers<cr>
 nmap <silent> <leader>l@ :registers<cr>
