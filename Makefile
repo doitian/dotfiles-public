@@ -1,6 +1,6 @@
 RUBY_VERSION := 2.1.5
 BREW_FORMULAE := ansible ant atool bash colordiff coreutils ctags dos2unix duti editorconfig fasd gettext gist git git-number gmp htop-osx hub imagemagick jq lua "macvim --override-system-vim" mariadb mongodb mtr multimarkdown ossp-uuid p7zip pidof pngquant postgresql pstree pv redis rlwrap subversion tag the_silver_searcher tig tmux unrar watch zsh-completions pandoc mas
-CASK_FORMULAE := 1password a-better-finder-rename adobe-photoshop-cc adobe-photoshop-lightroom airserver alfred bartender bmglyph calibre carbon-copy-cloner chromium cleanmymac cyberduck dropzone evernote fluid fork hazel hype istat-menus java keyboard-maestro libreoffice little-snitch marked medis omnifocus omnigraffle omnioutliner paragon-ntfs paw physicseditor sketch slicy snagit spriteilluminator sublime-text surge texturepacker vitamin-r xscope send-to-kindle intellij-idea-ce
+CASK_FORMULAE := 1password a-better-finder-rename adobe-photoshop-cc adobe-photoshop-lightroom airserver alfred bartender bmglyph calibre carbon-copy-cloner chromium cleanmymac cyberduck dropzone evernote fluid fork hazel hype istat-menus keyboard-maestro libreoffice little-snitch marked medis omnifocus omnigraffle omnioutliner paragon-ntfs paw physicseditor sketch slicy snagit spriteilluminator sublime-text surge texturepacker vitamin-r xscope send-to-kindle intellij-idea-ce thunder caffeine scroll-reverser
 PIP_PACKAGES := redis httpie Pygments
 NPM_PACKAGES := js-beautify eslint eslint-plugin-react jsonlint rtail
 GEM_PACKAGES := dotenv mdless
@@ -44,6 +44,7 @@ define MAS_PACKAGES
 568494494 Pocket (1.6.2)
 429449079 Patterns - The Regex App
 955297617 CodeRunner 2
+747961939 Toad
 endef
 export MAS_PACKAGES
 
