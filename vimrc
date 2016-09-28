@@ -608,3 +608,5 @@ augroup jsx_ft
   autocmd BufNewFile,BufRead *.react.js let b:jsx_ext_found = 1
   autocmd BufNewFile,BufRead *.react.js set filetype=javascript.jsx
 augroup END
+
+autocmd FileType netrw setl bufhidden=wipe
