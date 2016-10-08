@@ -1,6 +1,6 @@
 RUBY_VERSION := 2.1.5
 BREW_FORMULAE := ansible ant atool bash colordiff coreutils ctags dos2unix duti editorconfig fasd gettext gist git git-number gmp htop-osx hub imagemagick jq lua "macvim --override-system-vim" mariadb mongodb mtr multimarkdown ossp-uuid p7zip pidof pngquant postgresql pstree pv redis rlwrap subversion tag the_silver_searcher tig tmux unrar watch zsh-completions pandoc mas
-CASK_FORMULAE := 1password a-better-finder-rename adobe-photoshop-cc adobe-photoshop-lightroom airserver alfred bartender bmglyph calibre carbon-copy-cloner chromium cleanmymac cyberduck dropzone evernote fluid fork hazel hype istat-menus keyboard-maestro libreoffice little-snitch marked medis omnifocus omnigraffle omnioutliner paragon-ntfs paw physicseditor sketch slicy snagit spriteilluminator sublime-text surge texturepacker vitamin-r xscope send-to-kindle intellij-idea-ce thunder caffeine scroll-reverser
+CASK_FORMULAE := 1password a-better-finder-rename adobe-photoshop-cc adobe-photoshop-lightroom airserver alfred bartender bmglyph calibre carbon-copy-cloner chromium cleanmymac cyberduck dropzone evernote fluid fork hazel hype istat-menus keyboard-maestro libreoffice little-snitch marked medis omnifocus omnigraffle omnioutliner paragon-ntfs paw physicseditor sketch slicy snagit spriteilluminator sublime-text surge texturepacker vitamin-r xscope send-to-kindle intellij-idea-ce thunder caffeine scroll-reverser dash
 PIP_PACKAGES := redis httpie Pygments
 NPM_PACKAGES := js-beautify eslint eslint-plugin-react jsonlint rtail
 GEM_PACKAGES := dotenv mdless
@@ -12,7 +12,6 @@ define MAS_PACKAGES
 928871589 Noizio (1.5)
 527618971 Pixa (1.1.8)
 1026349850 Copied (1.1.6)
-449589707 Dash (3.3.1)
 880001334 Reeder (3.0.1)
 419330170 Moom (3.2.5)
 490152466 iBooks Author (2.5)
