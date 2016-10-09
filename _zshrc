@@ -11,6 +11,7 @@ COMPLETION_WAITING_DOTS=true
 fpath=($ZSH/plugins/brew $ZSH/plugins/docker $ZSH/plugins/gitfast $fpath)
 
 zstyle :omz:plugins:ssh-agent agent-forwarding on
+zstyle :omz:plugins:ssh-agent identities id_rsa
 
 # Figure out the SHORT hostname
 if [[ "$OSTYPE" = darwin* ]]; then
