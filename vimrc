@@ -15,13 +15,13 @@ Plug 'altercation/vim-colors-solarized'
 Plug 'amiorin/ctrlp-z'
 Plug 'bkad/CamelCaseMotion' " ,w ,b ,e
 Plug 'bling/vim-airline'
+Plug 'ctrlpvim/ctrlp.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'fatih/vim-go'
 Plug 'junegunn/vim-easy-align' " Enter in visual mode
 Plug 'kana/vim-textobj-indent' " ai ii aI iI
 Plug 'kana/vim-textobj-lastpat' " a/ i/ a? i?
 Plug 'kana/vim-textobj-user'
-Plug 'kien/ctrlp.vim'
 Plug 'mattn/emmet-vim'
 Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
@@ -100,7 +100,7 @@ let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/](\.(git|hg|svn)|_build)$',
   \ 'file': '\v\.(meta)$',
   \ }
-let g:ctrlp_extensions = ['Z', 'F']
+let g:ctrlp_extensions = ['z', 'f']
 let g:ctrlp_buftag_types = {
   \ 'yaml'     : '--languages=ansible --ansible-types=k',
   \ }
