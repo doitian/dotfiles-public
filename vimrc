@@ -70,9 +70,7 @@ endif
 
 set noshowmode
 "set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l
-if has("mac")
-  let g:airline_powerline_fonts=1
-endif
+let g:airline_powerline_fonts=1
 let g:airline#extensions#obsession#enabled = 1
 let g:airline#extensions#syntastic#enabled = 1
 
