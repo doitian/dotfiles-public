@@ -20,7 +20,11 @@ main() {
 
   for repo; do
     abrepo="$(realpath "$repo")"
-    ( cd "$repo" && printf "%b\t%s${reset_color}\t%s\n" "$(parse_git_dirty)" "$(__git_ps1 '%s')" "$abrepo" )
+    if [ -d "$repo" ]; then
+      ( cd "$repo" && printf "%b\t%s${reset_color}\t%s\n" "$(parse_git_dirty)" "$(__git_ps1 '%s')" "$abrepo" )
+    else
+      printf "${ZSH_THEME_GIT_PROMPT_DIRTY}\t%s${reset_color}\t%s\n" "MISSING" "$abrepo"
+    fi
   done
 }
 
