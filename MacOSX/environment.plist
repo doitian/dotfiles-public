@@ -3,6 +3,6 @@
 <plist version="1.0">
 <dict>
 	<key>PATH</key>
-  <string>.git/8c0c6dec/../../bin:/Users/ian/bin:/Users/ian/.rbenv/bin:/Users/ian/.rbenv/shims:/Users/ian/.go/bin:/Users/ian/.node-packages/bin:/PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/texbin:/usr/local/sbin:/Users/ian/Library/Android/sdk/tools:/Users/ian/Library/Android/sdk/platform-tools:/Users/ian/Library/Android/ndk :/Users/ian/.fzf/bin</string>
+  <string>.git/8c0c6dec/../../bin:/Users/ian/bin:/Users/ian/.rbenv/bin:/Users/ian/.rbenv/shims:/Users/ian/codebase/goroot/bin:/Users/ian/.node-packages/bin:/PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/texbin:/usr/local/sbin:/Users/ian/Library/Android/sdk/tools:/Users/ian/Library/Android/sdk/platform-tools:/Users/ian/Library/Android/ndk :/Users/ian/.fzf/bin</string>
 </dict>
 </plist>

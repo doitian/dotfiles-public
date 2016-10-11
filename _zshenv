@@ -59,8 +59,7 @@ function mksafepath() {
 }
 
 # golang
-export GOPATH="$HOME/.go"
-export GO15VENDOREXPERIMENT=1
+export GOPATH="$HOME/codebase/goroot"
 
 # fzf
 export FZF_DEFAULT_COMMAND="ag -g ''"
@@ -69,7 +68,7 @@ if ! which fresh &> /dev/null; then
   export PATH=".git/$SAFE_PATH_SECRET/../../bin\
 :$HOME/bin\
 :$HOME/.rbenv/bin:$HOME/.rbenv/shims\
-:$HOME/.go/bin\
+:$GOPATH/bin\
 :$HOME/.node-packages/bin\
 :/PATH\
 :$PATH\
