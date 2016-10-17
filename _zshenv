@@ -59,7 +59,7 @@ function mksafepath() {
 }
 
 # golang
-export GOPATH="$HOME/codebase/goroot"
+export GOPATH="$HOME/codebase/gopath"
 
 # fzf
 export FZF_DEFAULT_COMMAND="ag -g ''"
