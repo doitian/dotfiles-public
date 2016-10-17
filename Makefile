@@ -1,7 +1,6 @@
 RUBY_VERSION := 2.1.5
 BREW_FORMULAE := ansible ant atool bash colordiff coreutils ctags dos2unix duti editorconfig fasd gettext gist git git-number gmp htop-osx hub imagemagick jq lua "macvim --override-system-vim" mariadb mongodb mtr multimarkdown ossp-uuid p7zip pidof pngquant postgresql pstree pv redis rlwrap subversion tag the_silver_searcher tig tmux unrar watch zsh-completions pandoc mas
 CASK_FORMULAE := 1password a-better-finder-rename adobe-photoshop-cc adobe-photoshop-lightroom airserver alfred bartender bmglyph calibre carbon-copy-cloner chromium cleanmymac cyberduck dropzone evernote fluid fork hazel hype istat-menus keyboard-maestro libreoffice little-snitch marked medis omnifocus omnigraffle omnioutliner paragon-ntfs paw physicseditor sketch slicy snagit spriteilluminator sublime-text surge texturepacker vitamin-r xscope send-to-kindle intellij-idea-ce thunder caffeine scroll-reverser dash tickeys
-PIP_PACKAGES := redis httpie Pygments
 NPM_PACKAGES := js-beautify eslint eslint-plugin-react jsonlint rtail
 GEM_PACKAGES := dotenv mdless
 define MAS_PACKAGES
@@ -53,7 +52,7 @@ fresh:
 install:
 	./install.sh
 
-bootstrap: xcode homebrew install rbenv vim pip gem npm
+bootstrap: xcode homebrew install rbenv vim gem npm
 	mkdir ~/codebase
 
 bootlinux: install vim npm
@@ -68,10 +67,6 @@ homebrew:
 	fi
 	brew update
 	$(foreach formula,$(BREW_FORMULAE),brew install $(formula);)
-
-pip:
-	sudo easy_install pip
-	sudo pip install --upgrade $(PIP_PACKAGES)
 
 npm:
 	npm install -g $(NPM_PACKAGES)
@@ -90,4 +85,4 @@ vim:
 mas:
 	mas install $(echo "$$MAS_PACKAGES" | cut -f1 -d' ')
 
-.PHONY: fresh install bootstrap bootlinux xcode homebrew rbenv vim pip npm gem mas
+.PHONY: fresh install bootstrap bootlinux xcode homebrew rbenv vim npm gem mas
