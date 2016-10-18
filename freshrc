@@ -39,7 +39,7 @@ if [ -f ~/.dotfiles-private ]; then
   for f in ssh/config gem/credentials qrsbox/qrsbox.conf; do
     fresh $PRIVATE_REPO "$f" --file="~/.$f"
   done
-  for f in glcl glmr qput gen_3pjgames_contacts pjsvn-new; do
+  for f in qput gen_3pjgames_contacts pjsvn-new; do
     fresh $PRIVATE_REPO "bin/$f" --bin
   done
 fi
