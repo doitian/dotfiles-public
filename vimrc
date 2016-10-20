@@ -87,7 +87,6 @@ hi MatchParen cterm=bold ctermbg=none ctermfg=red gui=bold guibg=NONE guifg=red
 
 " Plugins Options {{{1
 let g:netrw_preview   = 1
-let g:netrw_liststyle = 3
 let g:netrw_winsize   = 30
 
 let g:bufExplorerDisableDefaultKeyMapping = 1
