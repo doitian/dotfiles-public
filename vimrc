@@ -125,7 +125,27 @@ let g:rails_projections = {
       \   ]
       \ }}
 let g:projectionist_heuristics = {
-      \ "Luafile|src/lualib|src/*.lua" : {
+      \ "app/service/*.lua" : {
+      \   "app/*.lua": {
+      \     "type": "source",
+      \     "alternate": "spec/{}_spec.lua"
+      \   },
+      \   "spec/*_spec.lua": {
+      \     "type": "test",
+      \     "alternate": "app/{}.lua"
+      \   },
+      \   "skynetx/lualib/*.lua": {
+      \     "type": "source",
+      \     "alternate": "skynetx/spec/lualib/{}_spec.lua"
+      \   },
+      \   "skynetx/spec/*_spec.lua": {
+      \     "type": "test",
+      \     "alternate": "skynetx/{}.lua"
+      \   },
+      \   "*.lua": { "dispatch": "make test" },
+      \   "*": { "console": "bin/lua" }
+      \ },
+      \ "src/*.lua" : {
       \   "src/*.lua": {
       \     "type": "lib",
       \     "alternate": "spec/{}_spec.lua"
@@ -134,6 +154,18 @@ let g:projectionist_heuristics = {
       \     "type": "test",
       \     "alternate": "src/{}.lua"
       \   }
+      \ },
+      \ "*_test.go" : {
+      \   "*_test.go": {
+      \     "type": "test",
+      \     "alternate": "{}.go"
+      \   },
+      \   "*.go": {
+      \     "type": "source",
+      \     "alternate": "{}_test.go",
+      \     "make": "go build",
+      \     "dispatch": "go test",
+      \   },
       \ },
       \ "Rakefile&!config/environment.rb" : {
       \   "lib/*.rb": {
@@ -149,17 +181,6 @@ let g:projectionist_heuristics = {
       \     "related": "test/test_helper.rb"
       \   },
       \   "*": { "make": "rake" }
-      \ },
-      \ "tasks/main.yml": {
-      \   "tasks/*.yml": {
-      \     "alternate": ["defaults/{}.yml","defaults/main.yml"],
-      \     "type": "task"
-      \   },
-      \   "handlers/*.yml": { "type": "handler" },
-      \   "defaults/*.yml": { "type": "def" },
-      \   "vars/*.yml": { "type": "var" },
-      \   "meta/main.yml": { "type": "meta" },
-      \   "*": { "alternate": "tasks/main.yml" }
       \ }}
 
 " Functions & Commands {{{1
