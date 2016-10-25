@@ -74,6 +74,6 @@ if ! which fresh &> /dev/null; then
 :$PATH\
 :/usr/local/bin\
 :/usr/local/sbin\
-:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$NDK_ROOT
+:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$NDK_ROOT\
 "
 fi
