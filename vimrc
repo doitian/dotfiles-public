@@ -34,6 +34,7 @@ Plug 'tommcdo/vim-exchange' " gx gX
 Plug 'tomtom/tcomment_vim' " gc
 Plug 'tpope/vim-abolish' " :A :S
 Plug 'tpope/vim-dispatch' " ,t
+Plug 'tpope/vim-dotenv'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive' " git client
 Plug 'tpope/vim-markdown'
