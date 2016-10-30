@@ -1,4 +1,2 @@
-bundler --pre
+bundler
 gem-browse
-gem-man
-gem-ctags
