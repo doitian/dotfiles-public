@@ -1,9 +1,11 @@
 patch:
   schema_list:
-    # - schema: wubi_pinyin
-    # - schema: wubi86
     - schema: double_pinyin_flypy
+    - schema: xhup
+    - schema: xhup_express
+    - schema: xhup_fluency
     - schema: wubi86
+    # - schema: wubi_pinyin
     - schema: luna_pinyin_fluency
   punctuator:
     full_shape:
