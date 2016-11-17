@@ -34,6 +34,25 @@ function git_prompt_info() {
   fi
 }
 
+export VIRTUAL_ENV_DISABLE_PROMPT=true
+ZSH_THEME_ENABLE_RBENV=true
+if ! which rbenv &> /dev/null; then
+  ZSH_THEME_ENABLE_RBENV=
+fi
+function universe_env_info() {
+  local rbenv_info virtualenv_info
+  local sep=" "
+  if [ -n "$ZSH_THEME_ENABLE_RBENV" ]; then
+    rbenv_info="$(rbenv version)"
+    if ! [ "${rbenv_info#*set by }" = "$HOME/.rbenv/version)" ]; then
+      echo -n "%F{red}rb»%F{black}${rbenv_info%% *} "
+    fi
+  fi
+  if [ -n "$VIRTUAL_ENV" ]; then
+    echo -n "%F{blue}py»%F{black}$(basename "${VIRTUAL_ENV%/env}") "
+  fi
+}
+
 RPROMPT='%(1j.%K{black}%F{yellow}'$'\ue0b2''%F{white}%K{yellow} %j .)%(?..%F{red}%(1j|%K{yellow}|%K{black})'$'\ue0b2''%F{white}%K{red} %? %f%k'
 PROMPT='
-%F{white}%K{blue} %(4~|%-1~/…/%2~|%~) %F{blue}$(git_prompt_info)%K{white}'$'\ue0b0'' %k%F{white}'$'\ue0b0'' %f%k'
+%F{white}%K{blue} %(4~|%-1~/…/%2~|%~) %F{blue}$(git_prompt_info)%K{white}'$'\ue0b0'' %K{white}$(universe_env_info)%k%F{white}'$'\ue0b0'' %f%k'
