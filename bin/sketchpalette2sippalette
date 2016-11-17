@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+
+import sys
+import os
+import json
+
+file = open(sys.argv[1])
+root, _ = os.path.splitext(sys.argv[1])
+basename = os.path.basename(root)
+
+palette_in = json.load(file)
+file.close()
+
+groups = [
+    "GRAY",
+    "RED",
+    "PINK",
+    "GRAPE",
+    "VIOLET",
+    "INDIGO",
+    "BLUE",
+    "CYAN",
+    "TEAL",
+    "GREEN",
+    "LIME",
+    "YELLOW",
+    "ORANGE",
+    ]
+
+colors_index = 0
+for group in groups:
+  colors = []
+  for i in range(10):
+    colors.append(palette_in["colors"][colors_index])
+    colors_index += 1
+    palette_out = { "name": basename + " " + group, "colors": colors }
+    file_out = open(root + "_" + group + ".sippalette", "w")
+    json.dump(palette_out, file_out)
+    file_out.close()
