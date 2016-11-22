@@ -6,6 +6,7 @@ ssh "$@" "
   test -f ~/.vimrc || (
     echo \"call plug#begin('~/.vim/plugged')\"
     echo \"Plug 'tpope/vim-sensible'\"
+    echo \"Plug 'tpope/tpope/vim-eunuch'\"
     echo \"call plug#end()\"
   ) > ~/.vimrc
 	vim +PlugInstall +qall

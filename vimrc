@@ -36,6 +36,7 @@ Plug 'tpope/vim-abolish' " :A :S
 Plug 'tpope/vim-dispatch' " ,t
 Plug 'tpope/vim-dotenv'
 Plug 'tpope/vim-endwise'
+Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-fugitive' " git client
 Plug 'tpope/vim-markdown'
 Plug 'tpope/vim-obsession' " :Obsess
@@ -256,11 +257,8 @@ if !exists(":DiffOrig")
     \ | wincmd p | diffthis
 endif
 
-command! Sw w !sudo tee % >/dev/null
-
 command! Reload :source ~/.vimrc | :filetype detect | :nohl
 command! Clear :CtrlPClearCache | :bufdo bd | :silent! argd * | :nohl
-command! Unlink :call delete(expand('%')) | :bdelete!
 
 command! -complete=dir -nargs=1 Tcd :tabnew | :lcd <args>
 
