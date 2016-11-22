@@ -27,6 +27,7 @@ Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
 Plug 'rizzatti/dash.vim' " ,h ,H
 Plug 'rking/ag.vim'
+Plug 'saltstack/salt-vim'
 Plug 'scrooloose/syntastic', { 'for': syntastic_active_modes } " ,f ,F
 Plug 'sjl/gundo.vim' " ,u
 Plug 'thinca/vim-visualstar' " * # g* g#
