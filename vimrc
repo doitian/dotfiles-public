@@ -14,15 +14,11 @@ Plug 'Lokaltog/vim-easymotion' " ,<space>
 Plug 'altercation/vim-colors-solarized'
 Plug 'amiorin/ctrlp-z'
 Plug 'bkad/CamelCaseMotion' " ,w ,b ,e
-Plug 'bling/vim-airline'
+Plug 'bling/vim-airline' "NOREMOTE
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'fatih/vim-go'
 Plug 'junegunn/vim-easy-align' " Enter in visual mode
-Plug 'kana/vim-textobj-indent' " ai ii aI iI
-Plug 'kana/vim-textobj-lastpat' " a/ i/ a? i?
-Plug 'kana/vim-textobj-user'
-Plug 'mattn/emmet-vim'
 Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
 Plug 'rizzatti/dash.vim' " ,h ,H
@@ -37,7 +33,7 @@ Plug 'tpope/vim-abolish' " :A :S
 Plug 'tpope/vim-dispatch' " ,t
 Plug 'tpope/vim-dotenv'
 Plug 'tpope/vim-endwise'
-Plug 'tpope/vim-eunuch'
+Plug 'tpope/vim-eunuch' " linux commands
 Plug 'tpope/vim-fugitive' " git client
 Plug 'tpope/vim-markdown'
 Plug 'tpope/vim-obsession' " :Obsess
@@ -72,10 +68,10 @@ if has("gui_running")
 endif
 
 set noshowmode
-"set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l
-let g:airline_powerline_fonts=1
-let g:airline#extensions#obsession#enabled = 1
-let g:airline#extensions#syntastic#enabled = 1
+
+let g:airline_powerline_fonts=1 "NOREMOTE
+let g:airline#extensions#obsession#enabled = 1 "NOREMOTE
+let g:airline#extensions#syntastic#enabled = 1 "NOREMOTE
 
 if &t_Co > 2 || has("gui_running")
   syntax on
@@ -113,10 +109,6 @@ let g:syntastic_mode_map = { "mode": "passive",
                            \ "passive_filetypes": [] }
 let g:syntastic_javascript_checkers = ['eslint']
 let g:syntastic_lua_checkers = ['luacheck', 'luac']
-
-let g:user_emmet_settings = {
-      \ 'indentation' : '  '
-      \ }
 
 let g:rails_projections = {
       \ "app/api/*.rb": {
@@ -273,14 +265,6 @@ function! ToggleTodoStatus(clear)
   endif
   let @/ = _s
   nohl
-endfunction
-
-" Returns true if paste mode is enabled
-function! HasPaste()
-    if &paste
-        return 'PASTE MODE  '
-    en
-    return ''
 endfunction
 
 " wrapper function to restore the cursor position, window position,
@@ -628,3 +612,13 @@ augroup jsx_ft
 augroup END
 
 autocmd FileType netrw setl bufhidden=wipe
+
+" REMOTE {{{1
+"REMOTE function! HasPaste()
+"REMOTE     if &paste
+"REMOTE         return 'PASTE MODE  '
+"REMOTE     en
+"REMOTE     return ''
+"REMOTE endfunction
+"REMOTE 
+"REMOTE set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l
