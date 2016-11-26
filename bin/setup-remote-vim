@@ -54,9 +54,9 @@ fi
 
 ssh "$@" "
   set -x
+  test -f ~/.vim/autoload/plug.vim || curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   $testcommand || cat <<\"VIMRC\" > ~/.vimrc
 $vimrc
 VIMRC
 "
-# curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 # vim +PlugInstall +qall
