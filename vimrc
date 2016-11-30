@@ -212,6 +212,7 @@ function! SyntasticNext(forced)
   if !exists('g:loaded_syntastic_plugin')
     call plug#load('syntastic')
   endif
+
   if g:SyntasticLoclist.current().isEmpty() || a:forced != 0
     write
     SyntasticCheck
@@ -220,9 +221,13 @@ function! SyntasticNext(forced)
       lopen 10
       ll
     endif
-  else
+  elseif !g:SyntasticLoclist.current().isEmpty()
     try
       silent lnext
+    catch /E42/
+      Errors
+      lopen 10
+      ll
     catch /E553/
       call SyntasticNext(1)
     endtry
