@@ -15,9 +15,11 @@ Plug 'altercation/vim-colors-solarized'
 Plug 'amiorin/ctrlp-z'
 Plug 'bkad/CamelCaseMotion' " ,w ,b ,e
 Plug 'bling/vim-airline' "NOREMOTE
+Plug 'cespare/vim-toml'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'fatih/vim-go'
+Plug 'Glench/Vim-Jinja2-Syntax'
 Plug 'junegunn/vim-easy-align' " Enter in visual mode
 Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
