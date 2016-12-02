@@ -342,7 +342,7 @@ set pastetoggle=<F12>
 set fileformats="unix,dos,mac"
 
 if v:version > 703
-  set formatoptions+=1j
+  set formatoptions+=1jmB
 endif
 
 set foldmethod=marker
