@@ -5,11 +5,16 @@
 TMUX_UP=tmux-up
 VERSION=0.5.1
 
-if [ $# -ne 1 ] && [ ! -f '.tmux.conf' ]
-then
-  echo "$0: missing file operand"
-  echo "Try '$0 --help' for more information."
-  exit 1
+if [ $# -ne 1 ]; then
+  if [ "$PWD" = "$HOME" ]; then
+    if ! tmux has-session "=chore" &> /dev/null; then
+      tmux new-session -s chore -d
+    fi
+    [ -z "$TMUX" ] && tmux attach -t "=chore" || tmux switch-client -t "=chore"
+    exit $?
+  elif [ ! -f '.tmux.conf' ]; then
+    ( echo 'send "vim -S" C-m'; echo 'neww -n shell' ) > .tmux.conf
+  fi
 fi
 
 if [ "$1" = '-h' ] || [ "$1" = '--help' ]

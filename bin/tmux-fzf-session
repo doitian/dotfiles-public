@@ -1,0 +1,65 @@
+#!/bin/bash
+
+set -e
+[ -n "$TMUX_FZF_DEBUG" ] && set -x
+
+function help() {
+  echo "Usage: tmux-fzf-session [-k] [-p] [<query>]"
+  echo
+  echo "Search a session using fzf and attach to it, or create one if not found."
+  echo
+  echo "-k:  Kill found sessions, select multiple using tab/shift-tab"
+  echo
+  echo "-p:  Show preview, which also can be opened using ctrl-t"
+}
+
+PREVIEW="tmux capture-pane -p -e -t '={1}:.'"
+PREVIEW_WINDOW='up:80%:hidden'
+
+session=
+kill_session=
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -p|--preview)
+      PREVIEW_WINDOW="${PREVIEW_WINDOW%:*}"
+      shift
+      ;;
+    -h|--help)
+      help
+      exit 0
+      ;;
+    -k|--kill)
+      kill_session=true
+      shift
+      ;;
+    *)
+      session="$1"
+      shift
+      ;;
+  esac
+done
+
+if [ -n "$kill_session" ]; then
+  tmux list-sessions | \
+    fzf -d: -n1 -0 -m -q "$session" \
+        --preview "$PREVIEW" --preview-window "$PREVIEW_WINDOW" \
+        --bind ctrl-t:toggle-preview | \
+    cut -d: -f1 | xargs -L 1 -I {} tmux kill-session -t '='{}
+  exit $?
+fi
+
+if [ -z "$session" ] || ! tmux has-session -t "=$session" &> /dev/null; then
+  opt_select_1=
+  if [ -n "$session" ]; then
+    opt_select_1=-1
+  fi
+  session="$(tmux list-sessions | fzf -d: -n1 $opt_select_1 -0 --print-query -q "$session" --preview "$PREVIEW" --preview-window "$PREVIEW_WINDOW" --bind ctrl-t:toggle-preview +m | cut -d: -f1 | tail -n 1)"
+fi
+
+if [ -n "$session" ]; then
+  if ! tmux has-session -t "=$session" &> /dev/null; then
+    tmux new-session -s "$session" -d
+  fi
+  [ -z "$TMUX" ] && tmux attach -t "=$session" || tmux switch-client -t "=$session"
+fi

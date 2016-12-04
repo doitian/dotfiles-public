@@ -1,10 +1,6 @@
 # -*- sh -*-
 ##################################################
 # Editor
-alias e="emacs-dwim"
-alias et="emacs-dwim -t"
-alias en="emacs-dwim -n"
-alias fp="file-picker"
 alias vi='vim'
 alias :e=vim
 function tv() {
@@ -17,11 +13,11 @@ alias ctrlp='vim +CtrlP'
 # TMUX
 alias t="tmux"
 alias tl="tmux ls"
-alias tn="tmux neww"
-alias ts="tmux new -s"
-alias ta="tmux attach -t"
-alias tu="tmux-up"
-alias tc="tmux-clean"
+alias tnw="tmux neww"
+alias tns="tmux new -s"
+alias ta="tmux-fzf-session"
+alias ts="tmux-fzf-pane -s -p"
+alias tu=tmux-up
 
 ##################################################
 # Git
@@ -57,20 +53,22 @@ if which fasd > /dev/null 2>&1; then
   unalias sd
   unalias d
 
-  function ffzf() {
-    fasd "$@" | fzf -1 -0
-  }
-
   function j() {
-    local dir="$(fasd -Rdl "$@" | fzf -1 -0)"
-    if [ -n "$dir" ]; then
-      cd "$dir"
-    fi
+    local dir="$(fasd -Rdl | fzf-tmux -1 -0 -q "$*")"
+    [ -n "$dir" ] && cd "$dir"
   }
 
-  alias f="ffzf -Rfl"
-  alias ff="FZF_DEFAULT_OPTS=-m ffzf -Rfl"
-  alias d="ffzf -Rdl"
+  alias f='fasd_fzf -m'
+  alias d='fasd_fzf -m -d'
+  alias e='fasd_fzf -m -e'
+  # fbr - checkout git branch (including remote branches)
+  function fbr() {
+    local branches branch
+    branches=$(git branch --all | grep -v HEAD) &&
+    branch=$(echo "$branches" |
+            fzf-tmux -d $(( 2 + $(wc -l <<< "$branches") )) +m) &&
+    git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
+  }
 fi
 
 alias di='dirs -v | head -n 10'

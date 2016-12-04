@@ -1,0 +1,89 @@
+#!/bin/bash
+
+set -e
+[ -n "$FASD_FZF_DEBUG" ] && set -x
+
+function abort() {
+  { if [ "$#" -eq 0 ]; then cat -
+    else echo "fasd_fzf: $*"
+    fi
+  } >&2
+  exit 1
+}
+
+function help() {
+  echo 'Usage: fasd_fzf [-d] [-m] [<query>] [-o|-e <cmd>|-- <cmd> <arg>...]'
+  echo
+  echo '-d       Select directory instead of files.'; echo
+  echo '-m       Enable multiple selection in FZF (tab/shift-tab).'; echo
+  echo '-o       Execute open on selected files or directories.'; echo
+  echo '-e <cmd> Execute <cmd> on selected files or directories. Use EDITOR if <cmd> is not available.'; echo
+  echo '-- <cmd> <arg>... Execute <cmd>, where selected files or directories are appended to the arguments list.'; echo
+  echo
+  echo 'Find file and open in VIM: fasd_fzf -e'
+  echo 'Edit multiple files: fasd_fzf -m -e'
+  echo 'Find file and open in Sublime Text: fasd_fzf -e subl'
+}
+
+query=
+fasd_opts="-Rfl"
+fzf_opts=()
+
+cmd=()
+state=
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --print0|-m)
+      fzf_opts[${#fzf_opts[@]}]="$1"
+      shift
+      ;;
+    -d)
+      shift
+      fasd_opts="-Rdl"
+      ;;
+    -o)
+      shift
+      cmd=(open)
+      ;;
+    -e)
+      shift
+      state=-e
+      cmd=("${EDITOR:-vim}")
+      ;;
+    --)
+      shift
+      cmd=("$@")
+      set --
+      ;;
+    -h|--help)
+      help
+      exit 0
+      ;;
+    -*)
+      help
+      exit 1
+      ;;
+    *)
+      if [ "$state" = "-e" ]; then
+        if [ -n "$1" ] && [ "$1" != "-" ]; then
+          cmd=($1)
+        fi
+        shift
+      elif [ -z "$query" ]; then
+        query="$1"
+        shift
+      else
+        help
+        exit 1
+      fi
+      ;;
+  esac
+done
+
+if [ "${#cmd[@]}" -gt 0 ]; then
+  IFS=$'\n' lines=($(fasd $fasd_opts | fzf-tmux -1 -0 -q "$query" "${fzf_opts[@]}"))
+  "${cmd[@]}" "${lines[@]}"
+else
+  fasd $fasd_opts | fzf-tmux -1 -0 -q "$query" "${fzf_opts[@]}"
+fi
