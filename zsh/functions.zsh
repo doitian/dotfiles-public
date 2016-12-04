@@ -72,3 +72,7 @@ function marked() {
     open -a "Marked 2.app"
   fi
 }
+
+function cbcb() {
+  cd "$HOME/codebase/$(find ~/codebase ~/codebase/goroot/src -maxdepth 4 -type d -name .git "$@" -prune | sed -e 's/.git$//' -e "s;^$HOME/codebase/;;" | fzf)"
+}
