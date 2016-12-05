@@ -1,34 +1,58 @@
 #!/usr/bin/env zsh
 
 set -e
-[ -n "$DEBUG" ] && set -x
+[ -n "$TT_DEBUG" ] && set -x
+
+function help() {
+  echo 'Usage: tt [-l] [-c] [-t <target>] [-n|-s|-h|-v|-N <name>|-S <name>] key ...'
+  echo
+  echo '-l Send keys literally, do not recoganize keycode name.'
+  echo '-c Commit, a.k.a., send a C-m at the end'
+  echo '-t Send to selected target, use active pane by default. When used with other creation option, create new pane in this target.'
+  echo
+  echo 'Creation Options'
+  echo
+  echo '-s        Send keys to new session'
+  echo '-S <name> Send keys to new session with specified name'
+  echo '-n        Send keys to new window'
+  echo '-N <name> Send keys to new window with specified name'
+  echo '-h        Send keys to new pane split horizontally'
+  echo '-v        Send keys to new pane split vertically'
+}
 
 function main() {
   local attach
   local target
-  local creation_opts
+  local commit
+  local -a creation_opts
+  local -a tmux_cmd
+  local -a tmux_send_opt_l
   while [ "$#" -gt 0 ]; do
     case "$1" in
-      -S)
-        shift
-        target="$(env TMUX= tmux new-session -d -P)"
+      --help)
+        help
+        exit 0
         ;;
       -s)
         shift
-        target="$(env TMUX= tmux new-session -d -P -s "$1")"
+        tmux_cmd=(env "TMUX=" tmux new-session -d -P)
+        ;;
+      -S)
+        shift
+        tmux_cmd=(env "TMUX=" tmux new-session -d -P -s "$1")
         shift
         ;;
       -n)
         shift
-        target="$(env TMUX= tmux new-window -d -P "${creation_opts[@]}")"
+        tmux_cmd=(env "TMUX=" tmux new-window -d -P)
         ;;
       -N)
         shift
-        target="$(env TMUX= tmux new-window -d -P -n "$1" "${creation_opts[@]}")"
+        tmux_cmd=(env "TMUX=" tmux new-window -d -P -n "$1")
         shift
         ;;
       -h|-v)
-        target="$(env TMUX= tmux split-window -d $1 -P "${creation_opts[@]}")"
+        tmux_cmd=(env "TMUX=" tmux split-window -d $1 -P)
         shift
         ;;
       -a)
@@ -41,11 +65,34 @@ function main() {
         creation_opts=(-t "$1")
         shift
         ;;
+      -l)
+        tmux_send_opt_l=-l
+        shift
+        ;;
+      -c)
+        commit=C-m
+        shift
+        ;;
+      --)
+        shift
+        break
+        ;;
+      -*)
+        help
+        exit 1;
+        ;;
       *)
         break
         ;;
     esac
   done
+
+  if [ "${#tmux_cmd[@]}" -gt 0 ]; then
+    if [ "${#creation_opts[@]}" -gt 0 ] && [ "${tmux_cmd[4]}" != "new-session" ]; then
+      tmux_cmd+=("${creation_opts[@]}")
+    fi
+    target="$("${tmux_cmd[@]}")"
+  fi
 
   local session="${target%%:*}"
   session="${session#=}"
@@ -68,11 +115,14 @@ function main() {
       tmux -u switch-client -t "$target"
     fi
   else
-    if [ "$1" = "--" ]; then
-      shift
-      tmux send-keys -t "$target" "$*" C-m
+    if [ -n "$tmux_send_opt_l" ]; then
+      tmux send-keys $tmux_send_opt_l -t "$target" "$*"
     else
-      tmux send-keys -t "$target" "$@" C-m
+      tmux send-keys -t "$target" "$@"
+    fi
+
+    if [ -n "$commit" ]; then
+      tmux send-keys -t "$target" "$commit"
     fi
 
     if [ -n "$attach" ]; then
