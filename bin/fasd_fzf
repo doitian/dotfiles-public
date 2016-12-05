@@ -66,6 +66,7 @@ while [ "$#" -gt 0 ]; do
       ;;
     *)
       if [ "$state" = "-e" ]; then
+        state=
         if [ -n "$1" ] && [ "$1" != "-" ]; then
           cmd=($1)
         fi
