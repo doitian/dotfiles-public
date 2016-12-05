@@ -60,7 +60,7 @@ if which fasd > /dev/null 2>&1; then
 
   alias f='fasd_fzf -m'
   alias d='fasd_fzf -m -d'
-  alias e='fasd_fzf -m -e'
+  alias e='fasd_fzf -e -m'
   # fbr - checkout git branch (including remote branches)
   function fbr() {
     local branches branch
