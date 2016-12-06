@@ -17,7 +17,7 @@ function help() {
   echo "-p:  Show preview, also can be opened using ctrl-t"
 }
 
-FORMAT='#P #{?window_active,*,}#{?window_last_flag,#,}/#P#{?pane_active,>,.}#{pane_current_command} #{pane_current_path}'
+FORMAT='#P #P#{?pane_active,>,.}#{pane_current_command} #{pane_current_path}'
 PREVIEW_WINDOW='up:80%:hidden'
 
 opt_a=
@@ -29,12 +29,12 @@ while [ "$#" -gt 0 ]; do
   case "$1" in
     -a|--all)
       opt_a=-a
-      FORMAT='#S:#I.#P #S/#W#{?window_active,*,}#{?window_last_flag,#,}/#P#{?pane_active,>,.}#{pane_current_command} #{pane_current_path}'
+      FORMAT='#S:#I.#P #S/#I.#W#{?window_active,*,}#{?window_last_flag,#,}/#P#{?pane_active,>,.}#{pane_current_command} #{pane_current_path}'
       shift
       ;;
     -s|--session)
       opt_s=-s
-      FORMAT='#I.#P #W#{?window_active,*,}#{?window_last_flag,#,}/#P#{?pane_active,>,.}#{pane_current_command} #{pane_current_path}'
+      FORMAT='#I.#P #I.#W#{?window_active,*,}#{?window_last_flag,#,}/#P#{?pane_active,>,.}#{pane_current_command} #{pane_current_path}'
       shift
       ;;
     -k|--kill)
