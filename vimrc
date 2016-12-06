@@ -40,7 +40,6 @@ Plug 'tpope/vim-fugitive' " git client
 Plug 'tpope/vim-markdown'
 Plug 'tpope/vim-obsession' " :Obsess
 Plug 'tpope/vim-projectionist'
-Plug 'tpope/vim-rails'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround' " ys s
 Plug 'tpope/vim-unimpaired' " various [, ] mappings
@@ -112,15 +111,6 @@ let g:syntastic_mode_map = { "mode": "passive",
 let g:syntastic_javascript_checkers = ['eslint']
 let g:syntastic_lua_checkers = ['luacheck', 'luac']
 
-let g:rails_projections = {
-      \ "app/api/*.rb": {
-      \   "command": "api",
-      \   "template": ["class {camelcase|capitalize|colons}", "end"],
-      \   "test": [
-      \     "test/api/{}_test.rb",
-      \     "spec/api/{}_spec.rb"
-      \   ]
-      \ }}
 let g:projectionist_heuristics = {
       \ "app/service/*.lua" : {
       \   "app/*.lua": {
@@ -589,6 +579,12 @@ augroup jinjia2_ft
   au!
 
   autocmd BufNewFile,BufRead *.j2 set ft=jinja
+augroup END
+
+augroup sls_ft
+  au!
+
+  autocmd BufNewFile,BufRead pillar.example set ft=sls
 augroup END
 
 augroup cg_ft
