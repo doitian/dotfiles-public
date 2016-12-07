@@ -15,8 +15,9 @@ alias t="tmux"
 alias tl="tmux ls"
 alias tnw="tmux neww"
 alias tns="tmux new -s"
-alias ta="tmux-fzf-session"
-alias ts="tmux-fzf-pane -s -p"
+alias th="tmux-fzf-session"
+alias tj="tmux-fzf-pane -s -p"
+alias tk="tmux-fzf-pane -a -p"
 alias tu=tmux-up
 
 ##################################################
