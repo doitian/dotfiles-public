@@ -64,7 +64,7 @@ fi
 PREVIEW="tmux capture-pane -p -e -t '$target_prefix{1}'"
 
 if [ -n "$kill_pane" ]; then
-  tmux list-panes $opt_a $opt_s -F "$FORMAT" | grep -v '[ /]TMUX_FZF_WIN' | \
+  tmux list-panes $opt_a $opt_s -F "$FORMAT" | grep -v '[0-9]\.TMUX_FZF_WIN' | \
     fzf -n 2.. -0 -m -q "$session" \
         --preview "$PREVIEW" --preview-window "$PREVIEW_WINDOW" \
         --bind ctrl-t:toggle-preview | \
