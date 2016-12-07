@@ -82,9 +82,14 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
+IFS=$'\n' lines=($(fasd $fasd_opts | fzf-tmux -1 -0 -q "$query" "${fzf_opts[@]}"))
+for l in "${lines[@]}"; do
+  fasd -A "$l"
+done
 if [ "${#cmd[@]}" -gt 0 ]; then
-  IFS=$'\n' lines=($(fasd $fasd_opts | fzf-tmux -1 -0 -q "$query" "${fzf_opts[@]}"))
   "${cmd[@]}" "${lines[@]}"
 else
-  fasd $fasd_opts | fzf-tmux -1 -0 -q "$query" "${fzf_opts[@]}"
+  for l in "${lines[@]}"; do
+    echo "$l"
+  done
 fi
