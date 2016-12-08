@@ -77,7 +77,7 @@ if [ -z "$session" ] || ! tmux has-session -t "=$session" &> /dev/null; then
   if [ -n "$session" ]; then
     opt_select_1=-1
   fi
-  session="$(tmux list-panes $opt_a $opt_s -F "$FORMAT" | grep -v '[ /]TMUX_FZF_WIN' | fzf -n 2.. $opt_select_1 -0 -q "$session" --preview "$PREVIEW" --preview-window "$PREVIEW_WINDOW" +m | awk '{print $1}')"
+  session="$(tmux list-panes $opt_a $opt_s -F "$FORMAT" | grep -v '[0-9]\.TMUX_FZF_WIN' | fzf -n 2.. $opt_select_1 -0 -q "$session" --preview "$PREVIEW" --preview-window "$PREVIEW_WINDOW" +m | awk '{print $1}')"
 fi
 
 target="$target_prefix$session"
