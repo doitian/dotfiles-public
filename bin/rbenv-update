@@ -37,7 +37,8 @@ PLUGINS=( "sstephenson:ruby-build"
           "dcarley:rbenv-sudo"
           "tpope:rbenv-communal-gems"
           "tpope:rbenv-aliases"
-          "sstephenson:rbenv-gem-rehash" )
+          "carsomyr:rbenv-bundler" 
+        )
 
 for plugin in ${PLUGINS[@]} ; do
 
