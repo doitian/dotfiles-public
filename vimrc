@@ -14,7 +14,7 @@ Plug 'Lokaltog/vim-easymotion' " ,<space>
 Plug 'altercation/vim-colors-solarized'
 Plug 'amiorin/ctrlp-z'
 Plug 'bkad/CamelCaseMotion' " ,w ,b ,e
-Plug 'bling/vim-airline' "NOREMOTE
+Plug 'bling/vim-airline'
 Plug 'cespare/vim-toml'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'editorconfig/editorconfig-vim'
@@ -71,8 +71,8 @@ endif
 set noshowmode
 
 let g:airline_powerline_fonts=1 "NOREMOTE
-let g:airline#extensions#obsession#enabled = 1 "NOREMOTE
-let g:airline#extensions#syntastic#enabled = 1 "NOREMOTE
+let g:airline#extensions#obsession#enabled = 1
+let g:airline#extensions#syntastic#enabled = 1
 
 if &t_Co > 2 || has("gui_running")
   syntax on
@@ -616,12 +616,3 @@ augroup END
 
 autocmd FileType netrw setl bufhidden=wipe
 
-" REMOTE {{{1
-"REMOTE function! HasPaste()
-"REMOTE     if &paste
-"REMOTE         return 'PASTE MODE  '
-"REMOTE     en
-"REMOTE     return ''
-"REMOTE endfunction
-"REMOTE 
-"REMOTE set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l
