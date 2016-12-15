@@ -26,8 +26,9 @@ function _tt() {
   local -a panes
   panes=( ${(f)"$(command tmux 2> /dev/null list-panes -F '#S:#W.#P')"} )
   _arguments \
-    '-l[Send keys literally, do not recoganize keycode name]' \
-    '-c[Commit, a.k.a., send a C-m at the end]' \
+    '-L[Do not send keys literally, recoganize keycode name]' \
+    '-C[Do not send a C-m at the end]' \
+    '-p[Print target session]' \
     "-t[Send to target, or specify where to create new pane]:panes:->panes" \
     - '(Creation Options)' \
     '-s[Send keys to new session]' \

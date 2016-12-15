@@ -6,8 +6,9 @@ set -e
 function help() {
   echo 'Usage: tt [-l] [-c] [-t <target>] [-n|-s|-h|-v|-N <name>|-S <name>] key ...'
   echo
-  echo '-l Send keys literally, do not recoganize keycode name.'
-  echo '-c Commit, a.k.a., send a C-m at the end'
+  echo '-L Do not send keys literally, recoganize keycode name.'
+  echo '-C do not send C-m automatically at the end.'
+  echo '-p Print target session.'
   echo '-t Send to selected target, use active pane by default. When used with other creation option, create new pane in this target.'
   echo
   echo 'Creation Options'
@@ -23,10 +24,11 @@ function help() {
 function main() {
   local attach
   local target
-  local commit
+  local commit=C-m
+  local print_target
   local -a creation_opts
   local -a tmux_cmd
-  local -a tmux_send_opt_l
+  local tmux_send_opt_l=-l
   while [ "$#" -gt 0 ]; do
     case "$1" in
       --help)
@@ -65,12 +67,16 @@ function main() {
         creation_opts=(-t "$1")
         shift
         ;;
-      -l)
-        tmux_send_opt_l=-l
+      -L)
+        tmux_send_opt_l=
         shift
         ;;
-      -c)
-        commit=C-m
+      -C)
+        commit=
+        shift
+        ;;
+      -p)
+        print_target=true
         shift
         ;;
       --)
@@ -108,7 +114,7 @@ function main() {
     fi
   fi
 
-  if [ -z "$1" ]; then
+  if [ "$#" = 0 ]; then
     if [ -z "$TMUX" ]; then
       tmux -u attach-session -t "$target"
     else
@@ -134,7 +140,9 @@ function main() {
     fi
   fi
 
-  echo "$target"
+  if [ -n "$print_target" ]; then
+    echo "$target"
+  fi
 }
 
 main "$@"
