@@ -10,7 +10,7 @@ function vimrc_simple() {
   cat <<"VIMRC"
 call plug#begin('~/.vim/plugged')
 Plug 'tpope/vim-sensible'
-Plug 'tpope/tpope/vim-eunuch'
+Plug 'tpope/vim-eunuch'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tpope/vim-vinegar'
 Plug 'editorconfig/editorconfig-vim'
@@ -52,11 +52,14 @@ fi
   exit 1
 )
 
+plugvim="$(cat ~/.vim/autoload/plug.vim)"
+
 ssh "$@" "
-  set -x
-  test -f ~/.vim/autoload/plug.vim || curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  mkdir -p ~/.vim/autoload
+  test -f ~/.vim/autoload/plug.vim || cat <<\"PLUG\" > ~/.vim/autoload/plug.vim
+$plugvim
+PLUG
   $testcommand || cat <<\"VIMRC\" > ~/.vimrc
 $vimrc
 VIMRC
 "
-# vim +PlugInstall +qall
