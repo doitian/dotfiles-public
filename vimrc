@@ -5,7 +5,7 @@ set nocompatible
 scriptencoding utf-8
 set encoding=utf-8
 
-let syntastic_active_modes = ["javascript", "json", "ruby", "go", "lua"]
+let syntax_check_active_modes = ["javascript", "json", "ruby", "go", "lua"]
 
 " Plug {{{1
 call plug#begin('~/.vim/plugged')
@@ -26,7 +26,9 @@ Plug 'pangloss/vim-javascript'
 Plug 'rizzatti/dash.vim' " ,h ,H
 Plug 'rking/ag.vim'
 Plug 'saltstack/salt-vim'
-Plug 'scrooloose/syntastic', { 'for': syntastic_active_modes } " ,f ,F
+if v:version >= 800
+  Plug 'w0rp/ale', { 'for': syntax_check_active_modes } " ,f ,F
+end
 Plug 'sjl/gundo.vim' " ,u
 Plug 'thinca/vim-visualstar' " * # g* g#
 Plug 'tommcdo/vim-exchange' " gx gX
@@ -72,7 +74,9 @@ set noshowmode
 
 let g:airline_powerline_fonts=1 "NOREMOTE
 let g:airline#extensions#obsession#enabled = 1
-let g:airline#extensions#syntastic#enabled = 1
+if v:version >= 800
+  let g:airline#extensions#ale#enabled = 1
+end
 
 if &t_Co > 2 || has("gui_running")
   syntax on
@@ -105,12 +109,15 @@ let g:ctrlp_buftag_types = {
   \ }
 
 " syntastic
-let g:syntastic_mode_map = { "mode": "passive",
-                           \ "active_filetypes": syntastic_active_modes,
-                           \ "passive_filetypes": [] }
-let g:syntastic_javascript_checkers = ['eslint']
-let g:syntastic_lua_checkers = ['luacheck', 'luac']
+let g:ale_linters = {
+  \ 'javascript': ['eslint'],
+  \ 'lua': ['luacheck', 'luac'],
+  \ }
+let g:ale_lint_on_save = 1
+let g:ale_lint_on_text_changed = 0
+let g:ale_lint_on_enter = 0
 
+" projectionist
 let g:projectionist_heuristics = {
       \ "app/service/*.lua" : {
       \   "app/*.lua": {
@@ -196,33 +203,6 @@ function! QFixToggle(forced)
   else
     copen 10
     let g:qfix_win = bufnr("$")
-  endif
-endfunction
-
-command! -bang -nargs=? SyntasticNext call SyntasticNext(<bang>0)
-function! SyntasticNext(forced)
-  if !exists('g:loaded_syntastic_plugin')
-    call plug#load('syntastic')
-  endif
-
-  if g:SyntasticLoclist.current().isEmpty() || a:forced != 0
-    write
-    SyntasticCheck
-    Errors
-    if !g:SyntasticLoclist.current().isEmpty()
-      lopen 10
-      ll
-    endif
-  elseif !g:SyntasticLoclist.current().isEmpty()
-    try
-      silent lnext
-    catch /E42/
-      Errors
-      lopen 10
-      ll
-    catch /E553/
-      call SyntasticNext(1)
-    endtry
   endif
 endfunction
 
@@ -454,8 +434,8 @@ vnoremap <silent> <leader>d "_d
 
 " e subword
 
-nnoremap <silent> <leader>f :SyntasticNext<CR>
-nnoremap <leader>F :SyntasticNext!<CR>
+nnoremap <silent> <leader>f <Plug>(ale_previous_wrap)
+nnoremap <silent> <leader>F <Plug>(ale_next_wrap)
 
 " shortcut to jump to next conflict marker
 nnoremap <leader>g. :e <C-R>=expand('%:h').'/'<cr>
