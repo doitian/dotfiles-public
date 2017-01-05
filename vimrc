@@ -97,7 +97,7 @@ let g:bufExplorerDisableDefaultKeyMapping = 1
 
 let g:ctrlp_root_markers = []
 let g:ctrlp_working_path_mode = 'a'
-let g:ctrlp_map = '<leader>,'
+let g:ctrlp_map = '<leader><space>'
 let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/](\.(git|hg|svn)|_build)$',
@@ -359,15 +359,15 @@ set grepformat=%f:%l:%c:%m
 runtime! macros/matchit.vim
 
 " Shortcut mappings {{{1
-let mapleader = ","
-let g:mapleader = ","
+let mapleader = " "
+let g:mapleader = " "
 let maplocalleader = "\\"
 let g:maplocalleader = "\\"
 
 " Avoid accidental hits of <F1> while aiming for <Esc>
 noremap! <F1> <Esc>
 
-map <space> <Plug>(easymotion-prefix)
+map <leader>j <Plug>(easymotion-prefix)
 
 inoremap <C-U> <C-G>u<C-U>
 
@@ -376,7 +376,6 @@ noremap <leader>%h i<C-R>=expand('%:h').'/'<cr><Esc>
 noremap <leader>%t i<C-R>=expand('%:t')<cr><Esc>
 noremap <leader>%% i<C-R>=expand('%')<cr><Esc>
 
-nnoremap ; :
 nnoremap <C-e> 3<C-e>
 nnoremap <C-y> 3<C-y>
 nnoremap <silent> <C-n> :bnext<CR>
