@@ -369,8 +369,8 @@ let g:maplocalleader = "\\"
 " Avoid accidental hits of <F1> while aiming for <Esc>
 noremap! <F1> <Esc>
 
-nnoremap <silent> [c <Plug>(ale_previous_wrap)
-nnoremap <silent> ]c <Plug>(ale_next_wrap)
+nmap <silent> [c <Plug>(ale_previous_wrap)
+nmap <silent> ]c <Plug>(ale_next_wrap)
 
 inoremap <C-U> <C-G>u<C-U>
 
