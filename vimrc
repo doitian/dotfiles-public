@@ -97,7 +97,12 @@ let g:bufExplorerDisableDefaultKeyMapping = 1
 let g:ctrlp_root_markers = []
 let g:ctrlp_working_path_mode = 'a'
 let g:ctrlp_map = '<leader><space>'
-let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+let g:ctrlp_user_command = {
+  \ 'types': {
+    \ 1: ['.ctrlp_user_command_is_git', 'git -C %s ls-files'],
+    \ },
+  \ 'fallback': 'ag %s -l --nocolor -g ""'
+  \ }
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/](\.(git|hg|svn)|_build)$',
   \ 'file': '\v\.(meta)$',

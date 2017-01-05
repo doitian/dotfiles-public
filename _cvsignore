@@ -55,3 +55,4 @@ SpaceNavigator
 3DConnexionWrapperU4.bundle
 ~$*
 Session.vim
+.ctrlp_user_command_*
