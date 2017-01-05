@@ -5,14 +5,12 @@ set nocompatible
 scriptencoding utf-8
 set encoding=utf-8
 
-let syntax_check_active_modes = ["javascript", "json", "ruby", "go", "lua"]
-
 " Plug {{{1
 call plug#begin('~/.vim/plugged')
 
 Plug 'altercation/vim-colors-solarized'
 Plug 'amiorin/ctrlp-z'
-Plug 'bkad/CamelCaseMotion' " ,w ,b ,e
+Plug 'bkad/CamelCaseMotion' " <leader>w <leader>b <leader>e
 Plug 'bling/vim-airline'
 Plug 'cespare/vim-toml'
 Plug 'ctrlpvim/ctrlp.vim'
@@ -22,18 +20,18 @@ Plug 'Glench/Vim-Jinja2-Syntax'
 Plug 'junegunn/vim-easy-align' " Enter in visual mode
 Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
-Plug 'rizzatti/dash.vim' " ,h ,H
+Plug 'rizzatti/dash.vim' " <leader>h <leader>H
 Plug 'rking/ag.vim'
 Plug 'saltstack/salt-vim'
 if v:version >= 800
-  Plug 'w0rp/ale', { 'for': syntax_check_active_modes } " ,f ,F
+  Plug 'w0rp/ale' " ]c, [c
 end
-Plug 'sjl/gundo.vim' " ,u
+Plug 'sjl/gundo.vim' " <leader>u
 Plug 'thinca/vim-visualstar' " * # g* g#
 Plug 'tommcdo/vim-exchange' " gx gX
 Plug 'tomtom/tcomment_vim' " gc
 Plug 'tpope/vim-abolish' " :A :S
-Plug 'tpope/vim-dispatch' " ,t
+Plug 'tpope/vim-dispatch' " <leader>t
 Plug 'tpope/vim-dotenv'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-eunuch' " linux commands
@@ -99,7 +97,7 @@ let g:ctrlp_working_path_mode = 'a'
 let g:ctrlp_map = '<leader><space>'
 let g:ctrlp_user_command = {
   \ 'types': {
-    \ 1: ['.ctrlp_user_command_is_git', 'git -C %s ls-files'],
+    \ 1: ['.ctrlp_user_command_is_git', 'git -C %s ls-files --exclude-standard --others --cached'],
     \ },
   \ 'fallback': 'ag %s -l --nocolor -g ""'
   \ }
