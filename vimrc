@@ -10,7 +10,6 @@ let syntax_check_active_modes = ["javascript", "json", "ruby", "go", "lua"]
 " Plug {{{1
 call plug#begin('~/.vim/plugged')
 
-Plug 'Lokaltog/vim-easymotion' " ,<space>
 Plug 'altercation/vim-colors-solarized'
 Plug 'amiorin/ctrlp-z'
 Plug 'bkad/CamelCaseMotion' " ,w ,b ,e
@@ -367,7 +366,8 @@ let g:maplocalleader = "\\"
 " Avoid accidental hits of <F1> while aiming for <Esc>
 noremap! <F1> <Esc>
 
-map <leader>j <Plug>(easymotion-prefix)
+nnoremap <silent> [c <Plug>(ale_previous_wrap)
+nnoremap <silent> ]c <Plug>(ale_next_wrap)
 
 inoremap <C-U> <C-G>u<C-U>
 
@@ -413,7 +413,7 @@ nmap gxx <Plug>(ExchangeLine)
 nmap gX <Plug>(ExchangeClear)
 vmap gx <Plug>(Exchange)
 
-nnoremap <silent> <leader>. :CtrlPClearAllCaches<cr>
+nnoremap <silent> <leader>F :CtrlPClearAllCaches\|:CtrlP<cr>
 nnoremap <silent> <leader>1 <C-w>o
 nnoremap <silent> <leader>2 <C-w>o<C-w>s<C-w>w:b#<CR><C-w>w
 nnoremap <silent> <leader>3 <C-w>o<C-w>v<C-w>w:b#<CR><C-w>w
@@ -433,24 +433,23 @@ vnoremap <silent> <leader>d "_d
 
 " e subword
 
-nnoremap <silent> <leader>f <Plug>(ale_previous_wrap)
-nnoremap <silent> <leader>F <Plug>(ale_next_wrap)
-
 " shortcut to jump to next conflict marker
-nnoremap <leader>g. :e <C-R>=expand('%:h').'/'<cr>
-nnoremap <silent> <leader>gb :CtrlPBuffer<CR>
-nnoremap <silent> <leader>gd :CtrlPDir<CR>
-nnoremap <silent> <leader>gh :CtrlPF<CR>
-nnoremap <silent> <leader>gz :CtrlPZ<CR>
-nnoremap <silent> <leader>gf :CtrlPCurFile<CR>
-nnoremap <silent> <leader>ge :CtrlPQuickfix<CR>
-nnoremap <silent> <leader>go :CtrlPLine<CR>
-nnoremap <silent> <leader>gr :CtrlPMRUFiles<CR>
-nnoremap <silent> <leader>gt :CtrlPTag<CR>
-nnoremap <silent> <leader>gg :CtrlPMixed<CR>
-nnoremap <silent> <leader>gc :CtrlPChange<CR>
-nnoremap <silent> <leader>gC :CtrlPChangeAll<CR>
-nnoremap <silent> <leader>gB :CtrlPBookmarkDir<CR>
+nnoremap <leader>f/ :e <C-R>=expand('%:h').'/'<cr>
+nnoremap <silent> <leader>fb :CtrlPBuffer<CR>
+nnoremap <silent> <leader>fd :CtrlPDir<CR>
+nnoremap <silent> <leader>ff :CtrlPF<CR>
+nnoremap <silent> <leader>fz :CtrlPZ<CR>
+nnoremap <silent> <leader>f. :CtrlPCurFile<CR>
+nnoremap <silent> <leader>fe :CtrlPQuickfix<CR>
+nnoremap <silent> <leader>fo :CtrlPLine<CR>
+nnoremap <silent> <leader>fr :CtrlPMRUFiles<CR>
+nnoremap <silent> <leader>ft :CtrlPTag<CR>
+nnoremap <silent> <leader>fg :CtrlPMixed<CR>
+nnoremap <silent> <leader>fc :CtrlPChange<CR>
+nnoremap <silent> <leader>fC :CtrlPChangeAll<CR>
+nnoremap <silent> <leader>fB :CtrlPBookmarkDir<CR>
+
+" g unused
 
 nmap <silent> <leader>h <Plug>DashSearch
 nmap <silent> <leader>H <Plug>DashGlobalSearch
@@ -458,7 +457,8 @@ nmap <silent> <leader>H <Plug>DashGlobalSearch
 nnoremap <silent> <leader>i :CtrlPBufTag<CR>
 nnoremap <silent> <leader>I :CtrlPBufTagAll<CR>
 
-" UNUSED j, k
+nnoremap <silent> <leader>j :bnext<CR>
+nnoremap <silent> <leader>k :bNext<CR>
 
 nmap <silent> <leader>ll :Lexplore<CR>
 nmap <silent> <leader>lt :tags<CR>
