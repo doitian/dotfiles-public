@@ -64,11 +64,6 @@ export GOPATH="$HOME/codebase/gopath"
 # fzf
 export FZF_DEFAULT_COMMAND="ag -g ''"
 
-# quick cocos
-if [ -f "$HOME/.QUICK_V3_ROOT" ]; then
-  export QUICK_V3_ROOT="$(cat "$HOME/.QUICK_V3_ROOT")"
-fi
-
 if ! which fresh &> /dev/null; then
   export PATH=".git/$SAFE_PATH_SECRET/../../bin\
 :$HOME/bin\
