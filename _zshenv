@@ -39,13 +39,13 @@ export R_LIBS="$HOME/.rlibs"
 if [ -d "$HOME/Library/Android/sdk" ]; then
   export ANDROID_HOME="$HOME/Library/Android/sdk"
   export ANDROID_SWT="$ANDROID_HOME/tools/lib/x86_64"
-  export NDK_ROOT="$HOME/Library/Android/ndk"
+  latest_ndk="$(ls "$HOME/Library/Android/ndk" | tail -n 1)"
+
+  export NDK_ROOT="$HOME/Library/Android/ndk/$latest_ndk"
 else
   export ANDROID_HOME=/opt/android-sdk
   export ANDROID_SWT=/usr/share/java
 fi
-
-export ANT_ROOT="/usr/local/bin"
 
 # safe path
 SAFE_PATH_SECRET=safe
