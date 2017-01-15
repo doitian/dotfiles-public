@@ -7,7 +7,6 @@ function tv() {
   tmux neww "vim $*"
 }
 alias view='vim -R'
-alias ctrlp='vim +CtrlP'
 
 ##################################################
 # TMUX
@@ -30,7 +29,6 @@ alias gst="git status"
 
 ##################################################
 # File
-# absolute ls
 alias tree='tree -CFA -I ".git" --dirsfirst'
 
 alias dud='du --max-depth=1 -h'
@@ -94,7 +92,6 @@ alias more="less"
 alias ltail="less +F -R"
 alias lr="less -R"
 alias lnum='less -N'
-alias w3mgo="w3m http://www.google.com"
 alias sortnr='sort -n -r'
 
 alias oneway="rsync -ltr --progress --delete"
@@ -129,10 +126,6 @@ alias ssh="TERM=xterm-256color ssh"
 
 alias mk=make
 
-alias cmr=cmus-remote
-
-alias vtig="GIT_EDITOR=vim tig"
-
 function encode64() {
   echo -n $1 | base64
 }
@@ -142,17 +135,7 @@ function decode64() {
 alias e64=encode64
 alias d64=decode64
 
-alias dj=django
-
-alias vboxmanage=VBoxManage
-alias vboxheadless=VBoxHeadless
-
-alias vbox=VBoxManage
-alias vheadless=VBoxHeadless
-
 alias fg=' fg'
-
-alias gofresh="$GOPATH/bin/fresh"
 
 ##################################################
 # Dir Aliases
