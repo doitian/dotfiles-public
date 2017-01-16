@@ -518,10 +518,8 @@ nnoremap <leader>v V`]
 
 " w subword
 
-nnoremap <leader>X :nnoremap ,x :w\\|!<Up><Left><Left><Left><Left><Left>
-nnoremap <leader>x :nnoremap ,x :w\\|!<Space><C-v><CR<C-v>><Left><Left><Left><Left><Left>
-nnoremap <buffer> <localleader>X :nnoremap <buffer> <localleader>x :w\\|!<Space><C-v><CR<C-v>><Left><Left><Left><Left><Left>
-nnoremap <buffer> <localleader>x :nnoremap <buffer> <localleader>x :w\\|!<Space><C-v><CR<C-v>><Left><Left><Left><Left><Left>
+nnoremap <leader>X :nnoremap <lt>leader>x :w\\|!<Up><Left><Left><Left><Left><Left>
+nnoremap <leader>x :nnoremap <lt>leader>x :w\\|!<Space><C-v><CR<C-v>><Left><Left><Left><Left><Left>
 
 nnoremap <leader>y "*y
 nnoremap <leader>Y "*yy
