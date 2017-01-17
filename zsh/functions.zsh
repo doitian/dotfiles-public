@@ -76,3 +76,14 @@ function marked() {
 function cbcb() {
   cd "$HOME/codebase/$(find ~/codebase ~/codebase/gopath/src -maxdepth 4 -type d -name .git -prune | sed -e 's/.git$//' -e "s;^$HOME/codebase/;;" | fzf -1 -q "$*")"
 }
+
+function ndk() {
+  local version="r10e"
+  if [ "$1" = "-v" ]; then
+    shift
+    version="$1"
+    shift
+  fi
+  export PATH="$HOME/Library/Android/ndk/android-ndk-$version:$PATH"
+  "$@"
+}

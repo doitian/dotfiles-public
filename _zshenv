@@ -39,7 +39,6 @@ export R_LIBS="$HOME/.rlibs"
 if [ -d "$HOME/Library/Android/sdk" ]; then
   export ANDROID_HOME="$HOME/Library/Android/sdk"
   export ANDROID_SWT="$ANDROID_HOME/tools/lib/x86_64"
-  export NDK_ROOT="$HOME/Library/Android/sdk/ndk-bundle"
 else
   export ANDROID_HOME=/opt/android-sdk
   export ANDROID_SWT=/usr/share/java
@@ -72,6 +71,6 @@ if ! which fresh &> /dev/null; then
 :$PATH\
 :/usr/local/bin\
 :/usr/local/sbin\
-:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$NDK_ROOT\
+:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools\
 "
 fi
