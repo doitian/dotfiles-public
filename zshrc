@@ -25,17 +25,6 @@ ZSH_COMPDUMP="$HOME/.zcompdump-${SHORT_HOST}-${ZSH_VERSION}"
 # Load and run compinit
 autoload -U compinit
 compinit -i -d "${ZSH_COMPDUMP}"
-{%- if accumulator is defined %}
-{%- for name, datae in accumulator %}
-
-# {{ name }}
-{%- for data in datae %}
-{{ data }}
-
-{% endfor %}
-# end {{ name }}
-{%- endfor %}
-{%- endif %}
 
 [ -f "$HOME/.fzf.zsh" ] && source "$HOME/.fzf.zsh"
 _fzf_compgen_path() {
@@ -43,7 +32,3 @@ _fzf_compgen_path() {
 }
 
 type sx &> /dev/null && eval $(sx completions --init)
-
-export LESS='--RAW-CONTROL-CHARS --quiet --HILITE-UNREAD --ignore-case --long-prompt'
-export TMUX_TTY="$TTY"
-unset LSCOLORS
