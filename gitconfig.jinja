@@ -1,0 +1,143 @@
+[alias]
+  snapshot = "!f() { git stash save -u \"snapshot $(date)\" && git stash apply \"stash@{0}\"; }; f"
+
+  a = add
+  aa = add -A
+  au = add -u
+
+  b = branch -v
+  br = branch
+  whereami = rev-parse --abbrev-ref HEAD
+
+  cm = commit
+  ca = commit --amend
+  co = checkout
+  cb = checkout -b
+
+  cp = cherry-pick
+
+  di = diff -p --stat # show difference between working tree and the index
+  dc = diff --cached -p --stat # what would be committed with "git commit"
+  da = diff -p --stat HEAD # what would be committed with "git commit -a"
+  ds = diff --stat # show different files between working tree and the index
+  dt = difftool
+  last = diff HEAD^
+
+  fp = format-patch -s
+
+  sa = stash
+  sl = stash list
+  sp = stash pop
+
+  l = log --pretty=tformat:'%C(auto)%h %s <%aN %ar>'
+  lg = log --pretty=tformat:'%C(auto)%h %s <%aN %ar>%d' --decorate --graph
+  l1 = --no-pager log -1 --decorate --date=relative
+  lref = log --pretty=tformat:'%C(auto)%h %aN %s %ar' 'HEAD@{1}'...
+  lpref = log -p --pretty=tformat:'%C(auto)%h %aN %s %ar' 'HEAD@{1}'...
+  lp = log -p
+  stat = log --stat
+
+  me = merge
+  mt = mergetool
+  mmr = "!f() { git merge --no-commit --no-ff \"$@\"; git commit; }; f"
+
+  n = number -s
+  nn = number
+  na = number add
+  nc = number -c
+
+  rs = reset
+  rh = reset --hard
+  unstage = reset HEAD
+  del = "!f() { git reset HEAD \"$@\"; git clean -f -- \"$@\"; git checkout -- \"$@\" 2>/dev/null; }; f"
+
+  rb = rebase
+  rc = rebase --continue
+  ra = rebase --abort
+  rk = rebase --skip
+
+  st = status --short --branch
+  ms = multistatus
+  dotfiles = "!git multistatus ~/.dotfiles/repos/public ~/.dotfiles/repos/private '~/Library/Application Support/Sublime Text 3/Packages/User'"
+  codebase = "!f() { find ~/codebase ~/codebase/gopath/src -maxdepth 4 -type d -name .git \"$@\" -prune | sed 's/.git$//' | xargs git multistatus; }; f"
+  all= "!f() { find . -maxdepth 3 -type d -name .git \"$@\" -prune | sed 's/.git$//' | xargs git multistatus; }; f"
+
+  ls = ls-files
+  grep = grep -Ii
+  ag = "!git ls-files | xargs ag"
+
+  assume = update-index --assume-unchanged
+  unassume = update-index --no-assume-unchanged
+  assumed = "!git ls-files -v | grep '^h' | cut -c 3-"
+  unassumeall = "!git assumed | xargs git update-index --no-assume-unchanged"
+  assumeall = "!git status -s | awk {'print $2'} | xargs git assume"
+  exclude = "!f() { dir=$(git rev-parse --show-toplevel 2> /dev/null); [ -n \"$dir\" ] || return 1; for i in \"$@\"; do echo \"$i\" >> \"$dir\"/.git/info/exclude; done; }; f"
+
+  lasttag = describe --tags --abbrev=0
+  lt = describe --tags --abbrev=0
+
+  ours = "!f() { git checkout --ours \"$@\" && git add \"$@\"; }; f"
+  theirs = "!f() { git checkout --theirs "$@" && git add \"$@\"; }; f"
+
+  purr = pull --rebase
+  current = "!f() { local remote=origin branch=$(git rev-parse --abbrev-ref HEAD) args=(); for a; do case \"$a\" in (-*) args=(\"${args[@]}\" \"$a\");; (*) remote=\"$a\" ;; esac; done; git push \"${args[@]}\" \"${remote}\" \"$branch:$branch\"; }; f"
+
+  ready = rebase -i @{u}
+  review = diff @{u}
+  giveup = reset --hard @{u}
+
+  fapp = "!open -a Fork ."
+
+[color "branch"]
+  current = yellow
+  local = blue bold
+  remote = green
+[color "diff"]
+  meta = green bold
+  func = yellow
+  old = red bold
+  new = green
+[push]
+  default = simple
+  followTags = true
+[log]
+  date = iso
+[mergetool "Kaleidoscope"]
+  cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+  trustexitcode = true
+[difftool "Kaleidoscope"]
+  cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+[difftool]
+  prompt = false
+[mergetool]
+  prompt = false
+[url "ssh://git@github.com/doitian/"]
+  insteadOf = https://github.com/doitian/
+[url "ssh://git@github.com/"]
+  pushInsteadOf = https://github.com/
+
+[core]
+excludesfile = {{ salt['file.join']({{ salt['user.info'](pillar.get('user', salt['pillar.get']('dotfiles.user', grains.username))).home, '.cvsignore') }}
+
+{%- if grains.os_family == "MacOS" %}
+[credential]
+  helper = osxkeychain
+{%- endif %}
+
+[diff]
+  algorithm = patience
+  {%- if grains.os_family == "MacOS" %}
+  tool = Kaleidoscope
+  {%- endif %}
+[merge]
+  defaultToUpstream = true
+  {%- if grains.os_family == "MacOS" %}
+  tool = Kaleidoscope
+  {%- endif %}
+
+{%- for section, options in pillar.get('git', {}).items() %}
+[{{section}}]
+  {%- for k, v in options.items() %}
+  {{ k }} = {{ v }}
+  {%- endfor %}
+{%- endfor %}
