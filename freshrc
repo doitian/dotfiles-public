@@ -1,9 +1,4 @@
 # vim:ft=sh:
-VAR_UNAME=$(uname -s)
-
-fresh freshshell/fresh bin/fresh --bin
-
-### shell.sh
 
 # bzr git prompt_info_functions
 for l in completion directories functions grep history key-bindings git misc spectrum termsupport theme-and-appearance; do
@@ -56,22 +51,40 @@ fresh vimrc --file
 fresh junegunn/vim-plug plug.vim --file=~/.vim/autoload/plug.vim
 
 ### config files
-for f in ~/.dotfiles/_*; do
-  f=$(basename "$f")
-  fresh "$f" --file="~/.${f#_}"
-done
+# for f in ~/.dotfiles/_*; do
+#   f=$(basename "$f")
+#   fresh "$f" --file="~/.${f#_}"
+# done
 
 fresh aria2.conf --file=~/.aria2/aria2.conf
 fresh bundle.config --file=~/.bundle/config
 fresh subversion.config --file=~/.subversion/config
 fresh rbenv/default-gems --file=~/.rbenv/default-gems
 
-for f in ~/.dotfiles/Library/Rime/*.yaml; do
-  f=$(basename "$f")
-  fresh "Library/Rime/$f" --file=~/Library/Rime/$f
-done
-
 ### GFW
 
 fresh Leask/Flora_Pac flora_pac --bin
 fresh fivesheep/chnroutes chnroutes.py --bin
+
+# - file.recurse:
+#   - source: .dotfiles/repos/public/def
+#     # location: ''
+#   - source: .dotfiles/repos/private/files
+#     private: True
+# - symlink.recurse:
+#   - source: .dotfiles/repos/public/files
+# - file.concat:
+#   - location: .zshrc
+#     comment: '# '
+#     source:
+#       - line: '#!/bin/bash'
+#       - find:
+#           source: .dotfiles/repos/public/zsh
+#           name: '*.zsh'
+#       - source: http://test.xx
+#         private: True
+# - file.symlink:
+#   - location: bin/test
+#     target: .dotfiles/repos/public/bin/test
+# - file.absent:
+#   - location: .secret
