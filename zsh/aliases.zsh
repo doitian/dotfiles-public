@@ -144,9 +144,8 @@ og=$HOME/Documents/Ongoing
 gop=$GOPATH
 docs=$HOME/Documents
 dl=$HOME/Downloads
-omz=$HOME/.fresh/source/robbyrussell/oh-my-zsh
+omz=$HOME/.oh-my-zsh
 omzp=$omz/plugins
 dotfiles=$HOME/.dotfiles
-dotfilesp=$HOME/.fresh/source/dotfiles-private/dotfiles-private
 dotsubl="$HOME/Library/Application Support/Sublime Text 3/Packages/User"
 
