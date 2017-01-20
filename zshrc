@@ -3,7 +3,7 @@
 if [[  "$-" != *i* ]]; then return 0; fi
 
 ZSH_CUSTOM="$HOME/.dotfiles/zsh"
-ZSH="$HOME/.fresh/source/robbyrussell/oh-my-zsh"
+ZSH="$HOME/.oh-my-zsh"
 ZSH_CACHE_DIR="$HOME/.zcompcache"
 COMPLETION_WAITING_DOTS=true
 DISABLE_AUTO_TITLE=true
