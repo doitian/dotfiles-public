@@ -117,7 +117,7 @@
   pushInsteadOf = https://github.com/
 
 [core]
-excludesfile = {{ salt['file.join'](salt['user.info'](pillar.get('user', salt['pillar.get']('dotfiles.user', grains.username))).home, '.cvsignore') }}
+  excludesfile = {{ salt['file.join'](salt['user.info'](pillar.get('user', salt['pillar.get']('dotfiles.user', grains.username))).home, '.cvsignore') }}
 
 {%- if grains.os_family == "MacOS" %}
 [credential]
