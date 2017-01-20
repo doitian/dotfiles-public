@@ -1,4 +1,11 @@
 
+[ -f "$HOME/.fzf.zsh" ] && source "$HOME/.fzf.zsh"
+_fzf_compgen_path() {
+  ag -l --nocolor -g "" "$1"
+}
+
+type sx &> /dev/null && eval $(sx completions --init)
+
 export LESS='--RAW-CONTROL-CHARS --quiet --HILITE-UNREAD --ignore-case --long-prompt'
 export TMUX_TTY="$TTY"
 unset LSCOLORS

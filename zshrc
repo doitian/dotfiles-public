@@ -25,10 +25,3 @@ ZSH_COMPDUMP="$HOME/.zcompdump-${SHORT_HOST}-${ZSH_VERSION}"
 # Load and run compinit
 autoload -U compinit
 compinit -i -d "${ZSH_COMPDUMP}"
-
-[ -f "$HOME/.fzf.zsh" ] && source "$HOME/.fzf.zsh"
-_fzf_compgen_path() {
-  ag -l --nocolor -g "" "$1"
-}
-
-type sx &> /dev/null && eval $(sx completions --init)
