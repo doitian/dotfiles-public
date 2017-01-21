@@ -102,11 +102,6 @@
   followTags = true
 [log]
   date = iso
-[mergetool "Kaleidoscope"]
-  cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
-  trustexitcode = true
-[difftool "Kaleidoscope"]
-  cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
 [difftool]
   prompt = false
 [mergetool]
@@ -117,9 +112,14 @@
   pushInsteadOf = https://github.com/
 
 [core]
-  excludesfile = {{ salt['file.join'](salt['user.info'](pillar.get('user', salt['pillar.get']('dotfiles.user', grains.username))).home, '.cvsignore') }}
+  excludesfile = {{ salt['file.join'](dotfiles.home, '.cvsignore') }}
 
 {%- if grains.os_family == "MacOS" %}
+[mergetool "Kaleidoscope"]
+  cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+  trustexitcode = true
+[difftool "Kaleidoscope"]
+  cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
 [credential]
   helper = osxkeychain
 {%- endif %}
