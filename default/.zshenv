@@ -45,13 +45,15 @@ else
 fi
 
 # safe path
-SAFE_PATH_SECRET=safe
-if [ -f "$HOME/.safe_path_secret" ]; then
-  SAFE_PATH_SECRET=$(cat $HOME/.safe_path_secret)
+if [ -f "$HOME/.safebin" ]; then
+  SAFEBIN_SECRET="$(cat "$HOME/.safebin")"
 fi
 function mksafepath() {
-  if [ -d .git ]; then
-    mkdir -p ".git/$SAFE_PATH_SECRET"
+  if [ -n "$SAFEBIN_SECRET" ] && [ -d .git ]; then
+    mkdir -p ".git/$SAFEBIN_SECRET"
+  else
+    echo "not available"
+    false
   fi
 }
 
@@ -61,11 +63,12 @@ export GOPATH="$HOME/codebase/gopath"
 # fzf
 export FZF_DEFAULT_COMMAND="ag -g ''"
 
-if ! which fresh &> /dev/null; then
-  export PATH=".git/$SAFE_PATH_SECRET/../../bin\
+if ! echo "$PATH" | grep ':/PATH:'; then
+  export PATH="\
 :$HOME/bin\
-:$HOME/.rbenv/bin:$HOME/.rbenv/shims\
 :$GOPATH/bin\
+:$HOME/Library/Python/2.7/bin\
+:$HOME/.rbenv/bin:$HOME/.rbenv/shims\
 :$HOME/.node-packages/bin\
 :/PATH\
 :$PATH\
@@ -73,4 +76,8 @@ if ! which fresh &> /dev/null; then
 :/usr/local/sbin\
 :$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools\
 "
+
+  if [ -n "$SAFEBIN_SECRET" ]; then
+    export PATH=".git/$SAFEBIN_SECRET/../../bin:$PATH"
+  fi
 fi
