@@ -63,7 +63,7 @@ export GOPATH="$HOME/codebase/gopath"
 # fzf
 export FZF_DEFAULT_COMMAND="ag -g ''"
 
-if ! echo "$PATH" | grep ':/PATH:'; then
+if ! echo "$PATH" | grep -q ':/PATH:'; then
   export PATH="\
 :$HOME/bin\
 :$GOPATH/bin\
