@@ -93,6 +93,7 @@ let g:netrw_winsize   = 30
 let g:bufExplorerDisableDefaultKeyMapping = 1
 
 let g:ctrlp_root_markers = []
+let g:ctrlp_switch_buffer = 'et'
 let g:ctrlp_working_path_mode = 'a'
 let g:ctrlp_map = '<leader><space>'
 let g:ctrlp_user_command = {
@@ -460,8 +461,7 @@ nmap <silent> <leader>H <Plug>DashGlobalSearch
 nnoremap <silent> <leader>i :CtrlPBufTag<CR>
 nnoremap <silent> <leader>I :CtrlPBufTagAll<CR>
 
-nnoremap <silent> <leader>j :bnext<CR>
-nnoremap <silent> <leader>k :bNext<CR>
+" j, k unused
 
 nmap <silent> <leader>ll :Lexplore<CR>
 nmap <silent> <leader>lt :tags<CR>

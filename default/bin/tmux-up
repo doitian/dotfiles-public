@@ -13,7 +13,7 @@ if [ $# -ne 1 ]; then
     [ -z "$TMUX" ] && tmux attach -t "=chore" || tmux switch-client -t "=chore"
     exit $?
   elif [ ! -f '.tmux.conf' ]; then
-    ( echo 'send "vim -S" C-m'; echo 'neww -n shell' ) > .tmux.conf
+    ( echo 'send "[ -f Session.vim ] && vim -S || vim" C-m'; echo 'neww -n shell' ) > .tmux.conf
   fi
 fi
 

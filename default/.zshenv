@@ -45,10 +45,11 @@ else
 fi
 
 # safe path
+SAFEBIN_SECRET=safebin
 if [ -f "$HOME/.safebin" ]; then
-  SAFEBIN_SECRET="$(cat "$HOME/.safebin")"
+  SAFEBIN_SECRET="safebin-$(cat "$HOME/.safebin")"
 fi
-function mksafepath() {
+function mksafebin() {
   if [ -n "$SAFEBIN_SECRET" ] && [ -d .git ]; then
     mkdir -p ".git/$SAFEBIN_SECRET"
   else
@@ -65,6 +66,7 @@ export FZF_DEFAULT_COMMAND="ag -g ''"
 
 if ! echo "$PATH" | grep -q ':/PATH:'; then
   export PATH="\
+.git/$SAFEBIN_SECRET/../../bin\
 :$HOME/bin\
 :$GOPATH/bin\
 :$HOME/Library/Python/2.7/bin\
@@ -78,6 +80,5 @@ if ! echo "$PATH" | grep -q ':/PATH:'; then
 "
 
   if [ -n "$SAFEBIN_SECRET" ]; then
-    export PATH=".git/$SAFEBIN_SECRET/../../bin:$PATH"
   fi
 fi
