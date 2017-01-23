@@ -5,6 +5,8 @@ set nocompatible
 scriptencoding utf-8
 set encoding=utf-8
 
+let has_ag = executable('ag')
+
 " Plug {{{1
 call plug#begin('~/.vim/plugged')
 
@@ -20,8 +22,12 @@ Plug 'Glench/Vim-Jinja2-Syntax'
 Plug 'junegunn/vim-easy-align' " Enter in visual mode
 Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
-Plug 'rizzatti/dash.vim' " <leader>h <leader>H
-Plug 'rking/ag.vim'
+if executable('open')
+  Plug 'rizzatti/dash.vim' " <leader>h <leader>H
+endif
+if has_ag
+  Plug 'rking/ag.vim'
+endif
 Plug 'saltstack/salt-vim'
 if v:version >= 800
   Plug 'w0rp/ale' " ]c, [c
@@ -34,16 +40,22 @@ Plug 'tpope/vim-abolish' " :A :S
 Plug 'tpope/vim-dispatch' " <leader>t
 Plug 'tpope/vim-dotenv'
 Plug 'tpope/vim-endwise'
-Plug 'tpope/vim-eunuch' " linux commands
 Plug 'tpope/vim-fugitive' " git client
 Plug 'tpope/vim-markdown'
 Plug 'tpope/vim-obsession' " :Obsess
-Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround' " ys s
 Plug 'tpope/vim-unimpaired' " various [, ] mappings
 Plug 'tpope/vim-vinegar' " file explorer
-Plug 'vim-ruby/vim-ruby'
+
+if has('unix')
+  Plug 'tpope/vim-eunuch' " linux commands
+endif
+
+if !has('win32') && !executable('regedit.exe')
+  Plug 'tpope/vim-projectionist'
+  Plug 'vim-ruby/vim-ruby'
+endif
 " Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets
 
 if v:version > 703
@@ -96,12 +108,14 @@ let g:ctrlp_root_markers = []
 let g:ctrlp_switch_buffer = 'et'
 let g:ctrlp_working_path_mode = 'a'
 let g:ctrlp_map = '<leader><space>'
-let g:ctrlp_user_command = {
-  \ 'types': {
-    \ 1: ['.ctrlp_user_command_is_git', 'git -C %s ls-files --exclude-standard --others --cached'],
-    \ },
-  \ 'fallback': 'ag %s -l --nocolor -g ""'
-  \ }
+if has_ag
+  let g:ctrlp_user_command = {
+    \ 'types': {
+      \ 1: ['.ctrlp_user_command_is_git', 'git -C %s ls-files --exclude-standard --others --cached'],
+      \ },
+    \ 'fallback': 'ag %s -l --nocolor -g ""'
+    \ }
+endif
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/](\.(git|hg|svn)|_build)$',
   \ 'file': '\v\.(meta)$',
@@ -355,7 +369,9 @@ set cursorline
 set spellfile=$HOME/.vim-spell-en.utf-8.add
 set spelllang=en_us
 
-set grepprg=ag\ --vimgrep\ $*
+if has_ag
+  set grepprg=ag\ --vimgrep\ $*
+endif
 set grepformat=%f:%l:%c:%m
 
 runtime! macros/matchit.vim
