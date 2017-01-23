@@ -13,7 +13,9 @@ call plug#begin('~/.vim/plugged')
 Plug 'altercation/vim-colors-solarized'
 Plug 'amiorin/ctrlp-z'
 Plug 'bkad/CamelCaseMotion' " <leader>w <leader>b <leader>e
-Plug 'bling/vim-airline'
+if &t_Co > 8
+  Plug 'bling/vim-airline'
+endif
 Plug 'cespare/vim-toml'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'editorconfig/editorconfig-vim'
@@ -115,6 +117,8 @@ if has_ag
       \ },
     \ 'fallback': 'ag %s -l --nocolor -g ""'
     \ }
+else
+  let g:ctrlp_user_command = ['.git', 'git -C %s ls-files --exclude-standard --others --cached']
 endif
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/](\.(git|hg|svn)|_build)$',
