@@ -113,6 +113,7 @@
 
 [core]
   excludesfile = {{ salt['file.join'](dotfiles.home, '.cvsignore') | yaml_dquote }}
+  autocrlf = false
 
 {%- if grains.os_family == "MacOS" %}
 [mergetool "Kaleidoscope"]
@@ -141,3 +142,5 @@
   {{ k }} = {{ v }}
   {%- endfor %}
 {%- endfor %}
+
+
