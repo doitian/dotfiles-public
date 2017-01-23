@@ -112,7 +112,7 @@
   pushInsteadOf = https://github.com/
 
 [core]
-  excludesfile = {{ salt['file.join'](dotfiles.home, '.cvsignore') }}
+  excludesfile = {{ salt['file.join'](dotfiles.home, '.cvsignore') | yaml_dquote }}
 
 {%- if grains.os_family == "MacOS" %}
 [mergetool "Kaleidoscope"]
