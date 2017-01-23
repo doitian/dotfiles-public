@@ -312,7 +312,6 @@ set hlsearch
 set incsearch
 set listchars=tab:▸\ ,trail:·,extends:>,precedes:<,nbsp:·
 set pastetoggle=<F12>
-set fileformats="unix,dos,mac"
 
 if v:version > 703
   set formatoptions+=1jmB
