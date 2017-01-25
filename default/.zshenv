@@ -72,6 +72,7 @@ if ! echo "$PATH" | grep -q ':/PATH:'; then
 :$HOME/Library/Python/2.7/bin\
 :$HOME/.rbenv/bin:$HOME/.rbenv/shims\
 :$HOME/.node-packages/bin\
+:$HOME/Library/gradle/bin\
 :/PATH\
 :$PATH\
 :/usr/local/bin\
