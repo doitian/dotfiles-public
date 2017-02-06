@@ -79,7 +79,4 @@ if ! echo "$PATH" | grep -q ':/PATH:'; then
 :/usr/local/sbin\
 :$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools\
 "
-
-  if [ -n "$SAFEBIN_SECRET" ]; then
-  fi
 fi
