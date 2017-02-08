@@ -7,5 +7,7 @@ tags
 .Ulysses*
 .tmux.conf
 Session.vim
-.ctrlp_user_command_*
+.ctrlp_*
 .env
+.*.swp
+.DS_Store
