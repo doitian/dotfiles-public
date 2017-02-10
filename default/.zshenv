@@ -1,4 +1,8 @@
 #!/usr/bin/env zsh
+
+ulimit -n 200000 &> /dev/null
+ulimit -u 2048 &> /dev/null
+
 export LESS='--RAW-CONTROL-CHARS --quiet --HILITE-UNREAD --ignore-case --long-prompt'
 export LANG=en_US.UTF-8
 export LC_CTYPE=$LANG
