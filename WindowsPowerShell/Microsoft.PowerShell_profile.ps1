@@ -1,6 +1,7 @@
-Import-Module posh-git
+if (Get-Module -ListAvailable -Name posh-git) {
+  Import-Module posh-git
 
-function prompt {
+  function prompt {
     $realLASTEXITCODE = $LASTEXITCODE
 
     Write-Host($pwd.ProviderPath) -nonewline
@@ -9,14 +10,19 @@ function prompt {
 
     $global:LASTEXITCODE = $realLASTEXITCODE
     return "> "
-}
+  }
 
-Start-SshAgent -Quiet
+  Start-SshAgent -Quiet
+}
 
 Set-Alias which Get-Command
 Set-Alias g git
 
-$PortableGit = (Get-Command git | Get-Item).Directory.Parent.FullName
+try {
+  $PortableGit = (Get-Command git | Get-Item).Directory.Parent.FullName
+} catch {
+  # ignore
+}
 
 function vim() {
   bash vi $args
