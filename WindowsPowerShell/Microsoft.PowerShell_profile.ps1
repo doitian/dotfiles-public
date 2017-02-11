@@ -17,6 +17,7 @@ if (Get-Module -ListAvailable -Name posh-git) {
 
 Set-Alias which Get-Command
 Set-Alias g git
+Set-Alias ll Get-ChildItem
 
 try {
   $PortableGit = (Get-Command git | Get-Item).Directory.Parent.FullName
