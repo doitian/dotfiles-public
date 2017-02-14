@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cd ~/.dotfiles
-tar -cf - zsh/aliases.zsh | ssh "$@" 'mkdir -p .shell && tar -C .shell -xf -'
+cd ~
+tar -L -cf - .bashrc .bash_profile | ssh "$@" 'mkdir -p .shell && tar -xf -'
