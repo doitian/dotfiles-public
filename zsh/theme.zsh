@@ -49,7 +49,9 @@ function universe_env_info() {
     fi
   fi
   if [ -n "$VIRTUAL_ENV" ]; then
-    echo -n "%F{blue}py»%F{black}$(basename "${VIRTUAL_ENV%/env}") "
+    name="${VIRTUAL_ENV%/env}"
+    name="${VIRTUAL_ENV%/.env}"
+    echo -n "%F{blue}py»%F{black}$(basename "$name") "
   fi
 }
 
