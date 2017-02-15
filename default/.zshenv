@@ -76,7 +76,7 @@ if ! echo "$PATH" | grep -q ':/PATH:'; then
 :$HOME/Library/Python/2.7/bin\
 :$HOME/.rbenv/bin:$HOME/.rbenv/shims\
 :$HOME/.node-packages/bin\
-:$HOME/Library/gradle/bin\
+:$HOME/.gradle/versions/gradle-3.3/bin\
 :/PATH\
 :$PATH\
 :/usr/local/bin\
