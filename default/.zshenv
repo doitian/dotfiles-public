@@ -1,5 +1,12 @@
 #!/usr/bin/env zsh
 
+if [ -n "$BASH_VERSION" ]; then
+  # include .bashrc if it exists
+  if [ -f "$HOME/.bashrc" ]; then
+    . "$HOME/.bashrc"
+  fi
+fi
+
 ulimit -n 200000 &> /dev/null
 ulimit -u 2048 &> /dev/null
 
@@ -11,7 +18,6 @@ if [ -x "/usr/bin/x-www-browser" ]; then
   export BROWSER="/usr/bin/x-www-browser"
 fi
 export ALTERNATE_EDITOR="vim"
-export GREP_OPTIONS='--color=auto'
 if [ -f /usr/libexec/java_home ]; then
   export JAVA_HOME=$(/usr/libexec/java_home)
 fi
