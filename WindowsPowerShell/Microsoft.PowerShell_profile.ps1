@@ -18,18 +18,13 @@ if (Get-Module -ListAvailable -Name posh-git) {
 Set-Alias which Get-Command
 Set-Alias g git
 Set-Alias ll Get-ChildItem
+Set-Alias vi vim
 
 try {
   $PortableGit = (Get-Command git | Get-Item).Directory.Parent.FullName
 } catch {
   # ignore
 }
-
-function vim() {
-  bash vi $args
-}
-
-Set-Alias vi vim
 
 function dotfiles() {
   cd $env:USERPROFILE\.dotfiles
