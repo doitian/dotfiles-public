@@ -29,3 +29,7 @@ try {
 function dotfiles() {
   cd $env:USERPROFILE\.dotfiles
 }
+
+function cmake-vcpkg {
+  cmake -DCMAKE_TOOLCHAIN_FILE=${env:VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake $Args
+}
