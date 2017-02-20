@@ -10,10 +10,6 @@ let has_ag = executable('ag')
 " Plug {{{1
 call plug#begin('~/.vim/plugged')
 
-if has("gui_running") || &t_Co > 16
-  Plug 'altercation/vim-colors-solarized'
-  Plug 'bling/vim-airline'
-endif
 Plug 'amiorin/ctrlp-z'
 Plug 'bkad/CamelCaseMotion' " <leader>w <leader>b <leader>e
 Plug 'cespare/vim-toml'
@@ -24,25 +20,14 @@ Plug 'Glench/Vim-Jinja2-Syntax'
 Plug 'junegunn/vim-easy-align' " Enter in visual mode
 Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
-if executable('open')
-  Plug 'rizzatti/dash.vim' " <leader>h <leader>H
-endif
-if has_ag
-  Plug 'rking/ag.vim'
-endif
+Plug 'rust-lang/rust.vim'
 Plug 'saltstack/salt-vim'
-if v:version >= 800
-  Plug 'w0rp/ale' " ]c, [c
-end
 Plug 'sjl/gundo.vim' " <leader>u
 Plug 'thinca/vim-visualstar' " * # g* g#
 Plug 'tommcdo/vim-exchange' " gx gX
 Plug 'tomtom/tcomment_vim' " gc
 Plug 'tpope/vim-abolish' " :A :S
 Plug 'tpope/vim-dispatch' " <leader>t
-if !has('win32')
-  Plug 'tpope/vim-dotenv'
-endif
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive' " git client
 Plug 'tpope/vim-markdown'
@@ -52,9 +37,26 @@ Plug 'tpope/vim-surround' " ys s
 Plug 'tpope/vim-unimpaired' " various [, ] mappings
 Plug 'tpope/vim-vinegar' " file explorer
 
+if has("gui_running") || &t_Co > 16
+  Plug 'altercation/vim-colors-solarized'
+  Plug 'bling/vim-airline'
+endif
+if executable('open')
+  Plug 'rizzatti/dash.vim' " <leader>h <leader>H
+endif
+if has_ag
+  Plug 'rking/ag.vim'
+endif
+if !has('win32')
+  Plug 'tpope/vim-dotenv'
+endif
+
 if has('unix')
   Plug 'tpope/vim-eunuch' " linux commands
 endif
+if v:version >= 800
+  Plug 'w0rp/ale' " ]c, [c
+end
 
 if !has('win32') && !executable('regedit.exe')
   Plug 'tpope/vim-projectionist'
