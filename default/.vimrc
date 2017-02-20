@@ -101,6 +101,8 @@ endif
 if has("gui_running") || &t_Co > 16
   colors solarized
   set bg=dark
+else
+  hi CursorLine NONE
 endif
 
 hi MatchParen cterm=bold ctermbg=none ctermfg=red gui=bold guibg=NONE guifg=red
