@@ -10,12 +10,12 @@ let has_ag = executable('ag')
 " Plug {{{1
 call plug#begin('~/.vim/plugged')
 
-Plug 'altercation/vim-colors-solarized'
-Plug 'amiorin/ctrlp-z'
-Plug 'bkad/CamelCaseMotion' " <leader>w <leader>b <leader>e
-if &t_Co > 8
+if has("gui_running") || &t_Co > 16
+  Plug 'altercation/vim-colors-solarized'
   Plug 'bling/vim-airline'
 endif
+Plug 'amiorin/ctrlp-z'
+Plug 'bkad/CamelCaseMotion' " <leader>w <leader>b <leader>e
 Plug 'cespare/vim-toml'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'editorconfig/editorconfig-vim'
@@ -40,7 +40,9 @@ Plug 'tommcdo/vim-exchange' " gx gX
 Plug 'tomtom/tcomment_vim' " gc
 Plug 'tpope/vim-abolish' " :A :S
 Plug 'tpope/vim-dispatch' " <leader>t
-Plug 'tpope/vim-dotenv'
+if !has('win32')
+  Plug 'tpope/vim-dotenv'
+endif
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive' " git client
 Plug 'tpope/vim-markdown'
@@ -70,7 +72,11 @@ set rtp+=/usr/local/opt/fzf
 
 " Theme {{{1
 if has("gui_running")
-  set guifont=Source\ Code\ Pro\ Medium:h16
+  if has("win32")
+    set guifont=Source\ Code\ Pro\ Medium:h12
+  else
+    set guifont=Source\ Code\ Pro\ Medium:h16
+  endif
 
   " Remove toolbar, left scrollbar and right scrollbar
   set guioptions-=TlLrR
@@ -92,11 +98,10 @@ end
 if &t_Co > 2 || has("gui_running")
   syntax on
 endif
-if &t_Co < 256
-  let g:solarized_termcolors=256
+if has("gui_running") || &t_Co > 16
+  colors solarized
+  set bg=dark
 endif
-colors solarized
-set bg=dark
 
 hi MatchParen cterm=bold ctermbg=none ctermfg=red gui=bold guibg=NONE guifg=red
 
@@ -111,11 +116,15 @@ let g:ctrlp_switch_buffer = 'et'
 let g:ctrlp_working_path_mode = 'a'
 let g:ctrlp_map = '<leader><space>'
 if has_ag
+  let ctrlp_user_command_ag = 'ag %s -l --nocolor -g ""'
+  if executable('regedit.exe')
+    let ctrlp_user_command_ag = 'ag -l --nocolor -g "" "." "%s"'
+  endif
   let g:ctrlp_user_command = {
     \ 'types': {
       \ 1: ['.ctrlp_user_command_is_git', 'git -C %s ls-files --exclude-standard --others --cached'],
       \ },
-    \ 'fallback': 'ag %s -l --nocolor -g ""'
+    \ 'fallback': ctrlp_user_command_ag
     \ }
 else
   let g:ctrlp_user_command = ['.git', 'git -C %s ls-files --exclude-standard --others --cached']
@@ -328,7 +337,9 @@ set display+=lastline
 set virtualedit="block,insert"
 set hlsearch
 set incsearch
-set listchars=tab:▸\ ,trail:·,extends:>,precedes:<,nbsp:·
+if !has("win32")
+  set listchars=tab:▸\ ,trail:·,extends:>,precedes:<,nbsp:·
+endif
 set pastetoggle=<F12>
 
 if v:version > 703
