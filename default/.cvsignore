@@ -9,5 +9,5 @@ tags
 Session.vim
 .ctrlp_*
 .env
-.*.swp
+.*.sw?
 .DS_Store
