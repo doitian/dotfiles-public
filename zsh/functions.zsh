@@ -74,5 +74,8 @@ function marked() {
 }
 
 function cbcb() {
-  cd "$HOME/codebase/$(find ~/codebase ~/codebase/gopath/src -maxdepth 4 -type d -name .git -prune | sed -e 's/.git$//' -e "s;^$HOME/codebase/;;" | fzf -1 -q "$*")"
+  local dir="$(find ~/codebase ~/codebase/gopath/src -maxdepth 4 -type d -name .git -prune | sed -e 's/.git$//' -e "s;^$HOME/codebase/;;" | fzf -1 -q "$*")"
+  if [ -n "$dir" ]; then
+    cd "$HOME/codebase/$dir"
+  fi
 }
