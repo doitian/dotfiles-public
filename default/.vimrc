@@ -62,11 +62,14 @@ if !has('win32') && !executable('regedit.exe')
   Plug 'tpope/vim-projectionist'
   Plug 'vim-ruby/vim-ruby'
 endif
-" Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets
 
 if v:version > 703
   Plug 'jlanzarotta/bufexplorer' " ,lb
 endif
+
+if executable('ctags')
+  Plug 'majutsushi/tagbar'
+end
 
 call plug#end()
 
@@ -499,6 +502,7 @@ nnoremap <silent> <leader>I :CtrlPBufTagAll<CR>
 
 nmap <silent> <leader>ll :Lexplore<CR>
 nmap <silent> <leader>lt :tags<CR>
+nmap <silent> <leader>lT :TagbarToggle<CR>
 nmap <silent> <leader>lm :marks<cr>
 nmap <silent> <leader>lr :registers<cr>
 nmap <silent> <leader>l@ :registers<cr>
