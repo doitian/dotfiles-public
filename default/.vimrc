@@ -67,10 +67,6 @@ if v:version > 703
   Plug 'jlanzarotta/bufexplorer' " ,lb
 endif
 
-if executable('ctags')
-  Plug 'xolox/vim-easytags'
-end
-
 call plug#end()
 
 set rtp+=/usr/local/opt/fzf
