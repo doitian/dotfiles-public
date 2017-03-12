@@ -68,7 +68,7 @@ if v:version > 703
 endif
 
 if executable('ctags')
-  Plug 'majutsushi/tagbar'
+  Plug 'xolox/vim-easytags'
 end
 
 call plug#end()
@@ -502,7 +502,6 @@ nnoremap <silent> <leader>I :CtrlPBufTagAll<CR>
 
 nmap <silent> <leader>ll :Lexplore<CR>
 nmap <silent> <leader>lt :tags<CR>
-nmap <silent> <leader>lT :TagbarToggle<CR>
 nmap <silent> <leader>lm :marks<cr>
 nmap <silent> <leader>lr :registers<cr>
 nmap <silent> <leader>l@ :registers<cr>
