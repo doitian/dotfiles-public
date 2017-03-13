@@ -9,8 +9,8 @@ min-split-size=5M
 enable-http-pipelining=true
 
 dir={{ salt['file.join'](dotfiles.home, 'Downloads') }}
-input-file={{ salt['file.join'](dotfiles.home, 'Downloads', 'aria2.session') }}
-save-session={{ salt['file.join'](dotfiles.home, 'Downloads', 'aria2.session') }}
+input-file={{ salt['file.join'](dotfiles.home, 'Downloads', '.aria2.session') }}
+save-session={{ salt['file.join'](dotfiles.home, 'Downloads', '.aria2.session') }}
 
 enable-rpc=true
 rpc-listen-all=true
