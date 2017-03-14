@@ -391,6 +391,7 @@ if has_ag
   set grepprg=ag\ --vimgrep\ $*
 endif
 set grepformat=%f:%l:%c:%m
+set relativenumber
 
 runtime! macros/matchit.vim
 
