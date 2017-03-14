@@ -1,0 +1,9 @@
+#!/bin/bash
+
+export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles
+if nc -z 127.0.0.1 6152 &> /dev/null; then
+  export https_proxy=http://127.0.0.1:6152
+  export http_proxy=http://127.0.0.1:6152
+fi
+
+exec "$@"
