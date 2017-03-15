@@ -1,5 +1,9 @@
 #!/usr/bin/env zsh
 
+if echo "$PATH" | grep -q ':/PATH:'; then
+  return
+fi
+
 if [ -z "$HOME" ]; then
   HOME="$(cd ~ && pwd)"
 fi
@@ -78,8 +82,7 @@ export GOPATH="$HOME/codebase/gopath"
 # fzf
 export FZF_DEFAULT_COMMAND="ag -g ''"
 
-if ! echo "$PATH" | grep -q ':/PATH:'; then
-  export PATH="\
+export PATH="\
 .git/$SAFEBIN_SECRET/../../bin\
 :$HOME/bin\
 :$GOPATH/bin\
@@ -93,4 +96,3 @@ if ! echo "$PATH" | grep -q ':/PATH:'; then
 :/usr/local/sbin\
 :$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools\
 "
-fi
