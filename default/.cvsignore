@@ -11,3 +11,4 @@ Session.vim
 .env
 .*.sw?
 .DS_Store
+py?env
