@@ -50,7 +50,7 @@ function universe_env_info() {
   fi
   if [ -n "$VIRTUAL_ENV" ]; then
     name="${VIRTUAL_ENV%/py2env}"
-    name="${VIRTUAL_ENV%/py3env}"
+    name="${name%/py3env}"
     echo -n "%F{blue}py»%F{black}$(basename "$name") "
   fi
 }
