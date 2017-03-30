@@ -135,6 +135,8 @@
   {%- if grains.os_family == "MacOS" %}
   tool = Kaleidoscope
   {%- endif %}
+[rerere]
+  enabled = true
 
 {%- for section, options in pillar.get('git', {}).items() %}
 [{{section}}]
