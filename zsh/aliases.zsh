@@ -148,4 +148,5 @@ omz=$HOME/.oh-my-zsh
 omzp=$omz/plugins
 dotfiles=$HOME/.dotfiles
 dotsubl="$HOME/Library/Application Support/Sublime Text 3/Packages/User"
+dotvscode="$HOME/Library/Application Support/Code/User"
 
