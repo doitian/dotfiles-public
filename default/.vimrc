@@ -67,6 +67,10 @@ if v:version > 703
   Plug 'jlanzarotta/bufexplorer' " ,lb
 endif
 
+if has('python')
+  Plug 'FelikZ/ctrlp-py-matcher'
+endif
+
 call plug#end()
 
 set rtp+=/usr/local/opt/fzf
@@ -140,6 +144,9 @@ let g:ctrlp_extensions = ['z', 'f']
 let g:ctrlp_buftag_types = {
   \ 'yaml'     : '--languages=ansible --ansible-types=k',
   \ }
+if has('python')
+  let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
+endif
 
 " syntastic
 let g:ale_linters = {
