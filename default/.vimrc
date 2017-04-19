@@ -147,6 +147,20 @@ let g:ctrlp_buftag_types = {
 if has('python')
   let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 endif
+" CtrlP auto cache clearing.
+" ----------------------------------------------------------------------------
+function! SetupCtrlP()
+  if exists("g:loaded_ctrlp") && g:loaded_ctrlp
+    augroup CtrlPExtension
+      autocmd!
+      autocmd FocusGained  * CtrlPClearCache
+      autocmd BufWritePost * CtrlPClearCache
+    augroup END
+  endif
+endfunction
+if has("autocmd")
+  autocmd VimEnter * :call SetupCtrlP()
+endif
 
 " syntastic
 let g:ale_linters = {
