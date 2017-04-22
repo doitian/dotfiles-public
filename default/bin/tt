@@ -10,6 +10,7 @@ function help() {
   echo '-C do not send C-m automatically at the end.'
   echo '-p Print target session.'
   echo '-t Send to selected target, use active pane by default. When used with other creation option, create new pane in this target.'
+  echo '-l Send to target used in last invocation.'
   echo
   echo 'Creation Options'
   echo
@@ -67,6 +68,13 @@ function main() {
         creation_opts=(-t "$1")
         shift
         ;;
+      -l)
+        shift
+        target="$([ -f ~/.tt_target ] && cat ~/.tt_target || true)"
+        if [ -n "$target" ]; then
+          creation_opts=(-t "$target")
+        fi
+        ;;
       -L)
         tmux_send_opt_l=
         shift
@@ -99,6 +107,7 @@ function main() {
     fi
     target="$("${tmux_cmd[@]}")"
   fi
+  echo "$target" > ~/.tt_target
 
   local session="${target%%:*}"
   session="${session#=}"
