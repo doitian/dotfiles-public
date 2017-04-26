@@ -1,7 +1,6 @@
 {
     /* Ctrl shortcuts */
     "^/"        = "undo:";
-    "^ "        = "setMark:";
     "^\@"       = "setMark:";
     "^w"        = "deleteWordBackward:";
     "^u"        = "deleteToBeginningOfParagraph:";
