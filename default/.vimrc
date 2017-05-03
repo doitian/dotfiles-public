@@ -22,6 +22,7 @@ Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
 Plug 'rust-lang/rust.vim'
 Plug 'saltstack/salt-vim'
+Plug 'sbdchd/neoformat'
 Plug 'sjl/gundo.vim' " <leader>u
 Plug 'thinca/vim-visualstar' " * # g* g#
 Plug 'tommcdo/vim-exchange' " gx gX
@@ -164,7 +165,7 @@ endif
 
 " syntastic
 let g:ale_linters = {
-  \ 'javascript': ['eslint'],
+  \ 'javascript': ['flow', 'eslint'],
   \ 'lua': ['luacheck', 'luac'],
   \ }
 let g:ale_lint_on_save = 1
@@ -230,6 +231,11 @@ let g:projectionist_heuristics = {
       \   },
       \   "*": { "make": "rake" }
       \ }}
+
+let g:jsx_ext_required = 0
+let g:javascript_plugin_flow = 1
+
+let g:neoformat_only_msg_on_error = 1
 
 " Functions & Commands {{{1
 command! -bar -nargs=1 OpenURL :!open <args>
@@ -412,7 +418,7 @@ if has_ag
   set grepprg=ag\ --vimgrep\ $*
 endif
 set grepformat=%f:%l:%c:%m
-set relativenumber
+" set relativenumber
 
 runtime! macros/matchit.vim
 
@@ -642,11 +648,10 @@ augroup spell_ft
   autocmd FileType gitcommit setlocal spell
 augroup END
 
-augroup jsx_ft
+augroup neoformat_ft
   au!
 
-  autocmd BufNewFile,BufRead *.react.js let b:jsx_ext_found = 1
-  autocmd BufNewFile,BufRead *.react.js set filetype=javascript.jsx
+  autocmd FileType javascript,jsx,python autocmd BufWritePre <buffer> Neoformat
 augroup END
 
 autocmd FileType netrw setl bufhidden=wipe
