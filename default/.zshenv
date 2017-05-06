@@ -86,10 +86,10 @@ export PATH="\
 .git/$SAFEBIN_SECRET/../../bin\
 :$HOME/bin\
 :$GOPATH/bin\
-:$HOME/Library/Python/2.7/bin\
 :$HOME/.rbenv/bin:$HOME/.rbenv/shims\
 :$HOME/.node-packages/bin\
 :$HOME/.gradle/versions/gradle-3.3/bin\
+:$HOME/.anaconda3/bin\
 :/PATH\
 :$PATH\
 :/usr/local/bin\
