@@ -48,6 +48,9 @@ function universe_env_info() {
       echo -n "%F{red}rb»%F{black}${rbenv_info%% *} "
     fi
   fi
+  if [ -n "$CONDA_DEFAULT_ENV" ]; then
+    echo -n "%F{blue}conda»%F{black}${CONDA_DEFAULT_ENV} "
+  fi
   if [ -n "$VIRTUAL_ENV" ]; then
     name="${VIRTUAL_ENV%/py2env}"
     name="${name%/py3env}"
