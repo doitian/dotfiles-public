@@ -648,11 +648,5 @@ augroup spell_ft
   autocmd FileType gitcommit setlocal spell
 augroup END
 
-augroup neoformat_ft
-  au!
-
-  autocmd FileType javascript,jsx,python autocmd BufWritePre <buffer> Neoformat
-augroup END
-
 autocmd FileType netrw setl bufhidden=wipe
 
