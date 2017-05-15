@@ -167,6 +167,7 @@ endif
 let g:ale_linters = {
   \ 'javascript': ['flow', 'eslint'],
   \ 'lua': ['luacheck', 'luac'],
+  \ 'python': [ 'flake8' ],
   \ }
 let g:ale_lint_on_save = 1
 let g:ale_lint_on_text_changed = 0
@@ -553,9 +554,6 @@ nnoremap <leader>P "*P
 " Tame the quickfix window (open/close using ,q)
 nnoremap <silent> <leader>Q :QFix<CR>
 nnoremap <silent> <leader>q :CtrlPQuickfix<CR>
-
-" OmniFocus
-nnoremap <silent> <leader>r :silent exe "Start osascript -e 'tell application \"OmniFocus\" to tell quick entry' -e 'make new inbox task with properties {name:\"%:t\",note:\"mvim://open?line=" . line(".") . "&url=file://%:p\"}' -e 'open' -e 'end tell' &> /dev/null"<cr>
 
 nnoremap <silent> <leader>sx :call ToggleTodoStatus(0)<cr>
 nnoremap <silent> <leader>sX :call ToggleTodoStatus(1)<cr>
