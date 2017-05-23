@@ -490,7 +490,6 @@ nnoremap <leader>a :A<cr>
 call camelcasemotion#CreateMotionMappings('<leader>')
 
 nnoremap <silent> <leader>cd :cd %:h<CR>
-nnoremap <silent> <leader>cc :bd<cr>
 
 " Use ,d (or ,dd or ,dj or 20,dd) to delete a line without adding it to the
 " yanked stack (also, in visual mode)
