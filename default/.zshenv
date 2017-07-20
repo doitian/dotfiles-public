@@ -88,7 +88,7 @@ export PATH="\
 :$GOPATH/bin\
 :$HOME/.rbenv/bin:$HOME/.rbenv/shims\
 :$HOME/.node-packages/bin\
-:$HOME/.gradle/versions/gradle-3.3/bin\
+:$HOME/.gradle/wrapper/dists/gradle-4.0.1-all/26awvqv6f41r14q9x72t4n0s/gradle-4.0.1/bin\
 :$HOME/.anaconda3/bin\
 :/PATH\
 :$PATH\
