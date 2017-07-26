@@ -15,8 +15,10 @@ if [ -n "$BASH_VERSION" ]; then
   fi
 fi
 
-ulimit -n 200000 &> /dev/null
-ulimit -u 2048 &> /dev/null
+if [ -f /usr/bin/mdfind ]; then
+  ulimit -n 200000 &> /dev/null
+  ulimit -u 2048 &> /dev/null
+fi
 
 export LESS='--RAW-CONTROL-CHARS --quiet --HILITE-UNREAD --ignore-case --long-prompt'
 export LANG=en_US.UTF-8
