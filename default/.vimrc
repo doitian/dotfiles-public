@@ -289,7 +289,7 @@ if !exists(":DiffOrig")
 endif
 
 command! Reload :source ~/.vimrc | :filetype detect | :nohl
-command! Clear :CtrlPClearCache | :bufdo bd | :silent! argd * | :nohl
+command! Clear :CtrlPClearCache | :silent! %bd | :silent! argd * | :nohl
 
 command! -complete=dir -nargs=1 Tcd :tabnew | :lcd <args>
 
