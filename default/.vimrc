@@ -349,6 +349,14 @@ function! s:RunShellCommand(cmdline)
   1
 endfunction
 
+function! CurDir()
+  if exists("b:netrw_curdir")
+    return b:netrw_curdir
+  else
+    return expand("%:h")
+  endif
+endfunction
+
 " Config {{{1
 set autoread
 set expandtab
@@ -442,6 +450,7 @@ noremap <leader>%h i<C-R>=expand('%:h').'/'<cr><Esc>
 noremap <leader>%t i<C-R>=expand('%:t')<cr><Esc>
 noremap <leader>%% i<C-R>=expand('%')<cr><Esc>
 
+
 nnoremap <C-e> 3<C-e>
 nnoremap <C-y> 3<C-y>
 nnoremap <silent> <C-n> :bnext<CR>
@@ -499,7 +508,7 @@ vnoremap <silent> <leader>d "_d
 " e subword
 
 " shortcut to jump to next conflict marker
-nnoremap <leader>f/ :e <C-R>=expand('%:h').'/'<cr>
+nnoremap <leader>f/ :e <C-R>=CurDir().'/'<cr>
 nnoremap <silent> <leader>fb :CtrlPBuffer<CR>
 nnoremap <silent> <leader>fd :CtrlPDir<CR>
 nnoremap <silent> <leader>ff :CtrlPF<CR>
@@ -532,6 +541,7 @@ nmap <silent> <leader>l@ :registers<cr>
 noremap <silent> <leader>lbe :BufExplorer<CR>
 noremap <silent> <leader>lbt :ToggleBufExplorer<CR>
 noremap <silent> <leader>lbb :ToggleBufExplorer<CR>
+noremap <silent> <leader>lbl :ls<CR>
 noremap <silent> <leader>lbs :BufExplorerHorizontalSplit<CR>
 noremap <silent> <leader>lbv :BufExplorerVerticalSplit<CR>
 
@@ -540,10 +550,10 @@ nnoremap <silent> <leader>M :Make!<CR>
 
 nnoremap <silent> <leader>n :nohlsearch<CR>
 
-nnoremap <silent> <leader>ot :exe "silent !open -a 'Terminal.app' " . shellescape(expand('%:h')) . " &> /dev/null" \| :redraw!<cr>
+nnoremap <silent> <leader>ot :exe "silent !open -a 'Terminal.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<cr>
 nnoremap <silent> <leader>of :exe "silent !open -R " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<cr>
 nnoremap <silent> <leader>om :exe "silent !open -a 'Marked 2.app' " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<cr>
-nnoremap <silent> <leader>oM :exe "silent !open -a 'Marked 2.app' " . shellescape(expand('%:h')) . " &> /dev/null" \| :redraw!<cr>
+nnoremap <silent> <leader>oM :exe "silent !open -a 'Marked 2.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<cr>
 nnoremap <silent> <leader>oo :exe "silent !open " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<cr>
 nmap <silent> <leader>ob <Plug>NetrwBrowseX
 
