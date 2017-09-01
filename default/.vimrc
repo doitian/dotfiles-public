@@ -5,6 +5,7 @@ set nocompatible
 scriptencoding utf-8
 set encoding=utf-8
 
+let loaded_matchparen = 1
 let has_ag = executable('ag')
 
 " Plug {{{1
@@ -37,6 +38,7 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround' " ys s
 Plug 'tpope/vim-unimpaired' " various [, ] mappings
 Plug 'tpope/vim-vinegar' " file explorer
+Plug 'wellle/targets.vim' " Text objects
 
 if has("gui_running") || &t_Co > 16
   Plug 'altercation/vim-colors-solarized'
@@ -170,31 +172,11 @@ let g:ale_linters = {
   \ 'python': [ 'flake8' ],
   \ }
 let g:ale_lint_on_save = 1
-let g:ale_lint_on_text_changed = 0
+let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
 
 " projectionist
 let g:projectionist_heuristics = {
-      \ "app/service/*.lua" : {
-      \   "app/*.lua": {
-      \     "type": "source",
-      \     "alternate": "spec/{}_spec.lua"
-      \   },
-      \   "spec/*_spec.lua": {
-      \     "type": "test",
-      \     "alternate": "app/{}.lua"
-      \   },
-      \   "skynetx/lualib/*.lua": {
-      \     "type": "source",
-      \     "alternate": "skynetx/spec/lualib/{}_spec.lua"
-      \   },
-      \   "skynetx/spec/*_spec.lua": {
-      \     "type": "test",
-      \     "alternate": "skynetx/{}.lua"
-      \   },
-      \   "*.lua": { "dispatch": "make test" },
-      \   "*": { "console": "bin/lua" }
-      \ },
       \ "src/*.lua" : {
       \   "src/*.lua": {
       \     "type": "lib",
@@ -216,21 +198,6 @@ let g:projectionist_heuristics = {
       \     "make": "go build",
       \     "dispatch": "go test",
       \   },
-      \ },
-      \ "Rakefile&!config/environment.rb" : {
-      \   "lib/*.rb": {
-      \     "type": "lib",
-      \     "template": ["class {camelcase|capitalize|colons}"],
-      \     "alternate": "test/{}_test.rb"
-      \   },
-      \   "test/*_test.rb": {
-      \     "type": "test",
-      \     "dispatch": "ruby -Ilib -Itest {file}",
-      \     "template": ["class {camelcase|capitalize|colons}Test < Minitest::Test", "end"],
-      \     "alternate": "lib/{}.rb",
-      \     "related": "test/test_helper.rb"
-      \   },
-      \   "*": { "make": "rake" }
       \ }}
 
 let g:jsx_ext_required = 0
@@ -240,21 +207,6 @@ let g:neoformat_only_msg_on_error = 1
 
 " Functions & Commands {{{1
 command! -bar -nargs=1 OpenURL :!open <args>
-
-function! EchoError(msg)
-  execute "normal \<Esc>"
-  echohl ErrorMsg
-  echomsg a:msg
-  echohl None
-endfunction
-
-function! ExecAndShowError(command)
-  let v:errmsg = ""
-  silent! exec a:command
-  if v:errmsg != ""
-    call EchoError(v:errmsg)
-  endif
-endfunction
 
 command! -bang -nargs=? QFix call QFixToggle(<bang>0)
 function! QFixToggle(forced)
@@ -305,30 +257,6 @@ function! ToggleTodoStatus(clear)
   nohl
 endfunction
 
-" wrapper function to restore the cursor position, window position,
-" and last search after running a command.
-function! Preserve(command)
-  " Save the last search
-  let last_search=@/
-  " Save the current cursor position
-  let save_cursor = getpos(".")
-  " Save the window position
-  normal H
-  let save_window = getpos(".")
-  call setpos('.', save_cursor)
-
-  " Do the business:
-  execute a:command
-
-  " Restore the last_search
-  let @/=last_search
-  " Restore the window position
-  call setpos('.', save_window)
-  normal zt
-  " Restore the cursor position
-  call setpos('.', save_cursor)
-endfunction
-
 command! -complete=shellcmd -nargs=+ Shell call s:RunShellCommand(<q-args>)
 function! s:RunShellCommand(cmdline)
   echo a:cmdline
@@ -350,7 +278,7 @@ function! s:RunShellCommand(cmdline)
 endfunction
 
 function! CurDir()
-  if exists("b:netrw_curdir")
+  if &filetype == "netrw"
     return b:netrw_curdir
   else
     return expand("%:h")
@@ -431,7 +359,7 @@ set grepformat=%f:%l:%c:%m
 
 runtime! macros/matchit.vim
 
-" Shortcut mappings {{{1
+" Shortcut mappings 
 let mapleader = " "
 let g:mapleader = " "
 let maplocalleader = "\\"
@@ -593,7 +521,7 @@ nnoremap <leader>y "*y
 nnoremap <leader>Y "*yy
 vnoremap <leader>y "*y
 
-" UNUSED z
+nnoremap <silent> <leader>z :FZF<CR>
 
 nnoremap <silent> <leader>/c /^\(<\\|=\\|>\)\{7\}\([^=].\+\)\?$<CR>
 nnoremap <silent> <leader>/t /\|.\{-}\|<CR>
@@ -619,7 +547,9 @@ augroup mardown_ft
   au!
 
   autocmd filetype markdown syntax region frontmatter start=/\%^---$/ end=/^---$/
+  autocmd filetype markdown syntax region frontmattertoml start=/\%^+++$/ end=/^+++$/
   autocmd filetype markdown highlight link frontmatter Comment
+  autocmd filetype markdown highlight link frontmattertoml Comment
   autocmd filetype markdown let b:dispatch = 'mmd %'
 augroup end
 
@@ -633,21 +563,6 @@ augroup sls_ft
   au!
 
   autocmd BufNewFile,BufRead pillar.example set ft=sls
-augroup END
-
-augroup cg_ft
-  au!
-
-  autocmd BufNewFile,BufRead *.shader set ft=cg
-  autocmd filetype cg syntax keyword shaderlabmarker CGPROGRAM ENDCG 
-  autocmd filetype glsl syntax keyword shaderlabmarker GLSLPROGRAM ENDGLSL
-  autocmd filetype cg,glsl syntax keyword shaderlabblock Shader Properties SubShader Tags FallBack Blend Range
-  autocmd filetype cg,glsl syntax keyword shaderlabfunc UnpackNormal
-  autocmd filetype cg,glsl syntax keyword shaderlabtype 2D Float Integer
-  autocmd filetype cg,glsl highlight link shaderlabmarker PreProc
-  autocmd filetype cg,glsl highlight link shaderlabblock Statement
-  autocmd filetype cg,glsl highlight link shaderlabfunc Statement
-  autocmd filetype cg,glsl highlight link shaderlabtype Type
 augroup END
 
 augroup spell_ft

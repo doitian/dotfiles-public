@@ -58,7 +58,7 @@
 
   st = status --short --branch
   ms = multistatus
-  dotfiles = "!git multistatus ~/.dotfiles/repos/public ~/.dotfiles/repos/private ~/'Library/Application Support/Sublime Text 3/Packages/User' ~/'Library/Application Support/Code/User'"
+  dotfiles = "!git multistatus ~/.dotfiles/repos/public ~/.dotfiles/repos/private ~/'Library/Application Support/Code/User'"
   codebase = "!f() { find ~/codebase ~/codebase/gopath/src -maxdepth 4 -type d -name .git \"$@\" -prune | sed 's/.git$//' | xargs git multistatus; }; f"
   all= "!f() { find . -maxdepth 3 -type d -name .git \"$@\" -prune | sed 's/.git$//' | xargs git multistatus; }; f"
 
