@@ -201,7 +201,6 @@ let g:projectionist_heuristics = {
       \ }}
 
 let g:jsx_ext_required = 0
-let g:javascript_plugin_flow = 1
 
 let g:neoformat_only_msg_on_error = 1
 
@@ -498,6 +497,7 @@ vnoremap <silent> <leader>sx :call ToggleTodoStatus(0)<cr>
 vnoremap <silent> <leader>sX :call ToggleTodoStatus(1)<cr>
 " Strip all trailing whitespace from a file
 nnoremap <silent> <leader>sw :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<cr>
+nnoremap <silent> <leader>sf :Neoformat<CR>
 
 nnoremap <leader>to :Copen<cr>
 nnoremap <leader>td :Dispatch<space>
@@ -509,8 +509,8 @@ nnoremap <leader>tb :Start!<space>
 nnoremap <leader>tf :Focus<space>
 
 nnoremap <leader>u :GundoToggle<CR>
-" Reselect text that was just pasted with ,v
-nnoremap <leader>v V`]
+" Reselect text that was just pasted
+nnoremap <leader>v `[v`]
 
 " w subword
 
