@@ -166,14 +166,23 @@ if has("autocmd")
 endif
 
 " syntastic
+call ale#linter#Define('eruby', {
+\   'name': 'erubis_rails',
+\   'executable': 'erubis',
+\   'output_stream': 'stderr',
+\   'command': "ruby -pe '$_.gsub!(\"<%=\", \"<%\")' %t | erubis -x | ruby -c",
+\   'callback': 'ale#handlers#ruby#HandleSyntaxErrors',
+\})
 let g:ale_linters = {
-  \ 'javascript': ['flow', 'eslint'],
+  \ 'javascript': ['eslint'],
   \ 'lua': ['luacheck', 'luac'],
   \ 'python': [ 'flake8' ],
+  \ 'eruby': [ 'erubis_rails' ],
   \ }
 let g:ale_lint_on_save = 1
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
+let g:ale_lint_on_filetype_changed = 0
 
 " projectionist
 let g:projectionist_heuristics = {
@@ -368,7 +377,9 @@ let g:maplocalleader = "\\"
 noremap! <F1> <Esc>
 
 nmap <silent> [c <Plug>(ale_previous_wrap)
+nmap <silent> [C <Plug>(ale_first)
 nmap <silent> ]c <Plug>(ale_next_wrap)
+nmap <silent> ]C <Plug>(ale_last)
 
 inoremap <C-U> <C-G>u<C-U>
 
