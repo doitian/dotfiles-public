@@ -138,7 +138,6 @@ alias fg=' fg'
 ##################################################
 # Dir Aliases
 cb=$HOME/codebase
-og=$HOME/Documents/Ongoing
 gop=$GOPATH
 docs=$HOME/Documents
 dl=$HOME/Downloads
