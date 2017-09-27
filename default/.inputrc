@@ -2,8 +2,4 @@ set print-completions-horizontally on
 set show-all-if-ambiguous on 
 
 "\e/":menu-complete
-"\C-x#":possible-filename-completions
-"\e#":complete-filename
-#"\eU":upcase-word
-#"\eL":downcase-word
 "\e[3~":backward-kill-word
