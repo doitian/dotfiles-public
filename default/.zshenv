@@ -31,6 +31,7 @@ export ALTERNATE_EDITOR="vim"
 if [ -f /usr/libexec/java_home ]; then
   export JAVA_HOME=$(/usr/libexec/java_home)
 fi
+export JAVA_OPTS="--add-modules=java.se.ee"
 
 if [ "$TERM" = "rxvt-unicode" ]; then
   export TERM=rxvt-256color
