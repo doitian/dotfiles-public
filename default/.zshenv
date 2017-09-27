@@ -95,5 +95,5 @@ export PATH="\
 :$PATH\
 :/usr/local/bin\
 :/usr/local/sbin\
-:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools\
+:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools\
 "
