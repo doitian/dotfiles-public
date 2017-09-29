@@ -11,18 +11,20 @@ let has_ag = executable('ag')
 " Plug {{{1
 call plug#begin('~/.vim/plugged')
 
-Plug 'amiorin/ctrlp-z'
-Plug 'bkad/CamelCaseMotion' " <leader>w <leader>b <leader>e
 Plug 'cespare/vim-toml'
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'editorconfig/editorconfig-vim'
 Plug 'fatih/vim-go'
 Plug 'Glench/Vim-Jinja2-Syntax'
-Plug 'junegunn/vim-easy-align' " Enter in visual mode
 Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
 Plug 'rust-lang/rust.vim'
 Plug 'saltstack/salt-vim'
+Plug 'tpope/vim-markdown'
+
+Plug 'amiorin/ctrlp-z'
+Plug 'bkad/CamelCaseMotion' " <leader>w <leader>b <leader>e
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'editorconfig/editorconfig-vim'
+Plug 'junegunn/vim-easy-align' " Enter in visual mode
 Plug 'sbdchd/neoformat'
 Plug 'sjl/gundo.vim' " <leader>u
 Plug 'thinca/vim-visualstar' " * # g* g#
@@ -32,7 +34,6 @@ Plug 'tpope/vim-abolish' " :A :S
 Plug 'tpope/vim-dispatch' " <leader>t
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive' " git client
-Plug 'tpope/vim-markdown'
 Plug 'tpope/vim-obsession' " :Obsess
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround' " ys s
