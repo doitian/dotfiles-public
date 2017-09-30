@@ -65,5 +65,5 @@ if [ -z "$SSH_TTY" ]; then
 else
   HOSTNAME=$(hostname -f)
   PROMPT='
-%F{white}%K{yello} $HOSTNAME %F{yellow}%K{blue} %(4~|%-1~/…/%2~|%~) %F{blue}$(git_prompt_info)%K{white}'$'\ue0b0'' %K{white}$(universe_env_info)%k%F{white}'$'\ue0b0'' %f%k'
+%F{white}%K{yellow} $HOSTNAME %F{yellow}%K{blue}'$'\ue0b0''%F{white} %(4~|%-1~/…/%2~|%~) %F{blue}$(git_prompt_info)%K{white}'$'\ue0b0'' %K{white}$(universe_env_info)%k%F{white}'$'\ue0b0'' %f%k'
 fi
