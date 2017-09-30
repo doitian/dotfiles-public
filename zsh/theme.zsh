@@ -59,5 +59,11 @@ function universe_env_info() {
 }
 
 RPROMPT='%(1j.%K{black}%F{yellow}'$'\ue0b2''%F{white}%K{yellow} %j .)%(?..%F{red}%(1j|%K{yellow}|%K{black})'$'\ue0b2''%F{white}%K{red} %? %f%k'
-PROMPT='
+if [ -z "$SSH_TTY" ]; then
+  PROMPT='
 %F{white}%K{blue} %(4~|%-1~/…/%2~|%~) %F{blue}$(git_prompt_info)%K{white}'$'\ue0b0'' %K{white}$(universe_env_info)%k%F{white}'$'\ue0b0'' %f%k'
+else
+  HOSTNAME=$(hostname -f)
+  PROMPT='
+%F{white}%K{yello} $HOSTNAME %F{yellow}%K{blue} %(4~|%-1~/…/%2~|%~) %F{blue}$(git_prompt_info)%K{white}'$'\ue0b0'' %K{white}$(universe_env_info)%k%F{white}'$'\ue0b0'' %f%k'
+fi
