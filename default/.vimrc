@@ -354,8 +354,10 @@ set wildignore=*.swp,*.bak,*.pyc,*.class,*.beam
 set title
 set visualbell
 set noerrorbells
-set cursorline
+
 " set ruler
+" set cursorline
+" set relativenumber
 
 set spellfile=$HOME/.vim-spell-en.utf-8.add
 set spelllang=en_us
@@ -364,7 +366,6 @@ if has_ag
   set grepprg=ag\ --vimgrep\ $*
 endif
 set grepformat=%f:%l:%c:%m
-" set relativenumber
 
 runtime! macros/matchit.vim
 
