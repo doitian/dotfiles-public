@@ -5,16 +5,6 @@ fi
 autoload colors; colors;
 setopt prompt_subst
 
-# reset 00
-# black 30
-# red 31 bright 1;31 background 41
-# green 32
-# yellow 33
-# blue 34
-# magenta 35
-# cyan 36
-# white 37
-
 ZSH_THEME_GIT_PROMPT_DIRTY="*"
 ZSH_THEME_GIT_PROMPT_CLEAN=""
 GIT_PS1_SHOWUPSTREAM="auto"
