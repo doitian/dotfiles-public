@@ -13,8 +13,8 @@ run_lan_ip() {
 		[[ -n "${lan_ip}" ]] && break
 	done
 
+  lan_ip="${lan_ip#addr:}"
   echo "lan: ${lan_ip-N/A}"
-  
 }
 run_wan_ip() {
   local tmp_file="/tmp/wan_ip${UID}.txt"
@@ -29,7 +29,6 @@ run_wan_ip() {
 
   	time_now=$(date +%s)
   	update_period=900
-  	up_to_date=$(echo "(${time_now}-${last_update}) < ${update_period}" | bc)
 
     if (( time_now - last_update < update_period )); then
     	wan_ip=$(cat ${tmp_file})
