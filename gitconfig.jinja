@@ -76,6 +76,7 @@
 
   purr = pull --rebase
   current = "!f() { local remote=origin branch=$(git rev-parse --abbrev-ref HEAD) args=(); for a; do case \"$a\" in (-*) args=(\"${args[@]}\" \"$a\");; (*) remote=\"$a\" ;; esac; done; git push \"${args[@]}\" \"${remote}\" \"$branch:$branch\"; }; f"
+  new = "!f() { git init; cp ~/.cvsignore .gitignore; git add -f .gitignore; git commit -m 'initial commit'; }; f"
 
   ready = rebase -i @{u}
   review = diff @{u}
