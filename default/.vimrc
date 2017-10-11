@@ -71,14 +71,14 @@ if v:version > 703
   Plug 'jlanzarotta/bufexplorer' " ,lb
 endif
 
-if has('python')
+if has('python') || has('python3')
   Plug 'FelikZ/ctrlp-py-matcher'
 endif
 
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-  Plug 'zchee/deoplete-go', { 'do': 'make'}
   Plug 'Shougo/echodoc.vim'
+  Plug 'zchee/deoplete-go', { 'do': 'make'}
 endif
 
 call plug#end()
@@ -158,17 +158,24 @@ if has('python')
   let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 endif
 
-set completeopt-=preview
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#disable_auto_complete = 1
-inoremap <silent><expr> <TAB>                                                                                              
-      \ pumvisible() ? "\<C-n>" :                                                                                                
-      \ <SID>check_back_space() ? "\<TAB>" :                                                                                     
-      \ deoplete#mappings#manual_complete()                                                                                      
-function! s:check_back_space() abort
-  let col = col('.') - 1                                                                                                     
-  return !col || getline('.')[col - 1]  =~ '\s'                                                                              
-endfunction
+if v:version >= 800
+  set shortmess+=c
+endif
+if has("nvim")
+  set completeopt-=preview
+
+  let g:echodoc#enable_at_startup = 1
+  let g:deoplete#enable_at_startup = 1
+  let g:deoplete#disable_auto_complete = 1
+  inoremap <silent><expr> <TAB>
+        \ pumvisible() ? "\<C-n>" :
+        \ <SID>check_back_space() ? "\<TAB>" :
+        \ deoplete#mappings#manual_complete()
+  function! s:check_back_space() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~ '\s'
+  endfunction
+endif
 
 " CtrlP auto cache clearing.
 " ----------------------------------------------------------------------------
@@ -216,7 +223,7 @@ let g:projectionist_heuristics = {
       \     "alternate": "src/{}.lua"
       \   }
       \ },
-      \ "*_test.go" : {
+      \ "*.go" : {
       \   "*_test.go": {
       \     "type": "test",
       \     "alternate": "{}.go"
@@ -312,8 +319,6 @@ function! CurDir()
     return expand("%:h")
   endif
 endfunction
-
-command! Deoplete call deoplete#toggle()
 
 " Config {{{1
 set autoread
@@ -602,6 +607,12 @@ augroup END
 augroup spell_ft
   au!
   autocmd FileType gitcommit setlocal spell
+augroup END
+
+augroup go_ft
+  au!
+  au FileType go nmap <buffer> <leader>j :GoDeclsDir<cr>
+  au FileType go nmap <buffer> <leader>i :GoDecls<cr>
 augroup END
 
 autocmd FileType netrw setl bufhidden=wipe
