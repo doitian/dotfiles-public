@@ -192,7 +192,7 @@ if has("autocmd")
   autocmd VimEnter * :call SetupCtrlP()
 endif
 
-" syntastic
+" ale
 call ale#linter#Define('eruby', {
 \   'name': 'erubis_rails',
 \   'executable': 'erubis',
@@ -210,6 +210,8 @@ let g:ale_lint_on_save = 1
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
 let g:ale_lint_on_filetype_changed = 0
+
+let g:go_fmt_fail_silently = 1
 
 " projectionist
 let g:projectionist_heuristics = {
@@ -277,6 +279,7 @@ endif
 
 command! Reload :source ~/.vimrc | :filetype detect | :nohl
 command! Clear :CtrlPClearCache | :silent! %bd | :silent! argd * | :nohl
+command! Close :pclose | :cclose | :lclose
 
 command! -complete=dir -nargs=1 Tcd :tabnew | :lcd <args>
 
@@ -489,7 +492,7 @@ nnoremap <silent> <leader>fc :CtrlPChange<CR>
 nnoremap <silent> <leader>fC :CtrlPChangeAll<CR>
 nnoremap <silent> <leader>fB :CtrlPBookmarkDir<CR>
 
-" g unused
+" g local map
 
 nmap <silent> <leader>h <Plug>DashSearch
 nmap <silent> <leader>H <Plug>DashGlobalSearch
@@ -589,7 +592,6 @@ augroup mardown_ft
   autocmd filetype markdown syntax region frontmattertoml start=/\%^+++$/ end=/^+++$/
   autocmd filetype markdown highlight link frontmatter Comment
   autocmd filetype markdown highlight link frontmattertoml Comment
-  autocmd filetype markdown let b:dispatch = 'mmd %'
 augroup end
 
 augroup jinjia2_ft
@@ -611,8 +613,13 @@ augroup END
 
 augroup go_ft
   au!
-  au FileType go nmap <buffer> <leader>j :GoDeclsDir<cr>
-  au FileType go nmap <buffer> <leader>i :GoDecls<cr>
+  au FileType go
+        \ nmap <buffer> <leader>gg :GoDeclsDir<cr>
+        \ | nmap <buffer> <leader>gi :GoImports<cr>
+        \ | nmap <buffer> <leader>gd :GoDoc<cr>
+        \ | nmap <buffer> <leader>gt :GoTest<cr>
+        \ | nmap <buffer> <leader>gaj :GoAddTags json<cr>
+        \ | nmap <buffer> <leader>i :GoDecls<cr>
 augroup END
 
 autocmd FileType netrw setl bufhidden=wipe
