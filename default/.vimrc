@@ -24,8 +24,6 @@ Plug 'amiorin/ctrlp-z'
 Plug 'bkad/CamelCaseMotion' " <leader>w <leader>b <leader>e
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'editorconfig/editorconfig-vim'
-Plug 'junegunn/vim-easy-align' " Enter in visual mode
-Plug 'sbdchd/neoformat'
 Plug 'sjl/gundo.vim' " <leader>u
 Plug 'thinca/vim-visualstar' " * # g* g#
 Plug 'tommcdo/vim-exchange' " gx gX
@@ -33,8 +31,6 @@ Plug 'tomtom/tcomment_vim' " gc
 Plug 'tpope/vim-abolish' " :A :S
 Plug 'tpope/vim-dispatch' " <leader>t
 Plug 'tpope/vim-endwise'
-Plug 'tpope/vim-fugitive' " git client
-Plug 'tpope/vim-obsession' " :Obsess
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround' " ys s
 Plug 'tpope/vim-unimpaired' " various [, ] mappings
@@ -225,11 +221,7 @@ let g:projectionist_heuristics = {
 
 let g:jsx_ext_required = 0
 
-let g:neoformat_only_msg_on_error = 1
-
 " Functions & Commands {{{1
-command! -bar -nargs=1 OpenURL :!open <args>
-
 command! -bang -nargs=? QFix call QFixToggle(<bang>0)
 function! QFixToggle(forced)
   if exists("g:qfix_win") && a:forced == 0
@@ -268,18 +260,6 @@ command! Close :pclose | :cclose | :lclose
 
 command! -complete=dir -nargs=1 Tcd :tabnew | :lcd <args>
 
-" Toggle [ ] and [x]
-function! ToggleTodoStatus(clear)
-  let _s = @/
-  if a:clear
-    s/\[[-x]\]/[ ]/e
-  else
-    s/\[\([- x]\)\]/\=submatch(1) == ' ' ? '[x]' : '[ ]'/e
-  endif
-  let @/ = _s
-  nohl
-endfunction
-
 command! -complete=shellcmd -nargs=+ Shell call s:RunShellCommand(<q-args>)
 function! s:RunShellCommand(cmdline)
   echo a:cmdline
@@ -316,7 +296,6 @@ set shiftround
 set backspace=indent,eol,start
 set autoindent
 set copyindent
-" set number
 set ignorecase
 set smartcase
 set smarttab
@@ -330,7 +309,6 @@ set incsearch
 if !has("win32")
   set listchars=tab:▸\ ,trail:·,extends:>,precedes:<,nbsp:·
 endif
-set pastetoggle=<F12>
 
 if v:version > 703
   set formatoptions+=1jmB
@@ -371,7 +349,8 @@ set noerrorbells
 
 " set ruler
 " set cursorline
-" set relativenumber
+set number
+set relativenumber
 
 set spellfile=$HOME/.vim-spell-en.utf-8.add
 set spelllang=en_us
@@ -430,12 +409,6 @@ noremap gM M
 noremap H 0
 noremap L $
 noremap M ^
-
-inoremap <C-a> <Home>
-inoremap <C-e> <End>
-inoremap <C-y><C-y> <C-R>"
-
-vnoremap <silent> <Enter> :EasyAlign<cr>
 
 nmap gx <Plug>(Exchange)
 nmap gxx <Plug>(ExchangeLine)
@@ -524,7 +497,6 @@ vnoremap <silent> <leader>sx :call ToggleTodoStatus(0)<cr>
 vnoremap <silent> <leader>sX :call ToggleTodoStatus(1)<cr>
 " Strip all trailing whitespace from a file
 nnoremap <silent> <leader>sw :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<cr>
-nnoremap <silent> <leader>sf :Neoformat<CR>
 
 nnoremap <leader>to :Copen<cr>
 nnoremap <leader>td :Dispatch<space>
@@ -599,7 +571,7 @@ augroup END
 augroup go_ft
   au!
   au FileType go
-        \ nmap <buffer> <leader>gg :GoDeclsDir<cr>
+        \ nmap <buffer> <leader>g :GoDeclsDir<cr>
         \ | nmap <buffer> <leader>gi :GoImports<cr>
         \ | nmap <buffer> <leader>gd :GoDoc<cr>
         \ | nmap <buffer> <leader>gt :GoTest<cr>
