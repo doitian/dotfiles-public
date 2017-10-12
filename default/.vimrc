@@ -114,7 +114,8 @@ else
   hi CursorLine NONE
 endif
 
-hi MatchParen cterm=bold ctermbg=none ctermfg=red gui=bold guibg=NONE guifg=red
+hi clear QuickFixLine
+hi link QuickFixLine Search
 
 " Plugins Options {{{1
 let g:netrw_preview   = 1
