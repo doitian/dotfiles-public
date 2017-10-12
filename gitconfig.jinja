@@ -53,9 +53,9 @@
 
   st = status --short --branch
   ms = multistatus
-  dotfiles = "!git multistatus ~/.dotfiles/repos/public ~/.dotfiles/repos/private ~/'Library/Application Support/Code/User'"
-  codebase = "!f() { find ~/codebase ~/codebase/gopath/src -maxdepth 4 -type d -name .git \"$@\" -prune | sed 's/.git$//' | xargs git multistatus; }; f"
-  all= "!f() { find . -maxdepth 3 -type d -name .git \"$@\" -prune | sed 's/.git$//' | xargs git multistatus; }; f"
+  dotfiles = "!git multistatus ~/.dotfiles ~/.dotfiles/repos/public ~/.dotfiles/repos/private ~/'Library/Application Support/Code/User'"
+  codebase = "!f() { fasd -dl | sed 's|$|/.git|' | xargs ls -d 2> /dev/null | sed 's/.git$//' | xargs git multistatus; }; f"
+  all= "!f() { find . -maxdepth 4 -type d -name .git \"$@\" -prune | sed 's/.git$//' | xargs git multistatus; }; f"
 
   ls = ls-files
   grep = grep -Ii
