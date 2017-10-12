@@ -572,7 +572,7 @@ augroup END
 augroup go_ft
   au!
   au FileType go
-        \ nmap <buffer> <leader>g :GoDeclsDir<cr>
+        \ nmap <buffer> <leader>gg :GoDeclsDir<cr>
         \ | nmap <buffer> <leader>gi :GoImports<cr>
         \ | nmap <buffer> <leader>gd :GoDoc<cr>
         \ | nmap <buffer> <leader>gt :GoTest<cr>
