@@ -79,7 +79,7 @@ function cbcb() {
     if [ -d "$dir" ]; then
       cd "$dir"
     else
-      cd "$HOME/codebase/$dir"
+      cd "$HOME/$dir"
     fi
   fi
 }
