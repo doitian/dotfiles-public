@@ -1,4 +1,5 @@
 if [ "$TERM" = dumb ]; then
+  unset zle_bracketed_paste
   return 0
 fi
 
