@@ -75,10 +75,8 @@ if has('python') || has('python3')
   Plug 'FelikZ/ctrlp-py-matcher'
 endif
 
-if has('nvim')
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+if v:version >= 747
   Plug 'Shougo/echodoc.vim'
-  Plug 'zchee/deoplete-go', { 'do': 'make'}
 endif
 
 call plug#end()
@@ -161,21 +159,8 @@ endif
 if v:version >= 800
   set shortmess+=c
 endif
-if has("nvim")
-  set completeopt-=preview
-
-  let g:echodoc#enable_at_startup = 1
-  let g:deoplete#enable_at_startup = 1
-  let g:deoplete#disable_auto_complete = 1
-  inoremap <silent><expr> <TAB>
-        \ pumvisible() ? "\<C-n>" :
-        \ <SID>check_back_space() ? "\<TAB>" :
-        \ deoplete#mappings#manual_complete()
-  function! s:check_back_space() abort
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~ '\s'
-  endfunction
-endif
+set completeopt-=preview
+let g:echodoc#enable_at_startup = 1
 
 " CtrlP auto cache clearing.
 " ----------------------------------------------------------------------------
