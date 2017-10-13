@@ -255,9 +255,22 @@ if !exists(":DiffOrig")
     \ | wincmd p | diffthis
 endif
 
+function! s:CloseDisturbingWin()
+  if &filetype == "help" || &filetype == "netrw"
+    let l:currentWindow = winnr()
+    if s:currentWindow > l:currentWindow
+      let s:currentWindow = s:currentWindow - 1
+    endif
+    close
+  endif
+endfunction
+command! Close :pclose | :cclose | :lclose |
+      \ let s:currentWindow = winnr() | 
+      \ :windo call s:CloseDisturbingWin() |
+      \ exe s:currentWindow . "wincmd w"
+
 command! Reload :source ~/.vimrc | :filetype detect | :nohl
 command! Clear :CtrlPClearCache | :silent! %bd | :silent! argd * | :nohl
-command! Close :pclose | :cclose | :lclose
 
 command! -complete=dir -nargs=1 Tcd :tabnew | :lcd <args>
 
