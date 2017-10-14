@@ -8,6 +8,15 @@ set encoding=utf-8
 let loaded_matchparen = 1
 let has_ag = executable('ag')
 
+" Shortcut mappings 
+let mapleader = " "
+let g:mapleader = " "
+let maplocalleader = "\\"
+let g:maplocalleader = "\\"
+if has("nvim")
+  let g:python3_host_prog = expand("~/bin/python3")
+endif
+
 " Plug {{{1
 call plug#begin('~/.vim/plugged')
 
@@ -73,6 +82,10 @@ endif
 
 if v:version >= 747
   Plug 'Shougo/echodoc.vim'
+endif
+if has('nvim')
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  Plug 'zchee/deoplete-go', { 'do': 'make'}
 endif
 
 call plug#end()
@@ -157,6 +170,15 @@ if v:version >= 800
 endif
 set completeopt-=preview
 let g:echodoc#enable_at_startup = 1
+if has("nvim")
+  command! DeopleteToggle call deoplete#toggle()
+  command! DeopleteAuto let g:deoplete#disable_auto_complete = 1 - g:deoplete#disable_auto_complete
+  inoremap <M-/> deoplete#mappings#manual_complete()
+  inoremap <leader><tab> deoplete#mappings#manual_complete()
+
+  let g:deoplete#enable_at_startup = 1
+  let g:deoplete#disable_auto_complete = 0
+endif
 
 " CtrlP auto cache clearing.
 " ----------------------------------------------------------------------------
@@ -374,12 +396,6 @@ endif
 set grepformat=%f:%l:%c:%m
 
 runtime! macros/matchit.vim
-
-" Shortcut mappings 
-let mapleader = " "
-let g:mapleader = " "
-let maplocalleader = "\\"
-let g:maplocalleader = "\\"
 
 " Avoid accidental hits of <F1> while aiming for <Esc>
 noremap! <F1> <Esc>
