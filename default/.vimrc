@@ -7,13 +7,7 @@ set encoding=utf-8
 
 let loaded_matchparen = 1
 let has_ag = executable('ag')
-
-" Shortcut mappings 
-let mapleader = " "
-let g:mapleader = " "
-let maplocalleader = "\\"
-let g:maplocalleader = "\\"
-if has("nvim")
+if has("nvim") && filereadable(expand("~/bin/python3"))
   let g:python3_host_prog = expand("~/bin/python3")
 endif
 
@@ -161,7 +155,7 @@ let g:ctrlp_extensions = ['z', 'f']
 let g:ctrlp_buftag_types = {
   \ 'yaml'     : '--languages=ansible --ansible-types=k',
   \ }
-if has('python')
+if has('python') || has('python3')
   let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 endif
 
@@ -171,13 +165,8 @@ endif
 set completeopt-=preview
 let g:echodoc#enable_at_startup = 1
 if has("nvim")
-  command! DeopleteToggle call deoplete#toggle()
-  command! DeopleteAuto let g:deoplete#disable_auto_complete = 1 - g:deoplete#disable_auto_complete
-  inoremap <M-/> deoplete#mappings#manual_complete()
-  inoremap <leader><tab> deoplete#mappings#manual_complete()
-
+  command! Deoplete call deoplete#toggle()
   let g:deoplete#enable_at_startup = 1
-  let g:deoplete#disable_auto_complete = 0
 endif
 
 " CtrlP auto cache clearing.
@@ -397,6 +386,13 @@ set grepformat=%f:%l:%c:%m
 
 runtime! macros/matchit.vim
 
+" Keymap {{{1
+" leader
+let mapleader = " "
+let g:mapleader = " "
+let maplocalleader = "\\"
+let g:maplocalleader = "\\"
+
 " Avoid accidental hits of <F1> while aiming for <Esc>
 noremap! <F1> <Esc>
 
@@ -551,14 +547,8 @@ vnoremap <leader>y "*y
 
 nnoremap <silent> <leader>z :FZF<CR>
 
-nnoremap <silent> <leader>/c /^\(<\\|=\\|>\)\{7\}\([^=].\+\)\?$<CR>
 nnoremap <silent> <leader>/t /\|.\{-}\|<CR>
 nnoremap <silent> <leader>// :nohlsearch<CR>
-
-
-" search word under cursor
-nnoremap <leader>; ;
-nnoremap <leader>: ,
 
 " Filetype specific handling {{{1
 filetype indent plugin on
