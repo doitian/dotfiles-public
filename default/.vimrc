@@ -38,7 +38,7 @@ Plug 'tpope/vim-vinegar' " file explorer
 Plug 'wellle/targets.vim' " Text objects
 
 if has("gui_running") || &t_Co > 16
-  Plug 'altercation/vim-colors-solarized'
+  Plug 'lifepillar/vim-solarized8'
   Plug 'bling/vim-airline'
 endif
 if executable('open')
@@ -108,14 +108,13 @@ if &t_Co > 2 || has("gui_running")
   syntax on
 endif
 if has("gui_running") || &t_Co > 16
-  colors solarized
+  colors solarized8_dark
   set bg=dark
 else
-  hi CursorLine NONE
+  hi! CursorLine NONE
 endif
 
-hi clear QuickFixLine
-hi link QuickFixLine Search
+hi! link QuickFixLine Search
 
 " Plugins Options {{{1
 let g:netrw_preview   = 1
@@ -256,7 +255,7 @@ if !exists(":DiffOrig")
 endif
 
 function! s:CloseDisturbingWin()
-  if &filetype == "help" || &filetype == "netrw"
+  if &filetype == "help" || &filetype == "netrw" || &filetype == "vim-plug"
     let l:currentWindow = winnr()
     if s:currentWindow > l:currentWindow
       let s:currentWindow = s:currentWindow - 1
