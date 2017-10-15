@@ -1,4 +1,0 @@
-#!/bin/sh
-
-# npm install -g js-beautify
-exec js-beautify "$@" -f -

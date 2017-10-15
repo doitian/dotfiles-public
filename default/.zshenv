@@ -91,7 +91,6 @@ export PATH="\
 :$GOPATH/bin\
 :$HOME/.rbenv/bin:$HOME/.rbenv/shims\
 :$HOME/.node-packages/bin\
-:$HOME/.anaconda3/bin\
 :/PATH\
 :$PATH\
 :/usr/local/bin\
