@@ -282,7 +282,7 @@ function! s:CloseDisturbingWin()
   endif
 endfunction
 command! Close :pclose | :cclose | :lclose |
-      \ let s:currentWindow = winnr() | 
+      \ let s:currentWindow = winnr() |
       \ :windo call s:CloseDisturbingWin() |
       \ exe s:currentWindow . "wincmd w"
 
@@ -413,12 +413,6 @@ nmap <silent> ]C <Plug>(ale_last)
 
 inoremap <C-U> <C-G>u<C-U>
 
-noremap <leader>%p i<C-R>=expand('%:p')<cr><Esc>
-noremap <leader>%h i<C-R>=expand('%:h').'/'<cr><Esc>
-noremap <leader>%t i<C-R>=expand('%:t')<cr><Esc>
-noremap <leader>%% i<C-R>=expand('%')<cr><Esc>
-
-
 nnoremap <C-e> 3<C-e>
 nnoremap <C-y> 3<C-y>
 nnoremap <silent> <C-n> :bnext<CR>
@@ -494,13 +488,15 @@ nmap <silent> <leader>H <Plug>DashGlobalSearch
 nnoremap <silent> <leader>i :CtrlPBufTag<CR>
 nnoremap <silent> <leader>I :CtrlPBufTagAll<CR>
 
-" j, k unused
+" j unused
 
-nmap <silent> <leader>ll :Lexplore<CR>
-nmap <silent> <leader>lt :tags<CR>
-nmap <silent> <leader>lm :marks<cr>
-nmap <silent> <leader>lr :registers<cr>
-nmap <silent> <leader>l@ :registers<cr>
+nnoremap <silent> <leader>k :Close<CR>
+
+noremap <silent> <leader>ll :Lexplore<CR>
+noremap <silent> <leader>lt :tags<CR>
+noremap <silent> <leader>lm :marks<cr>
+noremap <silent> <leader>lr :registers<cr>
+noremap <silent> <leader>l@ :registers<cr>
 noremap <silent> <leader>lbe :BufExplorer<CR>
 noremap <silent> <leader>lbt :ToggleBufExplorer<CR>
 noremap <silent> <leader>lbb :ToggleBufExplorer<CR>
@@ -558,6 +554,8 @@ vnoremap <leader>y "*y
 
 nnoremap <silent> <leader>z :FZF<CR>
 
+nnoremap <silent> <leader>/a :Ack! "\b<cword>\b"<cr>
+nnoremap <silent> <leader>/o :vimgrep /\<<C-R><C-w>\>/ %<cr>
 nnoremap <silent> <leader>/t /\|.\{-}\|<CR>
 nnoremap <silent> <leader>// :nohlsearch<CR>
 
