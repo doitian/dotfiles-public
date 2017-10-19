@@ -4,7 +4,7 @@ set -e
 [ -n "$TT_DEBUG" ] && set -x
 
 function help() {
-  echo 'Usage: tt [-l] [-c] [-t <target>] [-n|-s|-h|-v|-N <name>|-S <name>] key ...'
+  echo 'Usage: tt [-L] [-C] [-t <target>] [-n|-s|-h|-v|-N <name>|-S <name>] key ...'
   echo
   echo '-L Do not send keys literally, recoganize keycode name.'
   echo '-C do not send C-m automatically at the end.'

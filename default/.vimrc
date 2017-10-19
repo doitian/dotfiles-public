@@ -177,7 +177,6 @@ if has("nvim")
 endif
 
 " CtrlP auto cache clearing.
-" ----------------------------------------------------------------------------
 function! SetupCtrlP()
   if exists("g:loaded_ctrlp") && g:loaded_ctrlp
     augroup CtrlPExtension
@@ -273,7 +272,7 @@ if !exists(":DiffOrig")
 endif
 
 function! s:CloseDisturbingWin()
-  if &filetype == "help" || &filetype == "netrw" || &filetype == "vim-plug"
+  if &filetype == "help" || &filetype == "netrw" || &filetype == "vim-plug" || &filetype == "godoc"
     let l:currentWindow = winnr()
     if s:currentWindow > l:currentWindow
       let s:currentWindow = s:currentWindow - 1
@@ -596,15 +595,19 @@ augroup spell_ft
   autocmd FileType gitcommit setlocal spell
 augroup END
 
+function! SetupLocalMapForGo()
+  nmap <buffer> <leader>gg :GoDeclsDir<cr>
+  nmap <buffer> <leader>gi :GoImports<cr>
+  nmap <buffer> <leader>gd :GoDoc<cr>
+  nmap <buffer> <leader>gt :GoTest<cr>
+  nmap <buffer> <leader>gaj :GoAddTags json<cr>
+  nmap <buffer> <leader>gax :GoAddTags xorm<cr>
+  nmap <buffer> <leader>i :GoDecls<cr>
+endfunction
+
 augroup go_ft
   au!
-  au FileType go
-        \ nmap <buffer> <leader>gg :GoDeclsDir<cr>
-        \ | nmap <buffer> <leader>gi :GoImports<cr>
-        \ | nmap <buffer> <leader>gd :GoDoc<cr>
-        \ | nmap <buffer> <leader>gt :GoTest<cr>
-        \ | nmap <buffer> <leader>gaj :GoAddTags json<cr>
-        \ | nmap <buffer> <leader>i :GoDecls<cr>
+  au FileType go call SetupLocalMapForGo()
 augroup END
 
 autocmd FileType netrw setl bufhidden=wipe
