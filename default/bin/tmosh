@@ -1,0 +1,5 @@
+#!/bin/bash
+
+TMUX_SOCKET=ian
+
+mosh -- "$@" tmux -L $TMUX_SOCKET new-session -A -s default

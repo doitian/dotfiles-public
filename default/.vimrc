@@ -34,6 +34,7 @@ Plug 'tomtom/tcomment_vim' " gc
 Plug 'tpope/vim-abolish' " :A :S
 Plug 'tpope/vim-dispatch' " <leader>t
 Plug 'tpope/vim-endwise'
+Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround' " ys s
 Plug 'tpope/vim-unimpaired' " various [, ] mappings
