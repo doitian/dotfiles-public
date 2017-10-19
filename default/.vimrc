@@ -27,6 +27,7 @@ Plug 'amiorin/ctrlp-z'
 Plug 'bkad/CamelCaseMotion' " <leader>w <leader>b <leader>e
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'editorconfig/editorconfig-vim'
+Plug 'mileszs/ack.vim'
 Plug 'sjl/gundo.vim' " <leader>u
 Plug 'thinca/vim-visualstar' " * # g* g#
 Plug 'tommcdo/vim-exchange' " gx gX
@@ -47,9 +48,6 @@ if has("gui_running") || &t_Co > 16
 endif
 if executable('open')
   Plug 'rizzatti/dash.vim' " <leader>h <leader>H
-endif
-if has_ag
-  Plug 'rking/ag.vim'
 endif
 if !has('win32')
   Plug 'tpope/vim-dotenv'
@@ -83,9 +81,13 @@ if has('nvim')
   Plug 'zchee/deoplete-go', { 'do': 'make'}
 endif
 
-call plug#end()
+if filereadable('/usr/local/opt/fzf/install')
+  Plug '/usr/local/opt/fzf'
+else
+  Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+endif
 
-set rtp+=/usr/local/opt/fzf
+call plug#end()
 
 " Theme {{{1
 if has("gui_running")
@@ -129,6 +131,10 @@ let g:netrw_preview   = 1
 let g:netrw_winsize   = 30
 
 let g:bufExplorerDisableDefaultKeyMapping = 1
+
+if has_ag
+  let g:ackprg = 'ag --vimgrep'
+endif
 
 let g:ctrlp_root_markers = []
 let g:ctrlp_switch_buffer = 'et'
@@ -283,8 +289,6 @@ command! Close :pclose | :cclose | :lclose |
 command! Reload :source ~/.vimrc | :filetype detect | :nohl
 command! Clear :CtrlPClearCache | :silent! %bd | :silent! argd * | :nohl
 
-command! -complete=dir -nargs=1 Tcd :tabnew | :lcd <args>
-
 command! -complete=shellcmd -nargs=+ Shell call s:RunShellCommand(<q-args>)
 function! s:RunShellCommand(cmdline)
   echo a:cmdline
@@ -312,6 +316,11 @@ function! CurDir()
     return expand("%:h")
   endif
 endfunction
+
+command! -complete=dir -nargs=1 Tcd :tabnew | :lcd <args>
+command! -bang Z call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'lcd'}, <bang>0))
+command! -bang D call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd'}, <bang>0))
+command! -bang F call fzf#run(fzf#wrap('F', {'source': 'fasd -lRf'}, <bang>0))
 
 " Config {{{1
 set autoread
@@ -462,6 +471,7 @@ vnoremap <silent> <leader>d "_d
 
 " shortcut to jump to next conflict marker
 nnoremap <leader>f/ :e <C-R>=CurDir().'/'<cr>
+nnoremap <silent> <leader>; :CtrlPBuffer<CR>
 nnoremap <silent> <leader>fb :CtrlPBuffer<CR>
 nnoremap <silent> <leader>fd :CtrlPDir<CR>
 nnoremap <silent> <leader>ff :CtrlPF<CR>
