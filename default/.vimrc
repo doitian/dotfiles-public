@@ -81,13 +81,9 @@ if has('nvim')
   Plug 'zchee/deoplete-go', { 'do': 'make'}
 endif
 
-if filereadable('/usr/local/opt/fzf/install')
-  Plug '/usr/local/opt/fzf'
-else
-  Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-endif
-
 call plug#end()
+
+set rtp+=/usr/local/opt/fzf
 
 " Theme {{{1
 if has("gui_running")
