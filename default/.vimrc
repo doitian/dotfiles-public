@@ -480,7 +480,7 @@ nnoremap <silent> <leader>3 <C-w>o<C-w>v<C-w>w:b#<CR><C-w>w
 
 nnoremap <leader>a :A<cr>
 
-" b unused
+nnoremap <silent> <leader>b :CtrlPBuffer<CR>
 
 nnoremap <silent> <leader>cd :cd %:h<CR>
 
@@ -489,11 +489,13 @@ nnoremap <silent> <leader>cd :cd %:h<CR>
 nnoremap <silent> <leader>d "_d
 vnoremap <silent> <leader>d "_d
 
-" e unused
+nnoremap <leader>e/ :e <C-R>=CurDir().'/'<cr>
+nnoremap <leader>e. :e <C-R>=CurDir().'/'<cr><cr>
+nnoremap <silent> <leader>en :enew<cr>
+nnoremap <leader>ee :e <C-R>=expand("%")<cr>
+nnoremap <silent> <leader>ev :tabnew $MYVIMRC<cr>
 
 " shortcut to jump to next conflict marker
-nnoremap <leader>f/ :e <C-R>=CurDir().'/'<cr>
-nnoremap <silent> <leader>; :CtrlPBuffer<CR>
 nnoremap <silent> <leader>fb :CtrlPBuffer<CR>
 nnoremap <silent> <leader>fd :CtrlPDir<CR>
 nnoremap <silent> <leader>ff :CtrlPF<CR>
