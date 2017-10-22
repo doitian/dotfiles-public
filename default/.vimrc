@@ -482,7 +482,7 @@ nnoremap <leader>a :A<cr>
 
 nnoremap <silent> <leader>b :CtrlPBuffer<CR>
 
-nnoremap <silent> <leader>cd :cd %:h<CR>
+nnoremap <silent> <leader>cd :cd <C-R>=CurDir()<CR><CR>
 
 " Use ,d (or ,dd or ,dj or 20,dd) to delete a line without adding it to the
 " yanked stack (also, in visual mode)
