@@ -25,7 +25,6 @@ Plug 'saltstack/salt-vim'
 Plug 'tpope/vim-markdown'
 
 Plug 'amiorin/ctrlp-z'
-Plug 'bkad/CamelCaseMotion' " <leader>w <leader>b <leader>e
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'mileszs/ack.vim'
@@ -481,8 +480,7 @@ nnoremap <silent> <leader>3 <C-w>o<C-w>v<C-w>w:b#<CR><C-w>w
 
 nnoremap <leader>a :A<cr>
 
-" b subword
-call camelcasemotion#CreateMotionMappings('<leader>')
+" b unused
 
 nnoremap <silent> <leader>cd :cd %:h<CR>
 
@@ -491,7 +489,7 @@ nnoremap <silent> <leader>cd :cd %:h<CR>
 nnoremap <silent> <leader>d "_d
 vnoremap <silent> <leader>d "_d
 
-" e subword
+" e unused
 
 " shortcut to jump to next conflict marker
 nnoremap <leader>f/ :e <C-R>=CurDir().'/'<cr>
@@ -573,7 +571,7 @@ nnoremap <leader>u :GundoToggle<CR>
 " Reselect text that was just pasted
 nnoremap <leader>v `[v`]
 
-" w subword
+" w unused
 
 nnoremap <leader>X :nnoremap <lt>leader>x :w\\|!<Up><Left><Left><Left><Left><Left>
 nnoremap <leader>x :nnoremap <lt>leader>x :w\\|!<Space><C-v><CR<C-v>><Left><Left><Left><Left><Left>
