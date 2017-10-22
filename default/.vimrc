@@ -14,9 +14,10 @@ endif
 " Plug {{{1
 call plug#begin('~/.vim/plugged')
 
+Plug 'Glench/Vim-Jinja2-Syntax'
 Plug 'cespare/vim-toml'
 Plug 'fatih/vim-go'
-Plug 'Glench/Vim-Jinja2-Syntax'
+Plug 'leafgarland/typescript-vim'
 Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
 Plug 'rust-lang/rust.vim'
@@ -28,6 +29,8 @@ Plug 'bkad/CamelCaseMotion' " <leader>w <leader>b <leader>e
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'mileszs/ack.vim'
+Plug 'mkitt/tabline.vim'
+Plug 'sbdchd/neoformat'
 Plug 'sjl/gundo.vim' " <leader>u
 Plug 'thinca/vim-visualstar' " * # g* g#
 Plug 'tommcdo/vim-exchange' " gx gX
@@ -78,7 +81,8 @@ if v:version >= 747
 endif
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-  Plug 'zchee/deoplete-go', { 'do': 'make'}
+  Plug 'zchee/deoplete-go', { 'do': 'make' }
+  Plug 'mhartington/nvim-typescript', { 'do': ':UpdateRemotePlugins' }
 endif
 
 call plug#end()
@@ -170,6 +174,7 @@ let g:echodoc#enable_at_startup = 1
 if has("nvim")
   command! Deoplete call deoplete#toggle()
   let g:deoplete#enable_at_startup = 1
+  let g:deoplete#auto_complete_delay = 1000
 endif
 
 " CtrlP auto cache clearing.
@@ -196,6 +201,7 @@ call ale#linter#Define('eruby', {
 \})
 let g:ale_linters = {
   \ 'javascript': ['eslint'],
+  \ 'typescript': ['tslint'],
   \ 'lua': ['luacheck', 'luac'],
   \ 'python': [ 'flake8' ],
   \ 'eruby': [ 'erubis_rails' ],
@@ -233,6 +239,35 @@ let g:projectionist_heuristics = {
       \ }}
 
 let g:jsx_ext_required = 0
+
+" Neoformat
+let g:neoformat_auto = {
+      \ 'javascript': 1,
+      \ 'typescript': 1,
+      \}
+command! -nargs=? NeoformatToggle call NeoformatToggle(<q-args>)
+function! NeoformatToggle(ft)
+  let l:ft = a:ft == "" ? &filetype : a:ft
+  if has_key(g:neoformat_auto, l:ft) && g:neoformat_auto[l:ft] == 1
+    call remove(g:neoformat_auto, l:ft)
+    echo "Neoformat Off"
+  else
+    let g:neoformat_auto[l:ft] = 1
+    echo "Neoformat On"
+  endif
+endfunction
+
+function! NeoformatMaybe()
+  if has_key(g:neoformat_auto, &filetype) && g:neoformat_auto[&filetype] == 1
+    undojoin
+    Neoformat
+  endif
+endfunction
+
+augroup neoformat_auto
+  au!
+  autocmd BufWritePre * call NeoformatMaybe()
+augroup END
 
 " Functions & Commands {{{1
 command! -bang -nargs=? QFix call QFixToggle(<bang>0)
@@ -553,6 +588,9 @@ nnoremap <silent> <leader>/a :Ack! "\b<cword>\b"<cr>
 nnoremap <silent> <leader>/o :vimgrep /\<<C-R><C-w>\>/ %<cr>
 nnoremap <silent> <leader>/t /\|.\{-}\|<CR>
 nnoremap <silent> <leader>// :nohlsearch<CR>
+
+cnoremap <C-r><C-d> <C-r>=CurDir()."/"<cr>
+inoremap <C-r><C-d> <C-r>=CurDir()."/"<cr>
 
 " Filetype specific handling {{{1
 filetype indent plugin on
