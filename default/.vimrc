@@ -239,35 +239,6 @@ let g:projectionist_heuristics = {
 
 let g:jsx_ext_required = 0
 
-" Neoformat
-let g:neoformat_auto = {
-      \ 'javascript': 1,
-      \ 'typescript': 1,
-      \}
-command! -nargs=? NeoformatToggle call NeoformatToggle(<q-args>)
-function! NeoformatToggle(ft)
-  let l:ft = a:ft == "" ? &filetype : a:ft
-  if has_key(g:neoformat_auto, l:ft) && g:neoformat_auto[l:ft] == 1
-    call remove(g:neoformat_auto, l:ft)
-    echo "Neoformat Off"
-  else
-    let g:neoformat_auto[l:ft] = 1
-    echo "Neoformat On"
-  endif
-endfunction
-
-function! NeoformatMaybe()
-  if has_key(g:neoformat_auto, &filetype) && g:neoformat_auto[&filetype] == 1
-    undojoin
-    Neoformat
-  endif
-endfunction
-
-augroup neoformat_auto
-  au!
-  autocmd BufWritePre * call NeoformatMaybe()
-augroup END
-
 " Functions & Commands {{{1
 command! -bang -nargs=? QFix call QFixToggle(<bang>0)
 function! QFixToggle(forced)
@@ -520,7 +491,8 @@ nmap <silent> <leader>H <Plug>DashGlobalSearch
 nnoremap <silent> <leader>i :CtrlPBufTag<CR>
 nnoremap <silent> <leader>I :CtrlPBufTagAll<CR>
 
-" j unused
+nnoremap <leader>J :nnoremap <lt>buffer> <lt>leader>j :w\\|!<Up><Left><Left><Left><Left><Left>
+nnoremap <leader>j :nnoremap <lt>buffer> <lt>leader>j :w\\|!<Space><C-v><CR<C-v>><Left><Left><Left><Left><Left>
 
 nnoremap <silent> <leader>k :Close<CR>
 
@@ -561,6 +533,7 @@ vnoremap <silent> <leader>sx :call ToggleTodoStatus(0)<cr>
 vnoremap <silent> <leader>sX :call ToggleTodoStatus(1)<cr>
 " Strip all trailing whitespace from a file
 nnoremap <silent> <leader>sw :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<cr>
+nnoremap <silent> <leader>sf :Neoformat
 
 nnoremap <leader>to :Copen<cr>
 nnoremap <leader>td :Dispatch<space>
@@ -575,7 +548,8 @@ nnoremap <leader>u :GundoToggle<CR>
 " Reselect text that was just pasted
 nnoremap <leader>v `[v`]
 
-" w unused
+nnoremap <silent> <leader>wa :Ack! "\b<cword>\b"<cr>
+nnoremap <silent> <leader>wo :vimgrep /\<<C-R><C-w>\>/ %<cr>
 
 nnoremap <leader>X :nnoremap <lt>leader>x :w\\|!<Up><Left><Left><Left><Left><Left>
 nnoremap <leader>x :nnoremap <lt>leader>x :w\\|!<Space><C-v><CR<C-v>><Left><Left><Left><Left><Left>
@@ -586,10 +560,7 @@ vnoremap <leader>y "*y
 
 nnoremap <silent> <leader>z :FZF<CR>
 
-nnoremap <silent> <leader>/a :Ack! "\b<cword>\b"<cr>
-nnoremap <silent> <leader>/o :vimgrep /\<<C-R><C-w>\>/ %<cr>
 nnoremap <silent> <leader>/t /\|.\{-}\|<CR>
-nnoremap <silent> <leader>// :nohlsearch<CR>
 
 cnoremap <C-r><C-d> <C-r>=CurDir()."/"<cr>
 inoremap <C-r><C-d> <C-r>=CurDir()."/"<cr>
