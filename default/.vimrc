@@ -173,7 +173,7 @@ let g:echodoc#enable_at_startup = 1
 if has("nvim")
   command! Deoplete call deoplete#toggle()
   let g:deoplete#enable_at_startup = 1
-  let g:deoplete#auto_complete_delay = 1000
+  let g:deoplete#auto_complete_delay = 600
 endif
 
 " CtrlP auto cache clearing.
@@ -301,9 +301,6 @@ function! s:RunShellCommand(cmdline)
   endfor
   botright 5new
   setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nowrap
-  " call setline(1, 'You entered:    ' . a:cmdline)
-  " call setline(2, 'Expanded Form:  ' .expanded_cmdline)
-  " call setline(3,substitute(getline(2),'.','=','g'))
   execute '$read !'. expanded_cmdline
   setlocal nomodifiable
   1
@@ -533,7 +530,7 @@ vnoremap <silent> <leader>sx :call ToggleTodoStatus(0)<cr>
 vnoremap <silent> <leader>sX :call ToggleTodoStatus(1)<cr>
 " Strip all trailing whitespace from a file
 nnoremap <silent> <leader>sw :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<cr>
-nnoremap <silent> <leader>sf :Neoformat
+nnoremap <silent> <leader>sf :Neoformat<cr>:w<cr>
 
 nnoremap <leader>to :Copen<cr>
 nnoremap <leader>td :Dispatch<space>
