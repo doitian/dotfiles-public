@@ -74,7 +74,7 @@ function marked() {
 }
 
 function cbcb() {
-  local dir="$(fasd -dl | sed 's|$|/.git|' | xargs ls -d 2> /dev/null | sed -e 's/.git$//' -e "s;^$HOME/;;" | fzf -1 -q "$*")"
+  local dir="$(fasd -dl | sed 's|$|/.git|' | tr '\n' '\0' | xargs -0 ls -d 2> /dev/null | sed -e 's/.git$//' -e "s;^$HOME/;;" | fzf -1 -q "$*")"
   if [ -n "$dir" ]; then
     if [ -d "$dir" ]; then
       cd "$dir"
