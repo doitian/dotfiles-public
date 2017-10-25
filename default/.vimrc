@@ -173,7 +173,8 @@ let g:echodoc#enable_at_startup = 1
 if has("nvim")
   command! Deoplete call deoplete#toggle()
   let g:deoplete#enable_at_startup = 1
-  let g:deoplete#auto_complete_delay = 600
+  let g:deoplete#auto_complete_delay = 500
+  inoremap <silent><expr> <C-l> deoplete#mappings#manual_complete()
 endif
 
 " CtrlP auto cache clearing.
@@ -224,6 +225,27 @@ let g:projectionist_heuristics = {
       \     "alternate": "src/{}.lua"
       \   }
       \ },
+      \ "package.json" : {
+      \   "*": {
+      \     "dispatch": "CI=1 yarn test",
+      \   },
+      \   "*.test.ts": {
+      \     "type": "test",
+      \     "alternate": "{}.ts"
+      \   },
+      \   "*.ts": {
+      \     "type": "source",
+      \     "alternate": "{}.test.ts"
+      \   },
+      \   "*.test.tsx": {
+      \     "type": "test",
+      \     "alternate": "{}.tsx"
+      \   },
+      \   "*.tsx": {
+      \     "type": "source",
+      \     "alternate": "{}.test.tsx"
+      \   },
+      \ }}
       \ "*.go" : {
       \   "*_test.go": {
       \     "type": "test",
@@ -424,7 +446,6 @@ vnoremap <silent> p <Esc>:let current_reg = @"<CR>gvdi<C-R>=current_reg<CR><Esc>
 
 " Complete whole filenames/lines with a quicker shortcut key in insert mode
 inoremap <C-f> <C-x><C-f>
-inoremap <C-l> <C-x><C-l>
 
 " Quick yanking to the end of the line
 nnoremap Y y$
@@ -469,7 +490,6 @@ nnoremap <silent> <leader>fb :CtrlPBuffer<CR>
 nnoremap <silent> <leader>fd :CtrlPDir<CR>
 nnoremap <silent> <leader>ff :CtrlPF<CR>
 nnoremap <silent> <leader>fz :CtrlPZ<CR>
-nnoremap <silent> <leader>f. :CtrlPCurFile<CR>
 nnoremap <silent> <leader>fh :CtrlPCurFile<CR>
 nnoremap <silent> <leader>fe :CtrlPQuickfix<CR>
 nnoremap <silent> <leader>fo :CtrlPLine<CR>
