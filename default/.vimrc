@@ -340,6 +340,7 @@ command! -complete=dir -nargs=1 Tcd :tabnew | :lcd <args>
 command! -bang Z call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'lcd'}, <bang>0))
 command! -bang D call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd'}, <bang>0))
 command! -bang F call fzf#run(fzf#wrap('F', {'source': 'fasd -lRf'}, <bang>0))
+command! -bang T :tabnew | Z
 
 " Config {{{1
 set autoread
@@ -550,7 +551,6 @@ vnoremap <silent> <leader>sx :call ToggleTodoStatus(0)<cr>
 vnoremap <silent> <leader>sX :call ToggleTodoStatus(1)<cr>
 " Strip all trailing whitespace from a file
 nnoremap <silent> <leader>sw :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<cr>
-nnoremap <silent> <leader>sf :Neoformat<cr>:w<cr>
 
 nnoremap <leader>to :Copen<cr>
 nnoremap <leader>td :Dispatch<space>
@@ -565,8 +565,7 @@ nnoremap <leader>u :GundoToggle<CR>
 " Reselect text that was just pasted
 nnoremap <leader>v `[v`]
 
-nnoremap <silent> <leader>wa :Ack! "\b<cword>\b"<cr>
-nnoremap <silent> <leader>wo :vimgrep /\<<C-R><C-w>\>/ %<cr>
+nnoremap <leader>w :Neoformat<cr>:w<cr>
 
 nnoremap <leader>X :nnoremap <lt>leader>x :w\\|!<Up><Left><Left><Left><Left><Left>
 nnoremap <leader>x :nnoremap <lt>leader>x :w\\|!<Space><C-v><CR<C-v>><Left><Left><Left><Left><Left>
@@ -578,6 +577,8 @@ vnoremap <leader>y "*y
 nnoremap <silent> <leader>z :FZF<CR>
 
 nnoremap <silent> <leader>/t /\|.\{-}\|<CR>
+nnoremap <silent> <leader>/a :Ack! "\b<cword>\b"<cr>
+nnoremap <silent> <leader>/o :vimgrep /\<<C-R><C-w>\>/ %<cr>
 
 cnoremap <C-r><C-d> <C-r>=CurDir()."/"<cr>
 inoremap <C-r><C-d> <C-r>=CurDir()."/"<cr>
