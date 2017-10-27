@@ -6,10 +6,12 @@ scriptencoding utf-8
 set encoding=utf-8
 
 let loaded_matchparen = 1
-let has_ag = executable('ag')
+let s:has_ag = executable('ag')
 if has("nvim") && filereadable(expand("~/bin/python3"))
   let g:python3_host_prog = expand("~/bin/python3")
 endif
+let s:use_colorscheme = !filereadable(expand("~/.vim_no_colorscheme"))
+\ && (has("gui_running") || &t_Co > 16)
 
 " Plug {{{1
 call plug#begin('~/.vim/plugged')
@@ -44,7 +46,7 @@ Plug 'tpope/vim-unimpaired' " various [, ] mappings
 Plug 'tpope/vim-vinegar' " file explorer
 Plug 'wellle/targets.vim' " Text objects
 
-if has("gui_running") || &t_Co > 16
+if s:use_colorscheme
   Plug 'lifepillar/vim-solarized8'
   Plug 'bling/vim-airline'
 endif
@@ -116,7 +118,7 @@ end
 if &t_Co > 2 || has("gui_running")
   syntax on
 endif
-if has("gui_running") || &t_Co > 16
+if s:use_colorscheme
   colors solarized8_dark
   set bg=dark
 else
@@ -131,7 +133,7 @@ let g:netrw_winsize   = 30
 
 let g:bufExplorerDisableDefaultKeyMapping = 1
 
-if has_ag
+if s:has_ag
   let g:ackprg = 'ag --vimgrep'
 endif
 
@@ -139,7 +141,7 @@ let g:ctrlp_root_markers = []
 let g:ctrlp_switch_buffer = 'et'
 let g:ctrlp_working_path_mode = 'a'
 let g:ctrlp_map = '<leader><space>'
-if has_ag
+if s:has_ag
   let ctrlp_user_command_ag = 'ag %s -l --nocolor -g ""'
   if executable('regedit.exe')
     let ctrlp_user_command_ag = 'ag -l --nocolor -g "" "." "%s"'
@@ -409,7 +411,7 @@ set relativenumber
 set spellfile=$HOME/.vim-spell-en.utf-8.add
 set spelllang=en_us
 
-if has_ag
+if s:has_ag
   set grepprg=ag\ --vimgrep\ $*
 endif
 set grepformat=%f:%l:%c:%m
