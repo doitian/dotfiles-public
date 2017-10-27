@@ -10,8 +10,6 @@ let s:has_ag = executable('ag')
 if has("nvim") && filereadable(expand("~/bin/python3"))
   let g:python3_host_prog = expand("~/bin/python3")
 endif
-let s:use_colorscheme = !filereadable(expand("~/.vim_no_colorscheme"))
-\ && (has("gui_running") || &t_Co > 16)
 
 " Plug {{{1
 call plug#begin('~/.vim/plugged')
@@ -46,7 +44,7 @@ Plug 'tpope/vim-unimpaired' " various [, ] mappings
 Plug 'tpope/vim-vinegar' " file explorer
 Plug 'wellle/targets.vim' " Text objects
 
-if s:use_colorscheme
+if has("gui_running") || &t_Co > 16
   Plug 'lifepillar/vim-solarized8'
   Plug 'bling/vim-airline'
 endif
@@ -115,11 +113,15 @@ if v:version >= 800
   let g:airline#extensions#ale#enabled = 1
 end
 
-if &t_Co > 2 || has("gui_running")
+if has("gui_running") || &t_Co > 2
   syntax on
 endif
-if s:use_colorscheme
-  colors solarized8_dark
+if has("gui_running") || &t_Co > 16
+  if filereadable(expand("~/.vimcolor"))
+    exec "colors " . readfile(expand("~/.vimcolor"))[0]
+  else
+    colors solarized8_dark
+  endif
   set bg=dark
 else
   hi! CursorLine NONE
