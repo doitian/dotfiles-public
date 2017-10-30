@@ -621,7 +621,7 @@ augroup END
 
 augroup spell_ft
   au!
-  autocmd FileType gitcommit setlocal spell
+  autocmd FileType gitcommit,markdown,text,rst setlocal spell
 augroup END
 
 function! SetupLocalMapForGo()
