@@ -106,29 +106,9 @@
   pushInsteadOf = https://github.com/
 
 [core]
-  excludesfile = {{ salt['file.join'](dotfiles.home, '.cvsignore') | yaml_dquote }}
+  excludesfile = "__HOME__/.cvsignore"
   autocrlf = false
 
-{%- if grains.os_family == "MacOS" %}
-[mergetool "Kaleidoscope"]
-  cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
-  trustexitcode = true
-[difftool "Kaleidoscope"]
-  cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
-[credential]
-  helper = osxkeychain
-{%- endif %}
-
-[diff]
-  algorithm = patience
-  {%- if grains.os_family == "MacOS" %}
-  tool = Kaleidoscope
-  {%- endif %}
-[merge]
-  defaultToUpstream = true
-  {%- if grains.os_family == "MacOS" %}
-  tool = Kaleidoscope
-  {%- endif %}
 [rerere]
   enabled = true
 
@@ -138,11 +118,6 @@
 	process = git-lfs filter-process
 	required = true
 
-{%- for section, options in pillar.get('git', {}).items() %}
-[{{section}}]
-  {%- for k, v in options.items() %}
-  {{ k }} = {{ v }}
-  {%- endfor %}
-{%- endfor %}
-
-
+[user]
+  name = __NAME__
+  email = __EMAIL__

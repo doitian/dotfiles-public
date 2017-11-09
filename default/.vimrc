@@ -24,7 +24,6 @@ Plug 'rust-lang/rust.vim'
 Plug 'saltstack/salt-vim'
 Plug 'tpope/vim-markdown'
 
-Plug 'amiorin/ctrlp-z'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'mileszs/ack.vim'
@@ -41,15 +40,11 @@ Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround' " ys s
 Plug 'tpope/vim-unimpaired' " various [, ] mappings
-Plug 'tpope/vim-vinegar' " file explorer
 Plug 'wellle/targets.vim' " Text objects
 
 if has("gui_running") || &t_Co > 16
   Plug 'lifepillar/vim-solarized8'
   Plug 'bling/vim-airline'
-endif
-if executable('open')
-  Plug 'rizzatti/dash.vim' " <leader>h <leader>H
 endif
 if !has('win32')
   Plug 'tpope/vim-dotenv'
@@ -130,8 +125,7 @@ endif
 hi! link QuickFixLine Search
 
 " Plugins Options {{{1
-let g:netrw_preview   = 1
-let g:netrw_winsize   = 30
+let g:netrw_banner = 0
 
 let g:bufExplorerDisableDefaultKeyMapping = 1
 
@@ -250,7 +244,7 @@ let g:projectionist_heuristics = {
       \     "alternate": "{}.test.tsx"
       \   },
       \ }}
-      \ "*.go" : {
+      \ "**/*.go" : {
       \   "*_test.go": {
       \     "type": "test",
       \     "alternate": "{}.go"
