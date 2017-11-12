@@ -47,3 +47,8 @@ function _tt() {
 }
 
 compdef _tt tt
+
+if ! which _bpf_filters &> /dev/null; then
+  function _bpf_filters() {
+  }
+fi
