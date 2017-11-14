@@ -14,4 +14,4 @@ else
 fi
 
 rm -rf "$target_dir/$package_name"
-curl -L -o - | tar -xzvf - -C "$target_dir"
+curl -L -o - "$source_url" | tar -xzvf - -C "$target_dir"
