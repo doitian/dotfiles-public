@@ -613,6 +613,13 @@ augroup sls_ft
   autocmd BufNewFile,BufRead pillar.example set ft=sls
 augroup END
 
+augroup bats_ft
+  au!
+
+  autocmd BufNewFile,BufRead *.bats set ft=sh
+augroup END
+
+
 augroup spell_ft
   au!
   autocmd FileType gitcommit,markdown,text,rst setlocal spell
