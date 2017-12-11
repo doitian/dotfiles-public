@@ -126,6 +126,7 @@ hi! link QuickFixLine Search
 
 " Plugins Options {{{1
 let g:netrw_banner = 0
+let g:netrw_liststyle = 3
 
 let g:bufExplorerDisableDefaultKeyMapping = 1
 
@@ -420,6 +421,7 @@ let mapleader = " "
 let g:mapleader = " "
 let maplocalleader = "\\"
 let g:maplocalleader = "\\"
+set pastetoggle=<F2>
 
 " Avoid accidental hits of <F1> while aiming for <Esc>
 noremap! <F1> <Esc>
@@ -479,7 +481,9 @@ nnoremap <silent> <leader>d "_d
 vnoremap <silent> <leader>d "_d
 
 nnoremap <leader>e/ :e <C-R>=CurDir().'/'<cr>
+nnoremap <leader>eh :e <C-R>=CurDir().'/'<cr>
 nnoremap <leader>e. :e <C-R>=CurDir().'/'<cr><cr>
+nnoremap <leader>ed :e <C-R>=CurDir().'/'<cr><cr>
 nnoremap <silent> <leader>en :enew<cr>
 nnoremap <leader>ee :e <C-R>=expand("%")<cr>
 nnoremap <silent> <leader>ev :tabnew $MYVIMRC<cr>
