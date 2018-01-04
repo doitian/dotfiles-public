@@ -10,3 +10,5 @@ if [ -d "$VIRTUAL_ENV" ]; then
 fi
 export PATH="${BEFORE_PATH}$(echo "$PATH" | sed 's;^\(.*\):\.git\(.*\):/PATH:;.git\2:/PATH:\1:;')"
 unset BEFORE_PATH AFTER_PATH
+
+export PATH="$HOME/.cargo/bin:$PATH"

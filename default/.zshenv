@@ -89,6 +89,7 @@ export PATH="\
 .git/$SAFEBIN_SECRET/../../bin\
 :$HOME/bin\
 :$GOPATH/bin\
+:$HOME/.cargo/bin\
 :$HOME/.rbenv/bin:$HOME/.rbenv/shims\
 :$HOME/.node-packages/bin\
 :/PATH\
@@ -97,3 +98,5 @@ export PATH="\
 :/usr/local/sbin\
 :$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools\
 "
+
+export PATH="$HOME/.cargo/bin:$PATH"
