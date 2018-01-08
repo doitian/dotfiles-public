@@ -644,5 +644,10 @@ augroup go_ft
   au FileType go call SetupLocalMapForGo()
 augroup END
 
+augroup rust_ft
+  au!
+  au BufRead *.rs :setlocal tags=./rusty-tags.vi;/
+augroup END
+
 autocmd FileType netrw setl bufhidden=wipe
 

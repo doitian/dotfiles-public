@@ -138,8 +138,10 @@ alias fg=' fg'
 ##################################################
 # Dir Aliases
 cb=$HOME/codebase
+kb=$HOME/Desktop/KnowledgeBase
 gop=$GOPATH
 docs=$HOME/Documents
+desk=$HOME/Desktop
 dl=$HOME/Downloads
 omz=$HOME/.oh-my-zsh
 omzp=$omz/plugins
