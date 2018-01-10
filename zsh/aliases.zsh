@@ -139,6 +139,7 @@ alias fg=' fg'
 # Dir Aliases
 cb=$HOME/codebase
 kb=$HOME/Desktop/KnowledgeBase
+wf="$HOME/Library/Mobile Documents/iCloud~is~workflow~my~workflows/Documents"
 gop=$GOPATH
 docs=$HOME/Documents
 desk=$HOME/Desktop
