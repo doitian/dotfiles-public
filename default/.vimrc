@@ -21,7 +21,6 @@ Plug 'leafgarland/typescript-vim'
 Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
 Plug 'rust-lang/rust.vim'
-Plug 'saltstack/salt-vim'
 Plug 'tpope/vim-markdown'
 
 Plug 'ctrlpvim/ctrlp.vim'
@@ -115,6 +114,7 @@ if has("gui_running") || &t_Co > 16
   if filereadable(expand("~/.vimcolor"))
     exec "colors " . readfile(expand("~/.vimcolor"))[0]
   else
+    let g:solarized_use16 = 1
     colors solarized8_dark
   endif
   set bg=dark
