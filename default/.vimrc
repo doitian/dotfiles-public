@@ -114,7 +114,9 @@ if has("gui_running") || &t_Co > 16
   if filereadable(expand("~/.vimcolor"))
     exec "colors " . readfile(expand("~/.vimcolor"))[0]
   else
-    let g:solarized_use16 = 1
+    if !has("gui_running")
+      let g:solarized_use16 = 1
+    endif
     colors solarized8_dark
   endif
   set bg=dark
