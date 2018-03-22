@@ -72,11 +72,6 @@ endif
 if v:version >= 747
   Plug 'Shougo/echodoc.vim'
 endif
-if has('nvim')
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-  Plug 'zchee/deoplete-go', { 'do': 'make' }
-  Plug 'mhartington/nvim-typescript', { 'do': ':UpdateRemotePlugins' }
-endif
 
 call plug#end()
 
@@ -171,12 +166,6 @@ if v:version >= 800
 endif
 set completeopt-=preview
 let g:echodoc#enable_at_startup = 1
-if has("nvim")
-  command! Deoplete call deoplete#toggle()
-  let g:deoplete#enable_at_startup = 1
-  let g:deoplete#auto_complete_delay = 500
-  inoremap <silent><expr> <C-l> deoplete#mappings#manual_complete()
-endif
 
 " CtrlP auto cache clearing.
 function! SetupCtrlP()
@@ -193,13 +182,6 @@ if has("autocmd")
 endif
 
 " ale
-call ale#linter#Define('eruby', {
-\   'name': 'erubis_rails',
-\   'executable': 'erubis',
-\   'output_stream': 'stderr',
-\   'command': "ruby -pe '$_.gsub!(\"<%=\", \"<%\")' %t | erubis -x | ruby -c",
-\   'callback': 'ale#handlers#ruby#HandleSyntaxErrors',
-\})
 let g:ale_linters = {
   \ 'javascript': ['eslint'],
   \ 'typescript': ['tslint'],
@@ -208,6 +190,7 @@ let g:ale_linters = {
   \ 'eruby': [ 'erubis_rails' ],
   \ 'rust': [ 'rls' ],
   \ }
+let g:ale_rust_rls_toolchain = 'nightly-2018-03-07'
 let g:ale_lint_on_save = 1
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
@@ -217,16 +200,6 @@ let g:go_fmt_fail_silently = 1
 
 " projectionist
 let g:projectionist_heuristics = {
-      \ "src/*.lua" : {
-      \   "src/*.lua": {
-      \     "type": "lib",
-      \     "alternate": "spec/{}_spec.lua"
-      \   },
-      \   "spec/*_spec.lua": {
-      \     "type": "test",
-      \     "alternate": "src/{}.lua"
-      \   }
-      \ },
       \ "package.json" : {
       \   "*": {
       \     "dispatch": "CI=1 yarn test",
@@ -246,19 +219,13 @@ let g:projectionist_heuristics = {
       \   "*.tsx": {
       \     "type": "source",
       \     "alternate": "{}.test.tsx"
-      \   },
-      \ }}
-      \ "**/*.go" : {
-      \   "*_test.go": {
-      \     "type": "test",
-      \     "alternate": "{}.go"
-      \   },
-      \   "*.go": {
-      \     "type": "source",
-      \     "alternate": "{}_test.go",
-      \     "make": "go build",
-      \     "dispatch": "go test",
-      \   },
+      \   }
+      \ },
+      \ "Cargo.toml" : {
+      \   "*": {
+      \     "dispatch": "cargo test",
+      \     "make": "cargo build"
+      \   }
       \ }}
 
 let g:jsx_ext_required = 0
@@ -489,7 +456,7 @@ nnoremap <leader>e. :e <C-R>=CurDir().'/'<cr><cr>
 nnoremap <leader>ed :e <C-R>=CurDir().'/'<cr><cr>
 nnoremap <silent> <leader>en :enew<cr>
 nnoremap <leader>ee :e <C-R>=expand("%")<cr>
-nnoremap <silent> <leader>ev :tabnew $MYVIMRC<cr>
+nnoremap <silent> <leader>ev :tabnew ~/.vimrc<cr>
 
 " shortcut to jump to next conflict marker
 nnoremap <silent> <leader>fb :CtrlPBuffer<CR>
@@ -507,9 +474,7 @@ nnoremap <silent> <leader>fC :CtrlPChangeAll<CR>
 nnoremap <silent> <leader>fB :CtrlPBookmarkDir<CR>
 
 " g local map
-
-nmap <silent> <leader>h <Plug>DashSearch
-nmap <silent> <leader>H <Plug>DashGlobalSearch
+" h hint map
 
 nnoremap <silent> <leader>i :CtrlPBufTag<CR>
 nnoremap <silent> <leader>I :CtrlPBufTagAll<CR>
