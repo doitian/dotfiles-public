@@ -547,8 +547,12 @@ vnoremap <leader>y "*y
 nnoremap <silent> <leader>z :FZF<CR>
 
 nnoremap <silent> <leader>/t /\|.\{-}\|<CR>
-nnoremap <silent> <leader>/a :Ack! "\b<cword>\b"<cr>
-nnoremap <silent> <leader>/o :vimgrep /\<<C-R><C-w>\>/ %<cr>
+nnoremap <leader>A :Ack ''<Left>
+nnoremap <leader>/aa :Ack ''<Left>
+nnoremap <silent> <leader>/aw :Ack! "\b<cword>\b"<cr>
+nnoremap <leader>O :vimgrep // %<Left><Left><Left>
+nnoremap <leader>/oo :vimgrep // %<Left><Left><Left>
+nnoremap <silent> <leader>/ow :vimgrep /\<<C-R><C-w>\>/ %<cr>
 
 cnoremap <C-r><C-d> <C-r>=CurDir()."/"<cr>
 inoremap <C-r><C-d> <C-r>=CurDir()."/"<cr>
