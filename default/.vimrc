@@ -188,7 +188,7 @@ let g:ale_linters = {
   \ 'lua': ['luacheck', 'luac'],
   \ 'python': [ 'flake8' ],
   \ 'eruby': [ 'erubis_rails' ],
-  \ 'rust': [ 'rls' ],
+  \ 'rust': [],
   \ }
 let g:ale_rust_rls_toolchain = 'nightly-2018-03-07'
 let g:ale_lint_on_save = 1
