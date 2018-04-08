@@ -190,7 +190,6 @@ let g:ale_linters = {
   \ 'eruby': [ 'erubis_rails' ],
   \ 'rust': [],
   \ }
-let g:ale_rust_rls_toolchain = 'nightly-2018-03-07'
 let g:ale_lint_on_save = 1
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
