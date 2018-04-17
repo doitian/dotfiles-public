@@ -16,3 +16,5 @@ py?env
 .ipynb_checkpoints
 .vagrant
 rusty-tags.vi
+cscope.out
+cscope.files
