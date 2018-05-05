@@ -295,7 +295,7 @@ function! s:RunShellCommand(cmdline)
   endfor
   botright 5new
   setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nowrap
-  execute '$read !'. expanded_cmdline
+  execute '0read !'. expanded_cmdline
   setlocal nomodifiable
   1
 endfunction
