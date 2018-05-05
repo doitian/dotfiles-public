@@ -197,36 +197,6 @@ let g:ale_lint_on_filetype_changed = 0
 
 let g:go_fmt_fail_silently = 1
 
-" projectionist
-let g:projectionist_heuristics = {
-      \ "package.json": {
-      \   "*": {
-      \     "dispatch": "CI=1 yarn test",
-      \   },
-      \   "*.test.ts": {
-      \     "type": "test",
-      \     "alternate": "{}.ts"
-      \   },
-      \   "*.ts": {
-      \     "type": "source",
-      \     "alternate": "{}.test.ts"
-      \   },
-      \   "*.test.tsx": {
-      \     "type": "test",
-      \     "alternate": "{}.tsx"
-      \   },
-      \   "*.tsx": {
-      \     "type": "source",
-      \     "alternate": "{}.test.tsx"
-      \   }
-      \ },
-      \ "Cargo.toml": {
-      \   "*": {
-      \     "dispatch": "cargo test",
-      \     "make": "cargo build"
-      \   }
-      \ }}
-
 let g:jsx_ext_required = 0
 
 " Functions & Commands {{{1
@@ -268,7 +238,7 @@ function! s:CloseDisturbingWin()
     if s:currentWindow > l:currentWindow
       let s:currentWindow = s:currentWindow - 1
     endif
-    if l:currentWindow == winnr("$")
+    if winnr("$") == 1
       enew
     else
       close
@@ -283,23 +253,6 @@ command! Close :pclose | :cclose | :lclose |
 command! Reload :source ~/.vimrc | :filetype detect | :nohl
 command! Clear :CtrlPClearCache | :silent! %bd | :silent! argd * | :nohl
 
-command! -complete=shellcmd -nargs=+ Shell call s:RunShellCommand(<q-args>)
-function! s:RunShellCommand(cmdline)
-  echo a:cmdline
-  let expanded_cmdline = a:cmdline
-  for part in split(a:cmdline, ' ')
-     if part[0] =~ '\v[%#<]'
-        let expanded_part = fnameescape(expand(part))
-        let expanded_cmdline = substitute(expanded_cmdline, part, expanded_part, '')
-     endif
-  endfor
-  botright 5new
-  setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nowrap
-  execute '0read !'. expanded_cmdline
-  setlocal nomodifiable
-  1
-endfunction
-
 function! CurDir()
   if &filetype == "netrw"
     return b:netrw_curdir
@@ -308,13 +261,13 @@ function! CurDir()
   endif
 endfunction
 
-command! -complete=dir -nargs=1 Tcd :tabnew | :lcd <args>
 command! -bang Z call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'lcd'}, <bang>0))
 command! -bang D call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd'}, <bang>0))
 command! -bang F call fzf#run(fzf#wrap('F', {'source': 'fasd -lRf'}, <bang>0))
 command! -bang T :tabnew | Z
 
 " Config {{{1
+set mouse=a
 set autoread
 set expandtab
 set shiftwidth=2

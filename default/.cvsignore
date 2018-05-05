@@ -18,3 +18,4 @@ py?env
 rusty-tags.vi
 cscope.out
 cscope.files
+.projections.json
