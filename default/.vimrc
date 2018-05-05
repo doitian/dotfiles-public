@@ -263,12 +263,16 @@ if !exists(":DiffOrig")
 endif
 
 function! s:CloseDisturbingWin()
-  if &filetype == "help" || &filetype == "netrw" || &filetype == "vim-plug" || &filetype == "godoc"
+  if &filetype == "help" || &filetype == "netrw" || &filetype == "vim-plug" || &filetype == "godoc" || &filetype == ""
     let l:currentWindow = winnr()
     if s:currentWindow > l:currentWindow
       let s:currentWindow = s:currentWindow - 1
     endif
-    close
+    if l:currentWindow == winnr("$")
+      enew
+    else
+      close
+    endif
   endif
 endfunction
 command! Close :pclose | :cclose | :lclose |
@@ -470,8 +474,8 @@ nnoremap <silent> <leader>fB :CtrlPBookmarkDir<CR>
 nnoremap <silent> <leader>i :CtrlPBufTag<CR>
 nnoremap <silent> <leader>I :CtrlPBufTagAll<CR>
 
-nnoremap <leader>J :nnoremap <lt>buffer> <lt>leader>j :w\\|!<Up><Left><Left><Left><Left><Left>
-nnoremap <leader>j :nnoremap <lt>buffer> <lt>leader>j :w\\|!<Space><C-v><CR<C-v>><Left><Left><Left><Left><Left>
+nnoremap <leader>J :nnoremap <lt>buffer> <lt>leader>j :up\\|!<Up><Left><Left><Left><Left><Left>
+nnoremap <leader>j :nnoremap <lt>buffer> <lt>leader>j :up\\|!<Space><C-v><CR<C-v>><Left><Left><Left><Left><Left>
 
 nnoremap <silent> <leader>k :Close<CR>
 
@@ -528,10 +532,10 @@ nnoremap <leader>u :GundoToggle<CR>
 " Reselect text that was just pasted
 nnoremap <leader>v `[v`]
 
-nnoremap <leader>w :Neoformat<cr>:w<cr>
+nnoremap <silent> <leader>w :Neoformat<cr>:up<cr>
 
-nnoremap <leader>X :nnoremap <lt>leader>x :w\\|!<Up><Left><Left><Left><Left><Left>
-nnoremap <leader>x :nnoremap <lt>leader>x :w\\|!<Space><C-v><CR<C-v>><Left><Left><Left><Left><Left>
+nnoremap <leader>X :nnoremap <lt>leader>x :up\\|!<Up><Left><Left><Left><Left><Left>
+nnoremap <leader>x :nnoremap <lt>leader>x :up\\|!<Space><C-v><CR<C-v>><Left><Left><Left><Left><Left>
 
 nnoremap <leader>y "*y
 nnoremap <leader>Y "*yy
