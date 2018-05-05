@@ -199,7 +199,7 @@ let g:go_fmt_fail_silently = 1
 
 " projectionist
 let g:projectionist_heuristics = {
-      \ "package.json" : {
+      \ "package.json": {
       \   "*": {
       \     "dispatch": "CI=1 yarn test",
       \   },
@@ -220,7 +220,7 @@ let g:projectionist_heuristics = {
       \     "alternate": "{}.test.tsx"
       \   }
       \ },
-      \ "Cargo.toml" : {
+      \ "Cargo.toml": {
       \   "*": {
       \     "dispatch": "cargo test",
       \     "make": "cargo build"
@@ -346,7 +346,6 @@ set lazyredraw
 set laststatus=2
 
 set hidden
-set switchbuf=useopen
 set history=1000
 set tabpagemax=50
 set undolevels=1000
@@ -354,11 +353,7 @@ if v:version >= 730
   set undofile
   set undodir=~/.vim/.undo,/tmp
 endif
-if has("vms")
-  set nobackup
-else
-  set backup
-endif
+set backup
 set backupdir=~/.vim/backup//
 set viminfo=!,'30,\"80
 set sessionoptions-=options
@@ -370,9 +365,6 @@ set visualbell
 set noerrorbells
 
 " set ruler
-" set cursorline
-set number
-set relativenumber
 
 set spellfile=$HOME/.vim-spell-en.utf-8.add
 set spelllang=en_us
@@ -473,7 +465,7 @@ nnoremap <silent> <leader>fC :CtrlPChangeAll<CR>
 nnoremap <silent> <leader>fB :CtrlPBookmarkDir<CR>
 
 " g local map
-" h hint map
+" h unused
 
 nnoremap <silent> <leader>i :CtrlPBufTag<CR>
 nnoremap <silent> <leader>I :CtrlPBufTagAll<CR>
@@ -513,6 +505,8 @@ nnoremap <leader>P "*P
 " Tame the quickfix window (open/close using ,q)
 nnoremap <silent> <leader>Q :QFix<CR>
 nnoremap <silent> <leader>q :CtrlPQuickfix<CR>
+
+" r unused
 
 nnoremap <silent> <leader>sx :call ToggleTodoStatus(0)<cr>
 nnoremap <silent> <leader>sX :call ToggleTodoStatus(1)<cr>
