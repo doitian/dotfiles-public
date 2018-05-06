@@ -26,7 +26,6 @@ Plug 'tpope/vim-markdown'
 
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'editorconfig/editorconfig-vim'
-Plug 'mileszs/ack.vim'
 Plug 'mkitt/tabline.vim'
 Plug 'rizzatti/dash.vim'
 Plug 'sbdchd/neoformat'
@@ -128,10 +127,6 @@ let g:netrw_banner = 0
 let g:netrw_liststyle = 3
 
 let g:bufExplorerDisableDefaultKeyMapping = 1
-
-if s:has_ag
-  let g:ackprg = 'ag --vimgrep'
-endif
 
 let g:ctrlp_root_markers = []
 let g:ctrlp_switch_buffer = 'et'
@@ -279,7 +274,6 @@ set expandtab
 set foldlevelstart=0
 set foldmethod=marker
 set foldtext=MyFoldText()
-set grepformat=%f:%l:%c:%m
 set hidden
 set history=3000
 set hlsearch
@@ -296,8 +290,8 @@ set shiftwidth=2
 set sidescrolloff=5
 set smartcase
 set smarttab
-set spellfile=$HOME/.vim-spell-en.utf-8.add
-set spelllang=en_us
+set spellfile=$HOME/.vim-spell-en.utf-8.add,.vim-spell-en.utf-8.add
+set spelllang=en_us,cjk
 set tabpagemax=50
 set title
 set undolevels=1000
@@ -312,6 +306,7 @@ if v:version > 703
   set formatoptions+=1jmB
 endif
 if s:has_ag
+  set grepformat=%f:%l:%c:%m
   set grepprg=ag\ --vimgrep\ $*
 endif
 if !has("win32")
@@ -396,14 +391,16 @@ nnoremap <silent> <leader>fc :CtrlPChange<CR>
 nnoremap <silent> <leader>fC :CtrlPChangeAll<CR>
 nnoremap <silent> <leader>fB :CtrlPBookmarkDir<CR>
 
-nnoremap <leader>A :Ack ''<Left>
-nnoremap <leader>gaa :Ack ''<Left>
-nnoremap <silent> <leader>gaw :Ack! "\b<cword>\b"<cr>
-nnoremap <leader>O :vimgrep // %<Left><Left><Left>
-nnoremap <leader>goo :vimgrep // %<Left><Left><Left>
+nnoremap <leader>A :grep<space>
+nnoremap <leader>gaa :grep<space>
+nnoremap <silent> <leader>gaw :grep "\b<cword>\b"<cr>
+nnoremap <silent> <leader>gaW :grep "\b<cWORD>\b"<cr>
+nnoremap <leader>O :vimgrep //g %<Left><Left><Left>
+nnoremap <leader>goo :vimgrep //g %<Left><Left><Left>
 nnoremap <silent> <leader>gow :vimgrep /\<<C-R><C-w>\>/ %<cr>
+nnoremap <silent> <leader>goW :vimgrep /\<<C-R><C-a>\>/ %<cr>
 
-nnoremap <leader>gg :Fcd<cr>
+nnoremap <leader>gc :Fcd<cr>
 nnoremap <leader>gl :Flcd<cr>
 nnoremap <leader>gt :Ftcd<cr>
 
