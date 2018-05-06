@@ -4,6 +4,7 @@ endif
 set nocompatible
 scriptencoding utf-8
 set encoding=utf-8
+set termencoding=utf-8
 
 let loaded_matchparen = 1
 let s:has_ag = executable('ag')
@@ -27,6 +28,7 @@ Plug 'ctrlpvim/ctrlp.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'mileszs/ack.vim'
 Plug 'mkitt/tabline.vim'
+Plug 'rizzatti/dash.vim'
 Plug 'sbdchd/neoformat'
 Plug 'sjl/gundo.vim' " <leader>u
 Plug 'thinca/vim-visualstar' " * # g* g#
@@ -153,7 +155,6 @@ let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/](\.(git|hg|svn)|_build)$',
   \ 'file': '\v\.(meta)$',
   \ }
-let g:ctrlp_extensions = ['z', 'f']
 let g:ctrlp_buftag_types = {
   \ 'yaml'     : '--languages=ansible --ansible-types=k',
   \ }
@@ -188,11 +189,9 @@ let g:ale_linters = {
   \ 'lua': ['luacheck', 'luac'],
   \ 'python': [ 'flake8' ],
   \ 'eruby': [ 'erubis_rails' ],
-  \ 'rust': [],
   \ }
-let g:ale_lint_on_save = 1
-let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
+let g:ale_lint_delay = 3000
 let g:ale_lint_on_filetype_changed = 0
 
 let g:go_fmt_fail_silently = 1
@@ -261,75 +260,67 @@ function! CurDir()
   endif
 endfunction
 
-command! -bang Z call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'lcd'}, <bang>0))
-command! -bang D call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd'}, <bang>0))
-command! -bang F call fzf#run(fzf#wrap('F', {'source': 'fasd -lRf'}, <bang>0))
-command! -bang T :tabnew | Z
+command! -bang Fcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'cd'}, <bang>0))
+command! -bang Flcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'lcd'}, <bang>0))
+command! -bang Ftcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'tcd'}, <bang>0))
+command! -bang Fdir call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd'}, <bang>0))
+command! -bang Ffile call fzf#run(fzf#wrap('F', {'source': 'fasd -lRf'}, <bang>0))
 
 " Config {{{1
-set mouse=a
-set autoread
-set expandtab
-set shiftwidth=2
-set shiftround
-set backspace=indent,eol,start
+
 set autoindent
+set autoread
+set backspace=indent,eol,start
+set backup
+set backupdir=~/.vim/backup
 set copyindent
+set display+=lastline
+set expandtab
+set foldlevelstart=0
+set foldmethod=marker
+set foldtext=MyFoldText()
+set grepformat=%f:%l:%c:%m
+set hidden
+set history=3000
+set hlsearch
 set ignorecase
+set incsearch
+set laststatus=2
+set lazyredraw
+set mouse=a
+set noerrorbells
+set scrolloff=2
+set sessionoptions-=options
+set shiftround
+set shiftwidth=2
+set sidescrolloff=5
 set smartcase
 set smarttab
-set scrolloff=2
-set sidescrolloff=5
-set display+=lastline
-
+set spellfile=$HOME/.vim-spell-en.utf-8.add
+set spelllang=en_us
+set tabpagemax=50
+set title
+set undolevels=1000
+set viminfo=!,'30,\"80
 set virtualedit="block,insert"
-set hlsearch
-set incsearch
-if !has("win32")
-  set listchars=tab:▸\ ,trail:·,extends:>,precedes:<,nbsp:·
-endif
+set visualbell
+set wildignore=*.swp,*.bak,*.pyc,*.class,*.beam
+set wildmenu
+set wildmode=list:longest,full
 
 if v:version > 703
   set formatoptions+=1jmB
 endif
-
-set foldmethod=marker
-set foldlevelstart=0
-set foldtext=MyFoldText()
-
-set termencoding=utf-8
-set encoding=utf-8
-set lazyredraw
-set laststatus=2
-
-set hidden
-set history=1000
-set tabpagemax=50
-set undolevels=1000
-if v:version >= 730
-  set undofile
-  set undodir=~/.vim/.undo,/tmp
-endif
-set backup
-set backupdir=~/.vim/backup//
-set viminfo=!,'30,\"80
-set sessionoptions-=options
-set wildmenu
-set wildmode=list:longest,full
-set wildignore=*.swp,*.bak,*.pyc,*.class,*.beam
-set title
-set visualbell
-set noerrorbells
-
-" set ruler
-
-set spellfile=$HOME/.vim-spell-en.utf-8.add
-set spelllang=en_us
-
 if s:has_ag
   set grepprg=ag\ --vimgrep\ $*
 endif
-set grepformat=%f:%l:%c:%m
+if !has("win32")
+  set listchars=tab:▸\ ,trail:·,extends:>,precedes:<,nbsp:·
+endif
+if v:version >= 730
+  set undodir=~/.vim/.undo,/tmp
+  set undofile
+endif
 
 runtime! macros/matchit.vim
 
@@ -351,11 +342,6 @@ nmap <silent> ]C <Plug>(ale_last)
 
 inoremap <C-U> <C-G>u<C-U>
 
-nnoremap <C-e> 3<C-e>
-nnoremap <C-y> 3<C-y>
-nnoremap <silent> <C-n> :bnext<CR>
-nnoremap <silent> <C-p> :bNext<CR>
-
 " Use Q for formatting the current paragraph (or visual selection)
 vnoremap Q gq
 nnoremap Q gqap
@@ -369,19 +355,11 @@ inoremap <C-f> <C-x><C-f>
 " Quick yanking to the end of the line
 nnoremap Y y$
 
-noremap gH H
-noremap gL L
-noremap gM M
-noremap H 0
-noremap L $
-noremap M ^
-
 nmap gx <Plug>(Exchange)
 nmap gxx <Plug>(ExchangeLine)
 nmap gX <Plug>(ExchangeClear)
 vmap gx <Plug>(Exchange)
 
-nnoremap <silent> <leader>F :CtrlPClearAllCaches\|:CtrlP<cr>
 nnoremap <silent> <leader>1 <C-w>o
 nnoremap <silent> <leader>2 <C-w>o<C-w>s<C-w>w:b#<CR><C-w>w
 nnoremap <silent> <leader>3 <C-w>o<C-w>v<C-w>w:b#<CR><C-w>w
@@ -392,6 +370,7 @@ nnoremap <silent> <leader>b :CtrlPBuffer<CR>
 
 nnoremap <silent> <leader>cd :cd <C-R>=CurDir()<CR><CR>
 nnoremap <silent> <leader>lcd :lcd <C-R>=CurDir()<CR><CR>
+nnoremap <silent> <leader>tcd :tcd <C-R>=CurDir()<CR><CR>
 
 " Use ,d (or ,dd or ,dj or 20,dd) to delete a line without adding it to the
 " yanked stack (also, in visual mode)
@@ -406,11 +385,10 @@ nnoremap <silent> <leader>en :enew<cr>
 nnoremap <leader>ee :e <C-R>=expand("%")<cr>
 nnoremap <silent> <leader>ev :tabnew ~/.vimrc<cr>
 
-" shortcut to jump to next conflict marker
+nnoremap <silent> <leader>F :CtrlPClearAllCaches\|:CtrlP<cr>
 nnoremap <silent> <leader>fb :CtrlPBuffer<CR>
 nnoremap <silent> <leader>fd :CtrlPDir<CR>
-nnoremap <silent> <leader>ff :CtrlPF<CR>
-nnoremap <silent> <leader>fz :CtrlPZ<CR>
+nnoremap <silent> <leader>ff :Ffile<CR>
 nnoremap <silent> <leader>fh :CtrlPCurFile<CR>
 nnoremap <silent> <leader>fe :CtrlPQuickfix<CR>
 nnoremap <silent> <leader>fo :CtrlPLine<CR>
@@ -421,14 +399,24 @@ nnoremap <silent> <leader>fc :CtrlPChange<CR>
 nnoremap <silent> <leader>fC :CtrlPChangeAll<CR>
 nnoremap <silent> <leader>fB :CtrlPBookmarkDir<CR>
 
-" g local map
-" h unused
+nnoremap <leader>A :Ack ''<Left>
+nnoremap <leader>gaa :Ack ''<Left>
+nnoremap <silent> <leader>gaw :Ack! "\b<cword>\b"<cr>
+nnoremap <leader>O :vimgrep // %<Left><Left><Left>
+nnoremap <leader>goo :vimgrep // %<Left><Left><Left>
+nnoremap <silent> <leader>gow :vimgrep /\<<C-R><C-w>\>/ %<cr>
+
+nnoremap <leader>gg :Fcd<cr>
+nnoremap <leader>gl :Flcd<cr>
+nnoremap <leader>gt :Ftcd<cr>
+
+nnoremap <silent> <leader>H :Dash<space>
+nnoremap <silent> <leader>h :Dash<CR>
 
 nnoremap <silent> <leader>i :CtrlPBufTag<CR>
 nnoremap <silent> <leader>I :CtrlPBufTagAll<CR>
 
-nnoremap <leader>J :nnoremap <lt>buffer> <lt>leader>j :up\\|!<Up><Left><Left><Left><Left><Left>
-nnoremap <leader>j :nnoremap <lt>buffer> <lt>leader>j :up\\|!<Space><C-v><CR<C-v>><Left><Left><Left><Left><Left>
+" j localmap
 
 nnoremap <silent> <leader>k :Close<CR>
 
@@ -464,11 +452,8 @@ nnoremap <silent> <leader>Q :QFix<CR>
 nnoremap <silent> <leader>q :CtrlPQuickfix<CR>
 
 " r unused
+nnoremap <silent> <leader>r :Ffile<CR>
 
-nnoremap <silent> <leader>sx :call ToggleTodoStatus(0)<cr>
-nnoremap <silent> <leader>sX :call ToggleTodoStatus(1)<cr>
-vnoremap <silent> <leader>sx :call ToggleTodoStatus(0)<cr>
-vnoremap <silent> <leader>sX :call ToggleTodoStatus(1)<cr>
 " Strip all trailing whitespace from a file
 nnoremap <silent> <leader>sw :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<cr>
 
@@ -487,8 +472,7 @@ nnoremap <leader>v `[v`]
 
 nnoremap <silent> <leader>w :Neoformat<cr>:up<cr>
 
-nnoremap <leader>X :nnoremap <lt>leader>x :up\\|!<Up><Left><Left><Left><Left><Left>
-nnoremap <leader>x :nnoremap <lt>leader>x :up\\|!<Space><C-v><CR<C-v>><Left><Left><Left><Left><Left>
+nnoremap <leader>X :nnoremap <lt>leader>x :up\\|!<Up>
 
 nnoremap <leader>y "*y
 nnoremap <leader>Y "*yy
@@ -497,12 +481,6 @@ vnoremap <leader>y "*y
 nnoremap <silent> <leader>z :FZF<CR>
 
 nnoremap <silent> <leader>/t /\|.\{-}\|<CR>
-nnoremap <leader>A :Ack ''<Left>
-nnoremap <leader>/aa :Ack ''<Left>
-nnoremap <silent> <leader>/aw :Ack! "\b<cword>\b"<cr>
-nnoremap <leader>O :vimgrep // %<Left><Left><Left>
-nnoremap <leader>/oo :vimgrep // %<Left><Left><Left>
-nnoremap <silent> <leader>/ow :vimgrep /\<<C-R><C-w>\>/ %<cr>
 
 cnoremap <C-r><C-d> <C-r>=CurDir()."/"<cr>
 inoremap <C-r><C-d> <C-r>=CurDir()."/"<cr>
@@ -552,12 +530,12 @@ augroup spell_ft
 augroup END
 
 function! SetupLocalMapForGo()
-  nmap <buffer> <leader>gg :GoDeclsDir<cr>
-  nmap <buffer> <leader>gi :GoImports<cr>
-  nmap <buffer> <leader>gd :GoDoc<cr>
-  nmap <buffer> <leader>gt :GoTest<cr>
-  nmap <buffer> <leader>gaj :GoAddTags json<cr>
-  nmap <buffer> <leader>gax :GoAddTags xorm<cr>
+  nmap <buffer> <leader>jj :GoDeclsDir<cr>
+  nmap <buffer> <leader>ji :GoImports<cr>
+  nmap <buffer> <leader>jd :GoDoc<cr>
+  nmap <buffer> <leader>jt :GoTest<cr>
+  nmap <buffer> <leader>jaj :GoAddTags json<cr>
+  nmap <buffer> <leader>jax :GoAddTags xorm<cr>
   nmap <buffer> <leader>i :GoDecls<cr>
 endfunction
 
