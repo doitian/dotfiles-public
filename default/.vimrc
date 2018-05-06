@@ -346,14 +346,11 @@ inoremap <C-U> <C-G>u<C-U>
 vnoremap Q gq
 nnoremap Q gqap
 
-" make p in Visual mode replace the selected text with the yank register
-vnoremap <silent> p <Esc>:let current_reg = @"<CR>gvdi<C-R>=current_reg<CR><Esc>
-
 " Complete whole filenames/lines with a quicker shortcut key in insert mode
 inoremap <C-f> <C-x><C-f>
 
 " Quick yanking to the end of the line
-nnoremap Y y$
+nnoremap Y yg_
 
 nmap gx <Plug>(Exchange)
 nmap gxx <Plug>(ExchangeLine)
@@ -444,8 +441,8 @@ nnoremap <silent> <leader>oM :exe "silent !open -a 'Marked 2.app' " . shellescap
 nnoremap <silent> <leader>oo :exe "silent !open " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<cr>
 nmap <silent> <leader>ob <Plug>NetrwBrowseX
 
-nnoremap <leader>p "*p
-nnoremap <leader>P "*P
+nnoremap <leader>p "+p
+nnoremap <leader>P "+P
 
 " Tame the quickfix window (open/close using ,q)
 nnoremap <silent> <leader>Q :QFix<CR>
@@ -474,9 +471,9 @@ nnoremap <silent> <leader>w :Neoformat<cr>:up<cr>
 
 nnoremap <leader>X :nnoremap <lt>leader>x :up\\|!<Up>
 
-nnoremap <leader>y "*y
-nnoremap <leader>Y "*yy
-vnoremap <leader>y "*y
+nnoremap <leader>y "+y
+nnoremap <leader>Y "+yy
+vnoremap <leader>y "+y
 
 nnoremap <silent> <leader>z :FZF<CR>
 
