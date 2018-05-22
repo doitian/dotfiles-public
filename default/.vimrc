@@ -296,7 +296,7 @@ set spelllang=en_us,cjk
 set tabpagemax=50
 set title
 set undolevels=1000
-set viminfo=!,'30,\"80
+set viminfo=!,'100,<2000
 set virtualedit="block,insert"
 set visualbell
 set wildignore=*.swp,*.bak,*.pyc,*.class,*.beam
@@ -446,7 +446,6 @@ nnoremap <leader>P "+P
 nnoremap <silent> <leader>Q :QFix<CR>
 nnoremap <silent> <leader>q :CtrlPQuickfix<CR>
 
-" r unused
 nnoremap <silent> <leader>r :Ffile<CR>
 
 " Strip all trailing whitespace from a file

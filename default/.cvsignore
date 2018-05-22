@@ -17,6 +17,8 @@ py?env
 .vagrant
 rusty-tags.vi
 cscope.out
+cscope.in.out
+cscope.po.out
 cscope.files
 .projections.json
 .vim-spell-en.utf-8.add
