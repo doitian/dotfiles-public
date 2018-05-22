@@ -97,7 +97,7 @@ endif
 
 set noshowmode
 
-let g:airline_powerline_fonts=1 "NOREMOTE
+let g:airline_powerline_fonts = 1 "NOREMOTE
 let g:airline#extensions#obsession#enabled = 1
 if v:version >= 800
   let g:airline#extensions#ale#enabled = 1
@@ -113,7 +113,7 @@ if has("gui_running") || &t_Co > 16
     if !has("gui_running")
       let g:solarized_use16 = 1
     endif
-    colors solarized8_dark
+    colorscheme solarized8_dark
   endif
   set bg=dark
 else
