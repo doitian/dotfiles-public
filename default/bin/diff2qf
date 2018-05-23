@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+awk '
+  /^\+\+\+ b\// {
+    chunk = 0;
+    if (file != "") {
+      print "";
+    }
+
+    file = substr($2, 3, length($2) - 2);
+    next;
+  }
+
+  /^@@ / {
+    if (chunk) {
+      print "";
+    } else {
+      chunk = 3;
+    }
+    
+    gsub(/\+|,.*$/, "", $3);
+    printf("%s:%s:%s", file, $3, $5);
+    
+    for (i=6; i<=NF; ++i) {
+      printf(" " $i);
+    }
+
+    next;
+  }
+
+  chunk > 0 {
+    if (/^[-+]/) {
+      printf "\t" $0;
+      chunk -= 1;
+    } else {
+      chunk = 0;
+    }
+  }
+
+  END {
+    print "";
+  }
+'
