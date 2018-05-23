@@ -247,6 +247,7 @@ command! Close :pclose | :cclose | :lclose |
 
 command! Reload :source ~/.vimrc | :filetype detect | :nohl
 command! Clear :CtrlPClearCache | :silent! %bd | :silent! argd * | :nohl
+command! -nargs=* Diff2qf :cexpr system("diff2qf", system("git diff -U0 " . <q-args>))
 
 function! CurDir()
   if &filetype == "netrw"

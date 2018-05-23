@@ -2,7 +2,7 @@
 
 awk '
   /^\+\+\+ b\// {
-    chunk = 0;
+    chunk = -1;
     if (file != "") {
       print "";
     }
@@ -12,28 +12,21 @@ awk '
   }
 
   /^@@ / {
-    if (chunk) {
+    if (chunk >= 0) {
       print "";
-    } else {
-      chunk = 3;
     }
-    
+    chunk = 3;
+
     gsub(/\+|,.*$/, "", $3);
-    printf("%s:%s:%s", file, $3, $5);
-    
-    for (i=6; i<=NF; ++i) {
-      printf(" " $i);
-    }
+    printf("%s:%s:", file, $3);
 
     next;
   }
 
   chunk > 0 {
     if (/^[-+]/) {
-      printf "\t" $0;
+      printf("\t%s", substr($0, 2));
       chunk -= 1;
-    } else {
-      chunk = 0;
     }
   }
 
