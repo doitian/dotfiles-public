@@ -22,17 +22,11 @@ alias tu=tmux-up
 ##################################################
 # Git
 alias g="git"
-alias gn="git number -s"
-alias gna="git number add"
-alias gnc="git number -c"
 alias gst="git status"
 
 ##################################################
 # File
 alias tree='tree -CFA -I ".git" --dirsfirst'
-
-alias dud='du --max-depth=1 -h'
-alias duf='du -sh *'
 
 alias rm="rm -i"
 alias mv="mv -i"
@@ -74,16 +68,6 @@ alias di='dirs -v | head -n 10'
 ##################################################
 # System
 alias psg="ps auxw | grep -i"
-
-if which htop > /dev/null 2>&1; then
-  alias top=htop
-fi
-alias ttop='ps -e -o pcpu,pid,args --sort pcpu | sed "/^ 0.0 /d"'
-
-alias df="df -hT"
-alias du="du -hc"
-alias dus="du -S | sort -n"
-alias free="free -m"
 
 ##################################################
 # Utilities
