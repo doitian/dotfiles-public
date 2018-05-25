@@ -15,6 +15,7 @@ endif
 " Plug {{{1
 call plug#begin('~/.vim/plugged')
 
+" filetypes
 Plug 'Glench/Vim-Jinja2-Syntax'
 Plug 'cespare/vim-toml'
 Plug 'fatih/vim-go'
@@ -24,6 +25,7 @@ Plug 'pangloss/vim-javascript'
 Plug 'rust-lang/rust.vim'
 Plug 'tpope/vim-markdown'
 
+" other
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'mkitt/tabline.vim'
@@ -36,6 +38,7 @@ Plug 'tomtom/tcomment_vim' " gc
 Plug 'tpope/vim-abolish' " :A :S
 Plug 'tpope/vim-dispatch' " <leader>t
 Plug 'tpope/vim-endwise'
+Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround' " ys s
@@ -496,12 +499,6 @@ augroup restore_position
     \ endif
 augroup END
 
-augroup qf_window
-    autocmd!
-    autocmd QuickFixCmdPost [^l]* cwindow
-    autocmd QuickFixCmdPost l*    lwindow
-augroup END
-
 augroup mardown_ft
   au!
 
@@ -509,7 +506,7 @@ augroup mardown_ft
   autocmd filetype markdown syntax region frontmattertoml start=/\%^+++$/ end=/^+++$/
   autocmd filetype markdown highlight link frontmatter Comment
   autocmd filetype markdown highlight link frontmattertoml Comment
-augroup end
+augroup END
 
 augroup jinjia2_ft
   au!
