@@ -304,6 +304,10 @@ set wildignore=*.swp,*.bak,*.pyc,*.class,*.beam
 set wildmenu
 set wildmode=list:longest,full
 
+if has("cscope")
+  set cscopetag
+  set cscopequickfix=s-,c-,d-,i-,t-,e-,a-
+endif
 if v:version > 703
   set formatoptions+=1jmB
 endif
@@ -376,6 +380,7 @@ nnoremap <leader>eh :e <C-R>=CurDir().'/'<cr>
 nnoremap <leader>e. :e <C-R>=CurDir().'/'<cr><cr>
 nnoremap <leader>ed :e <C-R>=CurDir().'/'<cr><cr>
 nnoremap <silent> <leader>en :enew<cr>
+nnoremap <silent> <leader>et :tabnew<cr>
 nnoremap <leader>ee :e <C-R>=expand("%")<cr>
 nnoremap <silent> <leader>ev :tabnew ~/.vimrc<cr>
 
@@ -489,6 +494,12 @@ augroup restore_position
     \ if line("'\"") > 1 && line("'\"") <= line("$") && &filetype != "gitcommit" |
     \   exe "normal! g`\"" |
     \ endif
+augroup END
+
+augroup qf_window
+    autocmd!
+    autocmd QuickFixCmdPost [^l]* cwindow
+    autocmd QuickFixCmdPost l*    lwindow
 augroup END
 
 augroup mardown_ft
