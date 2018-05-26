@@ -24,6 +24,7 @@ Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
 Plug 'rust-lang/rust.vim'
 Plug 'tpope/vim-markdown'
+Plug 'vim-ruby/vim-ruby'
 
 " other
 Plug 'ctrlpvim/ctrlp.vim'
@@ -39,6 +40,7 @@ Plug 'tpope/vim-dispatch' " <leader>t
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-obsession'
+Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround' " ys s
 Plug 'tpope/vim-unimpaired' " various [, ] mappings
@@ -47,16 +49,10 @@ Plug 'wellle/targets.vim' " Text objects
 if has("gui_running") || &t_Co > 16
   Plug 'lifepillar/vim-solarized8'
 endif
-if !has('win32')
-  Plug 'tpope/vim-dotenv'
-endif
-if has('unix')
-  Plug 'tpope/vim-eunuch' " linux commands
-endif
 
-if !has('win32') && !executable('regedit.exe')
-  Plug 'tpope/vim-projectionist'
-  Plug 'vim-ruby/vim-ruby'
+if has('unix')
+  Plug 'tpope/vim-dotenv'
+  Plug 'tpope/vim-eunuch' " linux commands
 endif
 
 if has('python') || has('python3')
