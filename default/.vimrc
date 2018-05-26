@@ -256,6 +256,7 @@ set laststatus=2
 set lazyredraw
 set mouse=a
 set noerrorbells
+set nofoldenable
 set noshowmode
 set scrolloff=2
 set sessionoptions-=options
