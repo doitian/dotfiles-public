@@ -14,14 +14,12 @@ function git_prompt_info() {
   local info="$(__git_ps1 "%s")"
   if [ -n "$info" ]; then
     local dirty="$(parse_git_dirty)"
-    local fg=black
-    local bg=green
+    local fg=green
     if [ -n "$dirty" ]; then
-      fg=white
-      bg=red
+      fg=red
     fi
 
-    echo "%K{$bg}"$'\ue0b0'"%F{$fg} $info %F{$bg}"
+    echo " %F{$fg}$info"
   fi
 }
 
@@ -32,29 +30,28 @@ if ! which rbenv &> /dev/null; then
 fi
 function universe_env_info() {
   local rbenv_info virtualenv_info
-  local sep=" "
   if [ -n "$ZSH_THEME_ENABLE_RBENV" ]; then
     rbenv_info="$(rbenv version)"
     if ! [ "${rbenv_info#*set by }" = "$HOME/.rbenv/version)" ]; then
-      echo -n "%F{red}rb»%F{black}${rbenv_info%% *} "
+      echo -n " %F{cyan}rb»%f${rbenv_info%% *}"
     fi
-  fi
-  if [ -n "$CONDA_DEFAULT_ENV" ]; then
-    echo -n "%F{blue}conda»%F{black}${CONDA_DEFAULT_ENV} "
   fi
   if [ -n "$VIRTUAL_ENV" ]; then
     name="${VIRTUAL_ENV%/py2env}"
     name="${name%/py3env}"
-    echo -n "%F{blue}py»%F{black}$(basename "$name") "
+    if [ -n "$PIPENV_ACTIVE" ]; then
+      name="${name%-*}"
+    fi
+    echo -n " %F{cyan}py»%f$(basename "$name")"
   fi
 }
 
-RPROMPT='%(1j.%K{black}%F{yellow}'$'\ue0b2''%F{white}%K{yellow} %j .)%(?..%F{red}%(1j|%K{yellow}|%K{black})'$'\ue0b2''%F{white}%K{red} %? %f%k'
-if [ -z "$SSH_CONNECTION" ]; then
-  PROMPT='
-%F{white}%K{blue} %(4~|%-1~/…/%2~|%~) %F{blue}$(git_prompt_info)%K{white}'$'\ue0b0'' %K{white}$(universe_env_info)%k%F{white}'$'\ue0b0'' %f%k'
-else
+PROMPT_HOST=
+if [ -n "$SSH_CONNECTION" ]; then
   HOSTNAME=$(hostname -f)
-  PROMPT='
-%F{black}%K{yellow} $HOSTNAME %F{yellow}%K{blue}'$'\ue0b0''%F{white} %(4~|%-1~/…/%2~|%~) %F{blue}$(git_prompt_info)%K{white}'$'\ue0b0'' %K{white}$(universe_env_info)%k%F{white}'$'\ue0b0'' %f%k'
+  PROMPT_HOST='%F{yellow}$HOSTNAME%f:'
 fi
+PROMPT='%(?..%F{red}%?⏎
+)%f
+# '"$PROMPT_HOST"'%F{blue}%(4~|%-1~/…/%2~|%~)%f%(1j. %F{yellow}%%%j.)$(git_prompt_info)$(universe_env_info)%f
+%{$bold_color%}$%{$reset_color%} '

@@ -246,6 +246,7 @@ set smartcase
 set smarttab
 set spellfile=$HOME/.vim-spell-en.utf-8.add,.vim-spell-en.utf-8.add
 set spelllang=en_us,cjk
+set statusline=%<%f\ %m%r%=%l\ %P
 set tabpagemax=50
 set title
 set undolevels=1000
@@ -375,12 +376,7 @@ noremap <silent> <leader>lt :tags<CR>
 noremap <silent> <leader>lm :marks<cr>
 noremap <silent> <leader>lr :registers<cr>
 noremap <silent> <leader>l@ :registers<cr>
-noremap <silent> <leader>lbe :BufExplorer<CR>
-noremap <silent> <leader>lbt :ToggleBufExplorer<CR>
-noremap <silent> <leader>lbb :ToggleBufExplorer<CR>
-noremap <silent> <leader>lbl :ls<CR>
-noremap <silent> <leader>lbs :BufExplorerHorizontalSplit<CR>
-noremap <silent> <leader>lbv :BufExplorerVerticalSplit<CR>
+noremap <silent> <leader>lb :ls<CR>
 
 nnoremap <silent> <leader>m :Make<CR>
 nnoremap <silent> <leader>M :Make!<CR>
@@ -494,6 +490,11 @@ augroup END
 augroup rust_ft
   au!
   au BufRead *.rs :setlocal tags=./rusty-tags.vi;/
+augroup END
+
+augroup cmd_win
+  au!
+	au CmdwinEnter * map <buffer> <C-w><C-w> <CR>q:dd
 augroup END
 
 autocmd FileType netrw setl bufhidden=wipe
