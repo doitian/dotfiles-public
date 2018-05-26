@@ -29,7 +29,6 @@ Plug 'tpope/vim-markdown'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'mkitt/tabline.vim'
-Plug 'rizzatti/dash.vim'
 Plug 'sbdchd/neoformat'
 Plug 'sjl/gundo.vim' " <leader>u
 Plug 'thinca/vim-visualstar' " * # g* g#
@@ -47,26 +46,17 @@ Plug 'wellle/targets.vim' " Text objects
 
 if has("gui_running") || &t_Co > 16
   Plug 'lifepillar/vim-solarized8'
-  Plug 'bling/vim-airline'
 endif
 if !has('win32')
   Plug 'tpope/vim-dotenv'
 endif
-
 if has('unix')
   Plug 'tpope/vim-eunuch' " linux commands
 endif
-if v:version >= 800
-  Plug 'w0rp/ale' " ]c, [c
-end
 
 if !has('win32') && !executable('regedit.exe')
   Plug 'tpope/vim-projectionist'
   Plug 'vim-ruby/vim-ruby'
-endif
-
-if v:version > 703
-  Plug 'jlanzarotta/bufexplorer' " ,lb
 endif
 
 if has('python') || has('python3')
@@ -100,12 +90,6 @@ endif
 
 set noshowmode
 
-let g:airline_powerline_fonts = 1 "NOREMOTE
-let g:airline#extensions#obsession#enabled = 1
-if v:version >= 800
-  let g:airline#extensions#ale#enabled = 1
-end
-
 if has("gui_running") || &t_Co > 2
   syntax on
 endif
@@ -128,8 +112,6 @@ hi! link QuickFixLine Search
 " Plugins Options {{{1
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
-
-let g:bufExplorerDisableDefaultKeyMapping = 1
 
 let g:ctrlp_root_markers = []
 let g:ctrlp_switch_buffer = 'et'
@@ -179,19 +161,6 @@ endfunction
 if has("autocmd")
   autocmd VimEnter * :call SetupCtrlP()
 endif
-
-" ale
-let g:ale_linters = {
-  \ 'javascript': ['eslint'],
-  \ 'typescript': ['tslint'],
-  \ 'lua': ['luacheck', 'luac'],
-  \ 'python': [ 'flake8' ],
-  \ 'eruby': [ 'erubis_rails' ],
-  \ 'rust': [],
-  \ }
-let g:ale_lint_on_enter = 0
-let g:ale_lint_delay = 3000
-let g:ale_lint_on_filetype_changed = 0
 
 let g:go_fmt_fail_silently = 1
 
@@ -297,6 +266,7 @@ set smartcase
 set smarttab
 set spellfile=$HOME/.vim-spell-en.utf-8.add,.vim-spell-en.utf-8.add
 set spelllang=en_us,cjk
+set statusline=%<%y\ %f%(\ [%M%R]%)%=%3l\ %P
 set tabpagemax=50
 set title
 set undolevels=1000
@@ -338,11 +308,6 @@ set pastetoggle=<F2>
 
 " Avoid accidental hits of <F1> while aiming for <Esc>
 noremap! <F1> <Esc>
-
-nmap <silent> [c <Plug>(ale_previous_wrap)
-nmap <silent> [C <Plug>(ale_first)
-nmap <silent> ]c <Plug>(ale_next_wrap)
-nmap <silent> ]C <Plug>(ale_last)
 
 inoremap <C-U> <C-G>u<C-U>
 
@@ -414,8 +379,7 @@ nnoremap <leader>gc :Fcd<cr>
 nnoremap <leader>gl :Flcd<cr>
 nnoremap <leader>gt :Ftcd<cr>
 
-nnoremap <silent> <leader>H :Dash<space>
-nnoremap <silent> <leader>h :Dash<CR>
+" h unused
 
 nnoremap <silent> <leader>i :CtrlPBufTag<CR>
 nnoremap <silent> <leader>I :CtrlPBufTagAll<CR>
@@ -452,8 +416,8 @@ nnoremap <leader>p "+p
 nnoremap <leader>P "+P
 
 " Tame the quickfix window (open/close using ,q)
-nnoremap <silent> <leader>Q :QFix<CR>
-nnoremap <silent> <leader>q :CtrlPQuickfix<CR>
+nnoremap <silent> <leader>Q :caddfile errors.txt<CR>
+nnoremap <silent> <leader>q :QFix<CR>
 
 nnoremap <silent> <leader>r :Ffile<CR>
 
@@ -526,7 +490,6 @@ augroup bats_ft
   autocmd BufNewFile,BufRead *.bats set ft=sh
 augroup END
 
-
 augroup spell_ft
   au!
   autocmd FileType gitcommit,markdown,text,rst setlocal spell
@@ -550,6 +513,12 @@ augroup END
 augroup rust_ft
   au!
   au BufRead *.rs :setlocal tags=./rusty-tags.vi;/
+augroup END
+
+augroup active_cursorline
+  au!
+  autocmd WinEnter * set cursorline
+  autocmd WinLeave * set nocursorline
 augroup END
 
 autocmd FileType netrw setl bufhidden=wipe
