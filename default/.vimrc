@@ -92,14 +92,10 @@ if has("gui_running") || &t_Co > 2
   syntax on
 endif
 if has("gui_running") || &t_Co > 16
-  if filereadable(expand("~/.vimcolor"))
-    exec "colors " . readfile(expand("~/.vimcolor"))[0]
-  else
-    if !has("gui_running")
-      let g:solarized_use16 = 1
-    endif
-    colorscheme solarized8_dark
+  if !has("gui_running")
+    let g:solarized_use16 = 1
   endif
+  colorscheme solarized8_dark
   set bg=dark
 else
   hi! CursorLine NONE
@@ -241,7 +237,6 @@ set backspace=indent,eol,start
 set backup
 set backupdir=~/.vim/backup
 set copyindent
-set cursorline
 set display+=lastline
 set expandtab
 set foldlevelstart=0
@@ -267,7 +262,7 @@ set smartcase
 set smarttab
 set spellfile=$HOME/.vim-spell-en.utf-8.add,.vim-spell-en.utf-8.add
 set spelllang=en_us,cjk
-set statusline=%<%y\ %f%(\ [%M%R]%)%=%3l\ %P
+" set statusline=%<%f\ %m%=%y\ %3l\ %P
 set tabpagemax=50
 set title
 set undolevels=1000
@@ -513,12 +508,6 @@ augroup END
 augroup rust_ft
   au!
   au BufRead *.rs :setlocal tags=./rusty-tags.vi;/
-augroup END
-
-augroup active_cursorline
-  au!
-  autocmd WinEnter * set cursorline
-  autocmd WinLeave * set nocursorline
 augroup END
 
 autocmd FileType netrw setl bufhidden=wipe
