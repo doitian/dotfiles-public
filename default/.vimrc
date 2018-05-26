@@ -59,10 +59,6 @@ if has('python') || has('python3')
   Plug 'FelikZ/ctrlp-py-matcher'
 endif
 
-if v:version >= 747
-  Plug 'Shougo/echodoc.vim'
-endif
-
 call plug#end()
 
 set rtp+=/usr/local/opt/fzf
@@ -100,8 +96,6 @@ endif
 hi! link QuickFixLine Search
 
 " Plugins Options {{{1
-let g:netrw_banner = 0
-let g:netrw_liststyle = 3
 
 let g:ctrlp_root_markers = []
 let g:ctrlp_switch_buffer = 'et'
@@ -131,14 +125,6 @@ let g:ctrlp_buftag_types = {
 if has('python') || has('python3')
   let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 endif
-
-if v:version >= 800
-  set shortmess+=c
-endif
-set completeopt-=preview
-let g:echodoc#enable_at_startup = 1
-
-" CtrlP auto cache clearing.
 function! SetupCtrlP()
   if exists("g:loaded_ctrlp") && g:loaded_ctrlp
     augroup CtrlPExtension
@@ -152,8 +138,10 @@ if has("autocmd")
   autocmd VimEnter * :call SetupCtrlP()
 endif
 
-let g:go_fmt_fail_silently = 1
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
 
+let g:go_fmt_fail_silently = 1
 let g:jsx_ext_required = 0
 
 " Functions & Commands {{{1
@@ -286,6 +274,9 @@ endif
 if v:version >= 730
   set undodir=~/.vim/.undo,/tmp
   set undofile
+endif
+if v:version >= 800
+  set shortmess+=c
 endif
 
 runtime! macros/matchit.vim
