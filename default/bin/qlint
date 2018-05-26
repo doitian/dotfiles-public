@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+if [ "$#" = 0 ]; then
+  echo "qlint linter [args]" >&2
+  exit 1
+fi
+
+linter="$1"
+shift
+
+case "$linter" in
+  rust)
+    if [ -e "Cargo.toml" ]; then
+      cargo check "$@"
+    fi
+    ;;
+  *)
+    echo "Unknown linter: $linter" >&2
+    exit 2
+    ;;
+esac

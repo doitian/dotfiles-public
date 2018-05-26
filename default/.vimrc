@@ -258,7 +258,7 @@ set smartcase
 set smarttab
 set spellfile=$HOME/.vim-spell-en.utf-8.add,.vim-spell-en.utf-8.add
 set spelllang=en_us,cjk
-" set statusline=%<%f\ %m%=%y\ %3l\ %P
+set statusline=%<%f\ %m%=%y\ %3l\ %P
 set tabpagemax=50
 set title
 set undolevels=1000
@@ -408,7 +408,7 @@ nnoremap <leader>p "+p
 nnoremap <leader>P "+P
 
 " Tame the quickfix window (open/close using ,q)
-nnoremap <silent> <leader>Q :caddfile errors.txt<CR>
+nnoremap <silent> <leader>Q :cfile errors.txt<CR>
 nnoremap <silent> <leader>q :QFix<CR>
 
 nnoremap <silent> <leader>r :Ffile<CR>
@@ -418,11 +418,11 @@ nnoremap <silent> <leader>sw :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:noh
 
 nnoremap <leader>to :Copen<cr>
 nnoremap <leader>td :Dispatch<space>
-nnoremap <leader>tD :Dispatch!<space>
+nnoremap <leader>tk :Dispatch!<space>
 nnoremap <leader>tt :Dispatch<cr>
-nnoremap <leader>tT :Dispatch!<cr>
+nnoremap <leader>ty :Dispatch!<cr>
 nnoremap <leader>ts :Start<space>
-nnoremap <leader>tb :Start!<space>
+nnoremap <leader>tl :Start!<space>
 nnoremap <leader>tf :Focus<space>
 
 nnoremap <leader>u :GundoToggle<CR>
