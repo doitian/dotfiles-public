@@ -88,8 +88,6 @@ if has("gui_running")
   map! <S-Insert> <MiddleMouse>
 endif
 
-set noshowmode
-
 if has("gui_running") || &t_Co > 2
   syntax on
 endif
@@ -243,6 +241,7 @@ set backspace=indent,eol,start
 set backup
 set backupdir=~/.vim/backup
 set copyindent
+set cursorline
 set display+=lastline
 set expandtab
 set foldlevelstart=0
@@ -257,6 +256,7 @@ set laststatus=2
 set lazyredraw
 set mouse=a
 set noerrorbells
+set noshowmode
 set scrolloff=2
 set sessionoptions-=options
 set shiftround
@@ -456,7 +456,6 @@ inoremap <C-r><C-d> <C-r>=CurDir()."/"<cr>
 filetype indent plugin on
 augroup restore_position
   au!
-  autocmd FileType text setlocal textwidth=78
   autocmd BufReadPost *
     \ if line("'\"") > 1 && line("'\"") <= line("$") && &filetype != "gitcommit" |
     \   exe "normal! g`\"" |
