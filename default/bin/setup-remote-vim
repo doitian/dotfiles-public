@@ -25,12 +25,12 @@ set hidden
 
 function! HasPaste()
     if &paste
-        return 'PASTE MODE  '
+        return '[P]'
     en
     return ''
 endfunction
 
-set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l
+set statusline=%<%f\ %m%r%{HasPaste()}%=%l\ %P
 VIMRC
 }
 

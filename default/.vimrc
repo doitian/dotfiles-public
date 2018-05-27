@@ -145,6 +145,13 @@ let g:go_fmt_fail_silently = 1
 let g:jsx_ext_required = 0
 
 " Functions & Commands {{{1
+function! HasPaste()
+    if &paste
+        return '[P]'
+    en
+    return ''
+endfunction
+
 command! -bang -nargs=? QFix call QFixToggle(<bang>0)
 function! QFixToggle(forced)
   if exists("g:qfix_win") && a:forced == 0
@@ -246,7 +253,7 @@ set smartcase
 set smarttab
 set spellfile=$HOME/.vim-spell-en.utf-8.add,.vim-spell-en.utf-8.add
 set spelllang=en_us,cjk
-set statusline=%<%f\ %m%r%=%l\ %P
+set statusline=%<%f\ %m%r%{HasPaste()}%=%l\ %P
 set tabpagemax=50
 set title
 set undolevels=1000
