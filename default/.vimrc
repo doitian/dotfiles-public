@@ -184,8 +184,17 @@ if !exists(":DiffOrig")
     \ | wincmd p | diffthis
 endif
 
+let s:DisturbingFiletypes = {
+      \ "": 1,
+      \ "help": 1,
+      \ "netrw": 1,
+      \ "vim-plug": 1,
+      \ "godoc": 1,
+      \ "git": 1,
+      \ }
+
 function! s:CloseDisturbingWin()
-  if &filetype == "help" || &filetype == "netrw" || &filetype == "vim-plug" || &filetype == "godoc" || &filetype == ""
+  if has_key(s:DisturbingFiletypes, &filetype)
     let l:currentWindow = winnr()
     if s:currentWindow > l:currentWindow
       let s:currentWindow = s:currentWindow - 1
