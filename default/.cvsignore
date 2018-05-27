@@ -23,5 +23,5 @@ cscope.files
 .projections.json
 .vim-spell-en.utf-8.add
 .vim-spell-en.utf-8.add.spl
-cquery_cached_index
 errors.txt
+lmanage.sh
