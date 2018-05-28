@@ -11,10 +11,11 @@ function debug() {
 }
 
 
+: ${CLOUDIFY_TARGET_gdrive="$HOME/Google Drive/Locations"}
 : ${CLOUDIFY_TARGET_icloud="$HOME/Documents/Locations"}
 : ${CLOUDIFY_TARGET_onedrive="$HOME/OneDrive/Locations"}
 : ${CLOUDIFY_TARGET_dropbox="$HOME/Dropbox/Locations"}
-: ${CLOUDIFY_TARGET_DIRECTORY="$CLOUDIFY_TARGET_icloud"}
+: ${CLOUDIFY_TARGET_DIRECTORY="$CLOUDIFY_TARGET_gdrive"}
 
 CLOUDIFY_FORCE=
 CLOUDIFY_COMMAND=cloudify
@@ -130,13 +131,13 @@ function main() {
         echo ""
         echo "Move file to directory synced to cloud and replace original one with a symbol link. The file can be restored using -r and delete from cloud using -u."
         echo ""
-        echo "\t-r|--restore restores a file from cloud, a.k.a, makes symbol link to cloud file."
-        echo "\t-u|--uncloudify replaces symbol link with the real file, and delete it from cloud."
-        echo "\t-t|--target TARGET selects iCloud, OneDrive or Dropbox"
-        echo "\t-f|--force forces overwriting files"
+        echo -e "\t-r|--restore restores a file from cloud, a.k.a, makes symbol link to cloud file."
+        echo -e "\t-u|--uncloudify replaces symbol link with the real file, and delete it from cloud."
+        echo -e "\t-t|--target TARGET selects iCloud, Google Drive, OneDrive or Dropbox"
+        echo -e "\t-f|--force forces overwriting files"
         echo ""
-        echo "\t-h|--help shows this"
-        echo "\t-d|--debug prints debug messages"
+        echo -e "\t-h|--help shows this"
+        echo -e "\t-d|--debug prints debug messages"
         exit 0
         ;;
       -*)

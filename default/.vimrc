@@ -125,16 +125,17 @@ let g:ctrlp_buftag_types = {
 if has('python') || has('python3')
   let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 endif
+
 function! SetupCtrlP()
   if exists("g:loaded_ctrlp") && g:loaded_ctrlp
-    augroup CtrlPExtension
+    augroup ctrlp_au
       autocmd!
       autocmd FocusGained  * CtrlPClearCache
       autocmd BufWritePost * CtrlPClearCache
     augroup END
   endif
 endfunction
-if has("autocmd")
+if !exists("g:loaded_ctrlp") || !g:loaded_ctrlp
   autocmd VimEnter * :call SetupCtrlP()
 endif
 
@@ -184,14 +185,8 @@ if !exists(":DiffOrig")
     \ | wincmd p | diffthis
 endif
 
-let s:DisturbingFiletypes = {
-      \ "": 1,
-      \ "help": 1,
-      \ "netrw": 1,
-      \ "vim-plug": 1,
-      \ "godoc": 1,
-      \ "git": 1,
-      \ }
+let s:DisturbingFiletypes = { "": 1, "help": 1, "netrw": 1, "vim-plug": 1,
+      \ "godoc": 1, "git": 1, "man": 1 }
 
 function! s:CloseDisturbingWin()
   if has_key(s:DisturbingFiletypes, &filetype)
@@ -448,70 +443,68 @@ inoremap <C-r><C-d> <C-r>=CurDir()."/"<cr>
 
 " Filetype specific handling {{{1
 filetype indent plugin on
-augroup restore_position
-  au!
+augroup restore_position_au
+  autocmd!
   autocmd BufReadPost *
     \ if line("'\"") > 1 && line("'\"") <= line("$") && &filetype != "gitcommit" |
     \   exe "normal! g`\"" |
     \ endif
 augroup END
 
-augroup mardown_ft
-  au!
+augroup cmd_win_au
+  autocmd!
+  autocmd CmdwinEnter * map <buffer> <C-w><C-w> <CR>q:dd
+augroup END
 
+augroup mardown_au
+  autocmd!
   autocmd filetype markdown syntax region frontmatter start=/\%^---$/ end=/^---$/
   autocmd filetype markdown syntax region frontmattertoml start=/\%^+++$/ end=/^+++$/
   autocmd filetype markdown highlight link frontmatter Comment
   autocmd filetype markdown highlight link frontmattertoml Comment
 augroup END
 
-augroup jinjia2_ft
-  au!
-
+augroup jinjia2_au
+  autocmd!
   autocmd BufNewFile,BufRead *.j2 set ft=jinja
 augroup END
 
-augroup sls_ft
-  au!
-
+augroup sls_au
+  autocmd!
   autocmd BufNewFile,BufRead pillar.example set ft=sls
 augroup END
 
-augroup bats_ft
-  au!
-
+augroup bats_au
+  autocmd!
   autocmd BufNewFile,BufRead *.bats set ft=sh
 augroup END
 
-augroup spell_ft
-  au!
+augroup spell_au
+  autocmd!
   autocmd FileType gitcommit,markdown,text,rst setlocal spell
 augroup END
 
-function! SetupLocalMapForGo()
-  nmap <buffer> <leader>jj :GoDeclsDir<cr>
-  nmap <buffer> <leader>ji :GoImports<cr>
-  nmap <buffer> <leader>jd :GoDoc<cr>
-  nmap <buffer> <leader>jt :GoTest<cr>
-  nmap <buffer> <leader>jaj :GoAddTags json<cr>
-  nmap <buffer> <leader>jax :GoAddTags xorm<cr>
-  nmap <buffer> <leader>i :GoDecls<cr>
-endfunction
+augroup go_au
+  function! SetupLocalMapForGo()
+    nmap <buffer> <leader>jj :GoDeclsDir<cr>
+    nmap <buffer> <leader>ji :GoImports<cr>
+    nmap <buffer> <leader>jd :GoDoc<cr>
+    nmap <buffer> <leader>jt :GoTest<cr>
+    nmap <buffer> <leader>jaj :GoAddTags json<cr>
+    nmap <buffer> <leader>jax :GoAddTags xorm<cr>
+    nmap <buffer> <leader>i :GoDecls<cr>
+  endfunction
 
-augroup go_ft
-  au!
-  au FileType go call SetupLocalMapForGo()
+  autocmd!
+  autocmd FileType go call SetupLocalMapForGo()
 augroup END
 
-augroup rust_ft
-  au!
-  au BufRead *.rs :setlocal tags=./rusty-tags.vi;/
+augroup rust_au
+  autocmd!
+  autocmd BufRead *.rs :setlocal tags=./rusty-tags.vi;/
 augroup END
 
-augroup cmd_win
-  au!
-	au CmdwinEnter * map <buffer> <C-w><C-w> <CR>q:dd
+augroup netrw_au
+  autocmd!
+  autocmd FileType netrw setl bufhidden=wipe
 augroup END
-
-autocmd FileType netrw setl bufhidden=wipe
-

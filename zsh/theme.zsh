@@ -53,5 +53,5 @@ if [ -n "$SSH_CONNECTION" ]; then
 fi
 PROMPT='%(?..%F{red}%?⏎
 )%f
-# '"$PROMPT_HOST"'%F{blue}%(4~|%-1~/…/%2~|%~)%f%(1j. %F{yellow}%%%j.)$(git_prompt_info)$(universe_env_info)%f
-$ '
+# '"$PROMPT_HOST"'%F{blue}%(4~|%-1~/…/%2~|%~)%f$(git_prompt_info)$(universe_env_info)
+%(1j.%F{yellow}%%%j.)%f$ '
