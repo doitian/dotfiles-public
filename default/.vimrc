@@ -31,12 +31,12 @@ Plug 'ctrlpvim/ctrlp.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'mkitt/tabline.vim'
 Plug 'sbdchd/neoformat'
-Plug 'sjl/gundo.vim' " <leader>u
+Plug 'sjl/gundo.vim' " <Leader>u
 Plug 'thinca/vim-visualstar' " * # g* g#
 Plug 'tommcdo/vim-exchange' " gx gX
 Plug 'tomtom/tcomment_vim' " gc
 Plug 'tpope/vim-abolish' " :A :S
-Plug 'tpope/vim-dispatch' " <leader>t
+Plug 'tpope/vim-dispatch' " <Leader>t
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-obsession'
@@ -100,7 +100,7 @@ hi! link QuickFixLine Search
 let g:ctrlp_root_markers = []
 let g:ctrlp_switch_buffer = 'et'
 let g:ctrlp_working_path_mode = 'a'
-let g:ctrlp_map = '<leader><space>'
+let g:ctrlp_map = '<Leader><Space>'
 if s:has_ag
   let ctrlp_user_command_ag = 'ag %s -l --nocolor -g ""'
   if executable('regedit.exe')
@@ -303,7 +303,7 @@ set pastetoggle=<F2>
 " Avoid accidental hits of <F1> while aiming for <Esc>
 noremap! <F1> <Esc>
 
-inoremap <C-U> <C-G>u<C-U>
+inoremap <C-u> <C-g>u<C-u>
 
 " Use Q for formatting the current paragraph (or visual selection)
 vnoremap Q gq
@@ -320,126 +320,126 @@ nmap gxx <Plug>(ExchangeLine)
 nmap gX <Plug>(ExchangeClear)
 vmap gx <Plug>(Exchange)
 
-nnoremap <silent> <leader>1 <C-w>o
-nnoremap <silent> <leader>2 <C-w>o<C-w>s<C-w>w:b#<CR><C-w>w
-nnoremap <silent> <leader>3 <C-w>o<C-w>v<C-w>w:b#<CR><C-w>w
+nnoremap <silent> <Leader>1 <C-w>o
+nnoremap <silent> <Leader>2 <C-w>o<C-w>s<C-w>w:b#<CR><C-w>w
+nnoremap <silent> <Leader>3 <C-w>o<C-w>v<C-w>w:b#<CR><C-w>w
 
-nnoremap <leader>a :A<cr>
+nnoremap <Leader>a :A<CR>
 
-nnoremap <silent> <leader>b :CtrlPBuffer<CR>
+nnoremap <silent> <Leader>b :CtrlPBuffer<CR>
 
-nnoremap <silent> <leader>cd :cd <C-R>=CurDir()<CR><CR>
-nnoremap <silent> <leader>lcd :lcd <C-R>=CurDir()<CR><CR>
-nnoremap <silent> <leader>tcd :tcd <C-R>=CurDir()<CR><CR>
+nnoremap <silent> <Leader>cd :cd <C-r>=CurDir()<CR><CR>
+nnoremap <silent> <Leader>lcd :lcd <C-r>=CurDir()<CR><CR>
+nnoremap <silent> <Leader>tcd :tcd <C-r>=CurDir()<CR><CR>
 
 " Use ,d (or ,dd or ,dj or 20,dd) to delete a line without adding it to the
 " yanked stack (also, in visual mode)
-nnoremap <silent> <leader>d "_d
-vnoremap <silent> <leader>d "_d
+nnoremap <silent> <Leader>d "_d
+vnoremap <silent> <Leader>d "_d
 
-nnoremap <leader>e/ :e <C-R>=CurDir().'/'<cr>
-nnoremap <leader>eh :e <C-R>=CurDir().'/'<cr>
-nnoremap <leader>e. :e <C-R>=CurDir().'/'<cr><cr>
-nnoremap <leader>ed :e <C-R>=CurDir().'/'<cr><cr>
-nnoremap <silent> <leader>en :enew<cr>
-nnoremap <silent> <leader>et :tabnew<cr>
-nnoremap <leader>ee :e <C-R>=expand("%")<cr>
-nnoremap <silent> <leader>ev :tabnew ~/.vimrc<cr>
+nnoremap <Leader>e/ :e <C-r>=CurDir().'/'<CR>
+nnoremap <Leader>eh :e <C-r>=CurDir().'/'<CR>
+nnoremap <Leader>e. :e <C-r>=CurDir().'/'<CR><CR>
+nnoremap <Leader>ed :e <C-r>=CurDir().'/'<CR><CR>
+nnoremap <silent> <Leader>en :enew<CR>
+nnoremap <silent> <Leader>et :tabnew<CR>
+nnoremap <Leader>ee :e <C-r>=expand("%")<CR>
+nnoremap <silent> <Leader>ev :tabnew ~/.vimrc<CR>
 
-nnoremap <silent> <leader>F :CtrlPClearAllCaches\|:CtrlP<cr>
-nnoremap <silent> <leader>fb :CtrlPBuffer<CR>
-nnoremap <silent> <leader>fd :CtrlPDir<CR>
-nnoremap <silent> <leader>ff :Ffile<CR>
-nnoremap <silent> <leader>fh :CtrlPCurFile<CR>
-nnoremap <silent> <leader>fe :CtrlPQuickfix<CR>
-nnoremap <silent> <leader>fo :CtrlPLine<CR>
-nnoremap <silent> <leader>fr :CtrlPMRUFiles<CR>
-nnoremap <silent> <leader>ft :CtrlPTag<CR>
-nnoremap <silent> <leader>fg :CtrlPMixed<CR>
-nnoremap <silent> <leader>fc :CtrlPChange<CR>
-nnoremap <silent> <leader>fC :CtrlPChangeAll<CR>
-nnoremap <silent> <leader>fB :CtrlPBookmarkDir<CR>
+nnoremap <silent> <Leader>F :CtrlPClearAllCaches\|:CtrlP<CR>
+nnoremap <silent> <Leader>fb :CtrlPBuffer<CR>
+nnoremap <silent> <Leader>fd :CtrlPDir<CR>
+nnoremap <silent> <Leader>ff :Ffile<CR>
+nnoremap <silent> <Leader>fh :CtrlPCurFile<CR>
+nnoremap <silent> <Leader>fq :CtrlPQuickfix<CR>
+nnoremap <silent> <Leader>fo :CtrlPLine<CR>
+nnoremap <silent> <Leader>fr :CtrlPMRUFiles<CR>
+nnoremap <silent> <Leader>ft :CtrlPTag<CR>
+nnoremap <silent> <Leader>fg :CtrlPMixed<CR>
+nnoremap <silent> <Leader>fc :CtrlPChange<CR>
+nnoremap <silent> <Leader>fC :CtrlPChangeAll<CR>
 
-nnoremap <leader>A :grep<space>
-nnoremap <leader>gaa :grep<space>
-nnoremap <silent> <leader>gaw :grep "\b<cword>\b"<cr>
-nnoremap <silent> <leader>gaW :grep "\b<cWORD>\b"<cr>
-nnoremap <leader>O :vimgrep //g %<Left><Left><Left>
-nnoremap <leader>goo :vimgrep //g %<Left><Left><Left>
-nnoremap <silent> <leader>gow :vimgrep /\<<C-R><C-w>\>/ %<cr>
-nnoremap <silent> <leader>goW :vimgrep /\<<C-R><C-a>\>/ %<cr>
+nnoremap <Leader>A :grep<Space>
+nnoremap <Leader>gaa :grep<Space>
+nnoremap <silent> <Leader>gaw :grep "\b<cword>\b"<CR>
+nnoremap <silent> <Leader>gaW :grep "\b<cWORD>\b"<CR>
+nnoremap <Leader>O :vimgrep //g %<Left><Left><Left>
+nnoremap <Leader>goo :vimgrep //g %<Left><Left><Left><Left>
+nnoremap <silent> <Leader>gow :vimgrep /\<<C-r><C-w>\>/ %<CR>
+nnoremap <silent> <Leader>goW :vimgrep /\<<C-r><C-a>\>/ %<CR>
 
-nnoremap <leader>gc :Fcd<cr>
-nnoremap <leader>gl :Flcd<cr>
-nnoremap <leader>gt :Ftcd<cr>
+nnoremap <Leader>gc :Fcd<CR>
+nnoremap <Leader>gl :Flcd<CR>
+nnoremap <Leader>gt :Ftcd<CR>
 
 " h unused
 
-nnoremap <silent> <leader>i :CtrlPBufTag<CR>
-nnoremap <silent> <leader>I :CtrlPBufTagAll<CR>
+nnoremap <silent> <Leader>i :CtrlPBufTag<CR>
+nnoremap <silent> <Leader>I :CtrlPBufTagAll<CR>
 
 " j localmap
 
-nnoremap <silent> <leader>k :Close<CR>
+nnoremap <silent> <Leader>k :Close<CR>
 
-noremap <silent> <leader>ll :Lexplore<CR>
-noremap <silent> <leader>lt :tags<CR>
-noremap <silent> <leader>lm :marks<cr>
-noremap <silent> <leader>lr :registers<cr>
-noremap <silent> <leader>l@ :registers<cr>
-noremap <silent> <leader>lb :ls<CR>
+noremap <silent> <Leader>ll :Lexplore<CR>
+noremap <silent> <Leader>lt :tags<CR>
+noremap <silent> <Leader>lr :registers<CR>
+noremap <silent> <Leader>l@ :registers<CR>
+noremap <silent> <Leader>lb :ls<CR>:b<Space>
+noremap <silent> <Leader>lm :marks<CR>:normal! `
+noremap <silent> <Leader>lu :undolist<CR>:u<space>
 
-nnoremap <silent> <leader>m :Make<CR>
-nnoremap <silent> <leader>M :Make!<CR>
+nnoremap <silent> <Leader>m :Make<CR>
 
-nnoremap <silent> <leader>n :nohlsearch<CR>
+nnoremap <silent> <Leader>n :nohlsearch<CR>
 
-nnoremap <silent> <leader>ot :exe "silent !open -a 'Terminal.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<cr>
-nnoremap <silent> <leader>of :exe "silent !open -R " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<cr>
-nnoremap <silent> <leader>om :exe "silent !open -a 'Marked 2.app' " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<cr>
-nnoremap <silent> <leader>oM :exe "silent !open -a 'Marked 2.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<cr>
-nnoremap <silent> <leader>oo :exe "silent !open " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<cr>
-nmap <silent> <leader>ob <Plug>NetrwBrowseX
+nnoremap <silent> <Leader>ot :exe "silent !open -a 'Terminal.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
+nnoremap <silent> <Leader>of :exe "silent !open -R " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
+nnoremap <silent> <Leader>om :exe "silent !open -a 'Marked 2.app' " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
+nnoremap <silent> <Leader>oM :exe "silent !open -a 'Marked 2.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
+nnoremap <silent> <Leader>oo :exe "silent !open " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
+nmap <silent> <Leader>ob <Plug>NetrwBrowseX
 
-nnoremap <leader>p "+p
-nnoremap <leader>P "+P
+nnoremap <Leader>p "+p
+nnoremap <Leader>P "+P
 
 " Tame the quickfix window (open/close using ,q)
-nnoremap <silent> <leader>Q :cfile errors.txt<CR>
-nnoremap <silent> <leader>q :QFix<CR>
+nnoremap <silent> <Leader>Q :cfile errors.txt<CR>
+nnoremap <silent> <Leader>q :QFix<CR>
 
-nnoremap <silent> <leader>r :Ffile<CR>
+nnoremap <silent> <Leader>r :Ffile<CR>
 
 " Strip all trailing whitespace from a file
-nnoremap <silent> <leader>sw :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<cr>
+nnoremap <silent> <Leader>sw :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR>
 
-nnoremap <leader>to :Copen<cr>
-nnoremap <leader>td :Dispatch<space>
-nnoremap <leader>tk :Dispatch!<space>
-nnoremap <leader>tt :Dispatch<cr>
-nnoremap <leader>ty :Dispatch!<cr>
-nnoremap <leader>ts :Start<space>
-nnoremap <leader>tl :Start!<space>
-nnoremap <leader>tf :Focus<space>
+nnoremap <silent> <Leader>tm :Make!<CR>
+nnoremap <Leader>to :Copen<CR>
+nnoremap <Leader>tf :Focus<Space>
+nnoremap <Leader>td :Dispatch<Space>
+nnoremap <Leader>tk :Dispatch!<Space>
+nnoremap <Leader>tt :Dispatch<CR>
+nnoremap <Leader>ty :Dispatch!<CR>
+nnoremap <Leader>ts :Start<Space>
+nnoremap <Leader>tl :Start!<Space>
 
-nnoremap <leader>u :GundoToggle<CR>
+nnoremap <Leader>u :GundoToggle<CR>
 " Reselect text that was just pasted
-nnoremap <leader>v `[v`]
+nnoremap <Leader>v `[v`]
 
-nnoremap <silent> <leader>w :Neoformat<cr>:up<cr>
+nnoremap <silent> <Leader>w :Neoformat<CR>:up<CR>
 
-nnoremap <leader>X :nnoremap <lt>leader>x :up\\|!<Up>
+nnoremap <Leader>X :nnoremap <lt>Leader>x :up\\|!
 
-nnoremap <leader>y "+y
-nnoremap <leader>Y "+yy
-vnoremap <leader>y "+y
+nnoremap <Leader>y "+y
+nnoremap <Leader>Y "+yy
+vnoremap <Leader>y "+y
 
-nnoremap <silent> <leader>z :FZF<CR>
+nnoremap <silent> <Leader>z :FZF<CR>
 
-nnoremap <silent> <leader>/t /\|.\{-}\|<CR>
+nnoremap <silent> <Leader>/t /\|.\{-}\|<CR>
 
-cnoremap <C-r><C-d> <C-r>=CurDir()."/"<cr>
-inoremap <C-r><C-d> <C-r>=CurDir()."/"<cr>
+cnoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
+inoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
 
 " Filetype specific handling {{{1
 filetype indent plugin on
@@ -486,13 +486,13 @@ augroup END
 
 augroup go_au
   function! SetupLocalMapForGo()
-    nmap <buffer> <leader>jj :GoDeclsDir<cr>
-    nmap <buffer> <leader>ji :GoImports<cr>
-    nmap <buffer> <leader>jd :GoDoc<cr>
-    nmap <buffer> <leader>jt :GoTest<cr>
-    nmap <buffer> <leader>jaj :GoAddTags json<cr>
-    nmap <buffer> <leader>jax :GoAddTags xorm<cr>
-    nmap <buffer> <leader>i :GoDecls<cr>
+    nmap <buffer> <Leader>jj :GoDeclsDir<CR>
+    nmap <buffer> <Leader>ji :GoImports<CR>
+    nmap <buffer> <Leader>jd :GoDoc<CR>
+    nmap <buffer> <Leader>jt :GoTest<CR>
+    nmap <buffer> <Leader>jaj :GoAddTags json<CR>
+    nmap <buffer> <Leader>jax :GoAddTags xorm<CR>
+    nmap <buffer> <Leader>i :GoDecls<CR>
   endfunction
 
   autocmd!
