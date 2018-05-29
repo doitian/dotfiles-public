@@ -17,17 +17,21 @@ tab_width = 2
 [*.erl]
 indent_style = space
 indent_size = 4
+tab_width = 4
 
 [*.cs]
 indent_style = space
 indent_size = 4
+tab_width = 4
 
 [*.md]
 indent_style = space
 indent_size = 4
+tab_width = 4
 [*.markdown]
 indent_style = space
 indent_size = 4
+tab_width = 4
 
 [Makefile]
 indent_style = tab
@@ -48,7 +52,9 @@ indent_size = 2
 [*.py]
 indent_style = space
 indent_size = 4
+tab_width = 4
 
 [*.rs]
 indent_style = space
 indent_size = 4
+tab_width = 4

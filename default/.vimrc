@@ -72,9 +72,9 @@ if has("gui_running")
   endif
 
   " Remove toolbar, left scrollbar and right scrollbar
-  set guioptions-=TlLrR
+  set go-=e go-=r go-=L go-=T
   set guicursor+=a:blinkwait2000-blinkon1500 " blink slowly
-  set mousehide		" Hide the mouse when typing text
+  set mousehide " Hide the mouse when typing text
 
   map <S-Insert> <MiddleMouse>
   map! <S-Insert> <MiddleMouse>
@@ -247,6 +247,7 @@ set lazyredraw
 set mouse=a
 set noerrorbells
 set nofoldenable
+set nojoinspaces
 set noshowmode
 set scrolloff=2
 set sessionoptions-=options
@@ -258,6 +259,7 @@ set smarttab
 set spellfile=$HOME/.vim-spell-en.utf-8.add,.vim-spell-en.utf-8.add
 set spelllang=en_us,cjk
 set statusline=%<%f\ %m%r%{HasPaste()}%=%l\ %P
+set switchbuf=useopen
 set tabpagemax=50
 set title
 set undolevels=1000
@@ -267,6 +269,7 @@ set visualbell
 set wildignore=*.swp,*.bak,*.pyc,*.class,*.beam
 set wildmenu
 set wildmode=list:longest,full
+set winwidth=79
 
 if has("cscope")
   set cscopetag
@@ -443,48 +446,30 @@ inoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
 
 " Filetype specific handling {{{1
 filetype indent plugin on
-augroup restore_position_au
+
+augroup vimrc_au
   autocmd!
+
   autocmd BufReadPost *
     \ if line("'\"") > 1 && line("'\"") <= line("$") && &filetype != "gitcommit" |
     \   exe "normal! g`\"" |
     \ endif
-augroup END
 
-augroup cmd_win_au
-  autocmd!
   autocmd CmdwinEnter * map <buffer> <C-w><C-w> <CR>q:dd
-augroup END
 
-augroup mardown_au
-  autocmd!
+  autocmd BufNewFile,BufRead *.j2 set ft=jinja
+  autocmd BufNewFile,BufRead pillar.example set ft=sls
+  autocmd BufNewFile,BufRead *.bats set ft=sh
+
+  autocmd FileType gitcommit,markdown,text,rst setlocal spell textwidth=78
+  autocmd FileType rust :setlocal tags=./rusty-tags.vi;/
+  autocmd FileType netrw setl bufhidden=wipe
+
   autocmd filetype markdown syntax region frontmatter start=/\%^---$/ end=/^---$/
   autocmd filetype markdown syntax region frontmattertoml start=/\%^+++$/ end=/^+++$/
   autocmd filetype markdown highlight link frontmatter Comment
   autocmd filetype markdown highlight link frontmattertoml Comment
-augroup END
-
-augroup jinjia2_au
-  autocmd!
-  autocmd BufNewFile,BufRead *.j2 set ft=jinja
-augroup END
-
-augroup sls_au
-  autocmd!
-  autocmd BufNewFile,BufRead pillar.example set ft=sls
-augroup END
-
-augroup bats_au
-  autocmd!
-  autocmd BufNewFile,BufRead *.bats set ft=sh
-augroup END
-
-augroup spell_au
-  autocmd!
-  autocmd FileType gitcommit,markdown,text,rst setlocal spell
-augroup END
-
-augroup go_au
+  
   function! SetupLocalMapForGo()
     nmap <buffer> <Leader>jj :GoDeclsDir<CR>
     nmap <buffer> <Leader>ji :GoImports<CR>
@@ -494,17 +479,5 @@ augroup go_au
     nmap <buffer> <Leader>jax :GoAddTags xorm<CR>
     nmap <buffer> <Leader>i :GoDecls<CR>
   endfunction
-
-  autocmd!
   autocmd FileType go call SetupLocalMapForGo()
-augroup END
-
-augroup rust_au
-  autocmd!
-  autocmd BufRead *.rs :setlocal tags=./rusty-tags.vi;/
-augroup END
-
-augroup netrw_au
-  autocmd!
-  autocmd FileType netrw setl bufhidden=wipe
 augroup END

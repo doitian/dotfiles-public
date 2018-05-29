@@ -20,7 +20,7 @@ if [ -f /usr/bin/mdfind ]; then
   ulimit -u 2048 &> /dev/null
 fi
 
-export LESS='--RAW-CONTROL-CHARS --quiet --HILITE-UNREAD --ignore-case --long-prompt'
+export LESS='--RAW-CONTROL-CHARS --quiet --HILITE-UNREAD --ignore-case --long-prompt --no-init'
 export LANG=en_US.UTF-8
 export LC_CTYPE=$LANG
 export LC_ALL=$LANG
