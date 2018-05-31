@@ -7,7 +7,7 @@ set encoding=utf-8
 set termencoding=utf-8
 
 let loaded_matchparen = 1
-let s:has_ag = executable('ag')
+let s:has_rg = executable('rg')
 if has("nvim") && filereadable(expand("~/bin/python3"))
   let g:python3_host_prog = expand("~/bin/python3")
 endif
@@ -100,16 +100,13 @@ let g:ctrlp_root_markers = []
 let g:ctrlp_switch_buffer = 'et'
 let g:ctrlp_working_path_mode = 'a'
 let g:ctrlp_map = '<Leader><Space>'
-if s:has_ag
-  let ctrlp_user_command_ag = 'ag %s -l --nocolor -g ""'
-  if executable('regedit.exe')
-    let ctrlp_user_command_ag = 'ag -l --nocolor -g "" "." "%s"'
-  endif
+if s:has_rg
+  let ctrlp_user_command_rg = 'rg --hidden -g "!.git" --color never --files %s'
   let g:ctrlp_user_command = {
     \ 'types': {
       \ 1: ['.ctrlp_user_command_is_git', 'git -C %s ls-files --exclude-standard --others --cached'],
       \ },
-    \ 'fallback': ctrlp_user_command_ag
+    \ 'fallback': ctrlp_user_command_rg
     \ }
 else
   let g:ctrlp_user_command = ['.git', 'git -C %s ls-files --exclude-standard --others --cached']
@@ -290,9 +287,9 @@ endif
 if v:version > 703
   set formatoptions+=1jmB
 endif
-if s:has_ag
+if s:has_rg
   set grepformat=%f:%l:%c:%m
-  set grepprg=ag\ --vimgrep\ $*
+  set grepprg=rg\ --vimgrep\ $*
 endif
 if !has("win32")
   set listchars=tab:▸\ ,trail:·,extends:>,precedes:<,nbsp:·

@@ -59,7 +59,7 @@
 
   ls = ls-files
   grep = grep -Ii
-  ag = "!git ls-files | xargs ag"
+  rg = "!git ls-files -z | xargs -0 rg"
 
   assume = update-index --assume-unchanged
   unassume = update-index --no-assume-unchanged
@@ -76,7 +76,7 @@
 
   purr = pull --rebase
   current = "!f() { local remote=origin branch=$(git rev-parse --abbrev-ref HEAD) args=(); for a; do case \"$a\" in (-*) args=(\"${args[@]}\" \"$a\");; (*) remote=\"$a\" ;; esac; done; git push \"${args[@]}\" \"${remote}\" \"$branch:$branch\"; }; f"
-  new = "!f() { git init; cp ~/.cvsignore .gitignore; git add -f .gitignore; git commit -m 'initial commit'; }; f"
+  new = "!f() { git init; cp ~/.ignore .gitignore; git add -f .gitignore; git commit -m 'initial commit'; }; f"
 
   ready = rebase -i @{u}
   review = diff @{u}
@@ -106,7 +106,7 @@
   pushInsteadOf = https://github.com/
 
 [core]
-  excludesfile = "__HOME__/.cvsignore"
+  excludesfile = "__HOME__/.ignore"
   autocrlf = false
   pager = less -F -X
 

@@ -1,7 +1,7 @@
 
 [ -f "$HOME/.fzf.zsh" ] && source "$HOME/.fzf.zsh"
 _fzf_compgen_path() {
-  ag -l --nocolor -g "" "$1"
+  rg --hidden -g '!.git' --color never --files "$1"
 }
 
 type sx &> /dev/null && eval $(sx completions --init)
