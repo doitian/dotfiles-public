@@ -64,6 +64,8 @@ call plug#end()
 set rtp+=/usr/local/opt/fzf
 
 " Theme {{{1
+syntax on
+
 if has("gui_running")
   if has("win32")
     set guifont=Source\ Code\ Pro\ Medium:h12
@@ -78,11 +80,8 @@ if has("gui_running")
 
   map <S-Insert> <MiddleMouse>
   map! <S-Insert> <MiddleMouse>
-endif
+end
 
-if has("gui_running") || &t_Co > 2
-  syntax on
-endif
 if has("gui_running") || &t_Co > 16
   if !has("gui_running")
     let g:solarized_use16 = 1
@@ -224,6 +223,20 @@ command! -bang Ftcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': '
 command! -bang Fdir call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd'}, <bang>0))
 command! -bang Ffile call fzf#run(fzf#wrap('F', {'source': 'fasd -lRf'}, <bang>0))
 
+function! PushMark(is_global)
+  if a:is_global
+    let l:curr = char2nr('Z')
+  else
+    let l:curr = char2nr('z')
+  endif
+  let l:until = l:curr - 25
+  while l:curr > l:until
+    call setpos("'" . nr2char(l:curr), getpos("'" . nr2char(l:curr - 1)))
+    let l:curr -= 1
+  endwhile
+  call setpos("'" . nr2char(l:curr), getpos("."))
+endfunction
+
 " Config {{{1
 
 set autoindent
@@ -234,7 +247,6 @@ set backupdir=~/.vim/backup
 set copyindent
 set display+=lastline
 set expandtab
-set foldlevelstart=0
 set foldmethod=marker
 set foldtext=MyFoldText()
 set hidden
@@ -289,9 +301,6 @@ if v:version >= 730
   set undodir=~/.vim/.undo,/tmp
   set undofile
 endif
-if v:version >= 800
-  set shortmess+=c
-endif
 
 runtime! macros/matchit.vim
 
@@ -307,10 +316,6 @@ set pastetoggle=<F2>
 noremap! <F1> <Esc>
 
 inoremap <C-u> <C-g>u<C-u>
-
-" Use Q for formatting the current paragraph (or visual selection)
-vnoremap Q gq
-nnoremap Q gqap
 
 " Complete whole filenames/lines with a quicker shortcut key in insert mode
 inoremap <C-f> <C-x><C-f>
@@ -331,12 +336,10 @@ nnoremap <Leader>a :A<CR>
 
 nnoremap <silent> <Leader>b :CtrlPBuffer<CR>
 
-nnoremap <silent> <Leader>cd :cd <C-r>=CurDir()<CR><CR>
-nnoremap <silent> <Leader>lcd :lcd <C-r>=CurDir()<CR><CR>
-nnoremap <silent> <Leader>tcd :tcd <C-r>=CurDir()<CR><CR>
+nnoremap <Leader>cd :Fcd<CR>
+nnoremap <Leader>cl :Flcd<CR>
+nnoremap <Leader>ct :Ftcd<CR>
 
-" Use ,d (or ,dd or ,dj or 20,dd) to delete a line without adding it to the
-" yanked stack (also, in visual mode)
 nnoremap <silent> <Leader>d "_d
 vnoremap <silent> <Leader>d "_d
 
@@ -349,7 +352,7 @@ nnoremap <silent> <Leader>et :tabnew<CR>
 nnoremap <Leader>ee :e <C-r>=expand("%")<CR>
 nnoremap <silent> <Leader>ev :tabnew ~/.vimrc<CR>
 
-nnoremap <silent> <Leader>F :CtrlPClearAllCaches\|:CtrlP<CR>
+nnoremap <silent> <Leader>f<Space> :CtrlPClearAllCaches\|:CtrlP<CR>
 nnoremap <silent> <Leader>fb :CtrlPBuffer<CR>
 nnoremap <silent> <Leader>fd :CtrlPDir<CR>
 nnoremap <silent> <Leader>ff :Ffile<CR>
@@ -362,20 +365,11 @@ nnoremap <silent> <Leader>fg :CtrlPMixed<CR>
 nnoremap <silent> <Leader>fc :CtrlPChange<CR>
 nnoremap <silent> <Leader>fC :CtrlPChangeAll<CR>
 
-nnoremap <Leader>A :grep<Space>
-nnoremap <Leader>gaa :grep<Space>
-nnoremap <silent> <Leader>gaw :grep "\b<cword>\b"<CR>
-nnoremap <silent> <Leader>gaW :grep "\b<cWORD>\b"<CR>
-nnoremap <Leader>O :vimgrep //g %<Left><Left><Left>
-nnoremap <Leader>goo :vimgrep //g %<Left><Left><Left><Left>
-nnoremap <silent> <Leader>gow :vimgrep /\<<C-r><C-w>\>/ %<CR>
-nnoremap <silent> <Leader>goW :vimgrep /\<<C-r><C-a>\>/ %<CR>
+nnoremap <Leader>g<Space> :grep<Space>
+nnoremap <silent> <Leader>gw :silent grep "\b<cword>\b"<CR>:copen 10<CR>
+nnoremap <silent> <Leader>gW :silent grep "\b<cWORD>\b"<CR>:copen 10<CR>
 
-nnoremap <Leader>gc :Fcd<CR>
-nnoremap <Leader>gl :Flcd<CR>
-nnoremap <Leader>gt :Ftcd<CR>
-
-" h unused
+nnoremap <silent> <Leader>h :CtrlPCurFile<CR>
 
 nnoremap <silent> <Leader>i :CtrlPBufTag<CR>
 nnoremap <silent> <Leader>I :CtrlPBufTagAll<CR>
@@ -392,16 +386,14 @@ noremap <silent> <Leader>lb :ls<CR>:b<Space>
 noremap <silent> <Leader>lm :marks<CR>:normal! `
 noremap <silent> <Leader>lu :undolist<CR>:u<space>
 
-nnoremap <silent> <Leader>m :Make<CR>
+nnoremap <silent> <Leader>m :call PushMark(0)<CR>
+nnoremap <silent> <Leader>M :call PushMark(1)<CR>
 
 nnoremap <silent> <Leader>n :nohlsearch<CR>
 
-nnoremap <silent> <Leader>ot :exe "silent !open -a 'Terminal.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
-nnoremap <silent> <Leader>of :exe "silent !open -R " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
-nnoremap <silent> <Leader>om :exe "silent !open -a 'Marked 2.app' " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
-nnoremap <silent> <Leader>oM :exe "silent !open -a 'Marked 2.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
-nnoremap <silent> <Leader>oo :exe "silent !open " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
-nmap <silent> <Leader>ob <Plug>NetrwBrowseX
+nnoremap <Leader>o<Space> :vimgrep //g %<Left><Left><Left><Left>
+nnoremap <silent> <Leader>ow :silent vimgrep /\<<C-r><C-w>\>/ %<CR>:copen 10<CR>
+nnoremap <silent> <Leader>oW :silent vimgrep /\<<C-r><C-a>\>/ %<CR>:copen 10<CR>
 
 nnoremap <Leader>p "+p
 nnoremap <Leader>P "+P
@@ -410,13 +402,19 @@ nnoremap <Leader>P "+P
 nnoremap <silent> <Leader>Q :cfile errors.txt<CR>
 nnoremap <silent> <Leader>q :QFix<CR>
 
-nnoremap <silent> <Leader>r :Ffile<CR>
+" Reveal
+nnoremap <silent> <Leader>rt :exe "silent !open -a 'Terminal.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
+nnoremap <silent> <Leader>rf :exe "silent !open -R " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
+nnoremap <silent> <Leader>rm :exe "silent !open -a 'Marked 2.app' " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
+nnoremap <silent> <Leader>rM :exe "silent !open -a 'Marked 2.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
+nnoremap <silent> <Leader>ro :exe "silent !open " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
+nmap <silent> <Leader>rb <Plug>NetrwBrowseX
 
 " Strip all trailing whitespace from a file
 nnoremap <silent> <Leader>sw :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR>
 
 nnoremap <silent> <Leader>tm :Make!<CR>
-nnoremap <Leader>to :Copen<CR>
+nnoremap <Leader>tq :Copen<CR>
 nnoremap <Leader>tf :Focus<Space>
 nnoremap <Leader>td :Dispatch<Space>
 nnoremap <Leader>tk :Dispatch!<Space>
@@ -461,9 +459,9 @@ augroup vimrc_au
   autocmd BufNewFile,BufRead pillar.example set ft=sls
   autocmd BufNewFile,BufRead *.bats set ft=sh
 
-  autocmd FileType gitcommit,markdown,text,rst setlocal spell textwidth=78
+  autocmd FileType gitcommit,markdown,text,rst setlocal spell textwidth=78 fo+=a
   autocmd FileType rust :setlocal tags=./rusty-tags.vi;/
-  autocmd FileType netrw setl bufhidden=wipe
+  autocmd FileType netrw setlocal bufhidden=wipe
 
   autocmd filetype markdown syntax region frontmatter start=/\%^---$/ end=/^---$/
   autocmd filetype markdown syntax region frontmattertoml start=/\%^+++$/ end=/^+++$/
