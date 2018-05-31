@@ -88,7 +88,7 @@ if [ type rustc &> /dev/null ]; then
 fi
 
 # fzf
-export FZF_DEFAULT_COMMAND='rg --hidden -g "!.git" --color nerver --files'
+export FZF_DEFAULT_COMMAND='rg --hidden -g "!.git" --color never --files'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 export PATH="\

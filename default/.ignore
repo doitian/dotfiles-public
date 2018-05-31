@@ -26,3 +26,4 @@ cscope.files
 errors.txt
 lmake.mk
 .git
+.ignore

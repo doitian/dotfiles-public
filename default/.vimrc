@@ -289,7 +289,7 @@ if v:version > 703
 endif
 if s:has_rg
   set grepformat=%f:%l:%c:%m
-  set grepprg=rg\ -g\ '!.git'\ --vimgrep\ $*
+  set grepprg=rg\ --hidden\ -g\ '!.git'\ --vimgrep\ $*
 endif
 if !has("win32")
   set listchars=tab:▸\ ,trail:·,extends:>,precedes:<,nbsp:·
