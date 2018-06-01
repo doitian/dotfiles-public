@@ -18,13 +18,16 @@ call plug#begin('~/.vim/plugged')
 " filetypes
 Plug 'Glench/Vim-Jinja2-Syntax'
 Plug 'cespare/vim-toml'
-Plug 'fatih/vim-go'
 Plug 'leafgarland/typescript-vim'
 Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
 Plug 'rust-lang/rust.vim'
 Plug 'tpope/vim-markdown'
 Plug 'vim-ruby/vim-ruby'
+
+if v:version > 740
+  Plug 'fatih/vim-go'
+endif
 
 " other
 Plug 'ctrlpvim/ctrlp.vim'
@@ -181,11 +184,11 @@ if !exists(":DiffOrig")
     \ | wincmd p | diffthis
 endif
 
-let s:DisturbingFiletypes = { "": 1, "help": 1, "netrw": 1, "vim-plug": 1,
+let s:DisturbingFiletypes = { "help": 1, "netrw": 1, "vim-plug": 1,
       \ "godoc": 1, "git": 1, "man": 1 }
 
 function! s:CloseDisturbingWin()
-  if has_key(s:DisturbingFiletypes, &filetype)
+  if &filetype == "" || has_key(s:DisturbingFiletypes, &filetype)
     let l:currentWindow = winnr()
     if s:currentWindow > l:currentWindow
       let s:currentWindow = s:currentWindow - 1
@@ -282,9 +285,12 @@ set winwidth=79
 
 if has("cscope")
   set cscopetag
-  set cscopequickfix=s-,c-,d-,i-,t-,e-,a-
+  set cscopequickfix=s-,c-,d-,i-,t-,e-
+  if v:version > 740
+    set cscopequickfix+=a-
+  endif
 endif
-if v:version > 703
+if v:version > 740
   set formatoptions+=1jmB
 endif
 if s:has_rg
@@ -294,7 +300,7 @@ endif
 if !has("win32")
   set listchars=tab:▸\ ,trail:·,extends:>,precedes:<,nbsp:·
 endif
-if v:version >= 730
+if v:version > 740
   set undodir=~/.vim/.undo,/tmp
   set undofile
 endif
@@ -336,6 +342,8 @@ nnoremap <silent> <Leader>b :CtrlPBuffer<CR>
 nnoremap <Leader>cd :Fcd<CR>
 nnoremap <Leader>cl :Flcd<CR>
 nnoremap <Leader>ct :Ftcd<CR>
+nnoremap <Leader>css :colorscheme solarized8_dark<CR>
+nnoremap <Leader>csd :colorscheme default<CR>
 
 nnoremap <silent> <Leader>d "_d
 vnoremap <silent> <Leader>d "_d
