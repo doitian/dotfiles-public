@@ -1,0 +1,8 @@
+{
+  "*": {
+    "dispatch": "cargo test",
+    "make": "cargo build",
+    "start": "cargo run",
+    "path": ["src", "*/src"]
+  }
+}
