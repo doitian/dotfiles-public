@@ -49,7 +49,7 @@ function universe_env_info() {
 PROMPT_HOST=
 if [ -n "$SSH_CONNECTION" ]; then
   HOSTNAME=$(hostname -f)
-  PROMPT_HOST='%F{yellow}$HOSTNAME%f:'
+  PROMPT_HOST='%F{yellow}%n@$HOSTNAME%f:'
 fi
 PROMPT='%(?..%F{red}%?⏎
 )%f
