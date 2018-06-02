@@ -344,6 +344,8 @@ nnoremap <Leader>cl :Flcd<CR>
 nnoremap <Leader>ct :Ftcd<CR>
 nnoremap <Leader>css :colorscheme solarized8_dark<CR>
 nnoremap <Leader>csd :colorscheme default<CR>
+nnoremap <silent> <Leader>cc :let @+ = @"<CR>
+nnoremap <silent> <Leader>cv :let @" = @+<CR>
 
 nnoremap <silent> <Leader>d "_d
 vnoremap <silent> <Leader>d "_d

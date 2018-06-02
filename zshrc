@@ -8,7 +8,14 @@ ZSH_CACHE_DIR="$HOME/.zcompcache"
 COMPLETION_WAITING_DOTS=true
 DISABLE_AUTO_TITLE=true
 
-fpath=($HOME/.zsh-completions $ZSH/plugins/brew $ZSH/plugins/docker $ZSH/plugins/gitfast $fpath)
+fpath=(
+  $HOME/.zsh-completions
+  $ZSH/plugins/brew
+  $ZSH/plugins/docker
+  $ZSH/plugins/gitfast
+  $ZSH/plugins/cargo
+  $fpath
+)
 
 zstyle :omz:plugins:ssh-agent agent-forwarding on
 zstyle :omz:plugins:ssh-agent identities id_rsa

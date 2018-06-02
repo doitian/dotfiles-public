@@ -1,10 +1,22 @@
 #!/bin/bash
 
-# echo ~/.ssh/id_rsa.pub | ctrlc
-# Then CTRL-v in Chrome
-
-if [ -x /usr/bin/pbcopy ]; then
-  exec pbcopy "$@"
+if [[ $OSTYPE == darwin* ]]; then
+  if [ "$#" = 0 ]; then
+    pbcopy
+  else
+    cat "$@" | pbcopy
+  fi
+elif [[ $OSTYPE == cygwin* ]]; then
+  cat "$@" > /dev/clipboard
+elif command -v xclip &> /dev/null; then
+  xclip -in -selection clipboard "$@"
+elif command -v xsel &> /dev/null; then
+  if [ "$#" = 0 ]; then
+    xsel --clipboard --input
+  else
+    cat "$@" | xsel --clipboard --input
+  fi
 else
-  exec xclip -selection clipboard "$@"
+  echo "Platform $OSTYPE not supported!" >&2
+  exit 1
 fi
