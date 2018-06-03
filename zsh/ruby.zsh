@@ -39,12 +39,7 @@ sbundle() {
   shift
   bundle install --path "$HOME/.gem/bundle/$name" "$@"
 }
-alias b='bundle exec'
-alias bi="bundle install"
-alias bib="bundle install --binstubs"
-alias bl="bundle list"
-alias bp="bundle package"
-alias bu="bundle update"
+alias be='bundle exec'
 
 alias rake="noglob rake"
 alias mina="noglob mina"

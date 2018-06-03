@@ -386,12 +386,13 @@ nnoremap <silent> <Leader>I :CtrlPBufTagAll<CR>
 nnoremap <silent> <Leader>k :Close<CR>
 
 noremap <silent> <Leader>ll :Lexplore<CR>
+noremap <silent> <Leader>la :args<CR>
+noremap <silent> <Leader>lj :jumps<CR>
 noremap <silent> <Leader>lt :tags<CR>
 noremap <silent> <Leader>lr :registers<CR>
 noremap <silent> <Leader>l@ :registers<CR>
 noremap <silent> <Leader>lb :ls<CR>:b<Space>
 noremap <silent> <Leader>lm :marks<CR>:normal! `
-noremap <silent> <Leader>lu :undolist<CR>:u<space>
 
 nnoremap <silent> <Leader>m :call PushMark(0)<CR>
 nnoremap <silent> <Leader>M :call PushMark(1)<CR>

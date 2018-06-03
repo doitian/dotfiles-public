@@ -86,7 +86,7 @@ alias rsync-synchronize="rsync -avu --delete --progress -h"
 alias wcat='wget -q -0 -'
 alias dog=wcat
 
-if [ -x /usr/bin/colordiff ]; then
+if command -v colordiff &> /dev/null; then
   alias diff=colordiff
 fi
 
