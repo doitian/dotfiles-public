@@ -342,6 +342,7 @@ nnoremap <silent> <Leader>b :CtrlPBuffer<CR>
 nnoremap <Leader>cd :Fcd<CR>
 nnoremap <Leader>cl :Flcd<CR>
 nnoremap <Leader>ct :Ftcd<CR>
+nnoremap <Leader>cT :tabnew<CR>:Ftcd<CR>
 nnoremap <Leader>css :colorscheme solarized8_dark<CR>
 nnoremap <Leader>csd :colorscheme default<CR>
 nnoremap <silent> <Leader>cc :let @+ = @"<CR>
