@@ -45,7 +45,8 @@ if which fasd > /dev/null 2>&1; then
   unalias sd
   unalias d
 
-  function j() {
+  alias j='fasd_cd -d'
+  function jj() {
     local dir="$(fasd -Rdl | fzf-tmux -1 -0 -q "$*")"
     [ -n "$dir" ] && cd "$dir"
   }

@@ -469,7 +469,6 @@ augroup vimrc_au
   autocmd BufNewFile,BufRead *.bats set ft=sh
 
   autocmd FileType gitcommit,markdown,text,rst setlocal spell textwidth=78 fo+=a
-  autocmd FileType rust :setlocal tags=./rusty-tags.vi;/
   autocmd FileType netrw setlocal bufhidden=wipe
 
   autocmd filetype markdown syntax region frontmatter start=/\%^---$/ end=/^---$/
