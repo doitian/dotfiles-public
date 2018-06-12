@@ -1,6 +1,0 @@
-#!/bin/sh
-
-if [ -z "$(git config user.email)" ]; then
-  echo "ERROR: [pre-commit hook] Aborting commit because of user.email is not set"
-  exit 1
-fi
