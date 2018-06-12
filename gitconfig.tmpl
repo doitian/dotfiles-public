@@ -82,6 +82,8 @@
   review = diff @{u}
   giveup = reset --hard @{u}
 
+  me = "!f() { git config user.email __EMAIL__; git config user.signingkey 1523FD9C60A9CD14; }; f"
+
 [color "branch"]
   current = yellow
   local = blue bold
@@ -121,5 +123,6 @@
 
 [user]
   name = __NAME__
-  email = __EMAIL__
-  signingkey = 1523FD9C60A9CD14
+
+[init]
+  templatedir = ~/.gittmpl/default

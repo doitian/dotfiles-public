@@ -23,6 +23,10 @@
 #
 # Note that these options are most useful for testing the hooks themselves. Use git commit
 # --no-verify to skip the pre-commit hook altogether.
+if [ -z "$(git config user.email)" ]; then
+  echo "ERROR: [pre-commit hook] Aborting commit because of user.email is not set"
+  exit 1
+fi
 
 set -e
 
