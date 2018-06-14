@@ -198,21 +198,6 @@ function! PushMark(is_global)
   call setpos("'" . nr2char(l:curr), getpos("."))
 endfunction
 
-function! s:ProjectionistActivate() abort
-  let l:vars_query = projectionist#query('vars')
-  if len(l:vars_query) > 0
-    let l:vars = l:vars_query[0][1]
-    for name in keys(l:vars)
-      let l:value = l:vars[name]
-      if name[0] ==# '&'
-        exe 'let &l:' . name[1:] . ' = l:value'
-      else
-        let b:{name} = l:value
-      endif
-    endfor
-  endif
-endfunction
-
 command! -bang Fcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'cd'}, <bang>0))
 command! -bang Flcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'lcd'}, <bang>0))
 command! -bang Ftcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'tcd'}, <bang>0))
@@ -457,8 +442,6 @@ augroup vimrc_au
     \ if line("'\"") > 1 && line("'\"") <= line("$") && &filetype != "gitcommit" |
     \   exe "normal! g`\"" |
     \ endif
-
-  autocmd User ProjectionistActivate call s:ProjectionistActivate()
 
   autocmd CmdwinEnter * map <buffer> <C-w><C-w> <CR>q:dd
 
