@@ -47,6 +47,7 @@ Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround' " ys s
 Plug 'tpope/vim-unimpaired' " various [, ] mappings
+Plug 'w0rp/ale', { 'on': 'ALEEnable' }
 Plug 'wellle/targets.vim' " Text objects
 
 if has("gui_running") || &t_Co > 16
@@ -99,6 +100,11 @@ hi! link QuickFixLine Search
 
 " Plugins Options {{{1
 
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_enter = 0
+let g:ale_lint_delay = 3000
+let g:ale_lint_on_filetype_changed = 0
+
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
 
@@ -107,10 +113,10 @@ let g:jsx_ext_required = 0
 
 " Functions & Commands {{{1
 function! HasPaste()
-    if &paste
-        return '[P]'
-    en
-    return ''
+  if &paste
+    return '[P]'
+  endif
+  return ''
 endfunction
 
 function! QFixToggle()
@@ -122,19 +128,19 @@ function! QFixToggle()
 endfunction
 
 function! MyFoldText()
-    let line = getline(v:foldstart)
+  let line = getline(v:foldstart)
 
-    let nucolwidth = &fdc + &number * &numberwidth
-    let windowwidth = winwidth(0) - nucolwidth - 3
-    let foldedlinecount = v:foldend - v:foldstart
+  let nucolwidth = &fdc + &number * &numberwidth
+  let windowwidth = winwidth(0) - nucolwidth - 3
+  let foldedlinecount = v:foldend - v:foldstart
 
-    " expand tabs into spaces
-    let onetab = strpart('          ', 0, &tabstop)
-    let line = substitute(line, '\t', onetab, 'g')
+  " expand tabs into spaces
+  let onetab = strpart('          ', 0, &tabstop)
+  let line = substitute(line, '\t', onetab, 'g')
 
-    let line = strpart(line, 0, windowwidth - 2 -len(foldedlinecount))
-    let fillcharcount = windowwidth - len(line) - len(foldedlinecount) - 4
-    return line . ' …' . repeat(" ",fillcharcount) . foldedlinecount . ' '
+  let line = strpart(line, 0, windowwidth - 2 -len(foldedlinecount))
+  let fillcharcount = windowwidth - len(line) - len(foldedlinecount) - 4
+  return line . ' …' . repeat(" ",fillcharcount) . foldedlinecount . ' '
 endfunction
 
 if !exists(":DiffOrig")
@@ -281,6 +287,11 @@ set pastetoggle=<F2>
 
 " Avoid accidental hits of <F1> while aiming for <Esc>
 noremap! <F1> <Esc>
+
+nmap <silent> [c <Plug>(ale_previous_wrap)
+nmap <silent> [C <Plug>(ale_first)
+nmap <silent> ]c <Plug>(ale_next_wrap)
+nmap <silent> ]C <Plug>(ale_last)
 
 inoremap <C-u> <C-g>u<C-u>
 
