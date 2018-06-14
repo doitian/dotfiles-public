@@ -184,18 +184,6 @@ function! CurDir()
   endif
 endfunction
 
-command! -bang Fcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'cd'}, <bang>0))
-command! -bang Flcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'lcd'}, <bang>0))
-command! -bang Ftcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'tcd'}, <bang>0))
-command! -bang Fdir call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd'}, <bang>0))
-command! -bang Ffile call fzf#run(fzf#wrap('F', {'source': 'fasd -lRf'}, <bang>0))
-command! -bang -nargs=* Rg
-  \ call fzf#vim#grep(
-  \   'rg --hidden -g "!.git" --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
-  \   <bang>0 ? fzf#vim#with_preview('up:60%')
-  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
-  \   <bang>0)
-
 function! PushMark(is_global)
   if a:is_global
     let l:curr = char2nr('Z')
@@ -209,6 +197,33 @@ function! PushMark(is_global)
   endwhile
   call setpos("'" . nr2char(l:curr), getpos("."))
 endfunction
+
+function! s:ProjectionistActivate() abort
+  let l:vars_query = projectionist#query('vars')
+  if len(l:vars_query) > 0
+    let l:vars = l:vars_query[0][1]
+    for name in keys(l:vars)
+      let l:value = l:vars[name]
+      if name[0] ==# '&'
+        exe 'let &l:' . name[1:] . ' = l:value'
+      else
+        let b:{name} = l:value
+      endif
+    endfor
+  endif
+endfunction
+
+command! -bang Fcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'cd'}, <bang>0))
+command! -bang Flcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'lcd'}, <bang>0))
+command! -bang Ftcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'tcd'}, <bang>0))
+command! -bang Fdir call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd'}, <bang>0))
+command! -bang Ffile call fzf#run(fzf#wrap('F', {'source': 'fasd -lRf'}, <bang>0))
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --hidden -g "!.git" --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   <bang>0)
 
 " Config {{{1
 
@@ -442,6 +457,8 @@ augroup vimrc_au
     \ if line("'\"") > 1 && line("'\"") <= line("$") && &filetype != "gitcommit" |
     \   exe "normal! g`\"" |
     \ endif
+
+  autocmd User ProjectionistActivate call s:ProjectionistActivate()
 
   autocmd CmdwinEnter * map <buffer> <C-w><C-w> <CR>q:dd
 
