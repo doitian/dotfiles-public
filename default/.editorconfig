@@ -24,11 +24,7 @@ indent_style = space
 indent_size = 4
 tab_width = 4
 
-[*.md]
-indent_style = space
-indent_size = 4
-tab_width = 4
-[*.markdown]
+[*.{md,markdown}]
 indent_style = space
 indent_size = 4
 tab_width = 4
