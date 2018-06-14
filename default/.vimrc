@@ -31,6 +31,7 @@ endif
 
 " other
 Plug 'editorconfig/editorconfig-vim'
+Plug 'janko-m/vim-test'
 Plug 'junegunn/fzf.vim'
 Plug 'mkitt/tabline.vim'
 Plug 'sbdchd/neoformat'
@@ -104,6 +105,8 @@ let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
 let g:ale_lint_delay = 3000
 let g:ale_lint_on_filetype_changed = 0
+
+let test#strategy = 'dispatch'
 
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
@@ -271,9 +274,11 @@ if !has("win32")
   set listchars=tab:▸\ ,trail:·,extends:>,precedes:<,nbsp:·
 endif
 if v:version > 740
-  set undodir=~/.vim/.undo,/tmp
+  set undodir=~/.vim/undo,/tmp
   set undofile
 endif
+
+let $cb = $HOME . '/codebase'
 
 runtime! macros/matchit.vim
 
@@ -292,6 +297,8 @@ nmap <silent> [c <Plug>(ale_previous_wrap)
 nmap <silent> [C <Plug>(ale_first)
 nmap <silent> ]c <Plug>(ale_next_wrap)
 nmap <silent> ]C <Plug>(ale_last)
+
+nnoremap <silent> t<CR> :TestNearest<CR>
 
 inoremap <C-u> <C-g>u<C-u>
 
@@ -396,15 +403,14 @@ nmap <silent> <Leader>rb <Plug>NetrwBrowseX
 " Strip all trailing whitespace from a file
 nnoremap <silent> <Leader>sw :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR>
 
-nnoremap <silent> <Leader>tm :Make!<CR>
 nnoremap <Leader>tq :Copen<CR>
-nnoremap <Leader>tf :Focus<Space>
-nnoremap <Leader>td :Dispatch<Space>
-nnoremap <Leader>tk :Dispatch!<Space>
-nnoremap <Leader>tt :Dispatch<CR>
-nnoremap <Leader>ty :Dispatch!<CR>
-nnoremap <Leader>ts :Start<Space>
-nnoremap <Leader>tl :Start!<Space>
+nnoremap <Leader>t<Space> :Start<Space>
+nnoremap <Leader>tb :Start!<Space>
+nnoremap <silent> <Leader>tt :TestNearest<CR>
+nnoremap <silent> <Leader>tf :TestFile<CR>
+nnoremap <silent> <Leader>ts :TestSuite<CR>
+nnoremap <silent> <Leader>t. :TestLast<CR>
+nnoremap <silent> <Leader>te :TestVisit<CR>
 
 nnoremap <Leader>u :GundoToggle<CR>
 " Reselect text that was just pasted
