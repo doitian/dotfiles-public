@@ -30,8 +30,8 @@ if v:version > 740
 endif
 
 " other
-Plug 'ctrlpvim/ctrlp.vim'
 Plug 'editorconfig/editorconfig-vim'
+Plug 'junegunn/fzf.vim'
 Plug 'mkitt/tabline.vim'
 Plug 'sbdchd/neoformat'
 Plug 'sjl/gundo.vim' " <Leader>u
@@ -58,8 +58,8 @@ if has('unix')
   Plug 'tpope/vim-eunuch' " linux commands
 endif
 
-if has('python') || has('python3')
-  Plug 'FelikZ/ctrlp-py-matcher'
+if has('nvim')
+  Plug 'radenling/vim-dispatch-neovim'
 endif
 
 call plug#end()
@@ -99,45 +99,6 @@ hi! link QuickFixLine Search
 
 " Plugins Options {{{1
 
-let g:ctrlp_root_markers = []
-let g:ctrlp_switch_buffer = 'et'
-let g:ctrlp_working_path_mode = 'a'
-let g:ctrlp_map = '<Leader><Space>'
-if s:has_rg
-  let ctrlp_user_command_rg = 'rg --hidden -g "!.git" --color never --files %s'
-  let g:ctrlp_user_command = {
-    \ 'types': {
-      \ 1: ['.ctrlp_user_command_is_git', 'git -C %s ls-files --exclude-standard --others --cached'],
-      \ },
-    \ 'fallback': ctrlp_user_command_rg
-    \ }
-else
-  let g:ctrlp_user_command = ['.git', 'git -C %s ls-files --exclude-standard --others --cached']
-endif
-let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/](\.(git|hg|svn)|_build)$',
-  \ 'file': '\v\.(meta)$',
-  \ }
-let g:ctrlp_buftag_types = {
-  \ 'yaml'     : '--languages=ansible --ansible-types=k',
-  \ }
-if has('python') || has('python3')
-  let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
-endif
-
-function! SetupCtrlP()
-  if exists("g:loaded_ctrlp") && g:loaded_ctrlp
-    augroup ctrlp_au
-      autocmd!
-      autocmd FocusGained  * CtrlPClearCache
-      autocmd BufWritePost * CtrlPClearCache
-    augroup END
-  endif
-endfunction
-if !exists("g:loaded_ctrlp") || !g:loaded_ctrlp
-  autocmd VimEnter * :call SetupCtrlP()
-endif
-
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
 
@@ -152,14 +113,11 @@ function! HasPaste()
     return ''
 endfunction
 
-command! -bang -nargs=? QFix call QFixToggle(<bang>0)
-function! QFixToggle(forced)
-  if exists("g:qfix_win") && a:forced == 0
+function! QFixToggle()
+  if &filetype == "qf"
     cclose
-    unlet g:qfix_win
   else
     copen 10
-    let g:qfix_win = bufnr("$")
   endif
 endfunction
 
@@ -206,7 +164,7 @@ command! Close :pclose | :cclose | :lclose |
       \ exe s:currentWindow . "wincmd w"
 
 command! Reload :source ~/.vimrc | :filetype detect | :nohl
-command! Clear :CtrlPClearCache | :silent! %bd | :silent! argd * | :nohl
+command! Clear :silent! %bd | :silent! argd * | :nohl
 command! -nargs=* Diff2qf :cexpr system("diff2qf", system("git diff -U0 " . <q-args>))
 
 function! CurDir()
@@ -222,6 +180,12 @@ command! -bang Flcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': '
 command! -bang Ftcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'tcd'}, <bang>0))
 command! -bang Fdir call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd'}, <bang>0))
 command! -bang Ffile call fzf#run(fzf#wrap('F', {'source': 'fasd -lRf'}, <bang>0))
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --hidden -g "!.git" --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   <bang>0)
 
 function! PushMark(is_global)
   if a:is_global
@@ -335,9 +299,11 @@ nnoremap <silent> <Leader>1 <C-w>o
 nnoremap <silent> <Leader>2 <C-w>o<C-w>s<C-w>w:b#<CR><C-w>w
 nnoremap <silent> <Leader>3 <C-w>o<C-w>v<C-w>w:b#<CR><C-w>w
 
+nnoremap <Leader><Space> :Files<CR>
+
 nnoremap <Leader>a :A<CR>
 
-nnoremap <silent> <Leader>b :CtrlPBuffer<CR>
+nnoremap <silent> <Leader>b :Buffers<CR>
 
 nnoremap <Leader>cd :Fcd<CR>
 nnoremap <Leader>cl :Flcd<CR>
@@ -360,27 +326,25 @@ nnoremap <silent> <Leader>et :tabnew<CR>
 nnoremap <Leader>ee :e <C-r>=expand("%")<CR>
 nnoremap <silent> <Leader>ev :tabnew ~/.vimrc<CR>
 
-nnoremap <silent> <Leader>f<Space> :CtrlPClearAllCaches\|:CtrlP<CR>
-nnoremap <silent> <Leader>fb :CtrlPBuffer<CR>
-nnoremap <silent> <Leader>fd :CtrlPDir<CR>
-nnoremap <silent> <Leader>ff :Ffile<CR>
-nnoremap <silent> <Leader>fh :CtrlPCurFile<CR>
-nnoremap <silent> <Leader>fq :CtrlPQuickfix<CR>
-nnoremap <silent> <Leader>fo :CtrlPLine<CR>
-nnoremap <silent> <Leader>fr :CtrlPMRUFiles<CR>
-nnoremap <silent> <Leader>ft :CtrlPTag<CR>
-nnoremap <silent> <Leader>fg :CtrlPMixed<CR>
-nnoremap <silent> <Leader>fc :CtrlPChange<CR>
-nnoremap <silent> <Leader>fC :CtrlPChangeAll<CR>
+nnoremap <silent> <Leader>fb :<C-u>Buffers<CR>
+nnoremap <silent> <Leader>ff :<C-u>Ffile<CR>
+nnoremap <silent> <Leader>fo :BLines<CR>
+nnoremap <silent> <Leader>fO :Lines<CR>
+nnoremap <silent> <Leader>fr :History<CR>
+nnoremap <silent> <Leader>f: :History:<CR>
+nnoremap <silent> <Leader>f/ :History/<CR>
+nnoremap <silent> <Leader>fm :Marks<CR>
+nnoremap <silent> <Leader>fw :Windows<CR>
+nnoremap <silent> <Leader>fh :Helptags<CR>
 
 nnoremap <Leader>g<Space> :grep<Space>
 nnoremap <silent> <Leader>gw :silent grep "\b<cword>\b"<CR>:copen 10<CR>
 nnoremap <silent> <Leader>gW :silent grep "\b<cWORD>\b"<CR>:copen 10<CR>
 
-nnoremap <silent> <Leader>h :CtrlPCurFile<CR>
+nnoremap <silent> <Leader>h :<C-u>Files <C-r>=CurDir()<CR><CR>
 
-nnoremap <silent> <Leader>i :CtrlPBufTag<CR>
-nnoremap <silent> <Leader>I :CtrlPBufTagAll<CR>
+nnoremap <silent> <Leader>i :BTags<CR>
+nnoremap <silent> <Leader>I :Tags<CR>
 
 " j localmap
 
@@ -407,9 +371,8 @@ nnoremap <silent> <Leader>oW :silent vimgrep /\<<C-r><C-a>\>/ %<CR>:copen 10<CR>
 nnoremap <Leader>p "+p
 nnoremap <Leader>P "+P
 
-" Tame the quickfix window (open/close using ,q)
 nnoremap <silent> <Leader>Q :cfile errors.txt<CR>
-nnoremap <silent> <Leader>q :QFix<CR>
+nnoremap <silent> <Leader>q :call QFixToggle()<CR>
 
 " Reveal
 nnoremap <silent> <Leader>rt :exe "silent !open -a 'Terminal.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
@@ -447,6 +410,7 @@ vnoremap <Leader>y "+y
 nnoremap <silent> <Leader>z :FZF<CR>
 
 nnoremap <silent> <Leader>/t /\|.\{-}\|<CR>
+nnoremap <silent> <Leader>/T /\<TODO\><CR>
 
 cnoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
 inoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
