@@ -203,12 +203,7 @@ function! s:ProjectionistActivate() abort
   if len(l:vars_query) > 0
     let l:vars = l:vars_query[0][1]
     for name in keys(l:vars)
-      let l:value = l:vars[name]
-      if name[0] ==# '&'
-        exe 'let &l:' . name[1:] . ' = l:value'
-      else
-        let b:{name} = l:value
-      endif
+      call setbufvar('%', name, l:vars[name])
     endfor
   endif
 endfunction
