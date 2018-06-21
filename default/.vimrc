@@ -363,7 +363,7 @@ nnoremap <silent> <Leader>f: :History:<CR>
 nnoremap <silent> <Leader>f/ :History/<CR>
 nnoremap <silent> <Leader>fm :Marks<CR>
 nnoremap <silent> <Leader>fw :Windows<CR>
-nnoremap <silent> <Leader>fh :Helptags<CR>
+nnoremap <silent> <Leader>f? :Helptags<CR>
 
 nnoremap <Leader>g<Space> :grep<Space>
 nnoremap <silent> <Leader>gw :silent grep "\b<cword>\b"<CR>:copen 10<CR>
@@ -428,7 +428,10 @@ nnoremap <Leader>v `[v`]
 
 nnoremap <silent> <Leader>w :Neoformat<CR>:up<CR>
 
+nnoremap <Leader>x <Nop>
+nnoremap <LocalLeader>x <Nop>
 nnoremap <Leader>X :nnoremap <lt>Leader>x :up\\|!
+nnoremap <LocalLeader>X :nnoremap <lt>buffer> <lt>LocalLeader>x :up\\|!
 
 nnoremap <Leader>y "+y
 nnoremap <Leader>Y "+yy
