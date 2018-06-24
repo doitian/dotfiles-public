@@ -1,6 +1,6 @@
 {
   "*": {
-    "dispatch": "cargo test",
+    "dispatch": "cargo test --all",
     "make": "cargo build",
     "start": "cargo run",
     "path": ["src", "*/src"]
