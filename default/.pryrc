@@ -131,9 +131,13 @@ default_command_set = Pry::CommandSet.new do
 end
 
 Pry.config.commands.import default_command_set
-Pry::Commands.delete 'c'
-Pry::Commands.delete 'n'
-Pry::Commands.delete 's'
+begin
+  Pry::Commands.delete 'c'
+  Pry::Commands.delete 'n'
+  Pry::Commands.delete 's'
+rescue
+  # ignore
+end
 
 # === CONVENIENCE METHODS ===
 # Stolen from https://gist.github.com/807492
