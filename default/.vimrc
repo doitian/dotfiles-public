@@ -22,6 +22,7 @@ Plug 'leafgarland/typescript-vim'
 Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
 Plug 'rust-lang/rust.vim'
+Plug 'tomlion/vim-solidity'
 Plug 'tpope/vim-markdown'
 Plug 'vim-ruby/vim-ruby'
 
@@ -464,7 +465,7 @@ augroup vimrc_au
   autocmd BufNewFile,BufRead pillar.example set ft=sls
   autocmd BufNewFile,BufRead *.bats set ft=sh
 
-  autocmd FileType gitcommit,markdown,text,rst setlocal spell textwidth=78 fo+=a
+  autocmd FileType gitcommit,markdown,text,rst setlocal spell textwidth=78
   autocmd FileType netrw setlocal bufhidden=wipe
 
   autocmd filetype markdown syntax region frontmatter start=/\%^---$/ end=/^---$/
