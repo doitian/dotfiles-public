@@ -222,6 +222,8 @@ command! -bang -nargs=* Rg
   \           : fzf#vim#with_preview('right:50%:hidden', '?'),
   \   <bang>0)
 
+command! -nargs=1 -complete=file Cfile set errorformat=%f\|%l\ col\ %c\|\ %m | cfile <args>
+
 " Config {{{1
 
 set autoindent
