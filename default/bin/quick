@@ -1,4 +1,0 @@
-#!/bin/bash
-
-echo 'export QUICK_V3_ROOT=$(cat ~/.QUICK_V3_ROOT)'
-echo 'export PATH="$HOME/Library/Android/ndk/android-ndk-r10e:$PATH"'
