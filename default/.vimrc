@@ -157,7 +157,7 @@ let s:DisturbingFiletypes = { "help": 1, "netrw": 1, "vim-plug": 1,
       \ "godoc": 1, "git": 1, "man": 1 }
 
 function! s:CloseDisturbingWin()
-  if &filetype == "" || has_key(s:DisturbingFiletypes, &filetype)
+  if (&filetype == "" || has_key(s:DisturbingFiletypes, &filetype)) && !&modified
     let l:currentWindow = winnr()
     if s:currentWindow > l:currentWindow
       let s:currentWindow = s:currentWindow - 1
