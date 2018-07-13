@@ -30,7 +30,6 @@ fasd_opts="-Rfl"
 fzf_opts=()
 
 cmd=()
-state=
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -48,8 +47,15 @@ while [ "$#" -gt 0 ]; do
       ;;
     -e)
       shift
-      state=-e
       cmd=("${EDITOR:-vim}")
+      if [ "$#" -gt 0 ]; then
+        if [ "$1" = "-" ]; then
+          shift
+        elif [[ $1 != -* ]]; then
+          cmd=($1)
+          shift
+        fi
+      fi
       ;;
     --)
       shift
@@ -65,13 +71,7 @@ while [ "$#" -gt 0 ]; do
       exit 1
       ;;
     *)
-      if [ "$state" = "-e" ]; then
-        state=
-        if [ -n "$1" ] && [ "$1" != "-" ]; then
-          cmd=($1)
-        fi
-        shift
-      elif [ -z "$query" ]; then
+      if [ -z "$query" ]; then
         query="$1"
         shift
       else
