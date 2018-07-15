@@ -31,15 +31,18 @@ tab_width = 4
 
 [Makefile]
 indent_style = tab
+indent_size = 4
 tab_width = 4
 
 [*.mk]
 indent_style = tab
+indent_size = 4
 tab_width = 4
 
 [*.taskpaper]
 indent_style = tab
-tab_width = 2
+indent_size = 4
+tab_width = 4
 
 [*.go]
 indent_style = tab
