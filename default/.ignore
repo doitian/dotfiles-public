@@ -1,6 +1,7 @@
 .rbenv-*
 TAGS
 tags
+*.tags
 *.sublime-project
 *.sublime-workspace
 *.marked

@@ -271,7 +271,6 @@ set wildmode=list:longest,full
 set winwidth=79
 
 if has("cscope")
-  set cscopetag
   set cscopequickfix=s-,c-,d-,i-,t-,e-
   if v:version > 740
     set cscopequickfix+=a-
