@@ -50,7 +50,6 @@ Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround' " ys s
 Plug 'tpope/vim-unimpaired' " various [, ] mappings
-Plug 'w0rp/ale', { 'on': 'ALEEnable' }
 Plug 'wellle/targets.vim' " Text objects
 
 if has("gui_running") || &t_Co > 16
@@ -102,11 +101,6 @@ endif
 hi! link QuickFixLine Search
 
 " Plugins Options {{{1
-
-let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_enter = 0
-let g:ale_lint_delay = 3000
-let g:ale_lint_on_filetype_changed = 0
 
 let test#strategy = 'dispatch'
 
@@ -316,11 +310,6 @@ set pastetoggle=<F2>
 
 " Avoid accidental hits of <F1> while aiming for <Esc>
 noremap! <F1> <Esc>
-
-nmap <silent> [c <Plug>(ale_previous_wrap)
-nmap <silent> [C <Plug>(ale_first)
-nmap <silent> ]c <Plug>(ale_next_wrap)
-nmap <silent> ]C <Plug>(ale_last)
 
 nnoremap <silent> t<CR> :TestNearest<CR>
 
