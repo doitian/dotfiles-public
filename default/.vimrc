@@ -210,6 +210,16 @@ function! s:ProjectionistActivate() abort
   endif
 endfunction
 
+function! BookmarkLine(message)
+  let l:line = expand("%") . "|" . line(".") . " col " . col(".") . "| "
+  if a:message == ""
+    let l:line = l:line . getline(".")
+  else
+    let l:line = l:line . a:message
+  endif
+  call writefile([l:line], "bookmarks.qf", "a")
+endfunction
+
 command! -bang Fcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'cd'}, <bang>0))
 command! -bang Flcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'lcd'}, <bang>0))
 command! -bang Ftcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'tcd'}, <bang>0))
@@ -223,6 +233,7 @@ command! -bang -nargs=* Rg
   \   <bang>0)
 
 command! -nargs=1 -complete=file Cfile set errorformat=%f\|%l\ col\ %c\|\ %m | cfile <args>
+command! -nargs=* B call BookmarkLine(<q-args>)
 
 " Config {{{1
 
