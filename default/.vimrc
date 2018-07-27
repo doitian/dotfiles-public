@@ -194,16 +194,6 @@ function! PushMark(is_global)
   call setpos("'" . nr2char(l:curr), getpos("."))
 endfunction
 
-function! s:ProjectionistActivate() abort
-  let l:vars_query = projectionist#query('vars')
-  if len(l:vars_query) > 0
-    let l:vars = l:vars_query[0][1]
-    for name in keys(l:vars)
-      call setbufvar('%', name, l:vars[name])
-    endfor
-  endif
-endfunction
-
 function! BookmarkLine(message)
   let l:line = expand("%") . "|" . line(".") . " col " . col(".") . "| "
   if a:message == ""
@@ -214,9 +204,24 @@ function! BookmarkLine(message)
   call writefile([l:line], "bookmarks.qf", "a")
 endfunction
 
+function! s:ProjectionistActivate() abort
+  let l:vars_query = projectionist#query('vars')
+  if len(l:vars_query) > 0
+    let l:vars = l:vars_query[0][1]
+    for name in keys(l:vars)
+      call setbufvar('%', name, l:vars[name])
+    endfor
+  endif
+endfunction
+
+if has('nvim')
+  let s:tcd_sink = 'tcd'
+else
+  let s:tcd_sink = 'lcd'
+endif
 command! -bang Fcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'cd'}, <bang>0))
 command! -bang Flcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'lcd'}, <bang>0))
-command! -bang Ftcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'tcd'}, <bang>0))
+command! -bang Ftcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': s:tcd_sink}, <bang>0))
 command! -bang Fdir call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd'}, <bang>0))
 command! -bang Ffile call fzf#run(fzf#wrap('F', {'source': 'fasd -lRf'}, <bang>0))
 command! -bang -nargs=* Rg
