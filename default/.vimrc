@@ -232,6 +232,7 @@ command! -bang -nargs=* Rg
   \   <bang>0)
 
 command! -nargs=1 -complete=file Cfile set errorformat=%f\|%l\ col\ %c\|\ %m | cfile <args>
+command! -nargs=1 -complete=file Lfile set errorformat=%f\|%l\ col\ %c\|\ %m | lfile <args>
 command! -nargs=* B call BookmarkLine(<q-args>)
 
 " Config {{{1
