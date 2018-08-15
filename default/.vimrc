@@ -219,11 +219,12 @@ if has('nvim')
 else
   let s:tcd_sink = 'lcd'
 endif
-command! -bang Fcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'cd'}, <bang>0))
-command! -bang Flcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': 'lcd'}, <bang>0))
-command! -bang Ftcd call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd', 'sink': s:tcd_sink}, <bang>0))
-command! -bang Fdir call fzf#run(fzf#wrap('Z', {'source': 'fasd -lRd'}, <bang>0))
-command! -bang Ffile call fzf#run(fzf#wrap('F', {'source': 'fasd -lRf'}, <bang>0))
+command! -bang Fcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': 'cd'}, <bang>0))
+command! -bang Flcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': 'lcd'}, <bang>0))
+command! -bang Ftcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': s:tcd_sink}, <bang>0))
+command! -bang Fdir call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd'}, <bang>0))
+command! -bang Ffile call fzf#run(fzf#wrap('fasd -f', {'source': 'fasd -lRf'}, <bang>0))
+command! -bang -nargs=* Frg call fzf#run(fzf#wrap('rg', {'source': 'rg --hidden -g "!.git" --files '.<q-args>}, <bang>0))
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
   \   'rg --hidden -g "!.git" --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
