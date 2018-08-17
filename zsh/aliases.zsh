@@ -123,12 +123,10 @@ alias fg=' fg'
 ##################################################
 # Dir Aliases
 cb=$HOME/codebase
-kb=$HOME/Desktop/KnowledgeBase
 wf="$HOME/Library/Mobile Documents/iCloud~is~workflow~my~workflows/Documents"
-gop=$GOPATH
-docs=$HOME/Documents
-desk=$HOME/Desktop
-proj=$HOME/Desktop/Projects
+dcs=$HOME/Documents
+dsk=$HOME/Desktop
+prj=$HOME/Desktop/Projects
 dl=$HOME/Downloads
 omz=$HOME/.oh-my-zsh
 omzp=$omz/plugins
