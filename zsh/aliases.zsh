@@ -128,10 +128,10 @@ wf="$HOME/Library/Mobile Documents/iCloud~is~workflow~my~workflows/Documents"
 gop=$GOPATH
 docs=$HOME/Documents
 desk=$HOME/Desktop
+proj=$HOME/Desktop/Projects
 dl=$HOME/Downloads
 omz=$HOME/.oh-my-zsh
 omzp=$omz/plugins
 dotfiles=$HOME/.dotfiles
-dotsubl="$HOME/Library/Application Support/Sublime Text 3/Packages/User"
 dotvscode="$HOME/Library/Application Support/Code/User"
 
