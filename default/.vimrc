@@ -363,6 +363,7 @@ nnoremap <silent> <Leader>en :enew<CR>
 nnoremap <silent> <Leader>et :tabnew<CR>
 nnoremap <Leader>ee :e <C-r>=expand("%")<CR>
 nnoremap <silent> <Leader>ev :tabnew ~/.vimrc<CR>
+nnoremap <Leader>e<Space> :e<Space>
 
 nnoremap <silent> <Leader>fb :<C-u>Buffers<CR>
 nnoremap <silent> <Leader>ff :<C-u>Ffile<CR>
