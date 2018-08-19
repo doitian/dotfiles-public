@@ -119,6 +119,8 @@ alias e64=encode64
 alias d64=decode64
 
 alias fg=' fg'
+alias gfw='gfw '
+alias sudo='sudo '
 
 ##################################################
 # Dir Aliases
