@@ -84,9 +84,6 @@ alias rsync-move="rsync -av --progress -h --remove-source-files"
 alias rsync-update="rsync -avu --progress -h"
 alias rsync-synchronize="rsync -avu --delete --progress -h"
 
-alias wcat='wget -q -0 -'
-alias dog=wcat
-
 if command -v colordiff &> /dev/null; then
   alias diff=colordiff
 fi
