@@ -92,8 +92,7 @@ if has("gui_running") || &t_Co > 16
   if !has("gui_running")
     let g:solarized_use16 = 1
   endif
-  colorscheme solarized8_dark
-  set bg=dark
+  colorscheme solarized8
 else
   hi! CursorLine NONE
 endif

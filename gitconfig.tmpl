@@ -88,10 +88,19 @@
   local = blue bold
   remote = green
 [color "diff"]
-  meta = green bold
-  func = yellow
-  old = red bold
-  new = green
+	meta = yellow
+	frag = magenta bold
+	commit = yellow bold
+	old = red bold
+	new = green bold
+	whitespace = red reverse
+[color "diff-highlight"]
+	oldNormal = red bold
+	oldHighlight = red bold 52
+	newNormal = green bold
+	newHighlight = green bold 22
+[color]
+	ui = true
 [push]
   default = simple
   followTags = true

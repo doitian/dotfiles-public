@@ -90,6 +90,9 @@ alias dog=wcat
 if command -v colordiff &> /dev/null; then
   alias diff=colordiff
 fi
+if command -v prettyping &> /dev/null; then
+  alias ping=prettyping
+fi
 
 alias ibc="{echo 'scale=6';cat} | bc"
 function bcc () {
