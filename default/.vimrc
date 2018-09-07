@@ -58,7 +58,7 @@ endif
 
 if has('unix')
   Plug 'tpope/vim-dotenv'
-  Plug 'tpope/vim-eunuch' " linux commands
+  Plug 'tpope/vim-eunuch' " Linux commands
 endif
 
 if has('nvim')
@@ -254,7 +254,6 @@ set ignorecase
 set incsearch
 set laststatus=2
 set lazyredraw
-set mouse=a
 set noerrorbells
 set nofoldenable
 set nojoinspaces
@@ -331,6 +330,8 @@ nmap gx <Plug>(Exchange)
 nmap gxx <Plug>(ExchangeLine)
 nmap gX <Plug>(ExchangeClear)
 vmap gx <Plug>(Exchange)
+
+nnoremap <silent> g<CR> :Dispatch<CR>
 
 nnoremap <silent> <Leader>1 <C-w>o
 nnoremap <silent> <Leader>2 <C-w>o<C-w>s<C-w>w:b#<CR><C-w>w
