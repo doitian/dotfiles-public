@@ -53,7 +53,7 @@ Plug 'tpope/vim-unimpaired' " various [, ] mappings
 Plug 'wellle/targets.vim' " Text objects
 
 if has("gui_running") || &t_Co > 16
-  Plug 'lifepillar/vim-solarized8'
+  Plug 'NLKNguyen/papercolor-theme'
 endif
 
 if has('unix')
@@ -89,10 +89,7 @@ if has("gui_running")
 end
 
 if has("gui_running") || &t_Co > 16
-  if !has("gui_running")
-    let g:solarized_use16 = 1
-  endif
-  colorscheme solarized8
+  colorscheme PaperColor
 else
   hi! CursorLine NONE
 endif
@@ -347,7 +344,7 @@ nnoremap <Leader>cd :Fcd<CR>
 nnoremap <Leader>cl :Flcd<CR>
 nnoremap <Leader>ct :Ftcd<CR>
 nnoremap <Leader>cT :tabnew<CR>:Ftcd<CR>
-nnoremap <Leader>css :colorscheme solarized8_dark<CR>
+nnoremap <Leader>css :colorscheme PaperColor<CR>
 nnoremap <Leader>csd :colorscheme default<CR>
 nnoremap <silent> <Leader>cc :let @+ = @"<CR>
 nnoremap <silent> <Leader>cv :let @" = @+<CR>
