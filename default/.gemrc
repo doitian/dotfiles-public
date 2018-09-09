@@ -1,5 +1,5 @@
 ---
 :sources:
-- https://gems.ruby-china.org
+- https://gems.ruby-china.com
 :update_sources: true
 gem: "--no-ri --no-rdoc"
