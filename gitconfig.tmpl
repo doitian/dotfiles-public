@@ -29,11 +29,11 @@
   sl = stash list
   sp = stash pop
 
-  l = log --pretty=tformat:'%C(auto)%h %s <%aN %ar>'
-  lg = log --pretty=tformat:'%C(auto)%h %s <%aN %ar>%d' --decorate --graph
-  l1 = --no-pager log -1 --decorate --date=relative
-  lref = log --pretty=tformat:'%C(auto)%h %aN %s %ar' 'HEAD@{1}'...
-  lpref = log -p --pretty=tformat:'%C(auto)%h %aN %s %ar' 'HEAD@{1}'...
+  l = log --pretty=tformat:'%C(auto)%h %s <%aN %ad>' --date=relative
+  lg = log --pretty=tformat:'%C(auto)%h %s <%aN %ad>%d' --date=relative --decorate --graph
+  l1 = !git --no-pager log -1 --decorate --date=relative
+  lref = log --pretty=tformat:'%C(auto)%h %aN %s %ad' --date=relative 'HEAD@{1}'...
+  lpref = log -p --pretty=tformat:'%C(auto)%h %aN %s %ad' --date=relative 'HEAD@{1}'...
   lp = log -p
   stat = log --stat
 
