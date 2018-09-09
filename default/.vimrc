@@ -251,6 +251,7 @@ set ignorecase
 set incsearch
 set laststatus=2
 set lazyredraw
+set mouse=
 set noerrorbells
 set nofoldenable
 set nojoinspaces
