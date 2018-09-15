@@ -113,6 +113,15 @@ function! HasPaste()
   endif
   return ''
 endfunction
+function! StatusLineFileName()
+  if &filetype != "netrw"
+    return pathshorten(expand('%:~:.'))
+  elseif b:netrw_curdir == getcwd()
+    return "./"
+  else
+    return pathshorten(fnamemodify(b:netrw_curdir, ':~:.')) . '/'
+  endif
+endfunction
 
 function! QFixToggle()
   if &filetype == "qf"
@@ -169,10 +178,10 @@ command! Clear :silent! %bd | :silent! argd * | :nohl
 command! -nargs=* Diff2qf :cexpr system("diff2qf", system("git diff -U0 " . <q-args>))
 
 function! CurDir()
-  if &filetype == "netrw"
-    return b:netrw_curdir
-  else
+  if &filetype != "netrw"
     return expand("%:h")
+  else
+    return b:netrw_curdir
   endif
 endfunction
 
@@ -265,7 +274,7 @@ set smartcase
 set smarttab
 set spellfile=$HOME/.vim-spell-en.utf-8.add,.vim-spell-en.utf-8.add
 set spelllang=en_us,cjk
-set statusline=%<%f\ %m%r%{HasPaste()}%=%l\ %P
+set statusline=%<%{StatusLineFileName()}\ %m%r%{HasPaste()}%=%l\ %P
 set switchbuf=useopen
 set tabpagemax=50
 set title
