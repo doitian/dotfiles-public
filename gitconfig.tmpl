@@ -40,6 +40,10 @@
   mt = mergetool
   mmr = "!f() { git merge --no-commit --no-ff \"$@\"; git commit; }; f"
 
+  mb = !git merge-base HEAD \"$(git config --default master --get user.reviewBase)\"
+  review = "!f() { local review_base=\"$(git config --default master --get user.reviewBase)\"; vim -p $(git files) +\"set number\" +\"tabdo Gdiff $review_base\" \"$@\"; }; f"
+  reviewone = "!f() { local review_base=\"$(git config --default master --get user.reviewBase)\"; vim -p +\" set number\" +\"tabdo Gdiff $review_base\" \"$@\"; }; f"
+
   rs = reset
   rh = reset --hard
   unstage = reset HEAD
@@ -78,7 +82,7 @@
   new = "!f() { git init; cp ~/.ignore .gitignore; git add -f .gitignore; git commit -m 'initial commit'; }; f"
 
   ready = rebase -i @{u}
-  review = diff @{u}
+  whatsup = diff @{u}
   giveup = reset --hard @{u}
 
   me = "!f() { git config user.email __EMAIL__; git config user.signingkey 1523FD9C60A9CD14; }; f"
@@ -129,3 +133,4 @@
 [user]
   name = __NAME__
   useConfigOnly = true
+  reviewBase = master

@@ -168,10 +168,20 @@ function! s:CloseDisturbingWin()
     endif
   endif
 endfunction
+function! s:CloseReadonlyWin()
+  if &readonly
+    if winnr("$") == 1
+      enew
+    else
+      close
+    endif
+  endif
+endfunction
 command! Close :pclose | :cclose | :lclose |
       \ let s:currentWindow = winnr() |
       \ :windo call s:CloseDisturbingWin() |
       \ exe s:currentWindow . "wincmd w"
+command! Diffoff :diffoff! | :windo call s:CloseReadonlyWin() | :Close
 
 command! Reload :source ~/.vimrc | :filetype detect | :nohl
 command! Clear :silent! %bd | :silent! argd * | :nohl
