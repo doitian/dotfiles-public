@@ -41,7 +41,7 @@
   mmr = "!f() { git merge --no-commit --no-ff \"$@\"; git commit; }; f"
 
   mb = !git merge-base HEAD \"$(git config --default master --get user.reviewBase)\"
-  review = "!f() { local review_base=\"$(git config --default master --get user.reviewBase)\"; vim -p $(git files) +\"set number\" +\"tabdo Gdiff $review_base\" \"$@\"; }; f"
+  review = "!f() { local review_base=\"$(git config --default master --get user.reviewBase)\"; vim -p $(git diff --name-only $review_base) +\"set number\" +\"tabdo Gdiff $review_base\" \"$@\"; }; f"
   reviewone = "!f() { local review_base=\"$(git config --default master --get user.reviewBase)\"; vim -p +\" set number\" +\"tabdo Gdiff $review_base\" \"$@\"; }; f"
 
   rs = reset
