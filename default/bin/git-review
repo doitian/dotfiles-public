@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+review() {
+  local review_base="$(git config --default master --get user.reviewBase)"
+  local merge_base="$(git merge-base HEAD $review_base)"
+
+  if [ "$#" = 0 ]; then
+    set -- $(git diff --name-only "$merge_base")
+  fi
+
+  vim -p "$@" +"set number" +"tabdo Gdiff $merge_base"
+}
+
+review "$@"
