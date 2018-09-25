@@ -32,6 +32,7 @@ if v:version > 740
 endif
 
 " other
+Plug 'dyng/ctrlsf.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'janko-m/vim-test'
 Plug 'junegunn/fzf.vim'
@@ -105,6 +106,8 @@ let g:netrw_liststyle = 3
 
 let g:go_fmt_fail_silently = 1
 let g:jsx_ext_required = 0
+
+let g:ctrlsf_default_root = 'cwd'
 
 " Functions & Commands {{{1
 function! HasPaste()
@@ -270,7 +273,6 @@ set ignorecase
 set incsearch
 set laststatus=2
 set lazyredraw
-set mouse=
 set noerrorbells
 set nofoldenable
 set nojoinspaces
