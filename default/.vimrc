@@ -110,6 +110,9 @@ let g:jsx_ext_required = 0
 let g:ctrlsf_default_root = 'cwd'
 
 " Functions & Commands {{{1
+command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
+      \ | wincmd p | diffthis
+
 function! HasPaste()
   if &paste
     return '[P]'
@@ -150,11 +153,6 @@ function! MyFoldText()
   return line . ' …' . repeat(" ",fillcharcount) . foldedlinecount . ' '
 endfunction
 
-if !exists(":DiffOrig")
-  command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
-    \ | wincmd p | diffthis
-endif
-
 let s:DisturbingFiletypes = { "help": 1, "netrw": 1, "vim-plug": 1,
       \ "godoc": 1, "git": 1, "man": 1 }
 
@@ -164,20 +162,12 @@ function! s:CloseDisturbingWin()
     if s:currentWindow > l:currentWindow
       let s:currentWindow = s:currentWindow - 1
     endif
-    if winnr("$") == 1
-      enew
-    else
-      close
-    endif
+    if winnr("$") == 1 | enew | else | close | endif
   endif
 endfunction
 function! s:CloseReadonlyWin()
   if &readonly
-    if winnr("$") == 1
-      enew
-    else
-      close
-    endif
+    if winnr("$") == 1 | enew | else | close | endif
   endif
 endfunction
 command! Close :pclose | :cclose | :lclose |
