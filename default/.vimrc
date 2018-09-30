@@ -177,7 +177,7 @@ command! Close :pclose | :cclose | :lclose |
 command! Diffoff :diffoff! | :windo call s:CloseReadonlyWin() | :Close
 
 command! Reload :source ~/.vimrc | :filetype detect | :nohl
-command! Clear :silent! %bd | :silent! argd * | :nohl
+command! -bang Clear :silent! %bd<bang> | :silent! argd * | :nohl
 command! -nargs=* Diff2qf :cexpr system("diff2qf", system("git diff -U0 " . <q-args>))
 
 function! CurDir()
@@ -461,6 +461,7 @@ nnoremap <silent> <Leader>z :FZF<CR>
 
 nnoremap <silent> <Leader>/t /\|.\{-}\|<CR>
 nnoremap <silent> <Leader>/T /\<TODO\><CR>
+nnoremap <silent> <Leader>/a /<Esc>\[[0-9;]*m<CR>
 
 cnoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
 inoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
