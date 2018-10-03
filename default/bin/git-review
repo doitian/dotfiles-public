@@ -8,7 +8,7 @@ review() {
     set -- $(git diff --name-only "$merge_base")
   fi
 
-  vim -p "$@" +"set number" +"tabdo Gdiff $merge_base"
+  vim -p "$@" +"tabdo set number" +"tabdo Gdiff $merge_base" +"tabrewind"
 }
 
 review "$@"
