@@ -1,10 +1,5 @@
-if v:progname =~? "evim"
-  finish
-endif
+if v:progname =~? "evim" | finish | endif
 set nocompatible
-scriptencoding utf-8
-set encoding=utf-8
-set termencoding=utf-8
 
 let loaded_matchparen = 1
 let s:has_rg = executable('rg')
@@ -91,11 +86,7 @@ end
 
 if has("gui_running") || &t_Co > 16
   colorscheme PaperColor
-else
-  hi! CursorLine NONE
 endif
-
-hi! link QuickFixLine Search
 
 " Plugins Options {{{1
 
