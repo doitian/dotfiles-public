@@ -1,5 +1,6 @@
 if v:progname =~? "evim" | finish | endif
 set nocompatible
+set background=light
 
 let loaded_matchparen = 1
 let s:has_rg = executable('rg')
