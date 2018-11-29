@@ -4,8 +4,8 @@ set background=light
 
 let loaded_matchparen = 1
 let s:has_rg = executable('rg')
-if has("nvim") && filereadable(expand("~/bin/python3"))
-  let g:python3_host_prog = expand("~/bin/python3")
+if has("nvim") && filereadable(("/usr/local/bin/python3"))
+  let g:python3_host_prog = expand("/usr/local/bin/python3")
 endif
 
 " Plug {{{1
