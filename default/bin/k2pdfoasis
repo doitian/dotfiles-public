@@ -1,3 +1,0 @@
-#!/bin/bash
-
-k2pdfopt -dev kv -ui- -x "$@"
