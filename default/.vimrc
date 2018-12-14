@@ -314,29 +314,13 @@ let maplocalleader = "\\"
 let g:maplocalleader = "\\"
 set pastetoggle=<F2>
 
-" Avoid accidental hits of <F1> while aiming for <Esc>
-noremap! <F1> <Esc>
-
-nnoremap <silent> t<CR> :TestNearest<CR>
-
-inoremap <C-u> <C-g>u<C-u>
-
-" Complete whole filenames/lines with a quicker shortcut key in insert mode
-inoremap <C-f> <C-x><C-f>
-
-" Quick yanking to the end of the line
-nnoremap Y yg_
-
 nmap gx <Plug>(Exchange)
 nmap gxx <Plug>(ExchangeLine)
 nmap gX <Plug>(ExchangeClear)
 vmap gx <Plug>(Exchange)
 
+nnoremap <silent> t<CR> :TestNearest<CR>
 nnoremap <silent> g<CR> :Dispatch<CR>
-
-nnoremap <silent> <Leader>1 <C-w>o
-nnoremap <silent> <Leader>2 <C-w>o<C-w>s<C-w>w:b#<CR><C-w>w
-nnoremap <silent> <Leader>3 <C-w>o<C-w>v<C-w>w:b#<CR><C-w>w
 
 nnoremap <Leader><Space> :Files<CR>
 
@@ -357,9 +341,7 @@ nnoremap <silent> <Leader>d "_d
 vnoremap <silent> <Leader>d "_d
 
 nnoremap <Leader>e/ :e <C-r>=CurDir().'/'<CR>
-nnoremap <Leader>eh :e <C-r>=CurDir().'/'<CR>
 nnoremap <Leader>e. :e <C-r>=CurDir().'/'<CR><CR>
-nnoremap <Leader>ed :e <C-r>=CurDir().'/'<CR><CR>
 nnoremap <silent> <Leader>en :enew<CR>
 nnoremap <silent> <Leader>et :tabnew<CR>
 nnoremap <Leader>ee :e <C-r>=expand("%")<CR>
@@ -395,7 +377,6 @@ noremap <silent> <Leader>la :args<CR>
 noremap <silent> <Leader>lj :jumps<CR>
 noremap <silent> <Leader>lt :tags<CR>
 noremap <silent> <Leader>lr :registers<CR>
-noremap <silent> <Leader>l@ :registers<CR>
 noremap <silent> <Leader>lb :ls<CR>:b<Space>
 noremap <silent> <Leader>lm :marks<CR>:normal! `
 
@@ -415,7 +396,7 @@ nnoremap <silent> <Leader>Q :cfile errors.txt<CR>
 nnoremap <silent> <Leader>q :call QFixToggle()<CR>
 
 " Reveal
-nnoremap <silent> <Leader>rt :exe "silent !open -a 'Terminal.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
+nnoremap <silent> <Leader>rt :exe "silent !open -a 'iTerm.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
 nnoremap <silent> <Leader>rf :exe "silent !open -R " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
 nnoremap <silent> <Leader>rm :exe "silent !open -a 'Marked.app' " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
 nnoremap <silent> <Leader>rM :exe "silent !open -a 'Marked.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
@@ -452,8 +433,7 @@ vnoremap <Leader>y "+y
 nnoremap <silent> <Leader>z :FZF<CR>
 
 nnoremap <silent> <Leader>/t /\|.\{-}\|<CR>
-nnoremap <silent> <Leader>/T /\<TODO\><CR>
-nnoremap <silent> <Leader>/a /<Esc>\[[0-9;]*m<CR>
+nnoremap <Leader>/w /\<\><Left><Left>
 
 cnoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
 inoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
@@ -473,8 +453,6 @@ augroup vimrc_au
 
   autocmd CmdwinEnter * map <buffer> <C-w><C-w> <CR>q:dd
 
-  autocmd BufNewFile,BufRead *.j2 set ft=jinja
-  autocmd BufNewFile,BufRead pillar.example set ft=sls
   autocmd BufNewFile,BufRead *.bats set ft=sh
 
   autocmd FileType gitcommit,markdown,text,rst setlocal spell textwidth=78
@@ -484,15 +462,4 @@ augroup vimrc_au
   autocmd filetype markdown syntax region frontmattertoml start=/\%^+++$/ end=/^+++$/
   autocmd filetype markdown highlight link frontmatter Comment
   autocmd filetype markdown highlight link frontmattertoml Comment
-  
-  function! SetupLocalMapForGo()
-    nmap <buffer> <Leader>jj :GoDeclsDir<CR>
-    nmap <buffer> <Leader>ji :GoImports<CR>
-    nmap <buffer> <Leader>jd :GoDoc<CR>
-    nmap <buffer> <Leader>jt :GoTest<CR>
-    nmap <buffer> <Leader>jaj :GoAddTags json<CR>
-    nmap <buffer> <Leader>jax :GoAddTags xorm<CR>
-    nmap <buffer> <Leader>i :GoDecls<CR>
-  endfunction
-  autocmd FileType go call SetupLocalMapForGo()
 augroup END
