@@ -102,15 +102,13 @@ let g:jsx_ext_required = 0
 let g:ctrlsf_default_root = 'cwd'
 
 " Functions & Commands {{{1
-command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
-      \ | wincmd p | diffthis
-
 function! HasPaste()
   if &paste
     return '[P]'
   endif
   return ''
 endfunction
+
 function! StatusLineFileName()
   if &filetype != "netrw"
     return pathshorten(expand('%:~:.'))
@@ -157,17 +155,20 @@ function! s:CloseDisturbingWin()
     if winnr("$") == 1 | enew | else | close | endif
   endif
 endfunction
+
 function! s:CloseReadonlyWin()
   if &readonly
     if winnr("$") == 1 | enew | else | close | endif
   endif
 endfunction
+
+command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
+      \ | wincmd p | diffthis
 command! Close :pclose | :cclose | :lclose |
       \ let s:currentWindow = winnr() |
       \ :windo call s:CloseDisturbingWin() |
       \ exe s:currentWindow . "wincmd w"
 command! Diffoff :diffoff! | :windo call s:CloseReadonlyWin() | :Close
-
 command! Reload :source ~/.vimrc | :filetype detect | :nohl
 command! -bang Clear :silent! %bd<bang> | :silent! argd * | :nohl
 command! -nargs=* Diff2qf :cexpr system("diff2qf", system("git diff -U0 " . <q-args>))
@@ -214,14 +215,8 @@ function! s:ProjectionistActivate() abort
   endif
 endfunction
 
-if has('nvim')
-  let s:tcd_sink = 'tcd'
-else
-  let s:tcd_sink = 'lcd'
-endif
 command! -bang Fcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': 'cd'}, <bang>0))
 command! -bang Flcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': 'lcd'}, <bang>0))
-command! -bang Ftcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': s:tcd_sink}, <bang>0))
 command! -bang Fdir call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd'}, <bang>0))
 command! -bang Ffile call fzf#run(fzf#wrap('fasd -f', {'source': 'fasd -lRf'}, <bang>0))
 command! -bang -nargs=* Frg call fzf#run(fzf#wrap('rg', {'source': 'rg --hidden -g "!.git" --files '.<q-args>}, <bang>0))
@@ -279,7 +274,7 @@ set visualbell
 set wildignore=*.swp,*.bak,*.pyc,*.class,*.beam
 set wildmenu
 set wildmode=list:longest,full
-set winwidth=79
+set winwidth=78
 
 if has("cscope")
   set cscopequickfix=s-,c-,d-,i-,t-,e-
@@ -330,8 +325,7 @@ nnoremap <silent> <Leader>b :Buffers<CR>
 
 nnoremap <Leader>cd :Fcd<CR>
 nnoremap <Leader>cl :Flcd<CR>
-nnoremap <Leader>ct :Ftcd<CR>
-nnoremap <Leader>cT :tabnew<CR>:Ftcd<CR>
+nnoremap <Leader>ct :tabnew<CR>:Flcd<CR>
 nnoremap <Leader>css :colorscheme PaperColor<CR>
 nnoremap <Leader>csd :colorscheme default<CR>
 nnoremap <silent> <Leader>cc :let @+ = @"<CR>
@@ -340,8 +334,8 @@ nnoremap <silent> <Leader>cv :let @" = @+<CR>
 nnoremap <silent> <Leader>d "_d
 vnoremap <silent> <Leader>d "_d
 
-nnoremap <Leader>e/ :e <C-r>=CurDir().'/'<CR>
-nnoremap <Leader>e. :e <C-r>=CurDir().'/'<CR><CR>
+nnoremap <Leader>eh :e <C-r>=CurDir().'/'<CR>
+nnoremap <Leader>ed :e <C-r>=CurDir().'/'<CR><CR>
 nnoremap <silent> <Leader>en :enew<CR>
 nnoremap <silent> <Leader>et :tabnew<CR>
 nnoremap <Leader>ee :e <C-r>=expand("%")<CR>
@@ -456,10 +450,10 @@ augroup vimrc_au
   autocmd BufNewFile,BufRead *.bats set ft=sh
 
   autocmd FileType gitcommit,markdown,text,rst setlocal spell textwidth=78
+  autocmd FileType rust setlocal winwidth=99
   autocmd FileType netrw setlocal bufhidden=wipe
-
-  autocmd filetype markdown syntax region frontmatter start=/\%^---$/ end=/^---$/
-  autocmd filetype markdown syntax region frontmattertoml start=/\%^+++$/ end=/^+++$/
-  autocmd filetype markdown highlight link frontmatter Comment
-  autocmd filetype markdown highlight link frontmattertoml Comment
+  autocmd FileType markdown syntax region frontmatter start=/\%^---$/ end=/^---$/
+  autocmd FileType markdown syntax region frontmattertoml start=/\%^+++$/ end=/^+++$/
+  autocmd FileType markdown highlight link frontmatter Comment
+  autocmd FileType markdown highlight link frontmattertoml Comment
 augroup END

@@ -94,8 +94,8 @@ printf "${PREFIX} Checking formatting ... "
 FMTFAILED=0
 for file in $(git diff --name-only --cached);
 do
-	if [ ${file: -3} == ".rs" ]; then
-    if ! rustfmt --skip-children --check "$file"; then
+	if [ ${file: -3} == ".rs" ] && [ -f "$file" ]; then
+    if ! rustfmt --check "$file"; then
       FAILED=1
       FMTFAILED=1
     fi
