@@ -36,7 +36,7 @@ Plug 'mkitt/tabline.vim'
 Plug 'sbdchd/neoformat'
 Plug 'sjl/gundo.vim' " <Leader>u
 Plug 'thinca/vim-visualstar' " * # g* g#
-Plug 'tommcdo/vim-exchange' " gx gX
+Plug 'tommcdo/vim-exchange' " cx
 Plug 'tomtom/tcomment_vim' " gc
 Plug 'tpope/vim-abolish' " :A :S
 Plug 'tpope/vim-dispatch' " <Leader>t
@@ -308,11 +308,6 @@ let g:mapleader = " "
 let maplocalleader = "\\"
 let g:maplocalleader = "\\"
 set pastetoggle=<F2>
-
-nmap gx <Plug>(Exchange)
-nmap gxx <Plug>(ExchangeLine)
-nmap gX <Plug>(ExchangeClear)
-vmap gx <Plug>(Exchange)
 
 nnoremap <silent> t<CR> :TestNearest<CR>
 nnoremap <silent> g<CR> :Dispatch<CR>
