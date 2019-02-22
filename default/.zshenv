@@ -1,5 +1,19 @@
 #!/usr/bin/env zsh
 
+# safe path
+SAFEBIN_SECRET=safebin
+if [ -f "$HOME/.safebin" ]; then
+  SAFEBIN_SECRET="safebin-$(cat "$HOME/.safebin")"
+fi
+function mksafebin() {
+  if [ -n "$SAFEBIN_SECRET" ] && [ -d .git ]; then
+    mkdir -p ".git/$SAFEBIN_SECRET"
+  else
+    echo "not available"
+    false
+  fi
+}
+
 if echo "$PATH" | grep -q ':/PATH:'; then
   return
 fi
@@ -65,20 +79,6 @@ else
   export ANDROID_HOME=/opt/android-sdk
   export ANDROID_SWT=/usr/share/java
 fi
-
-# safe path
-SAFEBIN_SECRET=safebin
-if [ -f "$HOME/.safebin" ]; then
-  SAFEBIN_SECRET="safebin-$(cat "$HOME/.safebin")"
-fi
-function mksafebin() {
-  if [ -n "$SAFEBIN_SECRET" ] && [ -d .git ]; then
-    mkdir -p ".git/$SAFEBIN_SECRET"
-  else
-    echo "not available"
-    false
-  fi
-}
 
 # golang
 export GOPATH="$HOME/codebase/gopath"
