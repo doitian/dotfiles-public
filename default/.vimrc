@@ -93,13 +93,15 @@ endif
 
 let test#strategy = 'dispatch'
 
-let g:netrw_banner = 0
-let g:netrw_liststyle = 3
-
+let g:ctrlsf_default_root = 'cwd'
+let g:dispatch_compilers = {
+      \ 'pipenv run': '',
+      \ 'bundle exec': ''}
+let g:fzf_buffers_jump = 1
 let g:go_fmt_fail_silently = 1
 let g:jsx_ext_required = 0
-
-let g:ctrlsf_default_root = 'cwd'
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
 
 " Functions & Commands {{{1
 function! HasPaste()
