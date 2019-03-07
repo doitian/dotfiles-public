@@ -266,7 +266,7 @@ set smarttab
 set spellfile=$HOME/.vim-spell-en.utf-8.add,.vim-spell-en.utf-8.add
 set spelllang=en_us,cjk
 set statusline=%<%{StatusLineFileName()}\ %m%r%{HasPaste()}%=%l\ %P
-set switchbuf=useopen
+set switchbuf=usetab
 set tabpagemax=50
 set title
 set undolevels=1000
