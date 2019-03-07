@@ -133,7 +133,7 @@ function main() {
         echo ""
         echo -e "\t-r|--restore restores a file from cloud, a.k.a, makes symbol link to cloud file."
         echo -e "\t-u|--uncloudify replaces symbol link with the real file, and delete it from cloud."
-        echo -e "\t-t|--target TARGET selects iCloud, Google Drive, OneDrive or Dropbox"
+        echo -e "\t-t|--target TARGET selects gdrive (default), icloud, onedrive, dropbox"
         echo -e "\t-f|--force forces overwriting files"
         echo ""
         echo -e "\t-h|--help shows this"
