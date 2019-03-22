@@ -90,7 +90,7 @@ fi
 
 # fzf
 export FZF_DEFAULT_OPTS='--color light'
-export FZF_DEFAULT_COMMAND='rg --hidden -g "!.git" --color never --files'
+export FZF_DEFAULT_COMMAND='rg --no-messages --hidden -g "!.git" --color never --files'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 export PATH="\
