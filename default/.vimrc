@@ -32,7 +32,6 @@ Plug 'dyng/ctrlsf.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'janko-m/vim-test'
 Plug 'junegunn/fzf.vim'
-Plug 'mkitt/tabline.vim'
 Plug 'sbdchd/neoformat'
 Plug 'sjl/gundo.vim' " <Leader>u
 Plug 'thinca/vim-visualstar' " * # g* g#
@@ -104,6 +103,42 @@ let g:netrw_banner = 0
 let g:netrw_liststyle = 3
 
 " Functions & Commands {{{1
+function! Tabline()
+  let s = ''
+  for i in range(tabpagenr('$'))
+    let tab = i + 1
+    let winnr = tabpagewinnr(tab)
+    let buflist = tabpagebuflist(tab)
+    let bufnr = buflist[winnr - 1]
+    let bufname = fnamemodify(bufname(bufnr), ':t')
+    let rename = gettabvar(tab, 'tabline_rename')
+    let title = rename != '' ? substitute(rename, '\C%f', bufname, 'g') : (bufname != '' ? bufname : 'No Name')
+    let bufmodified = getbufvar(bufnr, "&mod")
+
+    let s .= '%' . tab . 'T'
+    let s .= (tab == tabpagenr() ? '%#TabLineSel#' : '%#TabLine#')
+    let s .= ' ' . tab .':'
+    let s .= '['. title . '] '
+
+    if bufmodified
+      let s .= '[+] '
+    endif
+  endfor
+
+  let s .= '%#TabLineFill#'
+  return s
+endfunction
+
+" To rename the current tab.
+function! s:TabRename(label)
+  call settabvar(tabpagenr(), 'tabline_rename', a:label)
+  exec 'set showtabline=' . &showtabline
+endfunction
+
+command! -nargs=1 Trename call s:TabRename(<q-args>)
+command! -nargs=1 Tnew tabnew! | call s:TabRename(<q-args>)
+command! -nargs=0 Treset call s:TabReset('')
+
 function! HasPaste()
   if &paste
     return '[P]'
@@ -267,6 +302,7 @@ set spellfile=$HOME/.vim-spell-en.utf-8.add,.vim-spell-en.utf-8.add
 set spelllang=en_us,cjk
 set statusline=%<%{StatusLineFileName()}\ %m%r%{HasPaste()}%=%l\ %P
 set switchbuf=usetab,split
+set tabline=%!Tabline()
 set tabpagemax=50
 set title
 set undolevels=1000
