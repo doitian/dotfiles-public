@@ -274,8 +274,9 @@ set autoindent
 set autoread
 set backspace=indent,eol,start
 set backup
-set backupdir=~/.vim/backup
+set backupdir=~/.vim/backup//,.
 set copyindent
+set directory=~/.vim/swap//,/tmp//,.
 set display+=lastline
 set expandtab
 set foldmethod=marker
@@ -301,7 +302,6 @@ set smarttab
 set spellfile=$HOME/.vim-spell-en.utf-8.add,.vim-spell-en.utf-8.add
 set spelllang=en_us,cjk
 set statusline=%<%{StatusLineFileName()}\ %m%r%{HasPaste()}%=%l\ %P
-set switchbuf=usetab,split
 set tabline=%!Tabline()
 set tabpagemax=50
 set title
@@ -331,7 +331,7 @@ if !has("win32")
   set listchars=tab:▸\ ,trail:·,extends:>,precedes:<,nbsp:·
 endif
 if v:version > 740
-  set undodir=~/.vim/undo,/tmp
+  set undodir=~/.vim/undo//,/tmp//,.
   set undofile
 endif
 
