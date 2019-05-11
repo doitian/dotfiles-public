@@ -12,14 +12,9 @@ endif
 call plug#begin('~/.vim/plugged')
 
 " filetypes
-Plug 'Glench/Vim-Jinja2-Syntax'
 Plug 'cespare/vim-toml'
-Plug 'davidoc/taskpaper.vim'
-Plug 'leafgarland/typescript-vim'
-Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
 Plug 'rust-lang/rust.vim'
-Plug 'tomlion/vim-solidity'
 Plug 'tpope/vim-markdown'
 Plug 'vim-ruby/vim-ruby'
 
@@ -40,7 +35,6 @@ Plug 'tomtom/tcomment_vim' " gc
 Plug 'tpope/vim-abolish' " :A :S
 Plug 'tpope/vim-dispatch' " <Leader>t
 Plug 'tpope/vim-endwise'
-Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-repeat'
@@ -53,7 +47,6 @@ if has("gui_running") || &t_Co > 16
 endif
 
 if has('unix')
-  Plug 'tpope/vim-dotenv'
   Plug 'tpope/vim-eunuch' " Linux commands
 endif
 
@@ -91,14 +84,12 @@ endif
 " Plugins Options {{{1
 
 let test#strategy = 'dispatch'
-
 let g:ctrlsf_default_root = 'cwd'
 let g:dispatch_compilers = {
       \ 'pipenv run': '',
       \ 'bundle exec': ''}
 let g:fzf_buffers_jump = 1
 let g:go_fmt_fail_silently = 1
-let g:jsx_ext_required = 0
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
 
@@ -256,7 +247,6 @@ command! -bang Fcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sin
 command! -bang Flcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': 'lcd'}, <bang>0))
 command! -bang Fdir call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd'}, <bang>0))
 command! -bang Ffile call fzf#run(fzf#wrap('fasd -f', {'source': 'fasd -lRf'}, <bang>0))
-command! -bang -nargs=* Frg call fzf#run(fzf#wrap('rg', {'source': 'rg --hidden -g "!.git" --files '.<q-args>}, <bang>0))
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
   \   'rg --hidden -g "!.git" --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
@@ -375,8 +365,9 @@ nnoremap <Leader>ee :e <C-r>=expand("%")<CR>
 nnoremap <silent> <Leader>ev :tabnew ~/.vimrc<CR>
 nnoremap <Leader>e<Space> :e<Space>
 
-nnoremap <silent> <Leader>fb :<C-u>Buffers<CR>
-nnoremap <silent> <Leader>ff :<C-u>Ffile<CR>
+nnoremap <silent> <Leader>fb :Buffers<CR>
+nnoremap <silent> <Leader>ff :Ffile<CR>
+nnoremap <silent> <Leader>fd :Fdir<CR>
 nnoremap <silent> <Leader>fo :BLines<CR>
 nnoremap <silent> <Leader>fO :Lines<CR>
 nnoremap <silent> <Leader>fr :History<CR>
@@ -390,7 +381,7 @@ nnoremap <Leader>g<Space> :grep<Space>
 nnoremap <silent> <Leader>gw :silent grep "\b<cword>\b"<CR>:copen 10<CR>
 nnoremap <silent> <Leader>gW :silent grep "\b<cWORD>\b"<CR>:copen 10<CR>
 
-nnoremap <silent> <Leader>h :<C-u>Files <C-r>=CurDir()<CR><CR>
+nnoremap <silent> <Leader>h :Files <C-r>=CurDir()<CR><CR>
 
 nnoremap <silent> <Leader>i :BTags<CR>
 nnoremap <silent> <Leader>I :Tags<CR>
