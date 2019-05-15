@@ -428,10 +428,9 @@ nnoremap <silent> <Leader>sw :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:noh
 nnoremap <Leader>tq :Copen<CR>
 nnoremap <Leader>t<Space> :Start<Space>
 nnoremap <Leader>tb :Start!<Space>
-nnoremap <silent> <Leader>t<CR> :TestNearest<CR>
 nnoremap <silent> <Leader>tf :TestFile<CR>
-nnoremap <silent> <Leader>ta :TestSuite<CR>
-nnoremap <silent> <Leader>tl :TestLast<CR>
+nnoremap <silent> <Leader>ts :TestSuite<CR>
+nnoremap <silent> <Leader>tt :TestLast<CR>
 nnoremap <silent> <Leader>te :TestVisit<CR>
 
 nnoremap <Leader>u :GundoToggle<CR>
