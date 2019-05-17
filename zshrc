@@ -18,7 +18,9 @@ fpath=(
 )
 
 zstyle :omz:plugins:ssh-agent agent-forwarding on
-zstyle :omz:plugins:ssh-agent identities id_rsa
+if [ -f ~/.ssh/id_rsa ]; then
+  zstyle :omz:plugins:ssh-agent identities id_rsa
+fi
 
 # Figure out the SHORT hostname
 if [[ "$OSTYPE" = darwin* ]]; then
