@@ -54,8 +54,10 @@ fi
 plugvim="$(cat ~/.vim/autoload/plug.vim)"
 
 ssh "$@" "
-  mkdir -p ~/.vim/autoload
   mkdir -p ~/.vim/backup
+  mkdir -p ~/.vim/undo
+  mkdir -p ~/.vim/swap
+  mkdir -p ~/.vim/autoload
   test -f ~/.vim/autoload/plug.vim || cat <<\"PLUG\" > ~/.vim/autoload/plug.vim
 $plugvim
 PLUG
