@@ -1,14 +1,20 @@
 #!/usr/bin/env bash
 
 review() {
-  local review_base="$(git config --default master --get user.reviewBase)"
+  local review_base="$(git config --get user.reviewBase || echo master)"
   local merge_base="$(git merge-base HEAD $review_base)"
+
+  local VIM=vim
+  if [ "$1" = "-g" ]; then
+    shift
+    VIM=mvim
+  fi
 
   if [ "$#" = 0 ]; then
     set -- $(git diff --name-only "$merge_base")
   fi
 
-  vim -p "$@" +"tabdo set number" +"tabdo 1" +"tabdo Gdiff $merge_base" +"tabrewind"
+  $VIM -p "$@" +"tabdo set number" +"tabdo 1" +"tabdo Gdiff $merge_base" +"tabrewind"
 }
 
 review "$@"
