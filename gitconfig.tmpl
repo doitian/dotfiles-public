@@ -76,7 +76,6 @@
   theirs = "!f() { git checkout --theirs "$@" && git add \"$@\"; }; f"
 
   purr = pull --rebase
-  current = "!f() { local remote=$(git config --get user.currentRemote || echo origin) branch=$(git rev-parse --abbrev-ref HEAD) args=(); for a; do case \"$a\" in (-*) args=(\"${args[@]}\" \"$a\");; (*) remote=\"$a\" ;; esac; done; git push \"${args[@]}\" \"${remote}\" \"$branch:$branch\"; }; f"
   new = "!f() { git init; cp ~/.ignore .gitignore; git add -f .gitignore; git commit -m 'initial commit'; }; f"
 
   ready = rebase -i @{u}

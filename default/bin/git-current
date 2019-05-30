@@ -1,0 +1,22 @@
+#!/bin/bash
+
+main() {
+  local remote=$(git config --get user.currentRemote || echo origin)
+  local branch=$(git rev-parse --abbrev-ref HEAD)
+  local -a args=()
+
+  for a; do
+    case "$a" in
+      (-*)
+        args=("${args[@]}" "$a")
+        ;;
+      (*)
+        remote="$a"
+        ;;
+    esac
+  done
+
+  git push "${args[@]}" "${remote}" "$branch:$branch"
+}
+
+main
