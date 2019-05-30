@@ -1,11 +1,6 @@
 [alias]
   snapshot = "!f() { git stash save -u \"snapshot $(date)\" && git stash apply \"stash@{0}\"; }; f"
 
-  a = add
-  aa = add -A
-  au = add -u
-
-  b = branch -v
   br = branch
   whereami = rev-parse --abbrev-ref HEAD
 
@@ -25,10 +20,6 @@
 
   fp = format-patch -s
 
-  sa = stash
-  sl = stash list
-  sp = stash pop
-
   l = log --pretty=tformat:'%C(auto)%h %s <%aN %ad>' --date=relative
   lg = log --pretty=tformat:'%C(auto)%h %s <%aN %ad>%d' --date=relative --decorate --graph
   l1 = !git --no-pager log -1 --decorate --date=relative
@@ -38,22 +29,19 @@
   stat = log --stat
 
   mt = mergetool
-  mmr = "!f() { git merge --no-commit --no-ff \"$@\"; git commit; }; f"
 
   mb = !git merge-base HEAD \"$(git config --get user.reviewBase || echo master)\"
+  cpr = "!f() { git current -u; hub pull-request \"$@\"; }; f"
 
-  rs = reset
-  rh = reset --hard
   unstage = reset HEAD
   del = "!f() { git reset HEAD \"$@\"; git clean -f -- \"$@\"; git checkout -- \"$@\" 2>/dev/null; }; f"
 
   rb = rebase
   rc = rebase --continue
   ra = rebase --abort
-  rk = rebase --skip
+  rs = rebase --skip
 
   st = status --short --branch
-  ms = multistatus
   dotfiles = "!git multistatus ~/.dotfiles ~/.dotfiles/repos/public ~/.dotfiles/repos/private ~/'Library/Application Support/Code/User'"
   codebase = "!f() { fasd -dl | sed 's|$|/.git|' | xargs ls -d 2> /dev/null | sed 's/.git$//' | xargs git multistatus; }; f"
   all= "!f() { find . -maxdepth 4 -type d -name .git \"$@\" -prune | sed 's/.git$//' | xargs git multistatus; }; f"
@@ -70,7 +58,6 @@
   exclude = "!f() { dir=$(git rev-parse --show-toplevel 2> /dev/null); [ -n \"$dir\" ] || return 1; for i in \"$@\"; do echo \"$i\" >> \"$dir\"/.git/info/exclude; done; }; f"
 
   lasttag = describe --tags --abbrev=0
-  lt = describe --tags --abbrev=0
 
   ours = "!f() { git checkout --ours \"$@\" && git add \"$@\"; }; f"
   theirs = "!f() { git checkout --theirs "$@" && git add \"$@\"; }; f"
