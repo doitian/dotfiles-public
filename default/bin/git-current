@@ -19,4 +19,4 @@ main() {
   git push "${args[@]}" "${remote}" "$branch:$branch"
 }
 
-main
+main "$@"
