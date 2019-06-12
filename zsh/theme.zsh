@@ -24,17 +24,17 @@ function git_prompt_info() {
 }
 
 export VIRTUAL_ENV_DISABLE_PROMPT=true
-ZSH_THEME_ENABLE_RBENV=true
-if ! which rbenv &> /dev/null; then
-  ZSH_THEME_ENABLE_RBENV=
+ZSH_THEME_ENABLE_ASDF=true
+if ! which asdf &> /dev/null; then
+  ZSH_THEME_ENABLE_ASDF=
 fi
 function universe_env_info() {
-  local rbenv_info virtualenv_info
-  if [ -n "$ZSH_THEME_ENABLE_RBENV" ]; then
-    rbenv_info="$(rbenv version)"
-    if ! [ "${rbenv_info#*set by }" = "$HOME/.rbenv/version)" ]; then
-      echo -n " %F{cyan}rb»%f${rbenv_info%% *}"
-    fi
+  local asdf_info
+  local virtualenv_info
+  if [ -n "$ZSH_THEME_ENABLE_ASDF" ]; then
+    asdf current 2>&1 | grep -v -F "set by $HOME/.tool-versions" | sed -n 's/\s*(set by.*//p' | while read asdf_info; do
+      echo -n " %F{cyan}${asdf_info%% *}»%f${asdf_info##* }"
+    done
   fi
   if [ -n "$VIRTUAL_ENV" ]; then
     name="${VIRTUAL_ENV%/py2env}"
@@ -42,7 +42,7 @@ function universe_env_info() {
     if [ -n "$PIPENV_ACTIVE" ]; then
       name="${name%-*}"
     fi
-    echo -n " %F{cyan}py»%f$(basename "$name")"
+    echo -n " %F{cyan}penv»%f$(basename "$name")"
   fi
 }
 
