@@ -29,4 +29,5 @@ lmake.mk
 *.qf
 .git
 .ignore
+.tool-versions
 todo.taskpaper
