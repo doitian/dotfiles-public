@@ -422,6 +422,7 @@ nnoremap <silent> <Leader>rm :exe "silent !open -a 'Marked.app' " . shellescape(
 nnoremap <silent> <Leader>rM :exe "silent !open -a 'Marked.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
 nnoremap <silent> <Leader>rr :exe "silent !open " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
 nnoremap <silent> <Leader>ro :exe "silent !open " . shellescape(expand('<cfile>')) . " &> /dev/null" \| :redraw!<CR>
+nnoremap <silent> <Leader>R :checktime<CR>
 
 " Strip all trailing whitespace from a file
 nnoremap <silent> <Leader>sw :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR>
