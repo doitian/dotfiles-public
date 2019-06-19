@@ -14,10 +14,7 @@ if [ -d "$GITBOOK_REP" ]; then
       sed -e 's/^<a href=["'"'"']//' -e 's/["'"'"']$//'| \
       xargs cat | \
       grep -v '^{%.*%}' | sed 's/{%[^%]*%}//' | \
-      pandoc -f markdown --variable fontsize=10pt \
-      --variable=geometry:b5paper \
-      --variable mainfont="Arial" \
-      --variable documentclass=scrbook --toc --pdf-engine=xelatex -o book.pdf
+      pandoc-pdf -f markdown -o book.pdf --toc
 
   else
     echo "File '$SUMMARY_FILE' does not exist"
