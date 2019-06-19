@@ -27,6 +27,7 @@ Plug 'dyng/ctrlsf.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'janko-m/vim-test'
 Plug 'junegunn/fzf.vim'
+Plug 'kassio/neoterm'
 Plug 'sbdchd/neoformat'
 Plug 'sjl/gundo.vim' " <Leader>u
 Plug 'thinca/vim-visualstar' " * # g* g#
@@ -173,7 +174,7 @@ function! MyFoldText()
   return line . ' …' . repeat(" ",fillcharcount) . foldedlinecount . ' '
 endfunction
 
-let s:DisturbingFiletypes = { "help": 1, "netrw": 1, "vim-plug": 1,
+let s:DisturbingFiletypes = { "help": 1, "netrw": 1, "vim-": 1,
       \ "godoc": 1, "git": 1, "man": 1 }
 
 function! s:CloseDisturbingWin()
@@ -325,6 +326,9 @@ endif
 if v:version > 740
   set undodir=~/.vim/undo//,/tmp//,.
   set undofile
+endif
+if has('nvim')
+  set inccommand=nosplit
 endif
 
 let $cb = $HOME . '/codebase'
