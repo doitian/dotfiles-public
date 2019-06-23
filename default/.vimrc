@@ -400,6 +400,7 @@ noremap <silent> <Leader>ll :Lexplore<CR>
 noremap <silent> <Leader>la :args<CR>
 noremap <silent> <Leader>lj :jumps<CR>
 noremap <silent> <Leader>lt :tags<CR>
+noremap <silent> <Leader>lT :tabs<CR>
 noremap <silent> <Leader>lr :registers<CR>
 noremap <silent> <Leader>lb :ls<CR>:b<Space>
 noremap <silent> <Leader>lm :marks<CR>:normal! `
@@ -416,7 +417,6 @@ nnoremap <silent> <Leader>oW :silent vimgrep /\<<C-r><C-a>\>/ %<CR>:copen 10<CR>
 nnoremap <Leader>p "+p
 nnoremap <Leader>P "+P
 
-nnoremap <silent> <Leader>Q :cfile errors.txt<CR>
 nnoremap <silent> <Leader>q :call QFixToggle()<CR>
 
 " Reveal
@@ -458,6 +458,9 @@ nnoremap <silent> <Leader>z :FZF<CR>
 
 nnoremap <silent> <Leader>/t /\|.\{-}\|<CR>
 nnoremap <Leader>/w /\<\><Left><Left>
+
+nnoremap <silent> <Leader>] :tabclose<CR>
+nnoremap <silent> <Leader>[ :Diffoff<CR>
 
 cnoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
 inoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
