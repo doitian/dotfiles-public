@@ -94,7 +94,7 @@ let g:fzf_buffers_jump = 1
 let g:go_fmt_fail_silently = 1
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
-let g:cargo_makeprg_params = "check --all"
+let g:cargo_makeprg_params = "check --all --all-targets"
 
 " Functions & Commands {{{1
 function! Tabline()
