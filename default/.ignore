@@ -1,9 +1,6 @@
-.rbenv-*
 TAGS
 tags
 *.tags
-*.sublime-project
-*.sublime-workspace
 *.marked
 .Ulysses*
 .tmux.conf
@@ -30,4 +27,4 @@ lmake.mk
 .git
 .ignore
 .tool-versions
-todo.taskpaper
+tempCodeRunnerFile
