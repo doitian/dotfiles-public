@@ -4,13 +4,14 @@
 
 TMUX_UP=tmux-up
 VERSION=0.5.1
+TMUX_COMM="${TMUX_COMM:-tmux}"
 
 if [ $# -ne 1 ]; then
   if [ "$PWD" = "$HOME" ]; then
     if ! tmux has-session "=chore" &> /dev/null; then
       tmux new-session -s chore -d
     fi
-    [ -z "$TMUX" ] && tmux attach -t "=chore" || tmux switch-client -t "=chore"
+    [ -z "$TMUX" ] && $TMUX_COMM attach -t "=chore" || tmux switch-client -t "=chore"
     exit $?
   elif [ ! -f '.tmux.conf' ]; then
     ( echo 'send "[ -f Session.vim ] && vim -S || vim" C-m'; echo 'neww -n shell' ) > .tmux.conf
@@ -72,7 +73,7 @@ fi
 
 if [ -z "$TMUX" ]
 then
-  tmux attach -t "=$SESSION"
+  $TMUX_COMM attach -t "=$SESSION"
 else
   tmux switch-client -t "=$SESSION"
 fi
