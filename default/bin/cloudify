@@ -15,7 +15,7 @@ function debug() {
 : ${CLOUDIFY_TARGET_icloud="$HOME/Documents/Locations"}
 : ${CLOUDIFY_TARGET_onedrive="$HOME/OneDrive/Locations"}
 : ${CLOUDIFY_TARGET_dropbox="$HOME/Dropbox/Locations"}
-: ${CLOUDIFY_TARGET_DIRECTORY="$CLOUDIFY_TARGET_gdrive"}
+: ${CLOUDIFY_TARGET_DIRECTORY="$CLOUDIFY_TARGET_icloud"}
 
 CLOUDIFY_FORCE=
 CLOUDIFY_COMMAND=cloudify
@@ -133,7 +133,7 @@ function main() {
         echo ""
         echo -e "\t-r|--restore restores a file from cloud, a.k.a, makes symbol link to cloud file."
         echo -e "\t-u|--uncloudify replaces symbol link with the real file, and delete it from cloud."
-        echo -e "\t-t|--target TARGET selects gdrive (default), icloud, onedrive, dropbox"
+        echo -e "\t-t|--target TARGET selects icloud (default), gdrive, onedrive, dropbox"
         echo -e "\t-f|--force forces overwriting files"
         echo ""
         echo -e "\t-h|--help shows this"

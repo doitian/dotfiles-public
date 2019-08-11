@@ -32,7 +32,7 @@ else:
         ['git', 'describe', '--tags', tag_rev]).strip())
 
 logs = _str(subprocess.check_output(
-    ['git', 'log', '--reverse', '--merges', '--first-parent', '--pretty=tformat:%s', '{}...HEAD'.format(since)]))
+    ['git', 'log', '--reverse', '--merges', '--pretty=tformat:%s', '{}...HEAD'.format(since)]))
 
 PR_NUMBER_RE = re.compile(r'^Merge pull request #(\d+) from')
 BORS_PR_NUMBER_RE = re.compile(r'^Merge #(\d+.*)')
