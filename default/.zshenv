@@ -96,14 +96,6 @@ export FZF_DEFAULT_OPTS='--color light'
 export FZF_DEFAULT_COMMAND='rg --no-messages --hidden -g "!.git" --color never --files'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
-# libraries
-if [ -f /usr/local/lib/librocksdb.a ]; then
-  export ROCKSDB_LIB_DIR=/usr/local/lib
-fi
-if [ -f /usr/local/lib/libsnappy.a ]; then
-  export SNAPPY_LIB_DIR=/usr/local/lib
-fi
-
 export PATH="\
 .git/$SAFEBIN_SECRET/../../bin\
 :$HOME/bin\
