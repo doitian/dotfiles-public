@@ -226,14 +226,23 @@ function! PushMark(is_global)
   call setpos("'" . nr2char(l:curr), getpos("."))
 endfunction
 
+if !exists("g:bookmark_line_insert_newline")
+  let g:bookmark_line_insert_newline = 0
+  let g:bookmark_line_prefix = ""
+endif
 function! BookmarkLine(message)
-  let l:line = expand("%") . "|" . line(".") . " col " . col(".") . "| "
+  let l:line = g:bookmark_line_prefix . expand("%") . "|" . line(".") . " col " . col(".") . "| "
   if a:message == ""
     let l:line = l:line . getline(".")
   else
     let l:line = l:line . a:message
   endif
-  call writefile([l:line], "bookmarks.qf", "a")
+  if g:bookmark_line_insert_newline
+    let l:list = ["", l:line]
+  else
+    let l:list = [l:line]
+  endif
+  call writefile(l:list, "bookmarks.qf", "a")
 endfunction
 
 function! s:ProjectionistActivate() abort
@@ -257,8 +266,8 @@ command! -bang -nargs=* Rg
   \           : fzf#vim#with_preview('right:50%:hidden', '?'),
   \   <bang>0)
 
-command! -nargs=1 -complete=file Cfile set errorformat=%f\|%l\ col\ %c\|\ %m | cfile <args>
-command! -nargs=1 -complete=file Lfile set errorformat=%f\|%l\ col\ %c\|\ %m | lfile <args>
+command! -nargs=1 -complete=file Cfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | cfile <args>
+command! -nargs=1 -complete=file Lfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | lfile <args>
 command! -nargs=* B call BookmarkLine(<q-args>)
 
 " Config {{{1
