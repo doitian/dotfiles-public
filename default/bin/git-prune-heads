@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+
+git fetch --all --prune
+git fetch --prune-tags origin
+
+# Remove branch which is up-to-dated with a remote branch
+git branch -r | \
+  git show-ref --heads | \
+  sed 's/.* refs\/heads\///' | \
+  grep -v '^\(develop\|master\)$' | \
+  xargs git branch -d
