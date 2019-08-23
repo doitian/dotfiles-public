@@ -95,7 +95,10 @@ for line in logs.splitlines():
 
         scope, module, message = PR_TITLE_RE.match(pr['title']).groups()
         if not scope:
-            scope = 'misc'
+            if message.lower().startswith("fix ") or message.lower().startswith("fixes "):
+                scope = 'fix'
+            else:
+                scope = 'misc'
         scope = SCOPE_MAPPING.get(scope, scope)
         if not scope:
             continue
