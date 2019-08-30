@@ -21,6 +21,9 @@ main() {
   fi
 
   for repo; do
+    if ! [ -e "$repo" ]; then
+      continue
+    fi
     abrepo="$(realpath "$repo")"
     if [ -d "$repo" ]; then
       ( cd "$repo" && printf "%b\t%s${reset_color}\t%s\n" "$(parse_git_dirty)" "$(__git_ps1 '%s' || true)" "$abrepo" )
