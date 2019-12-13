@@ -96,6 +96,11 @@ export FZF_DEFAULT_OPTS='--color light'
 export FZF_DEFAULT_COMMAND='rg --no-messages --hidden -g "!.git" --color never --files'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
+# gpg
+if [[ "$OSTYPE" = linux* ]]; then
+  export GPG_TTY="$(tty)"
+fi
+
 export PATH="\
 .git/$SAFEBIN_SECRET/../../bin\
 :$HOME/bin\

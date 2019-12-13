@@ -69,7 +69,7 @@
   whatsup = diff @{u}
   giveup = reset --hard @{u}
 
-  me = "!f() { git config user.email __EMAIL__; git config user.signingkey 1523FD9C60A9CD14; }; f"
+  me = "!f() { git config user.email __EMAIL__; git config user.signingkey 1523FD9C60A9CD14; git config commit.gpgSign true; }; f"
 
 [color "branch"]
   current = blue bold
