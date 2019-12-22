@@ -354,6 +354,8 @@ set pastetoggle=<F2>
 
 nnoremap <silent> t<CR> :TestNearest<CR>
 nnoremap <silent> g<CR> :Dispatch<CR>
+nnoremap <silent> q<CR> :cc<CR>
+nnoremap <silent> q<Space> :call QFixToggle()<CR>
 
 nnoremap <Leader><Space> :Files<CR>
 
@@ -363,7 +365,7 @@ nnoremap <silent> <Leader>b :Buffers<CR>
 
 nnoremap <Leader>cd :Fcd<CR>
 nnoremap <Leader>cl :Flcd<CR>
-nnoremap <Leader>ct :tabnew<CR>:Flcd<CR>
+nnoremap <Leader>ct :tabnew<Bar>Flcd<CR>
 nnoremap <Leader>css :colorscheme PaperColor<CR>
 nnoremap <Leader>csd :colorscheme default<CR>
 nnoremap <silent> <Leader>cc :let @+ = @"<CR>
@@ -393,8 +395,8 @@ nnoremap <silent> <Leader>fw :Windows<CR>
 nnoremap <silent> <Leader>f? :Helptags<CR>
 
 nnoremap <Leader>g<Space> :grep<Space>
-nnoremap <silent> <Leader>gw :silent grep "\b<cword>\b"<CR>:copen 10<CR>
-nnoremap <silent> <Leader>gW :silent grep "\b<cWORD>\b"<CR>:copen 10<CR>
+nnoremap <silent> <Leader>gw :silent grep "\b<cword>\b"<Bar>copen 10<CR>
+nnoremap <silent> <Leader>gW :silent grep "\b<cWORD>\b"<Bar>copen 10<CR>
 
 nnoremap <silent> <Leader>h :Files <C-r>=CurDir()<CR><CR>
 
@@ -420,8 +422,8 @@ nnoremap <silent> <Leader>M :call PushMark(1)<CR>
 nnoremap <silent> <Leader>n :nohlsearch<CR>
 
 nnoremap <Leader>o<Space> :vimgrep //g %<Left><Left><Left><Left>
-nnoremap <silent> <Leader>ow :silent vimgrep /\<<C-r><C-w>\>/ %<CR>:copen 10<CR>
-nnoremap <silent> <Leader>oW :silent vimgrep /\<<C-r><C-a>\>/ %<CR>:copen 10<CR>
+nnoremap <silent> <Leader>ow :silent vimgrep /\<<C-r><C-w>\>/ %<Bar>copen 10<CR>
+nnoremap <silent> <Leader>oW :silent vimgrep /\<<C-r><C-a>\>/ %<Bar>copen 10<CR>
 
 nnoremap <Leader>p "+p
 nnoremap <Leader>P "+P
@@ -438,7 +440,7 @@ nnoremap <silent> <Leader>ro :exe "silent !open " . shellescape(expand('<cfile>'
 nnoremap <silent> <Leader>R :checktime<CR>
 
 " Strip all trailing whitespace from a file
-nnoremap <silent> <Leader>sw :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR>
+nnoremap <silent> <Leader>sw :let _s=@/<Bar>%s/\s\+$//e<Bar>let @/=_s<Bar>nohl<CR>
 
 nnoremap <Leader>tq :Copen<CR>
 nnoremap <Leader>t<Space> :Start<Space>
@@ -452,12 +454,10 @@ nnoremap <Leader>u :GundoToggle<CR>
 " Reselect text that was just pasted
 nnoremap <Leader>v `[v`]
 
-nnoremap <silent> <Leader>w :Neoformat<CR>:up<CR>
+nnoremap <silent> <Leader>w :Neoformat<Bar>up<CR>
 
-nnoremap <Leader>x <Nop>
-nnoremap <LocalLeader>x <Nop>
-nnoremap <Leader>X :nnoremap <lt>Leader>x :up\\|!
-nnoremap <LocalLeader>X :nnoremap <lt>buffer> <lt>LocalLeader>x :up\\|!
+nnoremap <silent> <Leader>x :up<Bar>!lmake<CR>
+nnoremap <Leader>X :up<Bar>!lmake<Space>
 
 nnoremap <Leader>y "+y
 nnoremap <Leader>Y "+yy
