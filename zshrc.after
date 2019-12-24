@@ -7,3 +7,8 @@ _fzf_compgen_path() {
 export LESS='--RAW-CONTROL-CHARS --quiet --HILITE-UNREAD --ignore-case --long-prompt --no-init'
 export TMUX_TTY="$TTY"
 unset LSCOLORS
+
+if [ -n "${WSL_DISTRO_NAME:-}" ]; then
+  export TERM=xterm-color
+  umask 022
+fi
