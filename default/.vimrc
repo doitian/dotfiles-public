@@ -27,7 +27,6 @@ Plug 'dyng/ctrlsf.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'janko-m/vim-test'
 Plug 'junegunn/fzf.vim'
-Plug 'kassio/neoterm'
 Plug 'sbdchd/neoformat'
 Plug 'sjl/gundo.vim' " <Leader>u
 Plug 'thinca/vim-visualstar' " * # g* g#
@@ -255,6 +254,32 @@ function! s:ProjectionistActivate() abort
   endif
 endfunction
 
+if !exists("g:tmux_send_target")
+  let g:tmux_send_target = ".+1"
+endif
+function! s:TmuxSend(type)
+  let &selection = "inclusive"
+  let l:sel_save = &selection
+  let l:reg_save = @@
+
+  if a:type == 'line'
+    silent exe "normal! '[V']y"
+  elseif a:type == 'char'
+    silent exe "normal! `[v`]y"
+  else
+    silent exe "normal! gvy"
+  endif
+
+  let l:tt_send = "tt -t " . shellescape(g:tmux_send_target) . " "
+  let l:lines = split(@@, '\n')
+  for l:line in l:lines
+    call system(l:tt_send . shellescape(l:line))
+  endfor
+
+  let @@ = l:reg_save
+  let &selection = l:sel_save
+endfunction
+
 command! -bang Fcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': 'cd'}, <bang>0))
 command! -bang Flcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': 'lcd'}, <bang>0))
 command! -bang Fdir call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd'}, <bang>0))
@@ -456,8 +481,9 @@ nnoremap <Leader>v `[v`]
 
 nnoremap <silent> <Leader>w :Neoformat<Bar>up<CR>
 
-nnoremap <silent> <Leader>x :up<Bar>!lmake<CR>
-nnoremap <Leader>X :up<Bar>!lmake<Space>
+nnoremap <silent> <Leader>x :<C-u>set opfunc=<SID>TmuxSend<CR>g@
+nnoremap <silent> <Leader>xx :<C-u>set opfunc=<SID>TmuxSend<Bar>exe 'norm! 'v:count1.'g@_'<CR>
+vnoremap <silent> <Leader>x :<C-u>call <SID>TmuxSend(visualmode())<CR>
 
 nnoremap <Leader>y "+y
 nnoremap <Leader>Y "+yy
