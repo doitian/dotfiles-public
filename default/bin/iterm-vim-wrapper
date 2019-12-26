@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+function vim_clipboard() {
+  set -e
+
+  local arg="${1:-}"
+  local dir="$(mktemp -d "$TMPDIR/edit-in-editor.XXXXX")"
+  local file='clipboard'
+
+  case "x${arg}" in
+    x.*) file="$file$arg";;
+    *.*) file="$arg";;
+    x) : ;;
+    *) file="$file.$arg";;
+  esac
+
+  trap "rm -rf $dir" EXIT
+
+  cd "$dir"
+  pbpaste > "$file"
+  vim -n -b "$file" && pbcopy < "$file"
+}
+
+if [ "${1:-}" = "--edit-clipboard" ]; then
+  shift
+  vim_clipboard "$@"
+else
+  vim "$@"
+fi
+
+kill -SIGUSR1 $PPID

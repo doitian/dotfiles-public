@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+osascript -l JavaScript -e 'function run(arg) {
+  const iterm = Application("iTerm");
+  const window = iterm.createWindowWithDefaultProfile();
+  iterm.write(window.currentSession, {text: arg});
+}' "$(printf '%q ' "$@")"
