@@ -15,7 +15,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'cespare/vim-toml'
 Plug 'pangloss/vim-javascript'
 Plug 'rust-lang/rust.vim'
-Plug 'tpope/vim-markdown'
+Plug 'plasticboy/vim-markdown'
 Plug 'vim-ruby/vim-ruby'
 
 if v:version > 740
@@ -94,6 +94,9 @@ let g:go_fmt_fail_silently = 1
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
 let g:cargo_makeprg_params = "check --all --all-targets"
+let g:vim_markdown_frontmatter = 1
+let g:vim_markdown_toml_frontmatter = 1
+let g:vim_markdown_math = 1
 
 " Functions & Commands {{{1
 function! Tabline()
@@ -520,8 +523,4 @@ augroup vimrc_au
   autocmd FileType gitcommit,markdown,text,rst setlocal spell textwidth=78
   autocmd FileType rust setlocal winwidth=99
   autocmd FileType netrw setlocal bufhidden=wipe
-  autocmd FileType markdown syntax region frontmatter start=/\%^---$/ end=/^---$/
-  autocmd FileType markdown syntax region frontmattertoml start=/\%^+++$/ end=/^+++$/
-  autocmd FileType markdown highlight link frontmatter Comment
-  autocmd FileType markdown highlight link frontmattertoml Comment
 augroup END
