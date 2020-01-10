@@ -6,9 +6,12 @@ set -u
 function vim_clipboard() {
   set -e
 
+  local basename="$1"
+  shift
+
   local arg="${1:-}"
   local dir="$(mktemp -d "$TMPDIR/edit-in-editor.XXXXX")"
-  local file='clipboard'
+  local file="$basename"
 
   case "x${arg}" in
     x.*) file="$file$arg";;
@@ -20,13 +23,20 @@ function vim_clipboard() {
   trap "rm -rf $dir" EXIT
 
   cd "$dir"
-  pbpaste > "$file"
-  vim -n -b "$file" && pbcopy < "$file"
+  if [ "$basename" = clipboard ]; then
+    pbpaste > "$file"
+    vim -n -b "$file" && pbcopy < "$file"
+  else
+    vim -n -b "$file"
+  fi
 }
 
 if [ "${1:-}" = "--edit-clipboard" ]; then
   shift
-  vim_clipboard "$@"
+  vim_clipboard clipboard "$@"
+elif [ "${1:-}" = "--edit-scratch" ]; then
+  shift
+  vim_clipboard scratch "$@"
 else
   vim "$@"
 fi
