@@ -4,8 +4,13 @@ set -e
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
+COMMAND=
+if [ "$#" != 0 ]; then
+  COMMAND="$(printf '%q ' "$@")"
+fi
+
 osascript -l JavaScript -e 'function run(arg) {
   const iterm = Application("iTerm");
   const window = iterm.createWindowWithDefaultProfile();
   iterm.write(window.currentSession, {text: arg});
-}' "$(printf '%q ' "$@")"
+}' "$COMMAND"
