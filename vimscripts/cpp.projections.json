@@ -6,7 +6,7 @@
   "*.hpp": {
     "alternate": ["{}.cpp"],
     "type": "header"
-  }
+  },
   "*.c": {
     "alternate": ["{}.h"],
     "type": "source"
