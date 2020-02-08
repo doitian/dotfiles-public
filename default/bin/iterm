@@ -4,6 +4,8 @@ set -e
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
+export LANG=C.UTF-8
+
 COMMAND=
 if [ "$#" != 0 ]; then
   COMMAND="$(printf '%q ' "$@")"

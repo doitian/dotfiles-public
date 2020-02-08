@@ -232,7 +232,7 @@ if !exists("g:bookmark_line_insert_newline")
   let g:bookmark_line_insert_newline = 0
   let g:bookmark_line_prefix = ""
 endif
-function! BookmarkLine(message)
+function! BookmarkLine(message, copy)
   let l:line = g:bookmark_line_prefix . expand("%") . "|" . line(".") . " col " . col(".") . "| "
   if a:message == ""
     let l:line = l:line . getline(".")
@@ -245,6 +245,9 @@ function! BookmarkLine(message)
     let l:list = [l:line]
   endif
   call writefile(l:list, "bookmarks.qf", "a")
+  if a:copy
+    let @+ = join(l:list)
+  endif
 endfunction
 
 function! s:ProjectionistActivate() abort
@@ -296,7 +299,7 @@ command! -bang -nargs=* Rg
 
 command! -nargs=1 -complete=file Cfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | cfile <args>
 command! -nargs=1 -complete=file Lfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | lfile <args>
-command! -nargs=* B call BookmarkLine(<q-args>)
+command! -bang -nargs=* B call BookmarkLine(<q-args>, <bang>0)
 
 " Config {{{1
 
