@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Run a command in a new iterm window, examples:
+#
+#   iterm vim ~/.vimrc
+
 set -e
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true

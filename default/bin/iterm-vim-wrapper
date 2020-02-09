@@ -1,5 +1,27 @@
 #!/usr/bin/env bash
 
+# Vim launcher. Quits the parent shell when Vim quits.
+#
+# Examples:
+#
+#     iterm-vim-wrapper file
+#
+#     # edit clipboard in temp file clipboard.js
+#     iterm-vim-wrapper --edit-clipboard js
+#
+#     # edit clipboard in temp file Car.java
+#     iterm-vim-wrapper --edit-clipboard Car.java
+#
+#     # edit an empty scratch file scratch.js in a temp directory.
+#     iterm-vim-wrapper --edit-scratch js
+#
+#     # edit an empty scratch file Car.java in a temp directory.
+#     iterm-vim-wrapper --edit-scratch Car.java
+#
+# It can be used together with iterm, such as
+#
+#     iterm iterm-vim-wrapper --edit-clipboard
+
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
@@ -32,13 +54,16 @@ function vim_clipboard() {
 }
 
 if [ "${1:-}" = "--edit-clipboard" ]; then
+  # Edit clipboard in vim. Replace the clipboard with the edited content.
   shift
   vim_clipboard clipboard "$@"
 elif [ "${1:-}" = "--edit-scratch" ]; then
+  # Edit an empty scratch file in a tempory directory
   shift
   vim_clipboard scratch "$@"
 else
   vim "$@"
 fi
 
+# Kill the parent process (the shell) when Vim quits
 kill -SIGUSR1 $PPID
