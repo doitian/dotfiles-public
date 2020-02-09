@@ -63,12 +63,6 @@ set rtp+=/usr/local/opt/fzf
 syntax on
 
 if has("gui_running")
-  if has("win32")
-    set guifont=Source\ Code\ Pro\ Medium:h12
-  else
-    set guifont=Source\ Code\ Pro\ Medium:h16
-  endif
-
   " Remove toolbar, left scrollbar and right scrollbar
   set go-=e go-=r go-=L go-=T
   set guicursor+=a:blinkwait2000-blinkon1500 " blink slowly
