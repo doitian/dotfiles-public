@@ -376,6 +376,7 @@ let g:mapleader = " "
 let maplocalleader = "\\"
 let g:maplocalleader = "\\"
 set pastetoggle=<F2>
+set wildcharm=<C-Z>
 
 nnoremap <silent> t<CR> :TestNearest<CR>
 nnoremap <silent> g<CR> :Dispatch<CR>
@@ -399,13 +400,13 @@ nnoremap <silent> <Leader>cv :let @" = @+<CR>
 nnoremap <silent> <Leader>d "_d
 vnoremap <silent> <Leader>d "_d
 
-nnoremap <Leader>eh :e <C-r>=CurDir().'/'<CR>
+nnoremap <Leader>eh :e <C-r>=CurDir().'/'<CR><C-Z>
 nnoremap <Leader>ed :e <C-r>=CurDir().'/'<CR><CR>
 nnoremap <silent> <Leader>en :enew<CR>
 nnoremap <silent> <Leader>et :tabnew<CR>
-nnoremap <Leader>ee :e <C-r>=expand("%")<CR>
+nnoremap <Leader>ee :e <C-r>=expand("%:r")<CR><C-Z>
 nnoremap <silent> <Leader>ev :tabnew ~/.vimrc<CR>
-nnoremap <Leader>e<Space> :e<Space>
+nnoremap <Leader>e<Space> :e<Space><C-Z>
 
 nnoremap <silent> <Leader>fb :Buffers<CR>
 nnoremap <silent> <Leader>ff :Ffile<CR>
@@ -465,6 +466,7 @@ nnoremap <silent> <Leader>ro :exe "silent !open " . shellescape(expand('<cfile>'
 nnoremap <silent> <Leader>R :checktime<CR>
 
 " Strip all trailing whitespace from a file
+nnoremap <Leader>ss :source ~/.vim/scripts/<C-Z>
 nnoremap <silent> <Leader>sw :let _s=@/<Bar>%s/\s\+$//e<Bar>let @/=_s<Bar>nohl<CR>
 
 nnoremap <Leader>tq :Copen<CR>
