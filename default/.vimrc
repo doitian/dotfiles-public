@@ -32,7 +32,7 @@ Plug 'editorconfig/editorconfig-vim'
 Plug 'janko-m/vim-test'
 Plug 'junegunn/fzf.vim'
 Plug 'sbdchd/neoformat'
-Plug 'sjl/gundo.vim' " <Leader>u
+Plug 'simnalamburt/vim-mundo'
 Plug 'thinca/vim-visualstar' " * # g* g#
 Plug 'tommcdo/vim-exchange' " cx
 Plug 'tomtom/tcomment_vim' " gc
@@ -331,10 +331,8 @@ set ignorecase
 set incsearch
 set laststatus=2
 set lazyredraw
-set noerrorbells
 set nofoldenable
 set nojoinspaces
-set noshowmode
 set scrolloff=2
 set sessionoptions-=options
 set shiftround
@@ -356,7 +354,6 @@ set wildignore=*.swp,*.bak,*.pyc,*.class,*.beam
 set wildmenu
 set wildmode=list:longest,full
 set winwidth=78
-set nowrapscan
 
 if has("cscope")
   set cscopequickfix=s-,c-,d-,i-,t-,e-
@@ -502,7 +499,7 @@ nnoremap <Leader>th :tabnew <C-r>=CurDir().'/'<CR>
 nnoremap <Leader>td :tabnew <C-r>=CurDir().'/'<CR><CR>
 nnoremap <silent> <Leader>tn :tabnew<CR>
 
-nnoremap <Leader>u :GundoToggle<CR>
+nnoremap <Leader>u :MundoToggle<CR>
 " Reselect text that was just pasted
 nnoremap <Leader>v `[v`]
 
