@@ -1,6 +1,10 @@
 if v:progname =~? "evim" | finish | endif
 set nocompatible
-set background=light
+if $ITERM_PROFILE == "Dark"
+  set background=dark
+else
+  set background=light
+endif
 
 let loaded_matchparen = 1
 let s:has_rg = executable('rg')
@@ -369,6 +373,10 @@ let $cb = $HOME . '/codebase'
 
 runtime! macros/matchit.vim
 
+if filereadable(glob("~/.vimrc.local")) 
+    source ~/.vimrc.local
+endif
+
 " Keymap {{{1
 " leader
 let mapleader = " "
@@ -380,8 +388,6 @@ set wildcharm=<C-Z>
 
 nnoremap <silent> t<CR> :TestNearest<CR>
 nnoremap <silent> g<CR> :Dispatch<CR>
-nnoremap <silent> q<CR> :cc<CR>
-nnoremap <silent> q<Space> :call QFixToggle()<CR>
 
 nnoremap <Leader><Space> :Files<CR>
 
@@ -400,7 +406,7 @@ nnoremap <silent> <Leader>cv :let @" = @+<CR>
 nnoremap <silent> <Leader>d "_d
 vnoremap <silent> <Leader>d "_d
 
-nnoremap <Leader>eh :e <C-r>=CurDir().'/'<CR><C-Z>
+nnoremap <Leader>eh :e <C-r>=CurDir().'/'<CR>
 nnoremap <Leader>ed :e <C-r>=CurDir().'/'<CR><CR>
 nnoremap <silent> <Leader>en :enew<CR>
 nnoremap <silent> <Leader>et :tabnew<CR>
@@ -476,6 +482,10 @@ nnoremap <silent> <Leader>tf :TestFile<CR>
 nnoremap <silent> <Leader>ts :TestSuite<CR>
 nnoremap <silent> <Leader>tt :TestLast<CR>
 nnoremap <silent> <Leader>te :TestVisit<CR>
+
+nnoremap <Leader>th :tabnew <C-r>=CurDir().'/'<CR>
+nnoremap <Leader>td :tabnew <C-r>=CurDir().'/'<CR><CR>
+nnoremap <silent> <Leader>tn :tabnew<CR>
 
 nnoremap <Leader>u :GundoToggle<CR>
 " Reselect text that was just pasted

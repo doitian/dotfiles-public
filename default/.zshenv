@@ -92,7 +92,9 @@ if [ type rustc &> /dev/null ]; then
 fi
 
 # fzf
-export FZF_DEFAULT_OPTS='--color light'
+if [ "${ITERM_PROFILE:-}" != Dark ]; then
+  export FZF_DEFAULT_OPTS='--color light'
+fi
 export FZF_DEFAULT_COMMAND='rg --no-messages --hidden -g "!.git" --color never --files'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
