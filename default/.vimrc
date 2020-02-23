@@ -297,7 +297,19 @@ command! -bang -nargs=* Rg
 
 command! -nargs=1 -complete=file Cfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | cfile <args>
 command! -nargs=1 -complete=file Lfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | lfile <args>
-command! -bang -nargs=* B call BookmarkLine(<q-args>, <bang>0)
+command! -bang -nargs=* BM call BookmarkLine(<q-args>, <bang>0)
+
+function! Bufs()
+  redir => list
+  silent ls
+  redir END
+  return split(list, "\n")
+endfunction
+command! Bd call fzf#run(fzf#wrap({
+  \ 'source': Bufs(),
+  \ 'sink*': { lines -> execute('bwipeout '.join(map(lines, {_, line -> split(line)[0]}))) },
+  \ 'options': '--multi --reverse --bind ctrl-a:select-all+accept'
+\ }))
 
 " Config {{{1
 
@@ -344,6 +356,7 @@ set wildignore=*.swp,*.bak,*.pyc,*.class,*.beam
 set wildmenu
 set wildmode=list:longest,full
 set winwidth=78
+set nowrapscan
 
 if has("cscope")
   set cscopequickfix=s-,c-,d-,i-,t-,e-
@@ -415,6 +428,7 @@ nnoremap <silent> <Leader>ev :tabnew ~/.vimrc<CR>
 nnoremap <Leader>e<Space> :e<Space><C-Z>
 
 nnoremap <silent> <Leader>fb :Buffers<CR>
+nnoremap <silent> <Leader>fk :Bd<CR>
 nnoremap <silent> <Leader>ff :Ffile<CR>
 nnoremap <silent> <Leader>fd :Fdir<CR>
 nnoremap <silent> <Leader>fo :BLines<CR>
@@ -438,6 +452,7 @@ nnoremap <silent> <Leader>I :Tags<CR>
 " j localmap
 
 nnoremap <silent> <Leader>k :Close<CR>
+nnoremap <silent> <Leader>K :if winnr("$") == 1 <Bar> enew <Bar> bd # <Bar> else <Bar> bd <Bar> endif<CR>
 
 noremap <silent> <Leader>ll :Lexplore<CR>
 noremap <silent> <Leader>la :args<CR>
