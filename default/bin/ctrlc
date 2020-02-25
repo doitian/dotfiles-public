@@ -1,6 +1,12 @@
 #!/bin/bash
 
-if [[ $OSTYPE == darwin* ]]; then
+if [ -z "$SSH_TTY" ] && command -v it2copy; do
+  if [ "$#" = 0 ]; then
+    it2copy
+  else
+    cat "$@" | it2copy
+  fi
+elif [[ $OSTYPE == darwin* ]]; then
   if [ "$#" = 0 ]; then
     pbcopy
   else

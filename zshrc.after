@@ -4,6 +4,8 @@ _fzf_compgen_path() {
   rg --hidden -g '!.git' --color never --files "$1"
 }
 
+[ -f "$HOME/.iterm2_shell_integration.zsh" ] && source "$HOME/.iterm2_shell_integration.zsh"
+
 export LESS='--RAW-CONTROL-CHARS --quiet --HILITE-UNREAD --ignore-case --long-prompt --no-init'
 export TMUX_TTY="$TTY"
 unset LSCOLORS

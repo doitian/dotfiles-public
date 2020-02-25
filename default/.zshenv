@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-if [ "$(uname -s)" = "Darwin" ]; then
+if [[ -o interactive && "$(uname -s)" == "Darwin" ]]; then
   if [ "$(defaults read -g AppleInterfaceStyle 2>/dev/null)" = Dark ]; then
     if [[ "$ITERM_PROFILE" == "Light" ]]; then
       echo -ne "\033]50;SetProfile=Dark\a"
