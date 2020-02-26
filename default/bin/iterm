@@ -10,9 +10,11 @@ set -u
 
 export LANG=C.UTF-8
 
-COMMAND=
-if [ "$#" != 0 ]; then
+COMMAND="$*"
+if [[ "$#" > 1 ]]; then
   COMMAND="$(printf '%q ' "$@")"
+else
+  COMMAND="$*"
 fi
 
 osascript -l JavaScript -e 'function run(arg) {

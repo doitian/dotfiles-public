@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ -z "$SSH_TTY" ] && command -v it2copy; do
+if [ -z "$SSH_TTY" ] && command -v it2copy &> /dev/null; then
   if [ "$#" = 0 ]; then
     it2copy
   else
