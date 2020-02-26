@@ -132,5 +132,3 @@ export PATH="\
 :/usr/local/sbin\
 :$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools\
 "
-
-export PATH="$HOME/.cargo/bin:$PATH"
