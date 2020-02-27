@@ -7,6 +7,12 @@ set -u
 DIR="$(mktemp -d)"
 trap "rm -rf $DIR" exit
 
+GVIM=
+if [ "${1:-}" = "-g" ]; then
+  GVIM="$1"
+  shift
+fi
+
 FILENAME="$*"
 if [ -z "$FILENAME" ]; then
   FILENAME=scratch
@@ -15,4 +21,4 @@ elif [[ $FILENAME == .* ]]; then
 fi
 
 mkdir -p "$DIR"
-mvim -f +"cd $DIR" "$DIR/$FILENAME"
+vim "$GVIM" -f +"cd $DIR" "$DIR/$FILENAME"

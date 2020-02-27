@@ -8,9 +8,6 @@ endif
 
 let loaded_matchparen = 1
 let s:has_rg = executable('rg')
-if has("nvim") && filereadable(("/usr/local/bin/python3"))
-  let g:python3_host_prog = expand("/usr/local/bin/python3")
-endif
 
 " Plug {{{1
 call plug#begin('~/.vim/plugged')
@@ -55,10 +52,6 @@ if has('unix')
   Plug 'tpope/vim-eunuch' " Linux commands
 endif
 
-if has('nvim')
-  Plug 'radenling/vim-dispatch-neovim'
-endif
-
 call plug#end()
 
 set rtp+=/usr/local/opt/fzf
@@ -97,7 +90,6 @@ let g:netrw_banner = 0
 let g:netrw_liststyle = 3
 let g:cargo_makeprg_params = "check --all --all-targets"
 let g:vim_markdown_frontmatter = 1
-let g:vim_markdown_toml_frontmatter = 1
 let g:vim_markdown_math = 1
 
 " Functions & Commands {{{1
@@ -301,7 +293,7 @@ command! -bang -nargs=* Rg
 
 command! -nargs=1 -complete=file Cfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | cfile <args>
 command! -nargs=1 -complete=file Lfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | lfile <args>
-command! -bang -nargs=* BM call BookmarkLine(<q-args>, <bang>0)
+command! -bang -nargs=* Bm call BookmarkLine(<q-args>, <bang>0)
 
 function! Bufs()
   redir => list
@@ -379,17 +371,10 @@ if v:version > 740
   set undodir=~/.vim/undo//,/tmp//,.
   set undofile
 endif
-if has('nvim')
-  set inccommand=nosplit
-endif
 
 let $cb = $HOME . '/codebase'
 
 runtime! macros/matchit.vim
-
-if filereadable(glob("~/.vimrc.local")) 
-    source ~/.vimrc.local
-endif
 
 " Keymap {{{1
 " leader
@@ -549,3 +534,8 @@ augroup vimrc_au
   autocmd FileType rust setlocal winwidth=99
   autocmd FileType netrw setlocal bufhidden=wipe
 augroup END
+
+if filereadable(glob("~/.vimrc.local")) 
+    source ~/.vimrc.local
+endif
+

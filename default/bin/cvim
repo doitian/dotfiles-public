@@ -1,7 +1,15 @@
 #!/bin/bash
 
+set -x
+
 DIR="$(mktemp -d)"
 trap "rm -rf $DIR" exit
+
+GVIM=
+if [ "${1:-}" = "-g" ]; then
+  GVIM="$1"
+  shift
+fi
 
 FILENAME="$*"
 if [ -z "$FILENAME" ]; then
@@ -11,6 +19,6 @@ elif [[ $FILENAME == .* ]]; then
 fi
 
 pbpaste > "$DIR/$FILENAME"
-if mvim -f +"cd $DIR" "$DIR/$FILENAME"; then
+if vim "$GVIM" -f +"cd $DIR" "$DIR/$FILENAME"; then
   pbcopy < "$DIR/$FILENAME"
 fi
