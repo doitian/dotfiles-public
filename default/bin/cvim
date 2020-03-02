@@ -1,6 +1,8 @@
 #!/bin/bash
 
-set -x
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
 
 DIR="$(mktemp -d)"
 trap "rm -rf $DIR" exit
@@ -15,10 +17,10 @@ FILENAME="$*"
 if [ -z "$FILENAME" ]; then
   FILENAME=clipboard
 elif [[ $FILENAME == .* ]]; then
-  FILENAME="clipboard.$FILENAME"
+  FILENAME="clipboard$FILENAME"
 fi
 
 pbpaste > "$DIR/$FILENAME"
-if vim "$GVIM" -f +"cd $DIR" "$DIR/$FILENAME"; then
+if vim $GVIM -f +"cd $DIR" "$DIR/$FILENAME"; then
   pbcopy < "$DIR/$FILENAME"
 fi

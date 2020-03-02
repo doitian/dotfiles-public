@@ -20,5 +20,4 @@ elif [[ $FILENAME == .* ]]; then
   FILENAME="scratch$FILENAME"
 fi
 
-mkdir -p "$DIR"
-vim "$GVIM" -f +"cd $DIR" "$DIR/$FILENAME"
+vim $GVIM -f +"cd $DIR" "$DIR/$FILENAME"

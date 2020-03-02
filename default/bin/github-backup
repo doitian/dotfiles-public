@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+export GIT_DIR="$(mktemp -d)"
+export GIT_WORK_TREE="$(pwd)"
+trap "rm -rf $GIT_DIR" exit
+
+git init
+git me
+git add -A .
+git commit -m "Backup on $(date)"
+hub create -p "$@"
+git push origin master
