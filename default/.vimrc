@@ -318,6 +318,7 @@ set copyindent
 set directory=~/.vim/swap//,/tmp//,.
 set display+=lastline
 set expandtab
+set nofoldenable
 set foldmethod=marker
 set foldtext=MyFoldText()
 set hidden
@@ -325,14 +326,14 @@ set history=3000
 set hlsearch
 set ignorecase
 set incsearch
+set nojoinspaces
 set laststatus=2
 set lazyredraw
-set nofoldenable
-set nojoinspaces
 set scrolloff=2
 set sessionoptions-=options
 set shiftround
 set shiftwidth=2
+set shortmess-=S
 set sidescrolloff=5
 set smartcase
 set smarttab
@@ -413,6 +414,7 @@ nnoremap <silent> <Leader>et :tabnew<CR>
 nnoremap <Leader>ee :e <C-r>=expand("%:r")<CR><C-Z>
 nnoremap <silent> <Leader>ev :tabnew ~/.vimrc<CR>
 nnoremap <Leader>e<Space> :e<Space><C-Z>
+nnoremap <silent> <Leader>ep :tabnew .projections.json<CR>
 
 nnoremap <silent> <Leader>fb :Buffers<CR>
 nnoremap <silent> <Leader>fk :Bd<CR>
@@ -439,7 +441,7 @@ nnoremap <silent> <Leader>I :Tags<CR>
 " j localmap
 
 nnoremap <silent> <Leader>k :Close<CR>
-nnoremap <silent> <Leader>K :if winnr("$") == 1 <Bar> enew <Bar> bd # <Bar> else <Bar> bd <Bar> endif<CR>
+nnoremap <silent> <Leader>K :enew <Bar> bd #<CR>
 
 noremap <silent> <Leader>ll :Lexplore<CR>
 noremap <silent> <Leader>la :args<CR>
