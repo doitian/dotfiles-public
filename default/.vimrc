@@ -34,7 +34,7 @@ Plug 'thinca/vim-visualstar' " * # g* g#
 Plug 'tommcdo/vim-exchange' " cx
 Plug 'tomtom/tcomment_vim' " gc
 Plug 'tpope/vim-abolish' " :A :S
-Plug 'tpope/vim-dispatch' " <Leader>t
+Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-obsession'
@@ -480,8 +480,6 @@ nnoremap <Leader>ss :source ~/.vim/scripts/<C-Z>
 nnoremap <silent> <Leader>sw :let _s=@/<Bar>%s/\s\+$//e<Bar>let @/=_s<Bar>nohl<CR>
 
 nnoremap <Leader>tq :Copen<CR>
-nnoremap <Leader>t<Space> :Start<Space>
-nnoremap <Leader>tb :Start!<Space>
 nnoremap <silent> <Leader>tf :TestFile<CR>
 nnoremap <silent> <Leader>ts :TestSuite<CR>
 nnoremap <silent> <Leader>tt :TestLast<CR>
