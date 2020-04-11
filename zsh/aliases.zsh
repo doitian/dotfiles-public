@@ -125,7 +125,7 @@ alias sudo='sudo '
 ##################################################
 # Dir Aliases
 cb=$HOME/codebase
-wf="$HOME/Library/Mobile Documents/iCloud~is~workflow~my~workflows/Documents"
+kb="$HOME/Library/Mobile Documents/27N4MQEA55~pro~writer/Documents"
 dcs=$HOME/Documents
 dsk=$HOME/Desktop
 prj=$HOME/Desktop/Projects
