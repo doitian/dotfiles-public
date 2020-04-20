@@ -10,7 +10,7 @@ let loaded_matchparen = 1
 let s:has_rg = executable('rg')
 
 " Plug {{{1
-call plug#begin('~/.vim/plugged')
+silent! call plug#begin('~/.vim/plugged')
 
 " filetypes
 Plug 'cespare/vim-toml'
@@ -27,7 +27,11 @@ endif
 Plug 'dyng/ctrlsf.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'janko-m/vim-test'
-Plug 'junegunn/fzf.vim'
+if has("ios")
+  Plug 'ctrlpvim/ctrlp.vim'
+else
+  Plug 'junegunn/fzf.vim'
+endif
 Plug 'sbdchd/neoformat'
 Plug 'simnalamburt/vim-mundo'
 Plug 'thinca/vim-visualstar' " * # g* g#
@@ -514,6 +518,12 @@ nnoremap <silent> <Leader>[ :Diffoff<CR>
 cnoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
 inoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
 
+if has("ios")
+  set backupcopy=yes
+  nnoremap <Leader><Space> :CtrlP<CR>
+  nnoremap <silent> <Leader>b :CtrlPBuffer<CR>
+endif
+
 " Filetype specific handling {{{1
 filetype indent plugin on
 
@@ -539,4 +549,3 @@ augroup END
 if filereadable(glob("~/.vimrc.local")) 
     source ~/.vimrc.local
 endif
-
