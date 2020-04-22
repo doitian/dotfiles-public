@@ -19,7 +19,7 @@ Plug 'rust-lang/rust.vim'
 Plug 'plasticboy/vim-markdown'
 Plug 'vim-ruby/vim-ruby'
 
-if v:version > 740
+if v:version > 800
   Plug 'fatih/vim-go'
 endif
 
