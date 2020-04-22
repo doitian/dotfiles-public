@@ -1,0 +1,5 @@
+#!/bin/bash
+
+dir="$(pwd)"
+cd ~/.vim
+zip -r "$dir/vim" autoload plugged scripts projections
