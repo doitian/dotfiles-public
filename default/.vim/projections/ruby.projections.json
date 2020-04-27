@@ -1,0 +1,22 @@
+{
+  "*": {
+    "make": "rake"
+  },
+  "lib/*.rb": {
+    "alternate": ["test/{}_test.rb", "spec/{}_spec.rb"],
+    "type": "src"
+  },
+  "test/*_test.rb": {
+    "alternate": ["lib/{}.rb"],
+    "type": "test",
+    "dispatch": "ruby -Itest %"
+  },
+  "spec/*_spec.rb": {
+    "alternate": ["lib/{}.rb"],
+    "type": "spec",
+    "dispatch": "rspec {file}"
+  },
+  "*.rb": {
+    "path": ["lib/**", "test/**", "spec/**"]
+  }
+}

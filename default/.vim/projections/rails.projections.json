@@ -1,0 +1,37 @@
+{
+  "*": {
+    "make": "rake"
+  },
+  "app/models/*.rb": {
+    "alternate": ["test/models/{}_test.rb", "spec/models/{}_spec.rb"],
+    "type": "model"
+  },
+  "app/controllers/*_controller.rb": {
+    "alternate": [
+      "test/controllers/{}_controller_test.rb",
+      "spec/controllers/{}_controller_spec.rb"
+    ],
+    "type": "controller"
+  },
+  "app/views/*": {
+    "alternate": "app/controllers/{dirname}_controller.rb",
+    "type": "view"
+  },
+  "lib/*.rb": {
+    "alternate": ["test/lib/{}_test.rb", "spec/lib/{}_spec.rb"],
+    "type": "lib"
+  },
+  "test/*_test.rb": {
+    "alternate": ["app/{}.rb", "{}.rb"],
+    "type": "test",
+    "dispatch": "ruby -Itest %"
+  },
+  "spec/*_spec.rb": {
+    "alternate": ["app/{}.rb", "{}.rb"],
+    "type": "spec",
+    "dispatch": "rspec {file}"
+  },
+  "*.rb": {
+    "path": ["app/models/**", "app/controllers/**", "lib/**"]
+  }
+}
