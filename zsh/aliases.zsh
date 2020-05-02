@@ -76,8 +76,6 @@ alias ping="ping -c 5"
 alias more="less"
 alias ltail="less +F -R"
 alias lr="less -R"
-alias lnum='less -N'
-alias sortnr='sort -n -r'
 
 alias rsync-copy="rsync -av --progress -h"
 alias rsync-move="rsync -av --progress -h --remove-source-files"
@@ -89,6 +87,9 @@ if command -v colordiff &> /dev/null; then
 fi
 if command -v prettyping &> /dev/null; then
   alias ping=prettyping
+fi
+if command -v nnn &> /dev/null; then
+  alias nnd='eval "$(cat ~/.config/nnn/.lastd 2>/dev/null && rm -f ~/.config/nnn/.lastd)"'
 fi
 
 alias ibc="{echo 'scale=6';cat} | bc"
