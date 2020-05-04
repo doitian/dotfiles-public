@@ -5,7 +5,7 @@ if $ITERM_PROFILE == "Dark"
 else
   set background=light
 endif
-if has("windows")
+if has("win32")
   set t_Co=256
   set encoding=utf-8
 endif
@@ -81,7 +81,7 @@ if has("gui_running") || &t_Co > 16
   colorscheme PaperColor
 endif
 
-if has("windows")
+if has("win32")
   let &t_SI="\<CSI>5 q"
   let &t_EI="\<CSI>1 q"
 elseif !has("gui_running") && !has("nvim")
