@@ -102,7 +102,7 @@ let g:dispatch_compilers = {
       \ 'pipenv run': '',
       \ 'bundle exec': ''}
 let g:fzf_buffers_jump = 1
-if !has('win32')
+if has('win32')
   let g:fzf_preview_window = ''
 endif
 let g:go_fmt_fail_silently = 1
