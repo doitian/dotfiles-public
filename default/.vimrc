@@ -60,6 +60,11 @@ if has('unix')
   Plug 'tpope/vim-eunuch' " Linux commands
 endif
 
+if has('win32')
+  Plug 'junegunn/fzf'
+  Plug 'PProvost/vim-ps1'
+endif
+
 call plug#end()
 
 set rtp+=/usr/local/opt/fzf
