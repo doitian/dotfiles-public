@@ -8,7 +8,5 @@
 
 [diff]
   algorithm = patience
-  tool = Kaleidoscope
 [merge]
   defaultToUpstream = true
-  tool = Kaleidoscope
