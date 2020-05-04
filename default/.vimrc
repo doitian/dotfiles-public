@@ -5,6 +5,10 @@ if $ITERM_PROFILE == "Dark"
 else
   set background=light
 endif
+if has("windows")
+  set t_Co=256
+  set encoding=utf-8
+endif
 
 let loaded_matchparen = 1
 let s:has_rg = executable('rg')
@@ -76,7 +80,11 @@ end
 if has("gui_running") || &t_Co > 16
   colorscheme PaperColor
 endif
-if !has("gui_running") && !has("nvim")
+
+if has("windows")
+  let &t_SI="\<CSI>5 q"
+  let &t_EI="\<CSI>1 q"
+elseif !has("gui_running") && !has("nvim")
   let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
   let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
 endif
