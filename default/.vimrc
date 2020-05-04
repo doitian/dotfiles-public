@@ -384,9 +384,8 @@ if s:has_rg
   set grepformat=%f:%l:%c:%m
   set grepprg=rg\ --hidden\ -g\ '!.git'\ --vimgrep\ $*
 endif
-if !has("win32")
-  set listchars=tab:▸\ ,trail:·,extends:>,precedes:<,nbsp:·
-endif
+set listchars=tab:▸\ ,trail:·,extends:>,precedes:<,nbsp:·
+set list
 if v:version > 740
   set undodir=~/.vim/undo//,/tmp//,.
   set undofile
