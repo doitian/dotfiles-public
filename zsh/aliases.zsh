@@ -131,8 +131,3 @@ dcs=$HOME/Documents
 dsk=$HOME/Desktop
 prj=$HOME/Desktop/Projects
 dl=$HOME/Downloads
-omz=$HOME/.oh-my-zsh
-omzp=$omz/plugins
-dotfiles=$HOME/.dotfiles
-dotvscode="$HOME/Library/Application Support/Code/User"
-
