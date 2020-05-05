@@ -62,6 +62,12 @@ if which fasd > /dev/null 2>&1; then
             fzf-tmux -d $(( 2 + $(wc -l <<< "$branches") )) +m) &&
     git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
   }
+  function fpass() {
+    local selected
+    selected="$(cd ~/.password-store && fzf)"
+    selected="${selected%.gpg}"
+    gopass "$@" "$selected"
+  }
 fi
 
 alias di='dirs -v | head -n 10'
