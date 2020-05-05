@@ -54,21 +54,22 @@ if which fasd > /dev/null 2>&1; then
   alias f='fasd_fzf -m'
   alias d='fasd_fzf -m -d'
   alias e='fasd_fzf -e -m'
-  # fbr - checkout git branch (including remote branches)
-  function fbr() {
-    local branches branch
-    branches=$(git branch --all | grep -v HEAD) &&
-    branch=$(echo "$branches" |
-            fzf-tmux -d $(( 2 + $(wc -l <<< "$branches") )) +m) &&
-    git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
-  }
-  function fpass() {
-    local selected
-    selected="$(cd ~/.password-store && fzf)"
-    selected="${selected%.gpg}"
-    gopass "$@" "$selected"
-  }
 fi
+
+# fbr - checkout git branch (including remote branches)
+function fbr() {
+  local branches branch
+  branches=$(git branch --all | grep -v HEAD) &&
+  branch=$(echo "$branches" |
+          fzf-tmux -d $(( 2 + $(wc -l <<< "$branches") )) +m) &&
+  git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
+}
+function fpass() {
+  local selected
+  selected="$(cd ~/.password-store && fzf)"
+  selected="${selected%.gpg}"
+  gopass "$@" "$selected"
+}
 
 alias di='dirs -v | head -n 10'
 
