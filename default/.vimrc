@@ -5,9 +5,9 @@ if $ITERM_PROFILE == "Dark"
 else
   set background=light
 endif
-if has("win32")
+set encoding=utf-8
+if &term == 'win32'
   set t_Co=256
-  set encoding=utf-8
 endif
 
 let loaded_matchparen = 1
@@ -86,12 +86,12 @@ if has("gui_running") || &t_Co > 16
   colorscheme PaperColor
 endif
 
-if has("win32")
-  let &t_SI="\<CSI>5 q"
-  let &t_EI="\<CSI>1 q"
-elseif !has("gui_running") && !has("nvim")
+if &term =~ 'xterm'
   let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
   let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+elseif &term == 'win32'
+  let &t_SI="\<CSI>5 q"
+  let &t_EI="\<CSI>1 q"
 endif
 
 " Plugins Options {{{1
@@ -102,9 +102,6 @@ let g:dispatch_compilers = {
       \ 'pipenv run': '',
       \ 'bundle exec': ''}
 let g:fzf_buffers_jump = 1
-if has('win32')
-  let g:fzf_preview_window = ''
-endif
 let g:go_fmt_fail_silently = 1
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
