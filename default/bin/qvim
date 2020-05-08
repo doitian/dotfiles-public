@@ -1,0 +1,3 @@
+#!/bin/bash
+
+exec vim -u NONE "+set nobk noswf nocp" "+syntax on" "+filetype plugin indent on" "$@"
