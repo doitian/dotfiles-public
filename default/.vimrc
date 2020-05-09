@@ -348,11 +348,15 @@ set incsearch
 set nojoinspaces
 set laststatus=2
 set lazyredraw
+set linebreak
+set listchars=tab:▸\ ,trail:·,extends:»,precedes:«,nbsp:␣
+set list
 set scrolloff=2
 set sessionoptions-=options
 set shiftround
 set shiftwidth=2
 set shortmess-=S
+set showbreak=│
 set sidescrolloff=5
 set smartcase
 set smarttab
@@ -384,8 +388,6 @@ if s:has_rg
   set grepformat=%f:%l:%c:%m
   set grepprg=rg\ --hidden\ -g\ '!.git'\ --vimgrep\ $*
 endif
-set listchars=tab:▸\ ,trail:·,extends:>,precedes:<,nbsp:·
-set list
 if v:version > 740
   set undodir=~/.vim/undo//,/tmp//,.
   set undofile
@@ -557,8 +559,7 @@ augroup vimrc_au
 
   autocmd BufNewFile,BufRead *.bats set ft=sh
 
-  autocmd FileType gitcommit,markdown,text,rst setlocal spell textwidth=78
-  autocmd FileType rust setlocal winwidth=99
+  autocmd FileType gitcommit,markdown,text,rst setlocal spell
   autocmd FileType netrw setlocal bufhidden=wipe
 augroup END
 
