@@ -1,2 +1,2 @@
-text/html; open %s && sleep 2; nametemplate=%s.html; test=test -f /usr/bin/open;
-text/html; w3m -I %{charset} -T text/html; copiousoutput; test=which w3m;
+text/html; open %s && sleep 2; nametemplate=%s.html; test=test -f /usr/bin/open -a -z "$SSH_TTY";
+text/html; w3m -I %{charset} -T text/html; copiousoutput;
