@@ -86,7 +86,7 @@ if has("gui_running") || &t_Co > 16
   colorscheme PaperColor
 endif
 
-if &term =~ 'xterm'
+if &term =~ 'xterm' || &term =~ 'screen'
   let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
   let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
 elseif &term == 'win32'
