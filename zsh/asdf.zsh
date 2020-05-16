@@ -14,14 +14,12 @@ if [ -d "$HOME/.asdf" ]; then
     case "$command" in
       "shell")
         # eval commands that need to export variables
-        eval "$(asdf "sh-$command" "$@")";;
+        eval "$(asdf "sh-$command" "$@")"
+        ;;
       *)
         # forward other commands to asdf script
-        command asdf "$command" "$@";;
+        command asdf "$command" "$@"
+        ;;
     esac
   }
-
-  autoload -U bashcompinit
-  bashcompinit
-  source "${ASDF_DIR}/completions/asdf.bash"
 fi

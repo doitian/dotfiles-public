@@ -17,6 +17,10 @@ fpath=(
   $fpath
 )
 
+if [ -d "$HOME/.asdf" ]; then
+  fpath=($HOME/.asdf/completions $fpath)
+fi
+
 zstyle :omz:plugins:ssh-agent agent-forwarding on
 if [ -f ~/.ssh/id_rsa ]; then
   zstyle :omz:plugins:ssh-agent identities id_rsa

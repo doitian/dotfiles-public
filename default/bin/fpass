@@ -1,0 +1,15 @@
+#!/bin/bash
+
+function fpass() {
+  local selected
+  local clip=
+  if [ "${1:-}" = "-c" ]; then
+    shift
+    clip="--clip --alsoclip"
+  fi
+  selected="$(cd ~/.password-store && fzf)"
+  selected="${selected%.gpg}"
+  gopass $clip "$@" "$selected"
+}
+
+fpass "$@"

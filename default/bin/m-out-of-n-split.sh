@@ -6,6 +6,7 @@ fi
 
 m="$1"
 n="$2"
+pieces=$(( n - m + 1 ))
 file="$3"
 lineno=1
 padding=" "
@@ -23,7 +24,7 @@ while IFS= read -r line; do
     padding=""
   fi
 
-  for i in $(seq $m); do
+  for i in $(seq $pieces); do
     echo "$padding$lineno: $line" >> "$file.$head"
     head=$(( (head % n) + 1 ))
   done
