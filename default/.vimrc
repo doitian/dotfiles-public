@@ -562,6 +562,7 @@ augroup vimrc_au
 
   autocmd FileType gitcommit,markdown,text,rst setlocal spell
   autocmd FileType netrw setlocal bufhidden=wipe
+  autocmd FileType rust setlocal winwidth=99
 augroup END
 
 if filereadable(glob("~/.vimrc.local")) 
