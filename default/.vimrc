@@ -87,11 +87,20 @@ if has("gui_running") || &t_Co > 16
 endif
 
 if &term =~ 'xterm' || &term =~ 'screen'
-  let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
-  let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+  if $TERM_PROGRAM != 'Apple_Terminal'
+    let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+    let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+  else
+    let &t_SI="\033[5 q"
+    let &t_EI="\033[1 q"
+  endif
 elseif &term == 'win32'
   let &t_SI="\<CSI>5 q"
   let &t_EI="\<CSI>1 q"
+endif
+if exists('$TMUX')
+  let &t_SI = "\<Esc>Ptmux;\<Esc>" . &t_SI . "\<Esc>\\"
+  let &t_EI = "\<Esc>Ptmux;\<Esc>" . &t_EI . "\<Esc>\\"
 endif
 
 " Plugins Options {{{1
