@@ -50,6 +50,7 @@ Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround' " ys s
 Plug 'tpope/vim-unimpaired' " various [, ] mappings
+Plug 'vimwiki/vimwiki'
 Plug 'wellle/targets.vim' " Text objects
 
 if has("gui_running") || &t_Co > 16
@@ -63,6 +64,10 @@ endif
 if has('win32')
   Plug 'junegunn/fzf'
   Plug 'PProvost/vim-ps1'
+endif
+
+if has('python3')
+  Plug 'SirVer/ultisnips'
 endif
 
 call plug#end()
@@ -119,6 +124,14 @@ let g:netrw_altv = 1 " split to the right
 let g:cargo_makeprg_params = "check --all --all-targets"
 let g:vim_markdown_frontmatter = 1
 let g:vim_markdown_math = 1
+let g:UltiSnipsExpandTrigger = '<tab>'
+let g:UltiSnipsJumpForwardTrigger = '<tab>'
+let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
+let g:UltiSnipsSnippetDirectories = [
+      \ $HOME.'/.dotfiles/repos/public/UltiSnips',
+      \ $HOME.'/.dotfiles/repos/private/UltiSnips' ]
+let g:vimwiki_list = [{'path': '~/Documents/vimwiki/',
+                      \ 'syntax': 'markdown', 'ext': '.md'}]
 
 " Functions & Commands {{{1
 function! Tabline()
@@ -523,7 +536,7 @@ nnoremap <Leader>u :MundoToggle<CR>
 " Reselect text that was just pasted
 nnoremap <Leader>v `[v`]
 
-nnoremap <silent> <Leader>w :Neoformat<Bar>up<CR>
+nnoremap <silent> <Leader>wf :Neoformat<Bar>up<CR>
 
 nnoremap <silent> <Leader>x :<C-u>set opfunc=<SID>TmuxSend<CR>g@
 nnoremap <silent> <Leader>xx :<C-u>set opfunc=<SID>TmuxSend<Bar>exe 'norm! 'v:count1.'g@_'<CR>
