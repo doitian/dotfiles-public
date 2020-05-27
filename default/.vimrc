@@ -50,7 +50,6 @@ Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround' " ys s
 Plug 'tpope/vim-unimpaired' " various [, ] mappings
-Plug 'vimwiki/vimwiki'
 Plug 'wellle/targets.vim' " Text objects
 
 if has("gui_running") || &t_Co > 16
@@ -124,14 +123,7 @@ let g:netrw_altv = 1 " split to the right
 let g:cargo_makeprg_params = "check --all --all-targets"
 let g:vim_markdown_frontmatter = 1
 let g:vim_markdown_math = 1
-let g:UltiSnipsExpandTrigger = '<tab>'
-let g:UltiSnipsJumpForwardTrigger = '<tab>'
-let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
-let g:UltiSnipsSnippetDirectories = [
-      \ $HOME.'/.dotfiles/repos/public/UltiSnips',
-      \ $HOME.'/.dotfiles/repos/private/UltiSnips' ]
-let g:vimwiki_list = [{'path': '~/Documents/vimwiki/',
-                      \ 'syntax': 'markdown', 'ext': '.md'}]
+let g:UltiSnipsSnippetDirectories = [ $HOME.'/.vim/UltiSnips' ]
 
 " Functions & Commands {{{1
 function! Tabline()
@@ -587,6 +579,5 @@ augroup vimrc_au
   autocmd FileType rust setlocal winwidth=99
 augroup END
 
-if filereadable(glob("~/.vimrc.local")) 
-    source ~/.vimrc.local
-endif
+silent! source ~/.vim/UltiSnips/abbreviations.vim
+silent! source ~/.vimrc.local
