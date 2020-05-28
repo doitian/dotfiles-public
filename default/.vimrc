@@ -236,7 +236,11 @@ command! -nargs=* Diff2qf :cexpr system("diff2qf", system("git diff -U0 " . <q-a
 
 function! CurDir()
   if &filetype != "netrw"
-    return expand("%:h")
+    let l:dir = expand("%:h")
+    if l:dir != ""
+      return l:dir
+    endif
+    return getcwd()
   else
     return b:netrw_curdir
   endif
@@ -444,13 +448,16 @@ nnoremap <silent> <Leader>d "_d
 vnoremap <silent> <Leader>d "_d
 
 nnoremap <Leader>eh :e <C-r>=CurDir().'/'<CR>
-nnoremap <Leader>ed :e <C-r>=CurDir().'/'<CR><CR>
 nnoremap <silent> <Leader>en :enew<CR>
 nnoremap <silent> <Leader>et :tabnew<CR>
 nnoremap <Leader>ee :e <C-r>=expand("%:r")<CR><C-Z>
 nnoremap <silent> <Leader>ev :tabnew ~/.vimrc<CR>
 nnoremap <Leader>e<Space> :e<Space><C-Z>
 nnoremap <silent> <Leader>ep :tabnew .projections.json<CR>
+nnoremap <Leader>es :e ~/.vim/UltiSnips/<C-Z>
+nnoremap <Leader>ed :e ~/Desktop/diary-<C-R>=strftime('%Y-%m-%d')<CR>.md<CR>
+nnoremap <Leader>em :e ~/Desktop/diary-<C-R>=strftime('%Y-%m-%d', localtime() + 86400)<CR>.md<CR>
+nnoremap <Leader>ey :e ~/Desktop/diary-<C-R>=strftime('%Y-%m-%d', localtime() - 86400)<CR>.md<CR>
 
 nnoremap <silent> <Leader>fb :Buffers<CR>
 nnoremap <silent> <Leader>fk :Bd<CR>
@@ -579,6 +586,8 @@ augroup vimrc_au
   autocmd FileType gitcommit,markdown,text,rst setlocal spell
   autocmd FileType netrw setlocal bufhidden=wipe
   autocmd FileType rust setlocal winwidth=99
+
+  autocmd BufNewFile,BufRead */gopass-*/* set ft=gopass
 augroup END
 
 silent! source ~/.vim/UltiSnips/abbreviations.vim
