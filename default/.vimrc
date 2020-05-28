@@ -296,9 +296,9 @@ if !exists("g:tmux_send_target")
   let g:tmux_send_target = ".+1"
 endif
 function! s:TmuxSend(type)
-  let &selection = "inclusive"
   let l:sel_save = &selection
   let l:reg_save = @@
+  let &selection = "inclusive"
 
   if a:type == 'line'
     silent exe "normal! '[V']y"
@@ -316,6 +316,25 @@ function! s:TmuxSend(type)
 
   let @@ = l:reg_save
   let &selection = l:sel_save
+endfunction
+
+function! FollowIAWriter()
+  let l:sel_save = &selection
+  let l:reg_save = @@
+  let &selection = "inclusive"
+
+  silent exe "normal vi(y"
+  silent exe "e " . substitute(split(@@, 'path=/Locations/iCloud/')[-1], '%20', ' ', 'g')
+
+  let @@ = l:reg_save
+  let &selection = l:sel_save
+endfunction
+
+function! CopyIAWriter()
+  call cursor(1, 1)
+  let l:title = getline(search('^# '))[2:]
+  let l:path = 'ia-writer://open?path=/Locations/iCloud/§%20' . substitute(join(split(expand('%:p'), '§ ')[1:], '§ '), ' ', '%20', 'g')
+  let @@ = printf('[♯ %s](%s)', l:title, l:path)
 endfunction
 
 command! -bang Fcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': 'cd'}, <bang>0))
@@ -537,7 +556,9 @@ nnoremap <Leader>u :MundoToggle<CR>
 " Reselect text that was just pasted
 nnoremap <Leader>v `[v`]
 
-nnoremap <silent> <Leader>wf :Neoformat<Bar>up<CR>
+nnoremap <silent> <Leader>wr :Neoformat<Bar>up<CR>
+nnoremap <silent> <Leader>ww :call FollowIAWriter()<CR>
+nnoremap <silent> <Leader>wc :call CopyIAWriter()<CR>
 
 nnoremap <silent> <Leader>x :<C-u>set opfunc=<SID>TmuxSend<CR>g@
 nnoremap <silent> <Leader>xx :<C-u>set opfunc=<SID>TmuxSend<Bar>exe 'norm! 'v:count1.'g@_'<CR>
