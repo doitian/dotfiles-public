@@ -124,6 +124,7 @@ let g:cargo_makeprg_params = "check --all --all-targets"
 let g:vim_markdown_frontmatter = 1
 let g:vim_markdown_math = 1
 let g:UltiSnipsSnippetDirectories = [ $HOME.'/.vim/UltiSnips' ]
+let g:UltiSnipsListSnippets = "<c-f>"
 
 " Functions & Commands {{{1
 function! Tabline()
@@ -458,6 +459,7 @@ nnoremap <silent> <Leader>fd :Fdir<CR>
 nnoremap <silent> <Leader>fo :BLines<CR>
 nnoremap <silent> <Leader>fO :Lines<CR>
 nnoremap <silent> <Leader>fr :History<CR>
+nnoremap <silent> <Leader>fs :Snippets<CR>
 nnoremap <silent> <Leader>f: :History:<CR>
 nnoremap <silent> <Leader>f/ :History/<CR>
 nnoremap <silent> <Leader>fm :Marks<CR>
@@ -476,7 +478,7 @@ nnoremap <silent> <Leader>I :Tags<CR>
 " j localmap
 
 nnoremap <silent> <Leader>k :Close<CR>
-nnoremap <silent> <Leader>K :enew <Bar> bd #<CR>
+nnoremap <silent> <Leader>K <C-^>:bd #<Bar>let @# = 1<CR>
 
 noremap <silent> <Leader>ll :Lexplore<CR>
 noremap <silent> <Leader>la :args<CR>
