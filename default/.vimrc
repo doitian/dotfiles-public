@@ -291,11 +291,11 @@ function! s:TmuxSend(type)
   let &selection = "inclusive"
 
   if a:type == 'line'
-    silent exe "normal! '[V']y"
+    silent normal! '[V']y
   elseif a:type == 'char'
-    silent exe "normal! `[v`]y"
+    silent normal! `[v`]y
   else
-    silent exe "normal! gvy"
+    silent normal! gvy
   endif
 
   let l:tt_send = "tt -t " . shellescape(g:tmux_send_target) . " "
@@ -313,16 +313,24 @@ function! FollowIAWriter()
   let l:reg_save = @@
   let &selection = "inclusive"
 
-  silent exe "normal vi(y"
-  silent exe "e " . substitute(split(@@, 'path=/Locations/iCloud/')[-1], '%20', ' ', 'g')
+  if getline('.')[0] == '/'
+    exe 'e ' . expand('%:h') . getline('.')
+  else
+    normal yi(
+    if @@ != ''
+      exe 'e ' . substitute(split(@@, 'path=/Locations/iCloud/')[-1], '%20', ' ', 'g')
+    endif
+  endif
 
   let @@ = l:reg_save
   let &selection = l:sel_save
 endfunction
 
 function! CopyIAWriter()
+  let l:pos_save = getpos('.')
   call cursor(1, 1)
   let l:title = getline(search('^# '))[2:]
+  call setpos('.', l:pos_save)
   let l:path = 'ia-writer://open?path=/Locations/iCloud/§%20' . substitute(join(split(expand('%:p'), '§ ')[1:], '§ '), ' ', '%20', 'g')
   let @@ = printf('[♯ %s](%s)', l:title, l:path)
 endfunction
@@ -520,6 +528,8 @@ nnoremap <Leader>P "+P
 nnoremap <silent> <Leader>q :call QFixToggle()<CR>
 
 " Reveal
+nnoremap <silent> <Leader>ri :call FollowIAWriter()<CR>
+nnoremap <silent> <Leader>rI :call CopyIAWriter()<CR>
 nnoremap <silent> <Leader>rt :exe "silent !open -a 'iTerm.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
 nnoremap <silent> <Leader>rf :exe "silent !open -R " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
 nnoremap <silent> <Leader>rm :exe "silent !open -a 'Marked.app' " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
@@ -546,9 +556,7 @@ nnoremap <Leader>u :MundoToggle<CR>
 " Reselect text that was just pasted
 nnoremap <Leader>v `[v`]
 
-nnoremap <silent> <Leader>wr :Neoformat<Bar>up<CR>
-nnoremap <silent> <Leader>ww :call FollowIAWriter()<CR>
-nnoremap <silent> <Leader>wc :call CopyIAWriter()<CR>
+nnoremap <silent> <Leader>w :Neoformat<Bar>up<CR>
 
 nnoremap <silent> <Leader>x :<C-u>set opfunc=<SID>TmuxSend<CR>g@
 nnoremap <silent> <Leader>xx :<C-u>set opfunc=<SID>TmuxSend<Bar>exe 'norm! 'v:count1.'g@_'<CR>
@@ -568,6 +576,9 @@ nnoremap <silent> <Leader>[ :Diffoff<CR>
 
 cnoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
 inoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
+
+inoremap <expr> <C-r><C-h> fzf#vim#complete#path('cd ' .shellescape(expand('%:h')) . ' && rg --files')
+inoremap <expr> <C-r><C-f> fzf#vim#complete#path('rg --files')
 
 if has("ios")
   set backupcopy=yes

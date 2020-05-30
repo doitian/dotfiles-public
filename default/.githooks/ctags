@@ -6,6 +6,6 @@ CTAGS_COMM="$(git config --get user.ctagsComm &>/dev/null || echo ctags)"
 if [ -f .tags.files ]; then
   $CTAGS_COMM --tag-relative -L .tags.files -f"$$.tags"
 else
-  git ls-files | $CTAGS_COMM --tag-relative -L - -f"$$.tags"
+  git -c core.quotepath=off ls-files | $CTAGS_COMM --tag-relative -L - -f"$$.tags"
 fi
 mv "$$.tags" tags
