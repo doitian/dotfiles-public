@@ -1,10 +1,6 @@
 if v:progname =~? "evim" | finish | endif
 set nocompatible
-if $ITERM_PROFILE == "Dark"
-  set background=dark
-else
-  set background=light
-endif
+let &background = $ITERM_PROFILE == "Dark" ? "dark" : "light"
 set encoding=utf-8
 if &term == 'win32'
   set t_Co=256
@@ -31,11 +27,6 @@ endif
 Plug 'dyng/ctrlsf.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'janko-m/vim-test'
-if has("ios")
-  Plug 'ctrlpvim/ctrlp.vim'
-else
-  Plug 'junegunn/fzf.vim'
-endif
 Plug 'sbdchd/neoformat'
 Plug 'simnalamburt/vim-mundo'
 Plug 'thinca/vim-visualstar' " * # g* g#
@@ -65,6 +56,12 @@ if has('win32')
   Plug 'PProvost/vim-ps1'
 endif
 
+if has("ios")
+  Plug 'ctrlpvim/ctrlp.vim'
+else
+  Plug 'junegunn/fzf.vim'
+endif
+
 if has('python3')
   Plug 'SirVer/ultisnips'
 endif
@@ -81,9 +78,6 @@ if has("gui_running")
   set go-=e go-=r go-=L go-=T
   set guicursor+=a:blinkwait2000-blinkon1500 " blink slowly
   set mousehide " Hide the mouse when typing text
-
-  map <S-Insert> <MiddleMouse>
-  map! <S-Insert> <MiddleMouse>
 end
 
 if has("gui_running") || &t_Co > 16
@@ -108,7 +102,6 @@ if exists('$TMUX')
 endif
 
 " Plugins Options {{{1
-
 let test#strategy = 'dispatch'
 let g:ctrlsf_default_root = 'cwd'
 let g:dispatch_compilers = {
@@ -164,10 +157,7 @@ command! -nargs=1 Tnew tabnew! | call s:TabRename(<q-args>)
 command! -nargs=0 Treset call s:TabReset('')
 
 function! HasPaste()
-  if &paste
-    return '[P]'
-  endif
-  return ''
+  return &paste ? '[P]' : ''
 endfunction
 
 function! StatusLineFileName()
@@ -365,7 +355,6 @@ command! Bd call fzf#run(fzf#wrap({
 \ }))
 
 " Config {{{1
-
 set autoindent
 set autoread
 set backspace=indent,eol,start
