@@ -1,10 +1,6 @@
 if v:progname =~? "evim" | finish | endif
 set nocompatible
-if $ITERM_PROFILE == "Dark"
-  set background=dark
-else
-  set background=light
-endif
+let &background = $ITERM_PROFILE == "Dark" ? 'dark' : 'light'
 set encoding=utf-8
 if &term == 'win32'
   set t_Co=256
@@ -12,6 +8,7 @@ endif
 
 let loaded_matchparen = 1
 let s:has_rg = executable('rg')
+let s:has_fzf = executable('fzf')
 
 " Plug {{{1
 silent! call plug#begin('~/.vim/plugged')
@@ -31,11 +28,6 @@ endif
 Plug 'dyng/ctrlsf.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'janko-m/vim-test'
-if has("ios")
-  Plug 'ctrlpvim/ctrlp.vim'
-else
-  Plug 'junegunn/fzf.vim'
-endif
 Plug 'sbdchd/neoformat'
 Plug 'simnalamburt/vim-mundo'
 Plug 'thinca/vim-visualstar' " * # g* g#
@@ -65,8 +57,10 @@ if has('win32')
   Plug 'PProvost/vim-ps1'
 endif
 
-if has('python3')
-  Plug 'SirVer/ultisnips'
+if s:has_fzf
+  Plug 'junegunn/fzf.vim'
+else
+  Plug 'ctrlpvim/ctrlp.vim'
 endif
 
 call plug#end()
@@ -81,9 +75,6 @@ if has("gui_running")
   set go-=e go-=r go-=L go-=T
   set guicursor+=a:blinkwait2000-blinkon1500 " blink slowly
   set mousehide " Hide the mouse when typing text
-
-  map <S-Insert> <MiddleMouse>
-  map! <S-Insert> <MiddleMouse>
 end
 
 if has("gui_running") || &t_Co > 16
@@ -108,7 +99,6 @@ if exists('$TMUX')
 endif
 
 " Plugins Options {{{1
-
 let test#strategy = 'dispatch'
 let g:ctrlsf_default_root = 'cwd'
 let g:dispatch_compilers = {
@@ -123,8 +113,6 @@ let g:netrw_altv = 1 " split to the right
 let g:cargo_makeprg_params = "check --all --all-targets"
 let g:vim_markdown_frontmatter = 1
 let g:vim_markdown_math = 1
-let g:UltiSnipsSnippetDirectories = [ $HOME.'/.vim/UltiSnips' ]
-let g:UltiSnipsListSnippets = "<c-f>"
 
 " Functions & Commands {{{1
 function! Tabline()
@@ -164,10 +152,7 @@ command! -nargs=1 Tnew tabnew! | call s:TabRename(<q-args>)
 command! -nargs=0 Treset call s:TabReset('')
 
 function! HasPaste()
-  if &paste
-    return '[P]'
-  endif
-  return ''
+  return &paste ? '[P]' : ''
 endfunction
 
 function! StatusLineFileName()
@@ -579,7 +564,7 @@ nnoremap <silent> <Leader>[ :Diffoff<CR>
 cnoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
 inoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
 
-if has("ios")
+if !s:has_fzf
   set backupcopy=yes
   let g:ctrlp_root_markers = []
   let g:ctrlp_working_path_mode = 'a'
@@ -592,7 +577,6 @@ filetype indent plugin on
 
 augroup vimrc_au
   autocmd!
-
   autocmd BufReadPost *
     \ if line("'\"") > 1 && line("'\"") <= line("$") && &filetype != "gitcommit" |
     \   exe "normal! g`\"" |
@@ -611,5 +595,5 @@ augroup vimrc_au
   autocmd BufNewFile,BufRead */gopass-*/* set ft=gopass
 augroup END
 
-silent! source ~/.vim/UltiSnips/abbreviations.vim
+silent! source ~/.vim/abbreviations.vim
 silent! source ~/.vimrc.local
