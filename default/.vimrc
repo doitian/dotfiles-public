@@ -373,8 +373,6 @@ set copyindent
 set directory=~/.vim/swap//,/tmp//,.
 set display+=lastline
 set expandtab
-set nofoldenable
-set foldmethod=marker
 set foldtext=MyFoldText()
 set hidden
 set history=3000
@@ -608,6 +606,7 @@ augroup vimrc_au
   autocmd FileType gitcommit,markdown,text,rst setlocal spell
   autocmd FileType netrw setlocal bufhidden=wipe
   autocmd FileType rust setlocal winwidth=99
+  autocmd FileType vim setlocal foldmethod=marker
 
   autocmd BufNewFile,BufRead */gopass-*/* set ft=gopass
 augroup END

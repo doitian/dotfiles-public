@@ -21,6 +21,6 @@ elif [[ $FILENAME == .* ]]; then
 fi
 
 pbpaste > "$DIR/$FILENAME"
-if vim $GVIM -f +"cd $DIR" "$DIR/$FILENAME"; then
+if vim $GVIM -b -f +"cd $DIR" "$DIR/$FILENAME"; then
   pbcopy < "$DIR/$FILENAME"
 fi
