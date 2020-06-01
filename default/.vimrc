@@ -428,7 +428,7 @@ if v:version > 740
 endif
 
 let $cb = $HOME . '/codebase'
-let $kb = $HOME . '/codebase/my/ia-writer'
+let $kb = $HOME . '/codebase/my/knoledge-base'
 
 runtime! macros/matchit.vim
 
