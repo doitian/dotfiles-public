@@ -601,13 +601,12 @@ augroup vimrc_au
 
   autocmd CmdwinEnter * map <buffer> <C-w><C-w> <CR>q:dd
 
-  autocmd BufNewFile,BufRead *.bats set ft=sh
-
   autocmd FileType gitcommit,markdown,text,rst setlocal spell
   autocmd FileType netrw setlocal bufhidden=wipe
   autocmd FileType rust setlocal winwidth=99
   autocmd FileType vim setlocal foldmethod=marker
 
+  autocmd BufNewFile,BufRead *.bats set ft=sh
   autocmd BufNewFile,BufRead */gopass-*/* set ft=gopass
 augroup END
 
