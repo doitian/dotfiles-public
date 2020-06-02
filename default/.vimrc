@@ -84,15 +84,11 @@ if has("gui_running") || &t_Co > 16
   colorscheme PaperColor
 endif
 
-if &term =~ 'xterm' || &term =~ 'screen'
-  if $TERM_PROGRAM != 'Apple_Terminal'
-    let &t_SI = "\<Esc>]50;CursorShape=1\x7"
-    let &t_EI = "\<Esc>]50;CursorShape=0\x7"
-  else
-    let &t_SI="\033[5 q"
-    let &t_EI="\033[1 q"
-  endif
-elseif &term == 'win32'
+if &term != 'win32'
+  let &t_SI = "\<Esc>[6 q"
+  let &t_SR = "\<Esc>[4 q"
+  let &t_EI = "\<Esc>[2 q"
+else
   let &t_SI="\<CSI>5 q"
   let &t_EI="\<CSI>1 q"
 endif
