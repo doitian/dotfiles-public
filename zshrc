@@ -22,9 +22,7 @@ if [ -d "$HOME/.asdf" ]; then
 fi
 
 zstyle :omz:plugins:ssh-agent agent-forwarding on
-if [ -f ~/.ssh/id_rsa ]; then
-  zstyle :omz:plugins:ssh-agent identities id_rsa
-fi
+zstyle :omz:plugins:ssh-agent identities ''
 
 # Figure out the SHORT hostname
 if [[ "$OSTYPE" = darwin* ]]; then
