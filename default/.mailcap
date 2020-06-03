@@ -1,4 +1,4 @@
 text/html; open %s && sleep 2; nametemplate=%s.html; test=test -f /usr/bin/open -a -z "$SSH_TTY";
-text/html; w3m -I %{charset} -T text/html; copiousoutput;
+text/html; elinks -force-html; copiousoutput;
 text/*; view -Mf '%s' ; edit=vim -f '%s'; compose=vim -f '%s'; needsterminal
 
