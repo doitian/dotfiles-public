@@ -16,6 +16,6 @@ if has("mac")
   augroup END
 else
   set go-=m
-  set guifont=JetBrains\ Mono\ 11
+  set guifont=JetBrains\ Mono\ 12
 endif
 

@@ -27,6 +27,8 @@ endif
 Plug 'dyng/ctrlsf.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'janko-m/vim-test'
+Plug 'junegunn/goyo.vim'
+Plug 'junegunn/limelight.vim'
 Plug 'sbdchd/neoformat'
 Plug 'simnalamburt/vim-mundo'
 Plug 'thinca/vim-visualstar' " * # g* g#
@@ -604,6 +606,8 @@ augroup vimrc_au
 
   autocmd BufNewFile,BufRead *.bats set ft=sh
   autocmd BufNewFile,BufRead */gopass-*/* set ft=gopass
+  autocmd! User GoyoEnter Limelight
+  autocmd! User GoyoLeave Limelight!
 augroup END
 
 silent! source ~/.vim/UltiSnips/abbreviations.vim
