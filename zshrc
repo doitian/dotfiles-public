@@ -21,9 +21,6 @@ if [ -d "$HOME/.asdf" ]; then
   fpath=($HOME/.asdf/completions $fpath)
 fi
 
-zstyle :omz:plugins:ssh-agent agent-forwarding on
-zstyle :omz:plugins:ssh-agent identities ''
-
 # Figure out the SHORT hostname
 if [[ "$OSTYPE" = darwin* ]]; then
   # OS X's $HOST changes with dhcp, etc. Use ComputerName if possible.
