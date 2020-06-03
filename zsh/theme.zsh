@@ -19,7 +19,7 @@ function git_prompt_info() {
       fg=red
     fi
 
-    echo " %F{$fg}ᚬ$info"
+    echo " %F{$fg}±$info"
   fi
 }
 
