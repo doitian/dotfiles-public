@@ -50,7 +50,6 @@ if [ -f /usr/bin/mdfind ]; then
   ulimit -u 2048 &> /dev/null
 fi
 
-export BAT_THEME="GitHub"
 export LESS='--RAW-CONTROL-CHARS --quiet --HILITE-UNREAD --ignore-case --long-prompt --no-init'
 export LANG=en_US.UTF-8
 export LC_CTYPE=$LANG
@@ -113,6 +112,12 @@ if [ "${ITERM_PROFILE:-}" != Dark ]; then
 fi
 export FZF_DEFAULT_COMMAND='rg --no-messages --hidden -g "!.git" --color never --files'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+
+# bat
+export BAT_THEME='OneHalfLight'
+if [ "${ITERM_PROFILE:-}" = Dark ]; then
+  export BAT_THEME='OneHalfDark'
+fi
 
 # gpg
 if [[ "$OSTYPE" = linux* ]]; then
