@@ -3,10 +3,6 @@ set -e
 
 DIR="$(git config --get core.hooksPath 2>/dev/null || echo .git/hooks)"
 
-if [ -f "$DIR/post-commit.rescuetime.sh" ]; then
-  "$DIR/post-commit.rescuetime.sh"
-fi
-
 if [ -f tags ]; then
   "$DIR/ctags" >/dev/null 2>&1 &
 fi
