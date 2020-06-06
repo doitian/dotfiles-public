@@ -371,6 +371,7 @@ set copyindent
 set directory=~/.vim/swap//,/tmp//,.
 set display+=lastline
 set expandtab
+set nofoldenable
 set foldtext=MyFoldText()
 set hidden
 set history=3000
