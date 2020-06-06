@@ -306,22 +306,42 @@ function! s:TmuxSend(type)
   let &selection = l:sel_save
 endfunction
 
-function! FollowIAWriter()
-  let l:sel_save = &selection
-  let l:reg_save = @@
-  let &selection = "inclusive"
+function! SearchAround(start_tag, end_tag, ...)
+  let l:pos_save = getpos('.')
+  let l:line = line('.')
+  let l:pos_end = searchpos(a:end_tag, 'W', l:line)
+  let l:pos_start = searchpos(a:start_tag, 'bW', l:line)
+  call cursor(l:pos_save[1], l:pos_save[2])
 
-  if getline('.')[0] == '/'
-    exe 'e ' . expand('%:h') . getline('.')
-  else
-    normal yi(
-    if @@ != ''
-      exe 'e ' . substitute(split(@@, 'path=/Locations/iCloud/')[-1], '%20', ' ', 'g')
-    endif
+  if l:pos_end[0] == l:line && l:pos_start[0] == l:line && (a:0 > 0 || l:pos_start[1] <= l:pos_save[2])
+    return strpart(getline('.'), l:pos_start[1] + len(a:start_tag) - 1, l:pos_end[1] - l:pos_start[1] - len(a:start_tag))
+  endif
+  return ''
+endfunction
+
+function! FollowWikiLink()
+  let l:line_text = getline('.')
+
+  if l:line_text[0] == '/'
+    exe 'e ' . CurDir() . l:line_text
+    return
   endif
 
-  let @@ = l:reg_save
-  let &selection = l:sel_save
+  let l:mdsrc = SearchAround('(', ')', 1)
+  if stridx(l:mdsrc, 'ia-writer:') == 0
+    exe 'e ' . substitute(split(l:mdsrc, 'path=/Locations/iCloud/')[-1], '%20', ' ', 'g')
+    return
+  endif
+
+  let l:filename = SearchAround('[[', ']]')
+  if l:filename != '' && l:filename[1] != '|'
+    let l:filename = split(l:filename, '|')[0]
+    if l:filename[0] == '/'
+      exe 'e ' . l:filename[1:]
+    else
+      exe 'e ' . resolve(CurDir() . '/' . l:filename)
+    endif
+  endif
 endfunction
 
 function! CopyIAWriter()
@@ -525,7 +545,7 @@ nnoremap <Leader>P "+P
 nnoremap <silent> <Leader>q :call QFixToggle()<CR>
 
 " Reveal
-nnoremap <silent> <Leader>ri :call FollowIAWriter()<CR>
+nnoremap <silent> <Leader>ri :call FollowWikiLink()<CR>
 nnoremap <silent> <Leader>rI :call CopyIAWriter()<CR>
 nnoremap <silent> <Leader>rt :exe "silent !open -a 'iTerm.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
 nnoremap <silent> <Leader>rf :exe "silent !open -R " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
