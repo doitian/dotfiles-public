@@ -1,0 +1,3 @@
+#!/bin/bash
+
+fzf < "$HOME/.dotfiles/repos/unicodes.txt" | sed 's/ *#.*//'
