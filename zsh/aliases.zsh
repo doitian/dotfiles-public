@@ -84,20 +84,6 @@ if command -v nnn &> /dev/null; then
   alias nnd='eval "$(cat ~/.config/nnn/.lastd 2>/dev/null && rm -f ~/.config/nnn/.lastd)"'
 fi
 
-alias ibc="{echo 'scale=6';cat} | bc"
-function bcc () {
-  local scale=6
-  if [ "$1" = "-s" ]; then
-    shift
-    scale="$1"
-    shift
-  fi
-  {
-    echo "scale=$scale"
-    echo "$*"
-  } | bc
-}
-
 alias ssh="TERM=xterm-256color ssh"
 
 alias mk=make
