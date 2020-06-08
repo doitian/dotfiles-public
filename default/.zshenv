@@ -117,6 +117,7 @@ fi
 export PATH="\
 .git/$SAFEBIN_SECRET/../../bin\
 :$HOME/bin\
+:$HOME/.local/bin\
 :$GOPATH/bin\
 :$HOME/.cargo/bin\
 :$HOME/.asdf/bin:$HOME/.asdf/shims\
