@@ -104,11 +104,15 @@ alias sudo='sudo '
 function dark() {
   export BAT_THEME='OneHalfDark'
   export FZF_DEFAULT_OPTS=
+  export COLORFGBG=15;0
+  export ITERM_PROFILE=Dark
 }
 
 function light() {
   export BAT_THEME='OneHalfLight'
   export FZF_DEFAULT_OPTS='--color light'
+  export COLORFGBG=8;15
+  export ITERM_PROFILE=Default
 }
 
 ##################################################
