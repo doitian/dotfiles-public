@@ -26,6 +26,7 @@ endif
 " other
 Plug 'dyng/ctrlsf.vim'
 Plug 'editorconfig/editorconfig-vim'
+Plug 'godlygeek/tabular' " :Tab
 Plug 'janko-m/vim-test'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
@@ -114,6 +115,7 @@ let g:netrw_altv = 1 " split to the right
 let g:cargo_makeprg_params = "check --all --all-targets"
 let g:vim_markdown_frontmatter = 1
 let g:vim_markdown_math = 1
+let g:vim_markdown_strikethrough = 1
 let g:UltiSnipsSnippetDirectories = [ $HOME.'/.vim/UltiSnips' ]
 let g:UltiSnipsListSnippets = "<c-f>"
 
