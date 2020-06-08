@@ -101,6 +101,16 @@ alias fg=' fg'
 alias gfw='gfw '
 alias sudo='sudo '
 
+function dark() {
+  export BAT_THEME='OneHalfDark'
+  export FZF_DEFAULT_OPTS=
+}
+
+function light() {
+  export BAT_THEME='OneHalfLight'
+  export FZF_DEFAULT_OPTS='--color light'
+}
+
 ##################################################
 # Dir Aliases
 cb="$HOME/codebase"

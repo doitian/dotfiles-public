@@ -2,17 +2,7 @@
 
 if [[ -n "${ITERM_PROFILE:-}" && -o interactive ]]; then
   if [ "$(defaults read -g AppleInterfaceStyle 2>/dev/null)" = Dark ]; then
-    if [[ "$ITERM_PROFILE" == "Light" || "$ITERM_PROFILE" == "Tilde" ]]; then
-      echo -ne "\033]50;SetProfile=Dark\a"
-      echo -ne "\033]0;Dark\007"
-      export ITERM_PROFILE="Dark"
-    fi
-  else
-    if [[ "$ITERM_PROFILE" == "Dark" ]]; then
-      echo -ne "\033]50;SetProfile=Light\a"
-      echo -ne "\033]0;Light\007"
-      export ITERM_PROFILE="Light"
-    fi
+    export ITERM_PROFILE="Dark"
   fi
 fi
 
