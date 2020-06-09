@@ -2,6 +2,7 @@
 
 if [[  "$-" != *i* ]]; then return 0; fi
 
+SSH_AGENT_FORWARD_AUTH_SOCK="$SSH_AUTH_SOCK"
 ZSH_CUSTOM="$HOME/.dotfiles/zsh"
 ZSH="$HOME/.oh-my-zsh"
 ZSH_CACHE_DIR="$HOME/.zcompcache"

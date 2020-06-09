@@ -12,3 +12,7 @@ if [ -n "${WSL_DISTRO_NAME:-}" ]; then
   export TERM=xterm-color
   umask 022
 fi
+
+if [ -S "$SSH_AGENT_FORWARD_AUTH_SOCK" ]; then
+  export SSH_AUTH_SOCK="$SSH_AGENT_FORWARD_AUTH_SOCK"
+fi
