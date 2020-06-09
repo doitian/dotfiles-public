@@ -24,21 +24,21 @@ if v:version > 800
 endif
 
 " other
-Plug 'dyng/ctrlsf.vim'
+Plug 'dyng/ctrlsf.vim', { 'on': 'CtrlSF' }
 Plug 'editorconfig/editorconfig-vim'
-Plug 'godlygeek/tabular' " :Tab
-Plug 'janko-m/vim-test'
-Plug 'junegunn/goyo.vim'
-Plug 'junegunn/limelight.vim'
-Plug 'sbdchd/neoformat'
-Plug 'simnalamburt/vim-mundo'
+Plug 'godlygeek/tabular', { 'on': 'Tabularize' }
+Plug 'janko-m/vim-test', { 'on': ['TestNearest', 'TestFile', 'TestSuite', 'TestLast', 'TestVisit'] }
+Plug 'junegunn/goyo.vim', { 'for': 'markdown' }
+Plug 'junegunn/limelight.vim', { 'on': 'Goyo' }
+Plug 'sbdchd/neoformat', { 'on': 'Neoformat' }
+Plug 'simnalamburt/vim-mundo', { 'on': 'MundoToggle' }
 Plug 'thinca/vim-visualstar' " * # g* g#
 Plug 'tommcdo/vim-exchange' " cx
 Plug 'tomtom/tcomment_vim' " gc
 Plug 'tpope/vim-abolish' " :A :S
-Plug 'tpope/vim-dispatch'
+Plug 'tpope/vim-dispatch', { 'on': ['FocusDispatch', 'Dispatch'] }
 Plug 'tpope/vim-endwise'
-Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive', { 'on': 'Gstatus' }
 Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-repeat'
