@@ -13,6 +13,7 @@ if [ -n "${WSL_DISTRO_NAME:-}" ]; then
   umask 022
 fi
 
-if [ -S "$SSH_AGENT_FORWARD_AUTH_SOCK" ]; then
+if [ -n "${SSH_AGENT_FORWARD_AUTH_SOCK:-}" ]; then
   export SSH_AUTH_SOCK="$SSH_AGENT_FORWARD_AUTH_SOCK"
+  unset SSH_AGENT_FORWARD_AUTH_SOCK
 fi
