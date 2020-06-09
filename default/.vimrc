@@ -152,10 +152,6 @@ function! s:TabRename(label)
   exec 'set showtabline=' . &showtabline
 endfunction
 
-command! -nargs=1 Trename call s:TabRename(<q-args>)
-command! -nargs=1 Tnew tabnew! | call s:TabRename(<q-args>)
-command! -nargs=0 Treset call s:TabReset('')
-
 function! HasPaste()
   return &paste ? '[P]' : ''
 endfunction
@@ -213,17 +209,6 @@ function! s:CloseReadonlyWin()
   endif
 endfunction
 
-command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
-      \ | wincmd p | diffthis
-command! Close :pclose | :cclose | :lclose |
-      \ let s:currentWindow = winnr() |
-      \ :windo call s:CloseDisturbingWin() |
-      \ exe s:currentWindow . "wincmd w"
-command! Diffoff :diffoff! | :windo call s:CloseReadonlyWin() | :Close
-command! Reload :source ~/.vimrc | :filetype detect | :nohl
-command! -bang Clear :silent! %bd<bang> | :silent! argd * | :nohl
-command! -nargs=* Diff2qf :cexpr system("diff2qf", system("git diff -U0 " . <q-args>))
-
 function! CurDir()
   if &filetype != "netrw"
     let l:dir = expand("%:h")
@@ -269,16 +254,6 @@ function! BookmarkLine(message, copy)
   call writefile(l:list, "bookmarks.qf", "a")
   if a:copy
     let @+ = join(l:list)
-  endif
-endfunction
-
-function! s:ProjectionistActivate() abort
-  let l:vars_query = projectionist#query('vars')
-  if len(l:vars_query) > 0
-    let l:vars = l:vars_query[0][1]
-    for name in keys(l:vars)
-      call setbufvar('%', name, l:vars[name])
-    endfor
   endif
 endfunction
 
@@ -355,6 +330,28 @@ function! CopyIAWriter()
   let @@ = printf('[♯ %s](%s)', l:title, l:path)
 endfunction
 
+function! Bufs()
+  redir => list
+  silent ls
+  redir END
+  return split(list, "\n")
+endfunction
+
+command! -nargs=1 Trename call s:TabRename(<q-args>)
+command! -nargs=1 Tnew tabnew! | call s:TabRename(<q-args>)
+command! -nargs=0 Treset call s:TabReset('')
+
+command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
+      \ | wincmd p | diffthis
+command! Close :pclose | :cclose | :lclose |
+      \ let s:currentWindow = winnr() |
+      \ :windo call s:CloseDisturbingWin() |
+      \ exe s:currentWindow . "wincmd w"
+command! Diffoff :diffoff! | :windo call s:CloseReadonlyWin() | :Close
+command! Reload :source ~/.vimrc | :filetype detect | :nohl
+command! -bang Clear :silent! %bd<bang> | :silent! argd * | :nohl
+command! -nargs=* Diff2qf :cexpr system("diff2qf", system("git diff -U0 " . <q-args>))
+
 command! -bang Fcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': 'cd'}, <bang>0))
 command! -bang Flcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': 'lcd'}, <bang>0))
 command! -bang Fdir call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd'}, <bang>0))
@@ -369,13 +366,6 @@ command! -bang -nargs=* Rg
 command! -nargs=1 -complete=file Cfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | cfile <args>
 command! -nargs=1 -complete=file Lfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | lfile <args>
 command! -bang -nargs=* Bm call BookmarkLine(<q-args>, <bang>0)
-
-function! Bufs()
-  redir => list
-  silent ls
-  redir END
-  return split(list, "\n")
-endfunction
 command! Bd call fzf#run(fzf#wrap({
   \ 'source': Bufs(),
   \ 'sink*': { lines -> execute('bwipeout '.join(map(lines, {_, line -> split(line)[0]}))) },
@@ -610,6 +600,35 @@ endif
 " Filetype specific handling {{{1
 filetype indent plugin on
 
+function! s:ProjectionistActivate() abort
+  let l:vars_query = projectionist#query('vars')
+  if len(l:vars_query) > 0
+    let l:vars = l:vars_query[0][1]
+    for name in keys(l:vars)
+      call setbufvar('%', name, l:vars[name])
+    endfor
+  endif
+endfunction
+
+function! s:CocNvimInitialized() abort
+  nnoremap <Leader>co :<C-u>CocList lists<CR>
+  nmap <silent> [g <Plug>(coc-diagnostic-prev)
+  nmap <silent> ]g <Plug>(coc-diagnostic-next)
+  nmap <silent> gd <Plug>(coc-definition)
+  nmap <silent> <Leader>gy <Plug>(coc-type-definition)
+  nmap <silent> <Leader>gi <Plug>(coc-implementation)
+  nmap <silent> <Leader>gr <Plug>(coc-references)
+  nnoremap <silent> K :call <SID>show_documentation()<CR>
+endfunction
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
 augroup vimrc_au
   autocmd!
 
@@ -631,6 +650,7 @@ augroup vimrc_au
   autocmd BufNewFile,BufRead */gopass-*/* set ft=gopass
   autocmd! User GoyoEnter Limelight
   autocmd! User GoyoLeave Limelight!
+  autocmd! User CocNvimInit call s:CocNvimInitialized()
 augroup END
 
 silent! source ~/.vim/UltiSnips/abbreviations.vim
