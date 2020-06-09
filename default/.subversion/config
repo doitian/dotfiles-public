@@ -1,7 +1,2 @@
 [miscellany]
 global-ignores=*.o *.lo *.la *.al .libs *.so *.so.[0-9]* *.a *.pyc *.pyo __pycache__ *.rej *~ #*# .#* .*.swp .DS_Store ~$*
-[auto-props]
-
-[helpers]
-diff-cmd = ksdiff
-merge-tool-cmd = ksdiff

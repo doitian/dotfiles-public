@@ -20,7 +20,7 @@ done
 PING_atempts=5 # change 
 echo >&2 "Be patient, this might take a while..."
 LIST="$(while read mirror; do echo >&2 "Testing \"$mirror\"";
-    speed="$(ping -q -c $PING_atempts $mirror 2>&1 |\
+    speed="$(command ping -q -c $PING_atempts $mirror 2>&1 |\
     awk -F '/' '{if(/^(round-trip|rtt) /){print $5}}')" # rtts avg 
     printf "%-25s ----> %s\n" $mirror $speed; done;)"
 SORTED_LIST=$(echo "$LIST" | sort -n -k 3)
