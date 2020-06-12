@@ -88,14 +88,9 @@ if has("gui_running") || &t_Co > 16
   colorscheme PaperColor
 endif
 
-if &term != 'win32'
-  let &t_SI = "\<Esc>[6 q"
-  let &t_SR = "\<Esc>[4 q"
-  let &t_EI = "\<Esc>[2 q"
-else
-  let &t_SI="\<CSI>5 q"
-  let &t_EI="\<CSI>1 q"
-endif
+let &t_SI = "\<Esc>[6 q"
+let &t_SR = "\<Esc>[4 q"
+let &t_EI = "\<Esc>[2 q"
 if exists('$TMUX')
   let &t_SI = "\<Esc>Ptmux;\<Esc>" . &t_SI . "\<Esc>\\"
   let &t_EI = "\<Esc>Ptmux;\<Esc>" . &t_EI . "\<Esc>\\"
@@ -165,6 +160,10 @@ function! StatusLineFileName()
   else
     return pathshorten(fnamemodify(b:netrw_curdir, ':~:.')) . '/'
   endif
+endfunction
+
+function! StatusLineFileFormat()
+  return &fileformat == 'unix' ? '' : printf('[%s] ', &fileformat)
 endfunction
 
 function! QFixToggle()
@@ -408,7 +407,7 @@ set smartcase
 set smarttab
 set spellfile=$HOME/.vim-spell-en.utf-8.add,.vim-spell-en.utf-8.add
 set spelllang=en_us,cjk
-set statusline=%<%{StatusLineFileName()}\ %m%r%{HasPaste()}%=%l\ %P
+set statusline=%<%{StatusLineFileName()}\ %m%r%{HasPaste()}%=%{StatusLineFileFormat()}%l\ %P
 set tabline=%!Tabline()
 set tabpagemax=50
 set title
