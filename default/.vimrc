@@ -5,7 +5,7 @@ if has("win32")
   language en
 endif
 set encoding=utf-8
-if &term == 'win32' || $WSLENV != ''
+if &term == 'win32'
   set t_Co=256
 endif
 
