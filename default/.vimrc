@@ -484,6 +484,7 @@ nnoremap <silent> <Leader>ep :tabnew .projections.json<CR>
 nnoremap <Leader>es :e ~/.vim/UltiSnips/<C-Z>
 nnoremap <Leader>eS :UltiSnipsEdit<CR>
 nnoremap <Leader>ed :e ~/Desktop/diary-<C-R>=strftime('%Y-%m-%d')<CR>.md<CR>
+nnoremap <Leader>eD :e ~/Desktop/diary-<C-Z>
 nnoremap <Leader>em :e ~/Desktop/diary-<C-R>=strftime('%Y-%m-%d', localtime() + 86400)<CR>.md<CR>
 nnoremap <Leader>ey :e ~/Desktop/diary-<C-R>=strftime('%Y-%m-%d', localtime() - 86400)<CR>.md<CR>
 
