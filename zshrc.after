@@ -14,7 +14,6 @@ if [ -n "${SSH_AGENT_FORWARD_AUTH_SOCK:-}" ]; then
 fi
 
 if [ -n "${WSL_DISTRO_NAME:-}" ]; then
-  export TERM=xterm-color
   umask 022
   if [ -f "$HOME/bin/gpg-bridge" ]; then
     eval $("$HOME/bin/gpg-bridge")
