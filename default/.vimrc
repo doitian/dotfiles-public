@@ -328,7 +328,8 @@ function! CopyIAWriter()
   call cursor(1, 1)
   let l:title = getline(search('^# ', 'c'))[2:]
   call setpos('.', l:pos_save)
-  let l:path = 'ia-writer://open?path=/Locations/iCloud/§%20' . substitute(join(split(expand('%:p'), '§ ')[1:], '§ '), ' ', '%20', 'g')
+  let l:path = join(split(expand('%:p'), '\\'), '/')
+  let l:path = 'ia-writer://open?path=/Locations/iCloud/§%20' . substitute(join(split(l:path, '§ ')[1:], '§ '), ' ', '%20', 'g')
   let @@ = printf('[♯ %s](%s)', l:title, l:path)
 endfunction
 
