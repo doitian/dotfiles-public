@@ -42,7 +42,7 @@
   rs = rebase --skip
 
   st = status --short --branch
-  dotfiles = "!git multistatus ~/.dotfiles ~/.dotfiles/repos/public ~/.dotfiles/repos/private ~/'Library/Application Support/Code/User'"
+  dotfiles = "!git multistatus ~/.dotfiles ~/.dotfiles/repos/public ~/.dotfiles/repos/private"
   codebase = "!f() { fasd -dl | sed 's|$|/.git/HEAD|' | xargs ls 2> /dev/null | sed 's|.git/HEAD$||' | xargs git multistatus; }; f"
   all= "!f() { find . -maxdepth 4 -type d -name .git \"$@\" -prune | sed 's/.git$//' | xargs git multistatus; }; f"
 
