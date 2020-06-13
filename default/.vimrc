@@ -1,9 +1,11 @@
 if v:progname =~? "evim" | finish | endif
 set nocompatible
 let &background = $ITERM_PROFILE == "Dark" ? "dark" : "light"
-language en
+if has("win32")
+  language en
+endif
 set encoding=utf-8
-if &term == 'win32'
+if &term == 'win32' || $WSLENV != ''
   set t_Co=256
 endif
 

@@ -8,12 +8,15 @@ export LESS='--RAW-CONTROL-CHARS --quiet --HILITE-UNREAD --ignore-case --long-pr
 export TMUX_TTY="$TTY"
 unset LSCOLORS
 
-if [ -n "${WSL_DISTRO_NAME:-}" ]; then
-  export TERM=xterm-color
-  umask 022
-fi
-
 if [ -n "${SSH_AGENT_FORWARD_AUTH_SOCK:-}" ]; then
   export SSH_AUTH_SOCK="$SSH_AGENT_FORWARD_AUTH_SOCK"
   unset SSH_AGENT_FORWARD_AUTH_SOCK
+fi
+
+if [ -n "${WSL_DISTRO_NAME:-}" ]; then
+  export TERM=xterm-color
+  umask 022
+  if [ -f "$HOME/bin/gpg-agent" ]; then
+    eval $("$HOME/bin/gpg-agent")
+  fi
 fi
