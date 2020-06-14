@@ -14,6 +14,12 @@ elif command -v powershell.exe &> /dev/null; then
   export https_proxy=http://$IP:7890
   export http_proxy=http://$IP:7890
   export all_proxy=http://$IP:7891
+elif [ -f "/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe" ]; then
+  PS="/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe"
+  IP="$($PS -NoProfile -Command "(Get-NetIPAddress -InterfaceAlias Wi-Fi -AddressFamily IPv4).IPAddress | Write-Host -NoNewLine")"
+  export https_proxy=http://$IP:7890
+  export http_proxy=http://$IP:7890
+  export all_proxy=http://$IP:7891
 fi
 
 if [ "${1:-}" = "sudo" ]; then
