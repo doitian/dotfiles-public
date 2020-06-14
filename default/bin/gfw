@@ -4,6 +4,21 @@ export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles
 if nc -z 127.0.0.1 6152 &> /dev/null; then
   export https_proxy=http://127.0.0.1:6152
   export http_proxy=http://127.0.0.1:6152
+  export all_proxy=http://127.0.0.1:6153
+elif nc -z 127.0.0.1 7890 &> /dev/null; then
+  export https_proxy=http://127.0.0.1:7890
+  export http_proxy=http://127.0.0.1:7890
+  export all_proxy=http://127.0.0.1:7891
+elif command -v powershell.exe &> /dev/null; then
+  IP="$(powershell.exe -NoProfile -Command "(Get-NetIPAddress -InterfaceAlias Wi-Fi -AddressFamily IPv4).IPAddress | Write-Host -NoNewLine")"
+  export https_proxy=http://$IP:7890
+  export http_proxy=http://$IP:7890
+  export all_proxy=http://$IP:7891
 fi
 
-exec "$@"
+if [ "${1:-}" = "sudo" ]; then
+  shift
+  sudo --preserve-env=HOMEBREW_BOTTLE_DOMAIN,http_proxy,https_proxy,all_proxy "$@"
+else
+  exec "$@"
+fi
