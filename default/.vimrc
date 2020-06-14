@@ -1,14 +1,10 @@
+" Preamble {{{1
 if v:progname =~? "evim" | finish | endif
 set nocompatible
-let &background = $ITERM_PROFILE == "Dark" ? "dark" : "light"
-if has("win32")
-  language en
-endif
 set encoding=utf-8
-if &term == 'win32'
-  set t_Co=256
-endif
-
+if has("win32") | language en | endif
+let &background = $ITERM_PROFILE == "Dark" ? "dark" : "light"
+if &term == 'win32' | set t_Co=256 | endif
 let loaded_matchparen = 1
 let s:has_rg = executable('rg')
 
@@ -81,7 +77,7 @@ syntax on
 
 if has("gui_running")
   " Remove toolbar, left scrollbar and right scrollbar
-  set go-=e go-=r go-=L go-=T
+  set go-=e go-=r go-=L go-=T go-=m
   set guicursor+=a:blinkwait2000-blinkon1500 " blink slowly
   set mousehide " Hide the mouse when typing text
 end
@@ -592,6 +588,17 @@ inoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
 
 inoremap <expr> <C-r><C-h> fzf#vim#complete#path('cd ' .shellescape(expand('%:h')) . ' && rg --files')
 inoremap <expr> <C-r><C-f> fzf#vim#complete#path('rg --files')
+
+" OS specific settings {{{1
+if has('win32')
+  let &shell = executable("pwsh.exe") ? "pwsh.exe" : "powershell.exe"
+  set shellcmdflag=-NoLogo\ -NoProfile\ -NonInteractive\ -Command
+  set shellquote=\"
+  set shellxquote=
+  set shellslash
+  let g:fzf_preview_window = ''
+  let g:fzf_colors = { 'fg': ['bg', 'Normal'] }
+end
 
 if has("ios")
   set backupcopy=yes
