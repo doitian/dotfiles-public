@@ -8,6 +8,8 @@ elif command -v xclip &> /dev/null; then
   xclip -out -selection clipboard
 elif command -v xsel &> /dev/null; then
   xsel --clipboard --output
+elif command -v powershell.exe &> /dev/null; then
+  powershell.exe -NoLogo -NoProfile -NonInteractive -Command Get-Clipboard
 else
   echo "Platform $OSTYPE not supported!" >&2
   exit 1
