@@ -1,0 +1,1 @@
+echo "$(powershell.exe -NoProfile -Command "(Get-NetIPAddress -InterfaceAlias Wi-Fi -AddressFamily IPv4).IPAddress | Write-Host -NoNewLine")"
