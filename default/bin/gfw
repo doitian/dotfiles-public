@@ -22,7 +22,13 @@ elif [ -f "/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe" ]; the
   export all_proxy=http://$IP:7891
 fi
 
-if [ "${1:-}" = "sudo" ]; then
+if [ "$#" = 0 ]; then
+  echo "export HOMEBREW_BOTTLE_DOMAIN='$HOMEBREW_BOTTLE_DOMAIN'; "
+  echo "export http_proxy='$http_proxy'; "
+  echo "export https_proxy='$https_proxy'; "
+  echo "export all_proxy='$all_proxy'; "
+  echo '# eval $(gfw)'
+elif [ "${1:-}" = "sudo" ]; then
   shift
   sudo --preserve-env=HOMEBREW_BOTTLE_DOMAIN,http_proxy,https_proxy,all_proxy "$@"
 else
