@@ -12,12 +12,3 @@ if [ -n "${SSH_AGENT_FORWARD_AUTH_SOCK:-}" ]; then
   export SSH_AUTH_SOCK="$SSH_AGENT_FORWARD_AUTH_SOCK"
   unset SSH_AGENT_FORWARD_AUTH_SOCK
 fi
-
-if [ -n "${WSL_DISTRO_NAME:-}" ]; then
-  umask 022
-  if [ -f "$HOME/bin/gpg-bridge" ]; then
-    "$HOME/bin/gpg-bridge"
-  fi
-  alias ssh="plink.exe -batch"
-  export GIT_SSH_COMMAND="plink.exe"
-fi
