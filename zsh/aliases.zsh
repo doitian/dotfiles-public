@@ -110,7 +110,7 @@ function dark() {
 
 function light() {
   export BAT_THEME='OneHalfLight'
-  export FZF_DEFAULT_OPTS='--color light'
+  export FZF_DEFAULT_OPTS='--color light,fg:0'
   export COLORFGBG=8;15
   export ITERM_PROFILE=Default
 }

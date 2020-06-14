@@ -98,7 +98,7 @@ fi
 
 # fzf
 if [ "${ITERM_PROFILE:-}" != Dark ]; then
-  export FZF_DEFAULT_OPTS='--color light'
+  export FZF_DEFAULT_OPTS='--color light,fg:0'
 fi
 export FZF_DEFAULT_COMMAND='rg --no-messages --hidden -g "!.git" --color never --files'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
