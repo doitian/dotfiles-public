@@ -1,11 +1,5 @@
 #!/usr/bin/env zsh
 
-if [[ -n "${ITERM_PROFILE:-}" && -o interactive ]]; then
-  if [ "$(defaults read -g AppleInterfaceStyle 2>/dev/null)" = Dark ]; then
-    export ITERM_PROFILE="Dark"
-  fi
-fi
-
 # safe path
 SAFEBIN_SECRET=safebin
 if [ -f "$HOME/.safebin" ]; then
@@ -97,17 +91,12 @@ if [ type rustc &> /dev/null ]; then
 fi
 
 # fzf
-if [ "${ITERM_PROFILE:-}" != Dark ]; then
-  export FZF_DEFAULT_OPTS='--color light,fg:0'
-fi
+export FZF_DEFAULT_OPTS='--color light,fg:0'
 export FZF_DEFAULT_COMMAND='rg --no-messages --hidden -g "!.git" --color never --files'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 # bat
 export BAT_THEME='OneHalfLight'
-if [ "${ITERM_PROFILE:-}" = Dark ]; then
-  export BAT_THEME='OneHalfDark'
-fi
 
 # gpg
 if [[ "$OSTYPE" = linux* ]]; then

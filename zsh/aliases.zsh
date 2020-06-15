@@ -46,6 +46,8 @@ if which fasd > /dev/null 2>&1; then
   unalias d
 
   alias j='fasd_cd -d'
+  alias z='fasd_cd -d'
+  alias zl='fasd -Rdl'
   function jj() {
     local dir="$(fasd -Rdl | fzf-tmux -1 -0 -q "$*")"
     [ -n "$dir" ] && cd "$dir"
@@ -100,20 +102,6 @@ alias d64=decode64
 alias fg=' fg'
 alias gfw='gfw '
 alias sudo='sudo '
-
-function dark() {
-  export BAT_THEME='OneHalfDark'
-  export FZF_DEFAULT_OPTS=
-  export COLORFGBG=15;0
-  export ITERM_PROFILE=Dark
-}
-
-function light() {
-  export BAT_THEME='OneHalfLight'
-  export FZF_DEFAULT_OPTS='--color light,fg:0'
-  export COLORFGBG=8;15
-  export ITERM_PROFILE=Default
-}
 
 ##################################################
 # Dir Aliases

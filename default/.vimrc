@@ -2,8 +2,8 @@
 if v:progname =~? "evim" | finish | endif
 set nocompatible
 set encoding=utf-8
+set background=light
 if has("win32") | language en | set ff=unix | endif
-let &background = $ITERM_PROFILE == "Dark" ? "dark" : "light"
 if &term == 'win32' | set t_Co=256 | endif
 let loaded_matchparen = 1
 let s:has_rg = executable('rg')
