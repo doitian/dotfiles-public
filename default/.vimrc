@@ -2,7 +2,7 @@
 if v:progname =~? "evim" | finish | endif
 set nocompatible
 set encoding=utf-8
-if has("win32") | language en | endif
+if has("win32") | language en | set ff=unix | endif
 let &background = $ITERM_PROFILE == "Dark" ? "dark" : "light"
 if &term == 'win32' | set t_Co=256 | endif
 let loaded_matchparen = 1
@@ -86,14 +86,6 @@ if has("gui_running") || &t_Co > 16
   colorscheme PaperColor
 endif
 
-let &t_SI = "\<Esc>[6 q"
-let &t_SR = "\<Esc>[4 q"
-let &t_EI = "\<Esc>[2 q"
-if exists('$TMUX')
-  let &t_SI = "\<Esc>Ptmux;\<Esc>" . &t_SI . "\<Esc>\\"
-  let &t_EI = "\<Esc>Ptmux;\<Esc>" . &t_EI . "\<Esc>\\"
-endif
-
 " Plugins Options {{{1
 let test#strategy = 'dispatch'
 let g:ctrlsf_default_root = 'cwd'
@@ -164,7 +156,7 @@ function! StatusLineFileFormat()
   return &fileformat == 'unix' ? '' : printf('[%s] ', &fileformat)
 endfunction
 
-function! QFixToggle()
+function! s:QFixToggle()
   if &filetype == "qf"
     cclose
   else
@@ -219,7 +211,7 @@ function! CurDir()
   endif
 endfunction
 
-function! PushMark(is_global)
+function! s:PushMark(is_global)
   if a:is_global
     let l:curr = char2nr('Z')
   else
@@ -237,7 +229,7 @@ if !exists("g:bookmark_line_insert_newline")
   let g:bookmark_line_insert_newline = 0
   let g:bookmark_line_prefix = ""
 endif
-function! BookmarkLine(message, copy)
+function! s:BookmarkLine(message, copy)
   let l:line = g:bookmark_line_prefix . expand("%") . "|" . line(".") . " col " . col(".") . "| "
   if a:message == ""
     let l:line = l:line . getline(".")
@@ -294,7 +286,7 @@ function! SearchAround(start_tag, end_tag, ...)
   return ''
 endfunction
 
-function! FollowWikiLink()
+function! s:FollowWikiLink()
   let l:line_text = getline('.')
 
   if l:line_text[0] == '/'
@@ -319,7 +311,7 @@ function! FollowWikiLink()
   endif
 endfunction
 
-function! CopyIAWriter()
+function! s:CopyIAWriter()
   let l:pos_save = getpos('.')
   call cursor(1, 1)
   let l:title = getline(search('^# ', 'c'))[2:]
@@ -329,7 +321,7 @@ function! CopyIAWriter()
   let @@ = printf('[♯ %s](%s)', l:title, l:path)
 endfunction
 
-function! Bufs()
+function! s:Bufs()
   redir => list
   silent ls
   redir END
@@ -364,9 +356,9 @@ command! -bang -nargs=* Rg
 
 command! -nargs=1 -complete=file Cfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | cfile <args>
 command! -nargs=1 -complete=file Lfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | lfile <args>
-command! -bang -nargs=* Bm call BookmarkLine(<q-args>, <bang>0)
+command! -bang -nargs=* Bm call <SID>BookmarkLine(<q-args>, <bang>0)
 command! Bd call fzf#run(fzf#wrap({
-  \ 'source': Bufs(),
+  \ 'source': <SID>Bufs(),
   \ 'sink*': { lines -> execute('bwipeout '.join(map(lines, {_, line -> split(line)[0]}))) },
   \ 'options': '--multi --reverse --bind ctrl-a:select-all+accept'
 \ }))
@@ -522,8 +514,8 @@ noremap <silent> <Leader>lr :registers<CR>
 noremap <silent> <Leader>lb :ls<CR>:b<Space>
 noremap <silent> <Leader>lm :marks<CR>:normal! `
 
-nnoremap <silent> <Leader>m :call PushMark(0)<CR>
-nnoremap <silent> <Leader>M :call PushMark(1)<CR>
+nnoremap <silent> <Leader>m :call <SID>PushMark(0)<CR>
+nnoremap <silent> <Leader>M :call <SID>PushMark(1)<CR>
 
 nnoremap <silent> <Leader>n :nohlsearch<CR>
 
@@ -534,11 +526,11 @@ nnoremap <silent> <Leader>oW :silent vimgrep /\<<C-r><C-a>\>/ %<Bar>copen 10<CR>
 nnoremap <Leader>p "+p
 nnoremap <Leader>P "+P
 
-nnoremap <silent> <Leader>q :call QFixToggle()<CR>
+nnoremap <silent> <Leader>q :call <SID>QFixToggle()<CR>
 
 " Reveal
-nnoremap <silent> <Leader>ri :call FollowWikiLink()<CR>
-nnoremap <silent> <Leader>rI :call CopyIAWriter()<CR>
+nnoremap <silent> <Leader>ri :call <SID>FollowWikiLink()<CR>
+nnoremap <silent> <Leader>rI :call <SID>CopyIAWriter()<CR>
 nnoremap <silent> <Leader>rt :exe "silent !open -a 'iTerm.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
 nnoremap <silent> <Leader>rf :exe "silent !open -R " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
 nnoremap <silent> <Leader>rm :exe "silent !open -a 'Marked.app' " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
@@ -629,10 +621,10 @@ function! s:CocNvimInitialized() abort
   nmap <silent> <Leader>gy <Plug>(coc-type-definition)
   nmap <silent> <Leader>gi <Plug>(coc-implementation)
   nmap <silent> <Leader>gr <Plug>(coc-references)
-  nnoremap <silent> K :call <SID>show_documentation()<CR>
+  nnoremap <silent> K :call <SID>ShowDocumentation()<CR>
 endfunction
 
-function! s:show_documentation()
+function! s:ShowDocumentation()
   if (index(['vim','help'], &filetype) >= 0)
     execute 'h '.expand('<cword>')
   else
@@ -659,9 +651,9 @@ augroup vimrc_au
 
   autocmd BufNewFile,BufRead *.bats set ft=sh
   autocmd BufNewFile,BufRead */gopass-*/* set ft=gopass
-  autocmd! User GoyoEnter Limelight
-  autocmd! User GoyoLeave Limelight!
-  autocmd! User CocNvimInit call s:CocNvimInitialized()
+  autocmd User GoyoEnter Limelight
+  autocmd User GoyoLeave Limelight!
+  autocmd User CocNvimInit call s:CocNvimInitialized()
 augroup END
 
 silent! source ~/.vim/UltiSnips/abbreviations.vim
