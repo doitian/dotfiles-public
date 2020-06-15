@@ -376,6 +376,7 @@ set display+=lastline
 set expandtab
 set nofoldenable
 set foldtext=MyFoldText()
+set formatoptions+=1jmBo
 set hidden
 set history=3000
 set hlsearch
@@ -402,6 +403,8 @@ set statusline=%<%{StatusLineFileName()}\ %m%r%{HasPaste()}%=%{StatusLineFileFor
 set tabline=%!Tabline()
 set tabpagemax=50
 set title
+set undodir=~/.vim/undo//,/tmp//,.
+set undofile
 set undolevels=1000
 set viminfo=!,'100,<2000
 set virtualedit="block,insert"
@@ -413,20 +416,11 @@ set winwidth=78
 
 if has("cscope")
   set cscopequickfix=s-,c-,d-,i-,t-,e-
-  if v:version > 740
-    set cscopequickfix+=a-
-  endif
-endif
-if v:version > 740
-  set formatoptions+=1jmB
+  set cscopequickfix+=a-
 endif
 if s:has_rg
   set grepformat=%f:%l:%c:%m
   set grepprg=rg\ --hidden\ -g\ '!.git'\ --vimgrep\ $*
-endif
-if v:version > 740
-  set undodir=~/.vim/undo//,/tmp//,.
-  set undofile
 endif
 
 let $cb = $HOME . '/codebase'
@@ -472,10 +466,10 @@ nnoremap <Leader>e<Space> :e<Space><C-Z>
 nnoremap <silent> <Leader>ep :tabnew .projections.json<CR>
 nnoremap <Leader>es :e ~/.vim/UltiSnips/<C-Z>
 nnoremap <Leader>eS :UltiSnipsEdit<CR>
-nnoremap <Leader>ed :e ~/Desktop/diary-<C-R>=strftime('%Y-%m-%d')<CR>.md<CR>
-nnoremap <Leader>eD :e ~/Desktop/diary-<C-Z>
-nnoremap <Leader>em :e ~/Desktop/diary-<C-R>=strftime('%Y-%m-%d', localtime() + 86400)<CR>.md<CR>
-nnoremap <Leader>ey :e ~/Desktop/diary-<C-R>=strftime('%Y-%m-%d', localtime() - 86400)<CR>.md<CR>
+nnoremap <Leader>ed :e ~/Desktop/diary/dairy-<C-R>=strftime('%Y-%m-%d')<CR>.md<CR>
+nnoremap <Leader>eD :FZF ~/Desktop/diary/<CR>
+nnoremap <Leader>em :e ~/Desktop/diary/dairy-<C-R>=strftime('%Y-%m-%d', localtime() + 86400)<CR>.md<CR>
+nnoremap <Leader>ey :e ~/Desktop/diary/dairy-<C-R>=strftime('%Y-%m-%d', localtime() - 86400)<CR>.md<CR>
 
 nnoremap <silent> <Leader>fb :Buffers<CR>
 nnoremap <silent> <Leader>fk :Bd<CR>
@@ -649,6 +643,7 @@ augroup vimrc_au
   autocmd CmdwinEnter * map <buffer> <C-w><C-w> <CR>q:dd
 
   autocmd FileType gitcommit,markdown,text,rst setlocal spell
+  autocmd FileType markdown set fo+=ro
   autocmd FileType netrw setlocal bufhidden=wipe
   autocmd FileType rust setlocal winwidth=99
   autocmd FileType vim setlocal foldmethod=marker
