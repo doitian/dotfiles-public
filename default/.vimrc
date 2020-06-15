@@ -592,6 +592,10 @@ if has('win32')
   let g:fzf_colors = { 'fg': ['bg', 'Normal'] }
 end
 
+if exists('$WSLENV')
+  let g:netrw_browsex_viewer= "wsl-open"
+endif
+
 if has("ios")
   set backupcopy=yes
   let g:ctrlp_root_markers = []
