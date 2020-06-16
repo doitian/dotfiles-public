@@ -153,7 +153,12 @@ function! StatusLineFileName()
 endfunction
 
 function! StatusLineFileFormat()
-  return &fileformat == 'unix' ? '' : printf('[%s] ', &fileformat)
+  let l:flags = []
+  let l:encoding = &fileencoding != '' ? &fileencoding : &encoding
+  if l:encoding != 'utf-8' | call add(l:flags, l:encoding) | endif
+  if &bomb | call add(l:flags, '+bomb') | endif
+  if &fileformat != 'unix' | call add(l:flags, printf('[%s] ', &fileformat)) | endif
+  return join(l:flags, '')
 endfunction
 
 function! s:QFixToggle()
@@ -399,7 +404,7 @@ set smartcase
 set smarttab
 set spellfile=$HOME/.vim-spell-en.utf-8.add,.vim-spell-en.utf-8.add
 set spelllang=en_us,cjk
-set statusline=%<%{StatusLineFileName()}\ %m%r%{HasPaste()}%=%{StatusLineFileFormat()}%l\ %P
+set statusline=%<%{StatusLineFileName()}\ %m%r%{HasPaste()}%=%{StatusLineFileFormat()}\ %l\ %P
 set tabline=%!Tabline()
 set tabpagemax=50
 set title
