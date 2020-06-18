@@ -69,6 +69,8 @@
   giveup = reset --hard @{u}
 
   me = "!f() { git config user.email __EMAIL__; git config user.signingkey FD7051CE32E62CE7; git config commit.gpgSign true; }; f"
+  config-review-base = config user.reviewBase
+  config-current-remote = config user.currentRemote
 
 [color "branch"]
   current = blue bold
