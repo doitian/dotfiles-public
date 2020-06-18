@@ -345,7 +345,7 @@ command! Close :pclose | :cclose | :lclose |
       \ exe s:currentWindow . "wincmd w"
 command! Diffoff :diffoff! | :windo call s:CloseReadonlyWin() | :Close
 command! Reload :source ~/.vimrc | :filetype detect | :nohl
-command! -bang Clear :silent! %bd<bang> | :silent! argd * | :nohl
+command! -bang Clear :silent! %bw<bang> | :silent! argd * | :nohl
 command! -nargs=* Diff2qf :cexpr system("diff2qf", system("git diff -U0 " . <q-args>))
 
 command! -bang Fcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': 'cd'}, <bang>0))
@@ -362,7 +362,7 @@ command! -bang -nargs=* Rg
 command! -nargs=1 -complete=file Cfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | cfile <args>
 command! -nargs=1 -complete=file Lfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | lfile <args>
 command! -bang -nargs=* Bm call <SID>BookmarkLine(<q-args>, <bang>0)
-command! Bd call fzf#run(fzf#wrap({
+command! Bw call fzf#run(fzf#wrap({
   \ 'source': <SID>Bufs(),
   \ 'sink*': { lines -> execute('bwipeout '.join(map(lines, {_, line -> split(line)[0]}))) },
   \ 'options': '--multi --reverse --bind ctrl-a:select-all+accept'
@@ -477,7 +477,7 @@ nnoremap <Leader>em :e ~/Desktop/diary/dairy-<C-R>=strftime('%Y-%m-%d', localtim
 nnoremap <Leader>ey :e ~/Desktop/diary/dairy-<C-R>=strftime('%Y-%m-%d', localtime() - 86400)<CR>.md<CR>
 
 nnoremap <silent> <Leader>fb :Buffers<CR>
-nnoremap <silent> <Leader>fk :Bd<CR>
+nnoremap <silent> <Leader>fk :Bw<CR>
 nnoremap <silent> <Leader>ff :Ffile<CR>
 nnoremap <silent> <Leader>fd :Fdir<CR>
 nnoremap <silent> <Leader>fo :BLines<CR>
