@@ -23,6 +23,8 @@ if v:version > 800
 endif
 
 " other
+Plug 'NLKNguyen/papercolor-theme'
+
 Plug 'dyng/ctrlsf.vim', { 'on': 'CtrlSF' }
 Plug 'editorconfig/editorconfig-vim'
 Plug 'godlygeek/tabular', { 'on': 'Tabularize' }
@@ -44,10 +46,6 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround' " ys s
 Plug 'tpope/vim-unimpaired' " various [, ] mappings
 Plug 'wellle/targets.vim' " Text objects
-
-if has("gui_running") || &t_Co > 16
-  Plug 'NLKNguyen/papercolor-theme'
-endif
 
 if has('unix')
   Plug 'tpope/vim-eunuch' " Linux commands
@@ -82,9 +80,7 @@ if has("gui_running")
   set mousehide " Hide the mouse when typing text
 end
 
-if has("gui_running") || &t_Co > 16
-  colorscheme PaperColor
-endif
+silent! colorscheme PaperColor
 
 " Plugins Options {{{1
 let test#strategy = 'dispatch'

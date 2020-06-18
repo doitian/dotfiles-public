@@ -33,7 +33,6 @@
   mb = !git merge-base HEAD \"$(git config --get user.reviewBase || echo master)\"
   cpr = "!f() { git current -u; hub pull-request \"$@\"; }; f"
 
-  unstage = reset HEAD
   del = "!f() { git reset HEAD \"$@\"; git clean -f -- \"$@\"; git checkout -- \"$@\" 2>/dev/null; }; f"
 
   rb = rebase
@@ -43,7 +42,7 @@
 
   st = status --short --branch
   dotfiles = "!git multistatus ~/.dotfiles ~/.dotfiles/repos/public ~/.dotfiles/repos/private"
-  all= "!f() { find . -maxdepth 4 -type d -name .git \"$@\" -prune | sed 's/.git$//' | xargs git multistatus; }; f"
+  all = "!f() { find . -maxdepth 4 -type d -name .git \"$@\" -prune | sed 's/.git$//' | xargs git multistatus; }; f"
 
   ls = ls-files
   grep = grep -Ii
@@ -72,21 +71,6 @@
   config-review-base = config user.reviewBase
   config-current-remote = config user.currentRemote
 
-[color "branch"]
-  current = blue bold
-[color "diff"]
-  frag = magenta bold
-  commit = yellow bold
-  old = red bold
-  new = green bold
-  whitespace = red reverse
-[color "diff-highlight"]
-  oldNormal = red bold
-  oldHighlight = red bold 52
-  newNormal = green bold
-  newHighlight = green bold 22
-[color]
-  ui = true
 [pull]
   ff = only
 [push]
@@ -103,7 +87,6 @@
 [core]
   excludesfile = "__HOME__/.ignore"
   autocrlf = false
-  pager = less -F -X
   quotepath = off
 
 [rerere]
@@ -118,4 +101,3 @@
 [user]
   name = __NAME__
   useConfigOnly = true
-  reviewBase = master
