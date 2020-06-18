@@ -371,6 +371,7 @@ set backspace=indent,eol,start
 set backup
 set backupdir=~/.vim/backup//,.
 set breakindent
+set cursorline
 set copyindent
 set directory=~/.vim/swap//,/tmp//,.
 set display+=lastline
