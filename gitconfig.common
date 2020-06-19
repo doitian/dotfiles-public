@@ -1,4 +1,0 @@
-[diff]
-  algorithm = patience
-[merge]
-  defaultToUpstream = true

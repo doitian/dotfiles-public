@@ -71,26 +71,28 @@
   config-review-base = config user.reviewBase
   config-current-remote = config user.currentRemote
 
-[pull]
-  ff = only
-[push]
-  default = simple
-[log]
-  date = iso
-[difftool]
-  prompt = false
-[mergetool]
-  prompt = false
-[url "ssh://git@github.com/"]
-  pushInsteadOf = https://github.com/
-
-[color "diff"]
-  meta = blue bold
-
 [core]
   excludesfile = "__HOME__/.ignore"
   autocrlf = false
   quotepath = off
+
+[log]
+  date = iso
+[pull]
+  ff = only
+[push]
+  default = simple
+[diff]
+  algorithm = patience
+[difftool]
+  prompt = false
+[merge]
+  defaultToUpstream = true
+[mergetool]
+  prompt = false
+
+[url "ssh://git@github.com/"]
+  pushInsteadOf = https://github.com/
 
 [rerere]
   enabled = true
@@ -104,3 +106,10 @@
 [user]
   name = __NAME__
   useConfigOnly = true
+
+[pager]
+  branch = false
+
+[color "diff"]
+  meta = blue bold
+
