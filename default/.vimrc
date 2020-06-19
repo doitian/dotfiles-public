@@ -140,7 +140,7 @@ endfunction
 
 function! StatusLineFileName()
   if &filetype != "netrw"
-    return pathshorten(expand('%:~:.'))
+    return &buftype != "nofile" ? pathshorten(expand('%:~:.')) : expand("%")
   elseif b:netrw_curdir == getcwd()
     return "./"
   else
@@ -401,7 +401,7 @@ set smartcase
 set smarttab
 set spellfile=$HOME/.vim-spell-en.utf-8.add,.vim-spell-en.utf-8.add
 set spelllang=en_us,cjk
-set statusline=%<%{StatusLineFileName()}\ %m%r%{HasPaste()}%=%{StatusLineFileFormat()}\ %l\ %P
+set statusline=%<%{StatusLineFileName()}\ %h%m%r%{HasPaste()}%=%{StatusLineFileFormat()}\ %l\ %P
 set tabline=%!Tabline()
 set tabpagemax=50
 set title
