@@ -10,6 +10,7 @@ ZSH="$HOME/.oh-my-zsh"
 ZSH_CACHE_DIR="$HOME/.zcompcache"
 COMPLETION_WAITING_DOTS=true
 DISABLE_AUTO_TITLE=true
+GIT_PS1_SHOWUPSTREAM=auto
 
 fpath=(
   $HOME/.zsh-completions
