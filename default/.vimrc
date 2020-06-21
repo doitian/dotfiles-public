@@ -507,7 +507,7 @@ nnoremap <silent> <Leader>I :Tags<CR>
 nnoremap <silent> <Leader>k :Close<CR>
 nnoremap <silent> <Leader>K <C-^>:bd #<Bar>let @# = 1<CR>
 
-noremap <silent> <Leader>ll :Lexplore<CR>
+noremap <silent> <Leader>ll :25Lexplore<CR>
 noremap <silent> <Leader>la :args<CR>
 noremap <silent> <Leader>lj :jumps<CR>
 noremap <silent> <Leader>lt :tags<CR>
