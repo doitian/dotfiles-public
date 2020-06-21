@@ -56,7 +56,7 @@ if has('win32')
   Plug 'PProvost/vim-ps1'
 endif
 
-if has("ios")
+if has('ios')
   Plug 'ctrlpvim/ctrlp.vim'
 else
   Plug 'junegunn/fzf.vim'
@@ -364,6 +364,12 @@ command! Bw call fzf#run(fzf#wrap({
   \ 'options': '--multi --reverse --bind ctrl-a:select-all+accept'
 \ }))
 
+if has('win32') || has('ios')
+  command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile | silent file __viper__ | nnoremap <buffer> <CR> ggvGg_"+y:%d <lt>Bar> redraw!<lt>CR>
+else
+  command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile | silent file __viper__ | nnoremap <buffer> <CR> :exec "w !ctrlc" <lt>Bar> %d <lt>Bar> redraw!<lt>CR>
+end
+
 " Config {{{1
 set autoindent
 set autoread
@@ -537,7 +543,7 @@ nnoremap <silent> <Leader>R :checktime<CR>
 
 " Strip all trailing whitespace from a file
 nnoremap <Leader>ss :source ~/.vim/scripts/<C-Z>
-nnoremap <silent> <Leader>sw :let _s=@/<Bar>%s/\s\+$//e<Bar>let @/=_s<Bar>nohl<CR>
+nnoremap <silent> <Leader>sw :let _s=@/<Bar>%s/\s\+$//e<Bar>let @/=_s<Bar>unlet _s<Bar>nohl<CR>
 
 nnoremap <Leader>tq :Copen<CR>
 nnoremap <silent> <Leader>tf :TestFile<CR>
