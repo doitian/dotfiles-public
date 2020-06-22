@@ -591,7 +591,6 @@ if has('win32')
   set shellxquote=
   set shellslash
   let g:fzf_preview_window = ''
-  let g:fzf_colors = { 'fg': ['bg', 'Normal'] }
 end
 
 if exists('$WSLENV')
