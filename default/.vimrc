@@ -39,7 +39,7 @@ Plug 'tomtom/tcomment_vim' " gc
 Plug 'tpope/vim-abolish' " :A :S
 Plug 'tpope/vim-dispatch', { 'on': ['FocusDispatch', 'Dispatch'] }
 Plug 'tpope/vim-endwise'
-Plug 'tpope/vim-fugitive', { 'on': ['Gstatus', 'Git'] }
+Plug 'tpope/vim-fugitive', { 'on': ['Git', 'Gstatus', 'Gdiffsplit'] }
 Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-repeat'

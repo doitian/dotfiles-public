@@ -14,7 +14,7 @@ review() {
     set -- $(git diff --name-only "$merge_base")
   fi
 
-  $VIM -p "$@" +"tabdo set number" +"tabdo 1" +"tabdo Gdiff $merge_base" +"tabrewind"
+  $VIM -p "$@" +"tabdo set number" +"tabdo 1" +"tabdo Gdiffsplit $merge_base:%" +"tabrewind"
 }
 
 review "$@"
