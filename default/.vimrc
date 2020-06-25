@@ -591,6 +591,7 @@ if has('win32')
   set shellxquote=
   set shellslash
   let g:fzf_preview_window = ''
+  call setenv('FZF_DEFAULT_OPTS', '--color 16')
 end
 
 if exists('$WSLENV')
