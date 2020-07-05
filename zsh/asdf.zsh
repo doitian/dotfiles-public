@@ -3,7 +3,6 @@ if [ -d "$HOME/.asdf" ]; then
   ASDF_BIN="${ASDF_DIR}/bin"
   ASDF_USER_SHIMS="${ASDF_DIR}/shims"
 
-  # Add function wrapper so we can export variables
   asdf() {
     local command
     command="$1"
@@ -13,13 +12,14 @@ if [ -d "$HOME/.asdf" ]; then
 
     case "$command" in
       "shell")
-        # eval commands that need to export variables
-        eval "$(asdf "sh-$command" "$@")"
+        # commands that need to export variables
+        eval "$(asdf export-shell-version sh "$@")" # asdf_allow: eval
         ;;
       *)
         # forward other commands to asdf script
         command asdf "$command" "$@"
         ;;
+
     esac
   }
 fi
