@@ -646,6 +646,8 @@ augroup vimrc_au
     \   exe "normal! g`\"" |
     \ endif
 
+  autocmd SwapExists * let v:swapchoice = "o"
+
   autocmd User ProjectionistActivate call s:ProjectionistActivate()
 
   autocmd CmdwinEnter * map <buffer> <C-w><C-w> <CR>q:dd
