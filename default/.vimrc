@@ -600,6 +600,7 @@ endif
 
 if has("ios")
   set backupcopy=yes
+  set noundofile
   let g:ctrlp_root_markers = []
   let g:ctrlp_working_path_mode = 'a'
   nnoremap <Leader><Space> :CtrlP<CR>
