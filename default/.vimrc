@@ -469,6 +469,7 @@ nnoremap <Leader>eh :e <C-r>=CurDir().'/'<CR>
 nnoremap <silent> <Leader>en :enew<CR>
 nnoremap <silent> <Leader>et :tabnew<CR>
 nnoremap <Leader>ee :e <C-r>=expand("%:r")<CR><C-Z>
+nnoremap <Leader>eb :sview `=expand("~/.vim/backup/") . substitute(expand("%:p"), "[\\\\/]", "%", "g") . "~"`<CR>
 nnoremap <silent> <Leader>ev :tabnew ~/.vimrc<CR>
 nnoremap <Leader>e<Space> :e<Space><C-Z>
 nnoremap <silent> <Leader>ep :tabnew .projections.json<CR>
