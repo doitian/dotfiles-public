@@ -51,7 +51,7 @@ if [ -f Cargo.toml ]; then
     printf "${FAILURE}\n"
   fi
 
-  printf "${PREFIX} Checking for rustfmt ... "
+  printf "${PREFIX} Checking for cargo ... "
   if command -v cargo &>/dev/null; then
     printf "${SUCCESS}\n"
   else
