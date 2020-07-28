@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-HOSTNAME="$(hostname -f)"
-
-rclone sync -v ~/Desktop/ "onedrive:/Sync/$HOSTNAME/"
