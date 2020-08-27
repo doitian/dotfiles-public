@@ -662,6 +662,7 @@ augroup vimrc_au
 
   autocmd BufNewFile,BufRead *.bats set ft=sh
   autocmd BufNewFile,BufRead */gopass-*/* set ft=gopass
+  autocmd BufNewFile,BufRead PULLREQ_EDITMSG set ft=gitcommit
   autocmd User GoyoEnter Limelight
   autocmd User GoyoLeave Limelight!
   autocmd User CocNvimInit call s:CocNvimInitialized()
