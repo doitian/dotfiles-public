@@ -5,7 +5,7 @@ function fpass() {
   local clip=
   if [ "${1:-}" = "-c" ]; then
     shift
-    clip="--clip --alsoclip"
+    clip="show -c"
   fi
   selected="$(cd ~/.password-store && fzf)"
   selected="${selected%.gpg}"
