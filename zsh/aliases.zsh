@@ -7,6 +7,7 @@ function tv() {
   tmux neww "vim $*"
 }
 alias view='vim -R'
+alias viper='vim +Viper'
 
 ##################################################
 # TMUX
