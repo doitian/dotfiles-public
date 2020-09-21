@@ -661,6 +661,7 @@ augroup vimrc_au
   autocmd FileType vim setlocal foldmethod=marker
 
   autocmd BufNewFile,BufRead *.bats set ft=sh
+  autocmd BufNewFile,BufRead *.tid set ft=markdown
   autocmd BufNewFile,BufRead */gopass-*/* set ft=gopass
   autocmd BufNewFile,BufRead PULLREQ_EDITMSG set ft=gitcommit
   autocmd User GoyoEnter Limelight
