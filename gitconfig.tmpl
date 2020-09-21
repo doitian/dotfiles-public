@@ -31,7 +31,7 @@
   mt = mergetool
 
   mb = !git merge-base HEAD \"$(git config --get user.reviewBase || echo master)\"
-  cpr = "!f() { git current -u; hub pull-request \"$@\"; }; f"
+  cpr = "!f() { git current -u; gh pr create \"$@\"; }; f"
 
   del = "!f() { git reset HEAD \"$@\"; git clean -f -- \"$@\"; git checkout -- \"$@\" 2>/dev/null; }; f"
 
