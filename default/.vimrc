@@ -17,6 +17,7 @@ Plug 'pangloss/vim-javascript'
 Plug 'rust-lang/rust.vim'
 Plug 'plasticboy/vim-markdown'
 Plug 'vim-ruby/vim-ruby'
+Plug 'hwayne/tla.vim'
 
 if v:version > 800
   Plug 'fatih/vim-go'
@@ -89,6 +90,7 @@ let g:dispatch_compilers = {
       \ 'pipenv run': '',
       \ 'bundle exec': ''}
 let g:fzf_buffers_jump = 1
+let g:fzf_layout = { 'down': '40%' }
 let g:go_fmt_fail_silently = 1
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
