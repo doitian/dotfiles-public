@@ -665,6 +665,7 @@ augroup vimrc_au
   autocmd BufNewFile,BufRead *.bats set ft=sh
   autocmd BufNewFile,BufRead *.tid set ft=markdown
   autocmd BufNewFile,BufRead */gopass-*/* set ft=gopass
+  au BufNewFile,BufRead */gopass-*/* setlocal noswapfile nobackup noundofile
   autocmd BufNewFile,BufRead PULLREQ_EDITMSG set ft=gitcommit
   autocmd User GoyoEnter Limelight
   autocmd User GoyoLeave Limelight!
