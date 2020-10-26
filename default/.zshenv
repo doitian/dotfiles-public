@@ -103,6 +103,8 @@ if [[ "$OSTYPE" = linux* ]]; then
   export GPG_TTY="$(tty)"
 fi
 
+export HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK=1
+
 export PATH="\
 .git/$SAFEBIN_SECRET/../../bin\
 :$HOME/bin\
