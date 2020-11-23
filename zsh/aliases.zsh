@@ -107,9 +107,6 @@ alias sudo='sudo '
 ##################################################
 # Dir Aliases
 cb="$HOME/codebase"
-kb="$HOME/codebase/my/knowledge-base"
-dcs="$HOME/Documents"
-dsk="$HOME/Desktop"
-prj="$HOME/Desktop/Projects"
+brain="$HOME/Dropbox/Brain"
 dl="$HOME/Downloads"
 dotfiles="$HOME/.dotfiles"
