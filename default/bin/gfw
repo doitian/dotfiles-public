@@ -6,9 +6,10 @@ if nc -z 127.0.0.1 6152 &> /dev/null; then
   export http_proxy=http://127.0.0.1:6152
   export all_proxy=http://127.0.0.1:6153
 elif nc -z 127.0.0.1 7890 &> /dev/null; then
-  export https_proxy=http://127.0.0.1:7890
-  export http_proxy=http://127.0.0.1:7890
-  export all_proxy=http://127.0.0.1:7890
+  PROXY="${PROXY_HOST:-127.0.0.1}"
+  export https_proxy=http://${PROXY}:7890
+  export http_proxy=http://${PROXY}:7890
+  export all_proxy=http://${PROXY}:7890
 elif command -v powershell.exe &> /dev/null; then
   IP="$(powershell.exe -NoProfile -Command "(Get-NetIPAddress -InterfaceAlias Wi-Fi -AddressFamily IPv4).IPAddress | Write-Host -NoNewLine")"
   export https_proxy=http://$IP:7890
