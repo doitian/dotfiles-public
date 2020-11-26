@@ -1,0 +1,3 @@
+#!/bin/bash
+
+exec pandoc --wrap=none --markdown-headings=atx --to markdown_strict-raw_html-native_divs-native_spans "$@"
