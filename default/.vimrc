@@ -292,36 +292,28 @@ endfunction
 function! s:FollowWikiLink()
   let l:line_text = getline('.')
 
-  if l:line_text[0] == '/'
-    exe 'e ' . CurDir() . l:line_text
-    return
+  let l:filename = split(SearchAround('[[', ']]'), '|')[0]
+  if l:filename =~ '^\./'
+    let l:filename = l:filename[2:]
   endif
-
-  let l:mdsrc = SearchAround('(', ')', 1)
-  if stridx(l:mdsrc, 'ia-writer:') == 0
-    exe 'e ' . substitute(split(l:mdsrc, 'path=/Locations/iCloud/')[-1], '%20', ' ', 'g')
-    return
-  endif
-
-  let l:filename = SearchAround('[[', ']]')
-  if l:filename != '' && l:filename[1] != '|'
-    let l:filename = split(l:filename, '|')[0]
-    if l:filename[0] == '/'
-      exe 'e ' . l:filename[1:]
-    else
-      exe 'e ' . resolve(CurDir() . '/' . l:filename)
-    endif
+  if has('ios')
+    let g:ctrlp_default_input = l:filename
+    try
+      call cal ctrlp#init(0)
+    finally
+      let g:ctrlp_default_input = 0
+    endtry
+  else
+    call fzf#vim#files('', {'options':['-1', '-q', l:filename]})
   endif
 endfunction
 
-function! s:CopyIAWriter()
-  let l:pos_save = getpos('.')
-  call cursor(1, 1)
-  let l:title = getline(search('^# ', 'c'))[2:]
-  call setpos('.', l:pos_save)
-  let l:path = join(split(expand('%:p'), '\\'), '/')
-  let l:path = 'ia-writer://open?path=/Locations/iCloud/§%20' . substitute(join(split(l:path, '§ ')[1:], '§ '), ' ', '%20', 'g')
-  let @@ = printf('[♯ %s](%s)', l:title, l:path)
+function! s:CopyAsWikiLink()
+  let l:basename = expand('%:t')
+  if l:basename =~ '\.md$'
+    let l:basename = l:basename[:-4]
+  endif
+  let @@ = printf('[[%s]]', l:basename)
 endfunction
 
 function! s:Bufs()
@@ -535,7 +527,7 @@ nnoremap <silent> <Leader>q :call <SID>QFixToggle()<CR>
 
 " Reveal
 nnoremap <silent> <Leader>ri :call <SID>FollowWikiLink()<CR>
-nnoremap <silent> <Leader>rI :call <SID>CopyIAWriter()<CR>
+nnoremap <silent> <Leader>rI :call <SID>CopyAsWikiLink()<CR>
 nnoremap <silent> <Leader>rt :exe "silent !open -a 'iTerm.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
 nnoremap <silent> <Leader>rf :exe "silent !open -R " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
 nnoremap <silent> <Leader>rm :exe "silent !open -a 'Marked.app' " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
