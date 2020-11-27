@@ -299,7 +299,7 @@ function! s:FollowWikiLink()
   if has('ios')
     let g:ctrlp_default_input = l:filename
     try
-      call cal ctrlp#init(0)
+      call ctrlp#init(0)
     finally
       let g:ctrlp_default_input = 0
     endtry
