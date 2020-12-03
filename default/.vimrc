@@ -31,7 +31,7 @@ Plug 'editorconfig/editorconfig-vim'
 Plug 'godlygeek/tabular', { 'on': 'Tabularize' }
 Plug 'janko-m/vim-test', { 'on': ['TestNearest', 'TestFile', 'TestSuite', 'TestLast', 'TestVisit'] }
 Plug 'junegunn/goyo.vim', { 'for': 'markdown' }
-Plug 'junegunn/limelight.vim', { 'on': 'Goyo' }
+Plug 'junegunn/limelight.vim', { 'on': 'Limelight' }
 Plug 'sbdchd/neoformat', { 'on': 'Neoformat' }
 Plug 'simnalamburt/vim-mundo', { 'on': 'MundoToggle' }
 Plug 'thinca/vim-visualstar' " * # g* g#
