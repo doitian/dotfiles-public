@@ -17,11 +17,15 @@ def _str(s):
 
 
 os.makedirs(".git/changes", exist_ok=True)
-remote_url = _str(subprocess.check_output(
-    ["git", "remote", "get-url", "origin"])).strip()
-if remote_url.endswith('.git'):
-    remote_url = remote_url[:-4]
-org = '/'.join(remote_url.rsplit(':', 2)[-1].rsplit('/', 3)[-2:])
+
+if 'GITHUB_CHANGELOG_REPO' in os.environ:
+    repo = os.environ['GITHUB_CHANGELOG_REPO']
+else:
+    remote_url = _str(subprocess.check_output(
+        ["git", "remote", "get-url", "origin"])).strip()
+    if remote_url.endswith('.git'):
+        remote_url = remote_url[:-4]
+    repo = '/'.join(remote_url.rsplit(':', 2)[-1].rsplit('/', 3)[-2:])
 
 if len(sys.argv) > 1:
     since = sys.argv[1]
@@ -83,7 +87,7 @@ for line in logs.splitlines():
         else:
             print("get pr #" + pr_number, file=sys.stderr)
             api_endpoint = 'https://api.github.com/repos/{}/pulls/{}'.format(
-                org, pr_number)
+                repo, pr_number)
             pr = requests.get(api_endpoint, auth=auth).json()
 
             if 'message' in pr:
