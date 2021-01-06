@@ -59,20 +59,12 @@ if [ -f Cargo.toml ]; then
     exit 1
   fi
 
-  # Just check that running rustfmt doesn't do anything to the file. I do this instead of
-  # modifying the file because I don't want to mess with the developer's index, which may
-  # not only contain discrete files.
   printf "${PREFIX} Checking formatting ... "
   FMTFAILED=0
-  for file in $(git diff --name-only --cached);
-  do
-    if [ ${file: -3} == ".rs" ] && [ -f "$file" ]; then
-      if ! rustfmt --check "$file"; then
-        FAILED=1
-        FMTFAILED=1
-      fi
-    fi
-  done
+  if ! cargo fmt -- --check; then
+    FAILED=1
+    FMTFAILED=1
+  fi
   if [ "$FMTFAILED" = 0 ]; then
     printf "${SUCCESS}\n"
   fi
