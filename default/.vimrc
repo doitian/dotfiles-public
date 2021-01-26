@@ -469,10 +469,10 @@ nnoremap <Leader>e<Space> :e<Space><C-Z>
 nnoremap <silent> <Leader>ep :tabnew .projections.json<CR>
 nnoremap <Leader>es :e ~/.vim/UltiSnips/<C-Z>
 nnoremap <Leader>eS :UltiSnipsEdit<CR>
-nnoremap <Leader>ed :e ~/.diary/diary-<C-R>=strftime('%Y-%m-%d')<CR>.md<CR>
+nnoremap <Leader>ed :e ~/.diary/<C-R>=strftime('%Y-%m-%d')<CR>.md<CR>
 nnoremap <Leader>eD :FZF ~/.diary/<CR>
-nnoremap <Leader>em :e ~/.diary/diary-<C-R>=strftime('%Y-%m-%d', localtime() + 86400)<CR>.md<CR>
-nnoremap <Leader>ey :e ~/.diary/diary-<C-R>=strftime('%Y-%m-%d', localtime() - 86400)<CR>.md<CR>
+nnoremap <Leader>em :e ~/.diary/<C-R>=strftime('%Y-%m-%d', localtime() + 86400)<CR>.md<CR>
+nnoremap <Leader>ey :e ~/.diary/<C-R>=strftime('%Y-%m-%d', localtime() - 86400)<CR>.md<CR>
 
 nnoremap <silent> <Leader>fb :Buffers<CR>
 nnoremap <silent> <Leader>fk :Bw<CR>
