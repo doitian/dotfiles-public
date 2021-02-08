@@ -1,11 +1,7 @@
 #!/bin/bash
 
 export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles
-if nc -z 127.0.0.1 6152 &> /dev/null; then
-  export https_proxy=http://127.0.0.1:6152
-  export http_proxy=http://127.0.0.1:6152
-  export all_proxy=http://127.0.0.1:6153
-elif nc -z 127.0.0.1 7890 &> /dev/null; then
+if nc -z 127.0.0.1 7890 &> /dev/null; then
   PROXY="${PROXY_HOST:-127.0.0.1}"
   export https_proxy=http://${PROXY}:7890
   export http_proxy=http://${PROXY}:7890
