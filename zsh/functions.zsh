@@ -67,9 +67,9 @@ function nocaps {
 function marked() {
   if [ "$1" ]
   then
-    open -a "Marked.app" "$1"
+    open -a "Marked 2.app" "$1"
   else
-    open -a "Marked.app"
+    open -a "Marked 2.app"
   fi
 }
 

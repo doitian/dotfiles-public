@@ -530,8 +530,8 @@ nnoremap <silent> <Leader>ri :call <SID>FollowWikiLink()<CR>
 nnoremap <silent> <Leader>rI :call <SID>CopyAsWikiLink()<CR>
 nnoremap <silent> <Leader>rt :exe "silent !open -a 'iTerm.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
 nnoremap <silent> <Leader>rf :exe "silent !open -R " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
-nnoremap <silent> <Leader>rm :exe "silent !open -a 'Marked.app' " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
-nnoremap <silent> <Leader>rM :exe "silent !open -a 'Marked.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
+nnoremap <silent> <Leader>rm :exe "silent !open -a 'Marked 2.app' " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
+nnoremap <silent> <Leader>rM :exe "silent !open -a 'Marked 2.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
 nnoremap <silent> <Leader>rr :exe "silent !open " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
 nnoremap <silent> <Leader>ro :exe "silent !open " . shellescape(expand('<cfile>')) . " &> /dev/null" \| :redraw!<CR>
 nnoremap <silent> <Leader>R :checktime<CR>
