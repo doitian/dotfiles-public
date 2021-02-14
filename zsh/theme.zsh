@@ -39,6 +39,7 @@ function universe_env_info() {
   if [ -n "$VIRTUAL_ENV" ]; then
     name="${VIRTUAL_ENV%/py2env}"
     name="${name%/py3env}"
+    name="${name%/.venv}"
     if [ -n "$PIPENV_ACTIVE" ]; then
       name="${name%-*}"
     fi

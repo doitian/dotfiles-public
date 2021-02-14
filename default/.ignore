@@ -10,6 +10,7 @@ Session.vim
 .*.sw?
 .DS_Store
 py?env
+.venv
 *.pyc
 .ipynb_checkpoints
 .vagrant
