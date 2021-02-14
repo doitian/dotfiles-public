@@ -1,0 +1,77 @@
+#!/usr/bin/env python3
+
+import argparse
+import sys
+import shutil
+from collections import namedtuple
+
+Clipping = namedtuple('Clipping', 'title, body')
+
+
+def open_clippings_txt(path, mode):
+    newline = None
+    if 'a' in mode or 'w' in mode:
+        newline = '\r\n'
+    return open(path, mode=mode, encoding='utf-8-sig', newline=newline)
+
+
+def each_clipping():
+    title = None
+    body = []
+    for line in open_clippings_txt('My Clippings.txt', mode='r'):
+        if title is None:
+            title = line
+        else:
+            body.append(line)
+
+        if line == '==========\n':
+            yield Clipping(title, ''.join(body))
+            title = None
+            body = []
+
+
+def on_list(args):
+    seen = set()
+    for clip in each_clipping():
+        if clip.title not in seen:
+            seen.add(clip.title)
+            print(clip.title.rstrip())
+
+
+def on_archive(args):
+    keep = []
+    seen = set()
+    with open_clippings_txt('archive.txt', mode='a') as archive:
+        for clip in each_clipping():
+            if args.pattern in clip.title:
+                if clip.title not in seen:
+                    seen.add(clip.title)
+                    print("Archive {}".format(clip.title.rstrip()))
+                archive.write(clip.title)
+                archive.write(clip.body)
+            else:
+                keep.append(clip)
+
+    shutil.copy('My Clippings.txt', 'backup.txt')
+    with open_clippings_txt('My Clippings.txt', mode='w') as orig:
+        for clip in keep:
+            if clip.title not in seen:
+                seen.add(clip.title)
+                print("Keep {}".format(clip.title.rstrip()))
+            orig.write(clip.title)
+            orig.write(clip.body)
+
+
+parser = argparse.ArgumentParser(description='Kindle Clippings Cli')
+subparsers = parser.add_subparsers(help='sub-command help')
+
+parser_list = subparsers.add_parser('list', help='List titles.')
+parser_list.set_defaults(func=on_list)
+parser_archive = subparsers.add_parser(
+    'archive', help='Extract matching titles and append them to archive.txt.')
+parser_archive.add_argument(
+    'pattern', help='Archive titles matching the pattern.')
+parser_archive.set_defaults(func=on_archive)
+
+args = parser.parse_args()
+args.func(args)
