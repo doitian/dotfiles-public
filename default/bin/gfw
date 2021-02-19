@@ -1,22 +1,24 @@
 #!/bin/bash
 
 export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles
+PROXY_PROTOCOL="${PROXY_PROTOCOL:-socks5}"
+
 if nc -z 127.0.0.1 7890 &> /dev/null; then
   PROXY="${PROXY_HOST:-127.0.0.1}"
-  export https_proxy=http://${PROXY}:7890
-  export http_proxy=http://${PROXY}:7890
-  export all_proxy=http://${PROXY}:7890
+  export https_proxy=$PROXY_PROTOCOL://${PROXY}:7890
+  export http_proxy=$PROXY_PROTOCOL://${PROXY}:7890
+  export all_proxy=$PROXY_PROTOCOL://${PROXY}:7890
 elif command -v powershell.exe &> /dev/null; then
   IP="$(powershell.exe -NoProfile -Command "(Get-NetIPAddress -InterfaceAlias Wi-Fi -AddressFamily IPv4).IPAddress | Write-Host -NoNewLine")"
-  export https_proxy=http://$IP:7890
-  export http_proxy=http://$IP:7890
-  export all_proxy=http://$IP:7890
+  export https_proxy=$PROXY_PROTOCOL://$IP:7890
+  export http_proxy=$PROXY_PROTOCOL://$IP:7890
+  export all_proxy=$PROXY_PROTOCOL://$IP:7890
 elif [ -f "/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe" ]; then
   PS="/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe"
   IP="$($PS -NoProfile -Command "(Get-NetIPAddress -InterfaceAlias Wi-Fi -AddressFamily IPv4).IPAddress | Write-Host -NoNewLine")"
-  export https_proxy=http://$IP:7890
-  export http_proxy=http://$IP:7890
-  export all_proxy=http://$IP:7890
+  export https_proxy=$PROXY_PROTOCOL://$IP:7890
+  export http_proxy=$PROXY_PROTOCOL://$IP:7890
+  export all_proxy=$PROXY_PROTOCOL://$IP:7890
 fi
 
 if [ "$#" = 0 ]; then
