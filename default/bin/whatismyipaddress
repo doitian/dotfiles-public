@@ -1,0 +1,10 @@
+#!/bin/bash
+
+IP="$(curl -s bot.whatismyipaddress.com)"
+URL="https://whatismyipaddress.com/ip/$IP"
+
+echo "$URL"
+
+if type open &> /dev/null; then
+  open "$URL"
+fi
