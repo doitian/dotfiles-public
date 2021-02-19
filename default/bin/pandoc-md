@@ -1,3 +1,13 @@
 #!/bin/bash
 
-exec pandoc --wrap=none --markdown-headings=atx --to markdown_strict-raw_html-native_divs-native_spans "$@"
+# markdown_phpextra (PHP Markdown Extra)
+# markdown_github (deprecated GitHub-Flavored Markdown)
+# markdown_mmd (MultiMarkdown)
+# markdown_strict (Markdown.pl)
+# commonmark (CommonMark)
+# gfm (Github-Flavored Markdown)
+# commonmark_x (CommonMark with many pandoc extensions)
+
+# gfm-raw_html-native_divs-native_spans
+
+exec pandoc --wrap=none --markdown-headings=atx --to gfm "$@"
