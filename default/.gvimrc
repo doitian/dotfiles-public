@@ -1,5 +1,5 @@
 if has("mac")
-  set guifont=JetBrainsMono-Regular:h16
+  set guifont=SourceCodePro-Regular:h16
   set macligatures
 
   func! s:ChangeBackground()
