@@ -3,6 +3,7 @@
 import argparse
 import sys
 import shutil
+import textwrap
 from collections import namedtuple
 
 Clipping = namedtuple('Clipping', 'title, body')
@@ -36,6 +37,33 @@ def on_list(args):
         if clip.title not in seen:
             seen.add(clip.title)
             print(clip.title.rstrip())
+
+
+def on_export(args):
+    titles = {}
+    for clip in each_clipping():
+        if args.pattern in clip.title:
+            if clip.title not in titles:
+                clippings = []
+                titles[clip.title] = clippings
+            else:
+                clippings = titles[clip.title]
+
+            clippings.append(clip)
+
+    first_title = True
+    for title, clippings in titles.items():
+        if first_title:
+            first_title = False
+        else:
+            print('')
+        print("## {}".format(title))
+
+        for clipping in clippings:
+            body = clipping.body.split('\n', 2)[2]
+            body = body.rsplit('\n', 2)[0]
+            print('-   {}'.format(textwrap.indent(body, '    ')[4:]))
+            print('')
 
 
 def on_archive(args):
@@ -72,6 +100,11 @@ parser_archive = subparsers.add_parser(
 parser_archive.add_argument(
     'pattern', help='Archive titles matching the pattern.')
 parser_archive.set_defaults(func=on_archive)
+parser_export = subparsers.add_parser(
+    'export', help='Export matching titles as markdown.')
+parser_export.add_argument(
+    'pattern', help='Export titles matching the pattern.')
+parser_export.set_defaults(func=on_export)
 
 args = parser.parse_args()
 args.func(args)
