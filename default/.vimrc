@@ -13,15 +13,7 @@ silent! call plug#begin('~/.vim/plugged')
 
 " filetypes
 Plug 'cespare/vim-toml'
-Plug 'pangloss/vim-javascript'
-Plug 'rust-lang/rust.vim'
 Plug 'plasticboy/vim-markdown'
-Plug 'vim-ruby/vim-ruby'
-Plug 'hwayne/tla.vim'
-
-if v:version > 800
-  Plug 'fatih/vim-go'
-endif
 
 " other
 Plug 'NLKNguyen/papercolor-theme'
@@ -577,6 +569,7 @@ inoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
 
 inoremap <expr> <C-r><C-h> fzf#vim#complete#path('cd ' . shellescape(expand('%:p:h')) . ' && rg --files')
 inoremap <expr> <C-r><C-f> fzf#vim#complete#path('cd ' . shellescape(getcwd()) . ' && rg --files')
+inoremap <expr> <C-r><C-i> fzf#vim#complete#path('cd ' . shellescape(getcwd()) . ' && rg -g "*.md" --files')
 
 " OS specific settings {{{1
 if has('win32')
@@ -648,7 +641,7 @@ augroup vimrc_au
 
   autocmd CmdwinEnter * map <buffer> <C-w><C-w> <CR>q:dd
 
-  autocmd FileType gitcommit,markdown,text,rst setlocal spell
+  autocmd FileType gitcommit,markdown,text setlocal spell
   autocmd FileType markdown set fo+=ro
   autocmd FileType netrw setlocal bufhidden=wipe
   autocmd FileType rust setlocal winwidth=99
@@ -661,7 +654,6 @@ augroup vimrc_au
   autocmd BufNewFile,BufRead PULLREQ_EDITMSG set ft=gitcommit
   autocmd User GoyoEnter Limelight
   autocmd User GoyoLeave Limelight!
-  autocmd User CocNvimInit call s:CocNvimInitialized()
 augroup END
 
 silent! source ~/.vim/UltiSnips/abbreviations.vim
