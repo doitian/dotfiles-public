@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+# Generate a multipass instance name.
+# See https://github.com/canonical/multipass/tree/main/src/petname
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+pick_from() {
+  mkdir -p "$HOME/.cache/petname"
+  local NAMES_FILE="$1"
+  local CACHE_FILE="$HOME/.cache/petname/$NAMES_FILE"
+  if [ -z "$(find "$CACHE_FILE" -mtime -1 -print 2> /dev/null || true)" ]; then
+    curl -sL -o "$CACHE_FILE" "https://github.com/canonical/multipass/raw/main/src/petname/${NAMES_FILE}"
+  fi
+
+  shuf -n 1 "$CACHE_FILE"
+}
+
+case "${1:-2}" in
+  1|-1)
+    pick_from names.txt
+    ;;
+  2|-2)
+    echo "$(pick_from adjectives.txt)-$(pick_from names.txt)"
+    ;;
+  3|-3)
+    echo "$(pick_from adverbs.txt)-$(pick_from adjectives.txt)-$(pick_from names.txt)"
+    ;;
+  *)
+    echo "petname [-1|-2|-3]"
+    ;;
+esac
