@@ -57,7 +57,7 @@ def on_export(args):
             first_title = False
         else:
             print('')
-        print("## {}".format(title))
+        print("### {}".format(title))
 
         for clipping in clippings:
             body = clipping.body.split('\n', 2)[2]
