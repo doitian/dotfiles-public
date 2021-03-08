@@ -315,6 +315,7 @@ function! s:Bufs()
   return split(list, "\n")
 endfunction
 
+" Use %f as the base bufname, e.g., brain[%f]
 command! -nargs=1 Trename call s:TabRename(<q-args>)
 command! -nargs=1 Tnew tabnew! | call s:TabRename(<q-args>)
 command! -nargs=0 Treset call s:TabReset('')
