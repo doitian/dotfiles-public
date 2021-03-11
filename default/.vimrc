@@ -275,6 +275,7 @@ function! SearchAround(start_tag, end_tag, ...)
   let l:pos_start = searchpos(a:start_tag, 'bW', l:line)
   call cursor(l:pos_save[1], l:pos_save[2])
 
+  " Add a dummy third argument to search after current position.
   if l:pos_end[0] == l:line && l:pos_start[0] == l:line && (a:0 > 0 || l:pos_start[1] <= l:pos_save[2])
     return strpart(getline('.'), l:pos_start[1] + len(a:start_tag) - 1, l:pos_end[1] - l:pos_start[1] - len(a:start_tag))
   endif
@@ -284,7 +285,12 @@ endfunction
 function! s:FollowWikiLink()
   let l:line_text = getline('.')
 
-  let l:filename = split(SearchAround('[[', ']]'), '|')[0]
+  let l:wikilink = SearchAround('[[', ']]')
+  if l:wikilink == ''
+    echomsg 'WikiLink not found' | return
+  endif
+
+  let l:filename = split(l:wikilink, '|')[0]
   if l:filename =~ '^\./'
     let l:filename = l:filename[2:]
   endif
@@ -521,7 +527,7 @@ nnoremap <silent> <Leader>q :call <SID>QFixToggle()<CR>
 " Reveal
 nnoremap <silent> <Leader>ri :call <SID>FollowWikiLink()<CR>
 nnoremap <silent> <Leader>rI :call <SID>CopyAsWikiLink()<CR>
-nnoremap <silent> <Leader>rt :exe "silent !open -a 'iTerm.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
+nnoremap <silent> <Leader>rt :exe "silent !open -a 'Terminal.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
 nnoremap <silent> <Leader>rf :exe "silent !open -R " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
 nnoremap <silent> <Leader>rm :exe "silent !open -a 'Marked 2.app' " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
 nnoremap <silent> <Leader>rM :exe "silent !open -a 'Marked 2.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
