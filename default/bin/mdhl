@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+
+import re
+import sys
+import argparse
+
+HASHES_PATTERN = re.compile(r"^(#+)\s(.*)")
+
+parser = argparse.ArgumentParser(
+    description='Convert markdown headings to lists.')
+parser.add_argument('-l', '--level', type=int, default=1,
+                    help='Starting heading level (default: 1)')
+parser.add_argument('files', metavar='FILE', nargs='*',
+                    help='input files')
+
+args = parser.parse_args()
+
+def argf(files):
+  if len(files) > 0:
+    for file in files:
+      with open(file) as fin:
+        for line in fin:
+          yield line
+  else:
+    for line in sys.stdin:
+      yield line
+
+indentation = 0
+for line in argf(args.files):
+  line = line.rstrip()
+
+  match = HASHES_PATTERN.match(line)
+  if match is not None:
+    heading_level = len(match.group(1))
+    if heading_level >= args.level:
+      indentation = 4 * (heading_level - args.level) + 4
+      print(' ' * (indentation - 4), end='')
+      print('-   ', end='')
+      print(match.group(2))
+    else:
+      print(line)
+  else:
+    if indentation > 0:
+      print(' ' * indentation, end='')
+    print(line)
