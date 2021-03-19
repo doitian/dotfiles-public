@@ -20,6 +20,9 @@ os.makedirs(".git/changes", exist_ok=True)
 
 if 'GITHUB_CHANGELOG_REPO' in os.environ:
     repo = os.environ['GITHUB_CHANGELOG_REPO']
+elif os.path.exists(".git/changes/repo"):
+    with open(".git/changes/repo") as repo_file:
+        repo = repo_file.read().strip()
 else:
     remote_url = _str(subprocess.check_output(
         ["git", "remote", "get-url", "origin"])).strip()
