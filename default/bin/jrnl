@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+DIARY_DIR="$HOME/.diary"
+if ! [ -e "$DIARY_DIR" ] && [ -d "$HOME/Dropbox/Brain/diary" ]; then
+  ln -snf "$HOME/Dropbox/Brain/diary" "$HOME/.diary"
+fi
+DIARY_FILE="$DIARY_DIR/$(date +'%Y-%m-%d').md"
+
+ensure_diary_file() {
+  if ! [ -e "$DIARY_DIR" ]; then
+    mkdir -p "$DIARY_DIR"
+  fi
+
+  if ! [ -e "$DIARY_FILE" ]; then
+    local date="${DIARY_FILE%.md}"
+    date="${date#*/}"
+
+    local week_number=$(($(date -j -f '%Y-%m-%d' $date +'%W') + 1))
+
+    echo "# $(date -j -f '%Y-%m-%d' $date +'%a, %b %d, %Y')
+
+#journal
+
+In week [[$(date -j -f '%Y-%m-%d' $date +'%Y-%m')-W$(printf '%02d\n' $week_number)]]" > "$DIARY_FILE"
+  fi
+}
+
+main() {
+  ensure_diary_file
+
+  sep_title="$*"
+  if [ -n "$sep_title" ]; then
+    sep_title=" $sep_title"
+  fi
+
+  ( echo; echo "### == $(date +'%I:%M %p') ==>${sep_title}"; echo ) >> "$DIARY_FILE"
+  cat >> "$DIARY_FILE"
+  echo >> "$DIARY_FILE"
+}
+
+main "$@"
+
