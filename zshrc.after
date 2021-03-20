@@ -13,3 +13,10 @@ if [ -n "${SSH_AGENT_FORWARD_AUTH_SOCK:-}" ]; then
   export SSH_AUTH_SOCK="$SSH_AGENT_FORWARD_AUTH_SOCK"
   unset SSH_AGENT_FORWARD_AUTH_SOCK
 fi
+
+if command -v okc-ssh-agent &> /dev/null; then
+  if ! pgrep okc-ssh-agent &> /dev/null; then
+    okc-ssh-agent > "$PREFIX/tmp/okc-ssh-agent.env"
+  fi
+  source "$PREFIX/tmp/okc-ssh-agent.env"
+fi
