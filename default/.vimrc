@@ -617,25 +617,6 @@ function! s:ProjectionistActivate() abort
   endif
 endfunction
 
-function! s:CocNvimInitialized() abort
-  nnoremap <Leader>co :<C-u>CocList lists<CR>
-  nmap <silent> [g <Plug>(coc-diagnostic-prev)
-  nmap <silent> ]g <Plug>(coc-diagnostic-next)
-  nmap <silent> gd <Plug>(coc-definition)
-  nmap <silent> <Leader>gy <Plug>(coc-type-definition)
-  nmap <silent> <Leader>gi <Plug>(coc-implementation)
-  nmap <silent> <Leader>gr <Plug>(coc-references)
-  nnoremap <silent> K :call <SID>ShowDocumentation()<CR>
-endfunction
-
-function! s:ShowDocumentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
-
 augroup vimrc_au
   autocmd!
 
