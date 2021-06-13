@@ -1,0 +1,50 @@
+name: Package Vim files
+
+on:
+  push:
+    paths: 'default/.vimrc'
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Vim
+        run: sudo apt-get install -y vim
+
+      - name: Setup vimrc
+        run: |
+          sed -e 's;junegunn/fzf\.vim;ctrlpvim/ctrlp.vim;' default/.vimrc > ~/.vimrc
+          mkdir -p ~/.vim/backup
+          mkdir -p ~/.vim/undo
+          mkdir -p ~/.vim/swap
+          mkdir -p ~/.vim/autoload
+          mkdir -p ~/.vim/UltiSnips
+          curl -sSLo ~/.vim/autoload/plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+      - name: Install Vim packages
+        run: vim +PlugInstall +qall
+
+      - name: Package Vim files
+        run: |
+          mkdir -p vimfiles
+
+          cp .github/files/install-vimfiles.py vimfiles/install.py
+
+          cp default/.vimrc vimfiles/vimrc
+
+          mkdir -p vimfiles/vim
+          mv default/.vim/projections vimfiles/vim
+          mv default/.vim/scripts vimfiles/vim
+          mv ~/.vim/autoload vimfiles/vim
+          rsync -avu --delete --progress -h --copy-links --exclude '.git' ~/.vim/plugged vimfiles/vim/
+
+      - name: Upload Vim files
+        uses: actions/upload-artifact@v1
+        with:
+          name: vimfiles
+          path: vimfiles
