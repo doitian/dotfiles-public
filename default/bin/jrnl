@@ -17,7 +17,7 @@ ensure_diary_file() {
 
   if ! [ -e "$DIARY_FILE" ]; then
     local date="${DIARY_FILE%.md}"
-    date="${date#*/}"
+    date="${date##*/}"
 
     local week_number=$(($(date -j -f '%Y-%m-%d' $date +'%W') + 1))
 
