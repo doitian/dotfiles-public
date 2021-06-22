@@ -1,15 +1,13 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
 
 function fpass() {
   local selected
-  local clip=
-  if [ "${1:-}" = "-c" ]; then
-    shift
-    clip="show -c"
-  fi
-  selected="$(cd ~/.password-store && fzf)"
-  selected="${selected%.gpg}"
-  gopass $clip "$@" "$selected"
+  selected="$(gopass list -f | fzf)"
+  gopass "$@" "$selected"
 }
 
 fpass "$@"
