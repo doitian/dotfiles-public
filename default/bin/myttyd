@@ -1,0 +1,7 @@
+#!/bin/bash
+
+pass=$(openssl rand -hex 24)
+
+echo ">>> $pass"
+
+ttyd -t 'theme={"background": "#eaeaea", "black": "#212121", "blue": "#134eb2", "brightBlack": "#424242", "brightBlue": "#53a4f3", "brightCyan": "#26bad1", "brightGreen": "#7aba39", "brightMagenta": "#a94dbb", "brightRed": "#e83a3f", "brightWhite": "#eeeeee", "brightYellow": "#fc8e08", "cursor": "#16aec9", "cyan": "#0e707c", "foreground": "#2d2d2c", "green": "#457b23", "magenta": "#550087", "red": "#b7141e", "white": "#d8d8d8", "yellow": "#fc7b08"}' -i 0.0.0.0 -p 7003 -c "ian:$pass" "$@"
