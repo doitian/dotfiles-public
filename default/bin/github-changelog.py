@@ -68,7 +68,7 @@ SCOPE_TITLE = {
     'refactor': 'Improvements',
 }
 
-auth = HTTPBasicAuth('', os.environ['GITHUB_ACCESS_TOKEN'])
+auth = HTTPBasicAuth('', os.environ['GITHUB_TOKEN'])
 
 for line in logs.splitlines():
     pr_numbers = []
