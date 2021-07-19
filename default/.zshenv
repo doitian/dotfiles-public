@@ -92,12 +92,20 @@ fi
 
 # fzf
 export FZF_DEFAULT_OPTS='--color light,fg:#3c3b3a'
-export FZF_DEFAULT_COMMAND='fd -H -t f -E .git'
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude ".git"'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_ALT_C_COMMAND='fd -I -H -t d -E .git'
+export FZF_ALT_C_COMMAND='fd --type d --no-ignore --hidden --follow --exclude ".git"'
+
+_fzf_compgen_path() {
+  fd --type f --hidden --follow --exclude ".git" . "$1"
+}
+
+_fzf_compgen_dir() {
+  fd --type d --no-ignore --hidden --follow --exclude ".git" . "$1"
+}
 
 # bat
-export BAT_THEME='OneHalfLight'
+export BAT_THEME='Coldark-Cold'
 
 # gpg
 if [[ "$OSTYPE" = linux* ]]; then

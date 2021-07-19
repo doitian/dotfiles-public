@@ -53,6 +53,10 @@ if ! which _bpf_filters &> /dev/null; then
   }
 fi
 
+# Custom FZF Compleitions https://github.com/junegunn/fzf#custom-fuzzy-completion
+
 _fzf_complete_gopass() {
-  gopass list -f | _fzf_complete --reverse --prompt="gopass> " -- "$@"
+  _fzf_complete --prompt="gopass> " -- "$@" < <(
+    gopass list -f 
+  )
 }
