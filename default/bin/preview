@@ -1,0 +1,9 @@
+#!/bin/bash
+
+for arg; do
+  if [ -d "$arg" ]; then
+    exa --color always -T -L 3 "$arg" | head -200
+  else
+    bat --style=numbers --color=always --line-range :200 "$arg"
+  fi
+done
