@@ -42,7 +42,7 @@
 
   st = status --short --branch
   dotfiles = "!git multistatus ~/.dotfiles ~/.dotfiles/repos/public ~/.dotfiles/repos/private"
-  all = "!f() { find . -maxdepth 4 -type d -name .git \"$@\" -prune | sed 's/.git$//' | xargs git multistatus; }; f"
+  all = "!f() { fd -t d -I -H -g --prune \"$@\" .git -X git multistatus \"{//}\"; }; f"
 
   ls = ls-files
   grep = grep -Ii

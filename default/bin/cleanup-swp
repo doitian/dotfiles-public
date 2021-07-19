@@ -6,7 +6,7 @@ main() {
   local dir="${1:-.}"
   shift || true
 
-  find "$dir" -name "*.swp" -print -exec rm '{}' \;
+  fd -I -H -g "*.swp" "$dir" -X rm
 }
 
 main "$@"

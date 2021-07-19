@@ -576,9 +576,9 @@ nnoremap <silent> <Leader>[ :Diffoff<CR>
 cnoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
 inoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
 
-inoremap <expr> <C-r><C-h> fzf#vim#complete#path('cd ' . shellescape(expand('%:p:h')) . ' && rg --files')
-inoremap <expr> <C-r><C-f> fzf#vim#complete#path('cd ' . shellescape(getcwd()) . ' && rg --files')
-inoremap <expr> <C-r><C-i> fzf#vim#complete#path('cd ' . shellescape(getcwd()) . ' && rg -g "*.md" --files')
+inoremap <expr> <C-r><C-h> fzf#vim#complete#path('cd ' . shellescape(expand('%:p:h')) . ' && fd -t f')
+inoremap <expr> <C-r><C-f> fzf#vim#complete#path('cd ' . shellescape(getcwd()) . ' && fd -t f')
+inoremap <expr> <C-r><C-i> fzf#vim#complete#path('cd ' . shellescape(getcwd()) . ' && fd -t f -g "*.md"')
 
 " OS specific settings {{{1
 if has('win32')

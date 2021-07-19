@@ -52,3 +52,7 @@ if ! which _bpf_filters &> /dev/null; then
   function _bpf_filters() {
   }
 fi
+
+_fzf_complete_gopass() {
+  gopass list -f | _fzf_complete --reverse --prompt="gopass> " -- "$@"
+}

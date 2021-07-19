@@ -92,8 +92,9 @@ fi
 
 # fzf
 export FZF_DEFAULT_OPTS='--color light,fg:#3c3b3a'
-export FZF_DEFAULT_COMMAND='rg --no-messages --hidden -g "!.git" --color never --files'
+export FZF_DEFAULT_COMMAND='fd -H -t f -E .git'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND='fd -I -H -t d -E .git'
 
 # bat
 export BAT_THEME='OneHalfLight'
