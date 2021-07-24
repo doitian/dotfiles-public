@@ -29,3 +29,4 @@ lmake.mk
 .ignore
 .tool-versions
 tempCodeRunnerFile
+*.code-workspace
