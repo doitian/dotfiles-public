@@ -61,14 +61,8 @@ if has('python3')
 endif
 
 if has("nvim")
-  " Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-  " Plug 'nvim-treesitter/playground'
-  Plug 'neovim/nvim-lspconfig'
-  Plug 'hrsh7th/nvim-compe'
-  Plug 'nvim-lua/popup.nvim'
-  Plug 'nvim-lua/plenary.nvim'
-  Plug 'nvim-telescope/telescope.nvim'
-  " Plug 'folke/twilight.nvim'
+  call LoadNvimPlugs()
+  delfunction LoadNvimPlugs
 endif
 
 call plug#end()
@@ -521,19 +515,20 @@ nnoremap <silent> <Leader>I :Tags<CR>
 nnoremap <silent> <Leader>k :Close<CR>
 nnoremap <silent> <Leader>K <C-^>:bd #<Bar>let @# = 1<CR>
 
-noremap <silent> <Leader>ll :25Lexplore<CR>
-noremap <silent> <Leader>la :args<CR>
-noremap <silent> <Leader>lj :jumps<CR>
-noremap <silent> <Leader>lt :tags<CR>
-noremap <silent> <Leader>lT :tabs<CR>
-noremap <silent> <Leader>lr :registers<CR>
-noremap <silent> <Leader>lb :ls<CR>:b<Space>
-noremap <silent> <Leader>lm :marks<CR>:normal! `
+nnoremap <silent> <Leader>ll :25Lexplore<CR>
+nnoremap <silent> <Leader>la :args<CR>
+nnoremap <silent> <Leader>lj :jumps<CR>
+nnoremap <silent> <Leader>lt :tags<CR>
+nnoremap <silent> <Leader>lT :tabs<CR>
+nnoremap <silent> <Leader>lr :registers<CR>
+nnoremap <silent> <Leader>lb :ls<CR>:b<Space>
+nnoremap <silent> <Leader>lm :marks<CR>:normal! `
+nnoremap <silent> <leader>ln :Np<CR>
 
 nnoremap <silent> <Leader>m :call <SID>PushMark(0)<CR>
 nnoremap <silent> <Leader>M :call <SID>PushMark(1)<CR>
 
-nnoremap <silent> <leader>n :Np<CR>
+nnoremap <silent> <leader>n :nohlsearch<CR>
 
 nnoremap <Leader>o<Space> :vimgrep //g %<Left><Left><Left><Left>
 nnoremap <silent> <Leader>ow :silent vimgrep /\<<C-r><C-w>\>/ %<Bar>copen 10<CR>
@@ -666,6 +661,3 @@ augroup END
 
 silent! source ~/.vim/UltiSnips/abbreviations.vim
 silent! source ~/.vimrc.local
-if has("nvim")
-  silent! source ~/.vim/nvim.vim
-endif
