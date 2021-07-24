@@ -60,6 +60,10 @@ if has('python3')
   Plug 'SirVer/ultisnips'
 endif
 
+if has("nvim")
+  silent! source ~/.vim/nvim-plugs.vim
+endif
+
 call plug#end()
 
 set rtp+=/usr/local/opt/fzf
@@ -408,7 +412,12 @@ endif
 set tabline=%!Tabline()
 set tabpagemax=50
 set title
-set undodir=~/.vim/undo//,/tmp//,.
+
+if has("nvim")
+  set undodir=~/.vim/nvim-undo//,.
+else
+  set undodir=~/.vim/undo//,/tmp//,.
+endif
 set undofile
 set undolevels=1000
 set viminfo=!,'100,<2000
@@ -650,3 +659,6 @@ augroup END
 
 silent! source ~/.vim/UltiSnips/abbreviations.vim
 silent! source ~/.vimrc.local
+if has("nvim")
+  silent! source ~/.vim/nvim-config.vim
+endif
