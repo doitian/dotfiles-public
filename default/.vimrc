@@ -24,6 +24,7 @@ Plug 'godlygeek/tabular', { 'on': 'Tabularize' }
 Plug 'janko-m/vim-test', { 'on': ['TestNearest', 'TestFile', 'TestSuite', 'TestLast', 'TestVisit'] }
 Plug 'junegunn/goyo.vim', { 'for': 'markdown' }
 Plug 'junegunn/limelight.vim', { 'on': 'Limelight' }
+Plug 'mcchrish/nnn.vim', { 'on': 'Np' }
 Plug 'sbdchd/neoformat', { 'on': 'Neoformat' }
 Plug 'simnalamburt/vim-mundo', { 'on': 'MundoToggle' }
 Plug 'thinca/vim-visualstar' " * # g* g#
@@ -94,6 +95,7 @@ let g:vim_markdown_math = 1
 let g:vim_markdown_strikethrough = 1
 let g:UltiSnipsSnippetDirectories = [ $HOME.'/.vim/UltiSnips' ]
 let g:UltiSnipsListSnippets = "<c-f>"
+let g:nnn#set_default_mappings = 0
 
 " Functions & Commands {{{1
 function! Tabline()
@@ -515,7 +517,7 @@ noremap <silent> <Leader>lm :marks<CR>:normal! `
 nnoremap <silent> <Leader>m :call <SID>PushMark(0)<CR>
 nnoremap <silent> <Leader>M :call <SID>PushMark(1)<CR>
 
-nnoremap <silent> <Leader>n :nohlsearch<CR>
+nnoremap <silent> <leader>n :Np<CR>
 
 nnoremap <Leader>o<Space> :vimgrep //g %<Left><Left><Left><Left>
 nnoremap <silent> <Leader>ow :silent vimgrep /\<<C-r><C-w>\>/ %<Bar>copen 10<CR>
