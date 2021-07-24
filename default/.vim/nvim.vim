@@ -1,4 +1,4 @@
-set completeopt=menuone,noselect
+set completeopt=menuone,noselect,preview
 
 lua << EOF
 local nvim_lsp = require('lspconfig')
@@ -33,6 +33,8 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
   buf_set_keymap('n', '<LocalLeader>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
   buf_set_keymap("n", "<LocalLeader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+  buf_set_keymap("n", "<LocalLeader>i", "<cmd>Telescope lsp_document_symbols<CR>", opts)
+  buf_set_keymap("n", "<LocalLeader>I", "<cmd>Telescope lsp_workspace_symbols<CR>", opts)
 end
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
