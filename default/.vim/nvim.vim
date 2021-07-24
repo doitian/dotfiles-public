@@ -1,30 +1,5 @@
 set completeopt=menuone,noselect
 
-nnoremap <silent> <Leader><Space> <cmd>Telescope find_files<CR>
-
-nnoremap <silent> <Leader>fb <cmd>Telescope buffers<CR>
-nnoremap <silent> <Leader>ff <cmd>Telescope find_files<CR>
-" nnoremap <silent> <Leader>fd :Fdir<CR>
-nnoremap <silent> <Leader>fo <cmd>Telescope current_buffer_fuzzy_find<CR>
-" nnoremap <silent> <Leader>fO :Lines<CR>
-nnoremap <silent> <Leader>fr <cmd>Telescope oldfiles<CR>
-" nnoremap <silent> <Leader>fs :Snippets<CR>
-nnoremap <silent> <Leader>f: <cmd>Telescope command_history<CR>
-nnoremap <silent> <Leader>f/ <cmd>Telescope search_history<CR>
-nnoremap <silent> <Leader>fm <cmd>Telescope marks<CR>
-" nnoremap <silent> <Leader>fw :Windows<CR>
-nnoremap <silent> <Leader>f? <cmd>Telescope help_tags<CR>
-nnoremap <silent> <Leader>fg <cmd>Telescope live_grep<CR>
-nnoremap <silent> <Leader>f<CR> <cmd>Telescope<CR>
-nnoremap <silent> <Leader>i <cmd>Telescope current_buffer_tags<CR>
-nnoremap <silent> <Leader>I <cmd>Telescope tags<CR>
-
-inoremap <silent><expr> <A-/> compe#complete()
-inoremap <silent><expr> <CR>  compe#confirm('<CR>')
-inoremap <silent><expr> <C-e> compe#close('<C-e>')
-inoremap <silent><expr> <C-f> compe#scroll({ 'delta': +4 })
-inoremap <silent><expr> <C-d> compe#scroll({ 'delta': -4 })
-
 lua << EOF
 local nvim_lsp = require('lspconfig')
 
@@ -46,19 +21,18 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
   buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
   buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-  buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-  buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-  buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  buf_set_keymap('n', '<LocalLeader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<LocalLeader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<LocalLeader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+  buf_set_keymap('n', '<LocalLeader>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+  buf_set_keymap('n', '<LocalLeader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  buf_set_keymap('n', '<LocalLeader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+  buf_set_keymap('n', '<LocalLeader>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
   buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-  buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-  buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
-
+  buf_set_keymap('n', '<LocalLeader>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+  buf_set_keymap("n", "<LocalLeader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 end
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
@@ -97,7 +71,7 @@ require'compe'.setup {
   enabled = true;
   autocomplete = true;
   debug = false;
-  min_length = 1;
+  min_length = 3;
   preselect = 'enable';
   throttle_time = 80;
   source_timeout = 200;
@@ -127,3 +101,31 @@ require'compe'.setup {
   };
 }
 EOF
+
+nnoremap <silent> <Leader><Space> <cmd>Telescope find_files<CR>
+
+nnoremap <silent> <Leader>eV :tabnew ~/.vim/nvim.vim<CR>
+
+nnoremap <silent> <Leader>fb <cmd>Telescope buffers<CR>
+nnoremap <silent> <Leader>ff <cmd>Telescope find_files<CR>
+nnoremap <silent> <Leader>fo <cmd>Telescope current_buffer_fuzzy_find<CR>
+nnoremap <silent> <Leader>fr <cmd>Telescope oldfiles<CR>
+nnoremap <silent> <Leader>f: <cmd>Telescope command_history<CR>
+nnoremap <silent> <Leader>f/ <cmd>Telescope search_history<CR>
+nnoremap <silent> <Leader>fm <cmd>Telescope marks<CR>
+nnoremap <silent> <Leader>f? <cmd>Telescope help_tags<CR>
+nnoremap <silent> <Leader>fg <cmd>Telescope live_grep<CR>
+nnoremap <silent> <Leader>f<CR> <cmd>Telescope<CR>
+nnoremap <silent> <Leader>i <cmd>Telescope current_buffer_tags<CR>
+nnoremap <silent> <Leader>I <cmd>Telescope tags<CR>
+
+let g:endwise_no_mappings = 1
+inoremap <silent><expr> <CR>  compe#confirm('<CR>')
+inoremap <silent><expr> <A-/> compe#complete()
+inoremap <silent><expr> <C-e> compe#close('<C-e>')
+
+imap <silent><expr> <CR>
+      \ (pumvisible() ?
+        \ (complete_info()["selected"] == -1 ? "\<C-g>u\<CR>\<Plug>DiscretionaryEnd" : "\<C-y>")
+        \ : "\<CR>\<Plug>DiscretionaryEnd" )
+

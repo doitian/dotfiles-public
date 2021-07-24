@@ -61,7 +61,14 @@ if has('python3')
 endif
 
 if has("nvim")
-  silent! source ~/.vim/nvim-plugs.vim
+  " Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+  " Plug 'nvim-treesitter/playground'
+  Plug 'neovim/nvim-lspconfig'
+  Plug 'hrsh7th/nvim-compe'
+  Plug 'nvim-lua/popup.nvim'
+  Plug 'nvim-lua/plenary.nvim'
+  Plug 'nvim-telescope/telescope.nvim'
+  " Plug 'folke/twilight.nvim'
 endif
 
 call plug#end()
@@ -660,5 +667,5 @@ augroup END
 silent! source ~/.vim/UltiSnips/abbreviations.vim
 silent! source ~/.vimrc.local
 if has("nvim")
-  silent! source ~/.vim/nvim-config.vim
+  silent! source ~/.vim/nvim.vim
 endif
