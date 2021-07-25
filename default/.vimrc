@@ -22,9 +22,8 @@ Plug 'dyng/ctrlsf.vim', { 'on': 'CtrlSF' }
 Plug 'editorconfig/editorconfig-vim'
 Plug 'godlygeek/tabular', { 'on': 'Tabularize' }
 Plug 'janko-m/vim-test', { 'on': ['TestNearest', 'TestFile', 'TestSuite', 'TestLast', 'TestVisit'] }
-Plug 'junegunn/goyo.vim', { 'for': 'markdown' }
+Plug 'junegunn/goyo.vim', { 'on': 'Goyo' }
 Plug 'junegunn/limelight.vim', { 'on': 'Limelight' }
-Plug 'mcchrish/nnn.vim', { 'on': 'Np' }
 Plug 'sbdchd/neoformat', { 'on': 'Neoformat' }
 Plug 'simnalamburt/vim-mundo', { 'on': 'MundoToggle' }
 Plug 'thinca/vim-visualstar' " * # g* g#
@@ -100,7 +99,6 @@ let g:vim_markdown_math = 1
 let g:vim_markdown_strikethrough = 1
 let g:UltiSnipsSnippetDirectories = [ $HOME.'/.vim/UltiSnips' ]
 let g:UltiSnipsListSnippets = "<c-f>"
-let g:nnn#set_default_mappings = 0
 
 " Functions & Commands {{{1
 function! Tabline()
@@ -523,7 +521,6 @@ nnoremap <silent> <Leader>lT :tabs<CR>
 nnoremap <silent> <Leader>lr :registers<CR>
 nnoremap <silent> <Leader>lb :ls<CR>:b<Space>
 nnoremap <silent> <Leader>lm :marks<CR>:normal! `
-nnoremap <silent> <leader>ln :Np<CR>
 
 nnoremap <silent> <Leader>m :call <SID>PushMark(0)<CR>
 nnoremap <silent> <Leader>M :call <SID>PushMark(1)<CR>
