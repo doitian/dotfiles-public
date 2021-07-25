@@ -92,17 +92,11 @@ fi
 
 # fzf
 export FZF_DEFAULT_OPTS='--color light,fg:#3c3b3a'
-export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude ".git"'
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_ALT_C_COMMAND='fd --type d --no-ignore --hidden --follow --exclude ".git"'
-
-_fzf_compgen_path() {
-  fd --type f --hidden --follow --exclude ".git" . "$1"
-}
-
-_fzf_compgen_dir() {
-  fd --type d --no-ignore --hidden --follow --exclude ".git" . "$1"
-}
+if command -v fd &> /dev/null; then
+  export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude ".git"'
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  export FZF_ALT_C_COMMAND='fd --type d --no-ignore --hidden --follow --exclude ".git"'
+fi
 
 # bat
 export BAT_THEME='Coldark-Cold'

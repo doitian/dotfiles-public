@@ -1,8 +1,14 @@
 
 [ -f "$HOME/.fzf.zsh" ] && source "$HOME/.fzf.zsh"
-_fzf_compgen_path() {
-  rg --hidden -g '!.git' --color never --files "$1"
-}
+if command -v fd &> /dev/null; then
+  _fzf_compgen_path() {
+    fd --type f --hidden --follow --exclude ".git" . "$1"
+  }
+
+  _fzf_compgen_dir() {
+    fd --type d --no-ignore --hidden --follow --exclude ".git" . "$1"
+  }
+fi
 
 export LESS='--RAW-CONTROL-CHARS --quiet --HILITE-UNREAD --ignore-case --long-prompt --no-init'
 export TMUX_TTY="$TTY"
