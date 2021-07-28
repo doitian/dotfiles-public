@@ -40,6 +40,8 @@ main() {
   ( echo; echo "### == $(date +'%I:%M %p') ==>${sep_title}"; echo ) >> "$DIARY_FILE"
   cat >> "$DIARY_FILE"
   echo >> "$DIARY_FILE"
+
+  echo "$DIARY_FILE"
 }
 
 main "$@"
