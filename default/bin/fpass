@@ -4,6 +4,8 @@ set -e
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
+export GPG_TTY="$(tty)"
+
 function fpass() {
   local selected
   selected="$(gopass list -f | fzf)"
