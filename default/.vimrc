@@ -326,6 +326,14 @@ function! s:Bufs()
   return split(list, "\n")
 endfunction
 
+function! s:ZoteroCite()
+  " pick a format based on the filetype (customize at will)
+  let format = &filetype =~ '.*tex' ? 'citep' : 'pandoc'
+  let api_call = 'http://127.0.0.1:23119/better-bibtex/cayw?format='.format.'&brackets=1'
+  let ref = system('curl -s '.shellescape(api_call))
+  return ref
+endfunction
+
 " Use %f as the base bufname, e.g., brain[%f]
 command! -nargs=1 Trename call s:TabRename(<q-args>)
 command! -nargs=1 Tnew tabnew! | call s:TabRename(<q-args>)
@@ -498,6 +506,7 @@ nnoremap <silent> <Leader>f/ :History/<CR>
 nnoremap <silent> <Leader>fm :Marks<CR>
 nnoremap <silent> <Leader>fw :Windows<CR>
 nnoremap <silent> <Leader>f? :Helptags<CR>
+nnoremap <silent> <Leader>fz :FZF<CR>
 
 nnoremap <Leader>g<Space> :grep<Space>
 nnoremap <silent> <Leader>gw :silent grep "\b<cword>\b"<Bar>copen 10<CR>
@@ -575,7 +584,8 @@ nnoremap <Leader>y "+y
 nnoremap <Leader>Y "+yy
 vnoremap <Leader>y "+y
 
-nnoremap <silent> <Leader>z :FZF<CR>
+nnoremap <silent> <leader>z "=<SID>ZoteroCite()<CR>p
+inoremap <C-r><C-z> <C-r>=<SID>ZoteroCite()<CR>
 
 nnoremap <silent> <Leader>/t /\|.\{-}\|<CR>
 nnoremap <Leader>/w /\<\><Left><Left>
