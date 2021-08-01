@@ -90,14 +90,6 @@ if [ type rustc &> /dev/null ]; then
   export RUST_SRC_PATH=$(rustc --print sysroot)/lib/rustlib/src/rust/src/
 fi
 
-# fzf
-export FZF_DEFAULT_OPTS='--color light,fg:#3c3b3a'
-if command -v fd &> /dev/null; then
-  export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude ".git"'
-  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-  export FZF_ALT_C_COMMAND='fd --type d --no-ignore --hidden --follow --exclude ".git"'
-fi
-
 # bat
 export BAT_THEME='Coldark-Cold'
 
@@ -106,8 +98,10 @@ if [[ "$OSTYPE" = linux* ]]; then
   export GPG_TTY="$(tty)"
 fi
 
+# homebrew
 export HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK=1
 
+# path
 export PATH="\
 .git/$SAFEBIN_SECRET/../../bin\
 :$HOME/bin\
@@ -121,4 +115,14 @@ export PATH="\
 :/usr/local/bin\
 :/usr/local/sbin\
 :$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools\
+:.obsidian/bin\
 "
+
+# fzf
+export FZF_DEFAULT_OPTS='--color light,fg:#3c3b3a'
+if command -v fd &> /dev/null; then
+  export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude ".git"'
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  export FZF_ALT_C_COMMAND='fd --type d --no-ignore --hidden --follow --exclude ".git"'
+fi
+
