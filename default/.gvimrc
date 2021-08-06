@@ -7,13 +7,6 @@ if has("mac")
   set guifont=CartographCF-Regular:h16
   set macligatures
 
-  " Fix MacVim by defining this function. I don't know why it works.
-  func! s:GvimRcInit()
-    hi Comment gui=italic
-    hi Folded gui=italic
-    hi String gui=italic
-  end
-
   func! s:ChangeBackground()
     if (v:os_appearance)
       set background=dark

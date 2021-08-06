@@ -73,12 +73,6 @@ syntax on
 
 silent! colorscheme PaperColor
 
-hi Comment cterm=italic gui=italic
-hi Folded cterm=italic gui=italic
-hi String cterm=italic gui=italic
-let &t_ZH = "\e[3m"
-let &t_ZR = "\e[23m"
-
 " Plugins Options {{{1
 let test#strategy = 'dispatch'
 let g:ctrlsf_default_root = 'cwd'

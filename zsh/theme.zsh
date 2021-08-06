@@ -32,6 +32,6 @@ else
   fi
   PROMPT='%(?..%F{red}%?⏎
 )%f
-# '"$PROMPT_HOST"'%F{blue}%(4~|%-1~/…/%2~|%~)%f[3m$(git_prompt_info)[23m
+# '"$PROMPT_HOST"'%F{blue}%(4~|%-1~/…/%2~|%~)%f$(git_prompt_info)
 %(1j.%F{yellow}%%%j.)%f$ '
 fi
