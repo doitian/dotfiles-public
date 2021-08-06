@@ -468,7 +468,11 @@ nnoremap <Leader>a :A<CR>
 nnoremap <silent> <Leader>b :Buffers<CR>
 
 nnoremap <Leader>cd :Fcd<CR>
-nnoremap <Leader>cl :Flcd<CR>
+nnoremap <Leader>lcd :Flcd<CR>
+nnoremap <Leader>lch :lcd <C-r>=CurDir().'/'<CR>
+nnoremap <Leader>ch :cd <C-r>=CurDir().'/'<CR>
+nnoremap <Leader>c<Space> :cd<Space><C-Z>
+nnoremap <Leader>lc<Space> :lcd<Space><C-Z>
 nnoremap <Leader>ct :tabnew<Bar>Flcd<CR>
 nnoremap <Leader>css :colorscheme PaperColor<CR>
 nnoremap <Leader>csd :colorscheme default<CR>
@@ -522,6 +526,7 @@ nnoremap <silent> <Leader>I :Tags<CR>
 nnoremap <silent> <Leader>k :Close<CR>
 nnoremap <silent> <Leader>K <C-^>:bd #<Bar>let @# = 1<CR>
 
+" lc used in <Leader>c
 nnoremap <silent> <Leader>ll :25Lexplore<CR>
 nnoremap <silent> <Leader>la :args<CR>
 nnoremap <silent> <Leader>lj :jumps<CR>
@@ -598,7 +603,7 @@ inoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
 
 inoremap <expr> <C-r><C-h> fzf#vim#complete#path('cd ' . shellescape(expand('%:p:h')) . ' && fd -t f')
 inoremap <expr> <C-r><C-f> fzf#vim#complete#path('cd ' . shellescape(getcwd()) . ' && fd -t f')
-inoremap <expr> <C-r><C-i> fzf#vim#complete#path('cd ' . shellescape(getcwd()) . ' && fd -t f -g "*.md"')
+inoremap <expr> <C-r><C-i> fzf#vim#complete#path('cd ' . shellescape(getcwd()) . ' && fd -t f -e md')
 
 " OS specific settings {{{1
 if has('win32')
