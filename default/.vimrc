@@ -71,14 +71,13 @@ set rtp+=/usr/local/opt/fzf
 " Theme {{{1
 syntax on
 
-if has("gui_running")
-  " Remove toolbar, left scrollbar and right scrollbar
-  set go-=e go-=r go-=L go-=T go-=m
-  set guicursor+=a:blinkwait2000-blinkon1500 " blink slowly
-  set mousehide " Hide the mouse when typing text
-end
-
 silent! colorscheme PaperColor
+
+hi Comment cterm=italic gui=italic
+hi Folded cterm=italic gui=italic
+hi String cterm=italic gui=italic
+let &t_ZH = "\e[3m"
+let &t_ZR = "\e[23m"
 
 " Plugins Options {{{1
 let test#strategy = 'dispatch'
