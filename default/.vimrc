@@ -327,10 +327,27 @@ function! s:ZoteroCite()
   return ref
 endfunction
 
+function! s:Italic(enable)
+  if a:enable
+    hi Comment cterm=italic gui=italic
+    hi Folded cterm=italic gui=italic
+    let &t_ZH = "\e[3m"
+    let &t_ZR = "\e[23m"
+  else
+    hi Comment cterm=none gui=none
+    hi Folded cterm=none gui=none
+    let &t_ZH = ""
+    let &t_ZR = ""
+  endif
+endfunction
+
 " Use %f as the base bufname, e.g., brain[%f]
 command! -nargs=1 Trename call s:TabRename(<q-args>)
 command! -nargs=1 Tnew tabnew! | call s:TabRename(<q-args>)
 command! -nargs=0 Treset call s:TabReset('')
+
+command! ItalicOn call s:Italic(1)
+command! ItalicOff call s:Italic(0)
 
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
       \ | wincmd p | diffthis
