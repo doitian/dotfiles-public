@@ -30,3 +30,4 @@ lmake.mk
 .tool-versions
 tempCodeRunnerFile
 *.code-workspace
+*-vimbackup
