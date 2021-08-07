@@ -1,9 +1,38 @@
 #!/bin/bash
 
+COLS="${FZF_PREVIEW_COLUMNS:-$(tput cols)}"
+LINES="${FZF_PREVIEW_LINES:-$(tput lines)}"
+if [ -z "${FZF_PREVIEW_LINES:-}" ]; then
+  LINES=$(( LINES - 3 ))
+fi
+
+if [ "${1:-}" = "--fzf-enable" ]; then
+  echo ': "${FZF_ORIG_OPTS:="$FZF_DEFAULT_OPTS"}"'
+  echo 'export FZF_DEFAULT_OPTS="$FZF_ORIG_OPTS --preview='\''preview {}'\''"'
+  echo '# eval "$(preview --fzf-enable)"'
+  exit 0
+elif [ "${1:-}" = "--fzf-disable" ]; then
+  echo 'export FZF_DEFAULT_OPTS="$FZF_ORIG_OPTS"'
+  echo '# eval "$(preview --fzf-disable)"'
+  exit 0
+fi
+
 for arg; do
   if [ -d "$arg" ]; then
-    exa --color always -T -L 3 "$arg" | head -200
+    exa --color always -T -L 3 "$arg" | head -n "$LINES"
   else
-    bat --style=numbers --color=always --line-range :200 "$arg"
+    BAT_STYLE=
+    if [ -n "${FZF_PREVIEW_LINES:-}" ]; then
+      BAT_STYLE="--style=numbers"
+    else
+      LINES=$(( LINES - 4 ))
+    fi
+    BAT_OPTS="--color=always --line-range=:$LINES --terminal-width=$COLS --wrap=never --paging=never $BAT_STYLE"
+
+    if [ -e "$arg" ]; then
+      bat $BAT_OPTS "$arg"
+    else
+      echo "$arg" | bat $BAT_OPTS --plain
+    fi
   fi
 done
