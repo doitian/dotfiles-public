@@ -77,7 +77,6 @@ silent! colorscheme PaperColor
 let test#strategy = 'dispatch'
 let g:ctrlsf_default_root = 'cwd'
 let g:dispatch_compilers = {
-      \ 'pipenv run': '',
       \ 'bundle exec': ''}
 let g:fzf_buffers_jump = 1
 let g:fzf_layout = { 'down': '40%' }
