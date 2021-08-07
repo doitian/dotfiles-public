@@ -8,8 +8,10 @@ if &term == 'win32' | set t_Co=256 | endif
 let loaded_matchparen = 1
 let s:has_rg = executable('rg')
 
+if $SSH_HOME != '' | let $HOME = $SSH_HOME | endif
+
 " Plug {{{1
-silent! call plug#begin('~/.vim/plugged')
+silent! call plug#begin($HOME.'/.vim/plugged')
 
 " filetypes
 Plug 'cespare/vim-toml'
@@ -355,7 +357,7 @@ command! Close :pclose | :cclose | :lclose |
       \ :windo call s:CloseDisturbingWin() |
       \ exe s:currentWindow . "wincmd w"
 command! Diffoff :diffoff! | :windo call s:CloseReadonlyWin() | :Close
-command! Reload :source ~/.vimrc | :filetype detect | :nohl
+command! Reload :source $HOME/.vimrc | :filetype detect | :nohl
 command! -bang Clear :silent! %bw<bang> | :silent! argd * | :nohl
 command! -nargs=* Diff2qf :cexpr system("diff2qf", system("git diff -U0 " . <q-args>))
 
@@ -390,11 +392,12 @@ set autoindent
 set autoread
 set backspace=indent,eol,start
 set backup
-set backupdir=~/.vim/backup//,.
+set backupdir=$HOME/.vim/files/backup//,.
+set backupext=-vimbackup
 set breakindent
 set cursorline
 set copyindent
-set directory=~/.vim/swap//,/tmp//,.
+set directory=$HOME/.vim/files/swap//,.
 set display+=lastline
 set expandtab
 set nofoldenable
@@ -430,9 +433,9 @@ set tabpagemax=50
 set title
 
 if has("nvim")
-  set undodir=~/.vim/nvim-undo//,.
+  set undodir=$HOME/.vim/files/nvim-undo//
 else
-  set undodir=~/.vim/undo//,/tmp//,.
+  set undodir=$HOME/.vim/files/undo//
 endif
 set undofile
 set undolevels=1000
@@ -495,16 +498,16 @@ nnoremap <Leader>eh :e <C-r>=CurDir().'/'<CR>
 nnoremap <silent> <Leader>en :enew<CR>
 nnoremap <silent> <Leader>et :tabnew<CR>
 nnoremap <Leader>ee :e <C-r>=expand("%:r")<CR><C-Z>
-nnoremap <Leader>eb :sview `=expand("~/.vim/backup/") . substitute(expand("%:p"), "[\\\\/]", "%", "g") . "~"`<CR>
-nnoremap <silent> <Leader>ev :tabnew ~/.vimrc<CR>
+nnoremap <Leader>eb :sview `=expand($HOME."/.vim/backup/") . substitute(expand("%:p"), "[\\\\/]", "%", "g") . "~"`<CR>
+nnoremap <silent> <Leader>ev :tabnew $HOME/.vimrc<CR>
 nnoremap <Leader>e<Space> :e<Space><C-Z>
 nnoremap <silent> <Leader>ep :tabnew .projections.json<CR>
-nnoremap <Leader>es :e ~/.vim/UltiSnips/<C-Z>
+nnoremap <Leader>es :e $HOME/.vim/UltiSnips/<C-Z>
 nnoremap <Leader>eS :UltiSnipsEdit<CR>
-nnoremap <Leader>ed :e ~/.diary/<C-R>=strftime('%Y-%m-%d')<CR>.md<CR>
-nnoremap <Leader>eD :FZF ~/.diary/<CR>
-nnoremap <Leader>em :e ~/.diary/<C-R>=strftime('%Y-%m-%d', localtime() + 86400)<CR>.md<CR>
-nnoremap <Leader>ey :e ~/.diary/<C-R>=strftime('%Y-%m-%d', localtime() - 86400)<CR>.md<CR>
+nnoremap <Leader>ed :e $HOME/.diary/<C-R>=strftime('%Y-%m-%d')<CR>.md<CR>
+nnoremap <Leader>eD :FZF $HOME/.diary/<CR>
+nnoremap <Leader>em :e $HOME/.diary/<C-R>=strftime('%Y-%m-%d', localtime() + 86400)<CR>.md<CR>
+nnoremap <Leader>ey :e $HOME/.diary/<C-R>=strftime('%Y-%m-%d', localtime() - 86400)<CR>.md<CR>
 
 nnoremap <silent> <Leader>fb :Buffers<CR>
 nnoremap <silent> <Leader>fk :Bw<CR>
@@ -571,7 +574,7 @@ nnoremap <silent> <Leader>ro :exe "silent !open " . shellescape(expand('<cfile>'
 nnoremap <silent> <Leader>R :checktime<CR>
 
 " Strip all trailing whitespace from a file
-nnoremap <Leader>ss :source ~/.vim/scripts/<C-Z>
+nnoremap <Leader>ss :source $HOME/.vim/scripts/<C-Z>
 nnoremap <silent> <Leader>sw :let _s=@/<Bar>%s/\s\+$//e<Bar>let @/=_s<Bar>unlet _s<Bar>nohl<CR>
 
 nnoremap <Leader>tq :Copen<CR>
@@ -680,5 +683,5 @@ augroup vimrc_au
   autocmd User GoyoLeave Limelight!
 augroup END
 
-silent! source ~/.vim/UltiSnips/abbreviations.vim
-silent! source ~/.vimrc.local
+silent! source $HOME/.vim/UltiSnips/abbreviations.vim
+silent! source $HOME/.vimrc.local
