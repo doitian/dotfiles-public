@@ -48,7 +48,7 @@ else
 endif
 
 set backup
-set backupdir   =$HOME/.vim/files/backup/
+set backupdir   =$HOME/.vim/files/backup//
 set backupext   =-vimbackup
 set backupskip  =
 set directory   =$HOME/.vim/files/swap//
