@@ -73,6 +73,12 @@ syntax on
 
 silent! colorscheme PaperColor
 
+" Fix cursor shape
+let &t_ti.="\eP\e[1 q\e\\"
+let &t_SI.="\eP\e[5 q\e\\"
+let &t_EI.="\eP\e[1 q\e\\"
+let &t_te.="\eP\e[0 q\e\\"
+
 " Plugins Options {{{1
 let test#strategy = 'dispatch'
 let g:ctrlsf_default_root = 'cwd'

@@ -1,25 +1,17 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # https://github.com/jamesottaway/tmux-up/blob/master/tmux-up
 
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
 TMUX_UP=tmux-up
-VERSION=0.5.1
+VERSION=0.5.1-fork
 TMUX_COMM="${TMUX_COMM:-tmux}"
+ARG1="${1:-}"
 
-if [ $# -ne 1 ]; then
-  if [ "$PWD" = "$HOME" ]; then
-    if ! tmux has-session "=chore" &> /dev/null; then
-      tmux new-session -s chore -d
-    fi
-    [ -z "$TMUX" ] && $TMUX_COMM attach -t "=chore" || tmux switch-client -t "=chore"
-    exit $?
-  elif [ ! -f '.tmux.conf' ]; then
-    ( echo 'send "[ -f Session.vim ] && vim -S || vim" C-m'; echo 'neww -n shell' ) > .tmux.conf
-  fi
-fi
-
-if [ "$1" = '-h' ] || [ "$1" = '--help' ]
-then
+if [ "$ARG1" = '-h' ] || [ "$ARG1" = '--help' ]; then
   cat <<-USAGE
 		Usage: $0 [FILE]
 		Attach to a newly bootstrapped or existing tmux session.
@@ -34,8 +26,7 @@ then
   exit 0
 fi
 
-if [ "$1" = '-v' ] || [ "$1" = '--version' ]
-then
+if [ "$ARG1" = '-v' ] || [ "$ARG1" = '--version' ]; then
   cat <<-EOF
 		$TMUX_UP $VERSION
 		Copyright (C) 2015 James Ottaway
@@ -46,33 +37,52 @@ then
   exit 0
 fi
 
-FILE=${1:-.tmux.conf}
-
-if [ ! -f "$FILE" ]
-then
-  echo "$0: cannot stat ‘${FILE}’: No such file"
-  exit 1
-fi
-
-BASE=$(basename "$PWD" | sed 's/[^a-zA-Z0-9\-]//g')
-NAME=$(basename "$FILE" .conf)
-
-if [ "$NAME" = 'tmux' ] || [ "$NAME" = '.tmux' ]
-then
-  SESSION=$BASE
+FILE=
+COMMANDS=
+if [ -z "$ARG1" ]; then
+  if [ "$PWD" = "$HOME" ]; then
+    SESSION=chore
+  elif [ ! -f '.tmux.conf' ]; then
+    SESSION=$(basename "$PWD" | sed 's/[^a-zA-Z0-9\-]//g')
+    COMMANDS='send "[ -f Session.vim ] && vim -S || vim" C-m
+neww -n shell'
+  else
+    FILE=".tmux.conf"
+  fi
 else
-  SESSION=$BASE/$NAME
+  FILE='$ARG1'
 fi
 
-if ! tmux has-session -t "=$SESSION" > /dev/null 2>&1
-then
+if [ -n "${FILE}" ]; then
+  if ! [ -f "${FILE}" ]; then
+    echo "File ${FILE} does not exist!" >&2
+    exit 1
+  fi
+
+  BASE=$(basename "$PWD" | sed 's/[^a-zA-Z0-9\-]//g')
+  NAME=$(basename "$FILE" .conf)
+
+  if [ "$NAME" = 'tmux' ] || [ "$NAME" = '.tmux' ]; then
+    SESSION="$BASE"
+  else
+    SESSION="$BASE/$NAME"
+  fi
+fi
+
+if ! tmux has-session -t "=$SESSION" > /dev/null 2>&1; then
   TMUX='' tmux new-session -d -s "$SESSION"
-  xargs -L1 tmux < "$FILE"
+  if [ -n "$COMMANDS" ]; then
+    echo "Use default commands:"
+    echo
+    echo "$COMMANDS"
+    echo "$COMMANDS" | xargs -L1 tmux
+  elif [ -n "$FILE" ]; then
+    xargs -L1 tmux < "$FILE"
+  fi
   tmux select-window -t 1
 fi
 
-if [ -z "$TMUX" ]
-then
+if [ -z "${TMUX:-}" ]; then
   $TMUX_COMM attach -t "=$SESSION"
 else
   tmux switch-client -t "=$SESSION"
