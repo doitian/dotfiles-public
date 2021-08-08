@@ -7,7 +7,6 @@ if has("win32") | language en | set ff=unix | endif
 if &term == 'win32' | set t_Co=256 | endif
 let loaded_matchparen = 1
 let s:has_rg = executable('rg')
-
 if $SSH_HOME != '' | let $HOME = $SSH_HOME | endif
 
 " Plug {{{1
@@ -347,8 +346,8 @@ command! -nargs=1 Trename call s:TabRename(<q-args>)
 command! -nargs=1 Tnew tabnew! | call s:TabRename(<q-args>)
 command! -nargs=0 Treset call s:TabReset('')
 
-command! ItalicOn call s:Italic(1)
-command! ItalicOff call s:Italic(0)
+command! ItalicEnable call s:Italic(1)
+command! ItalicDisable call s:Italic(0)
 
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
       \ | wincmd p | diffthis
@@ -412,7 +411,6 @@ set nojoinspaces
 set laststatus=2
 set lazyredraw
 set linebreak
-set listchars=tab:▸\ ,trail:·,extends:»,precedes:«,nbsp:␣
 set list
 set scrolloff=2
 set sessionoptions-=options
@@ -425,18 +423,9 @@ set smartcase
 set smarttab
 set spellfile=$HOME/.vim-spell-en.utf-8.add,.vim-spell-en.utf-8.add
 set spelllang=en_us,cjk
-if &term != 'win32'
-  set statusline=%<%{StatusLineFileName()}\ %h%m%r%{HasPaste()}%=%{StatusLineFileFormat()}\ %l\ %P
-endif
 set tabline=%!Tabline()
 set tabpagemax=50
 set title
-
-if has("nvim")
-  set undodir=$HOME/.vim/files/nvim-undo//
-else
-  set undodir=$HOME/.vim/files/undo//
-endif
 set undofile
 set undolevels=1000
 set viminfo=!,'100,<2000
@@ -455,9 +444,22 @@ if s:has_rg
   set grepformat=%f:%l:%c:%m
   set grepprg=rg\ --hidden\ -g\ '!.git'\ --vimgrep\ $*
 endif
+if has('multi_byte') && &encoding ==# 'utf-8'
+  let &listchars = 'tab:▸\ ,trail:·,extends:»,precedes:«,nbsp:␣'
+else
+  let &listchars = 'tab:> ,trail:.,extends:>,precedes:<,nbsp:.'
+endif
+if &term != 'win32'
+  set statusline=%<%{StatusLineFileName()}\ %h%m%r%{HasPaste()}%=%{StatusLineFileFormat()}\ %l\ %P
+endif
+if has("nvim")
+  set undodir=$HOME/.vim/files/nvim-undo//
+else
+  set undodir=$HOME/.vim/files/undo//
+endif
 
 let $cb = $HOME . '/codebase'
-let $kb = $HOME . '/codebase/my/knowledge-base'
+let $kb = $HOME . '/Dropbox/Brain'
 
 runtime! macros/matchit.vim
 
@@ -498,8 +500,9 @@ nnoremap <Leader>eh :e <C-r>=CurDir().'/'<CR>
 nnoremap <silent> <Leader>en :enew<CR>
 nnoremap <silent> <Leader>et :tabnew<CR>
 nnoremap <Leader>ee :e <C-r>=expand("%:r")<CR><C-Z>
-nnoremap <Leader>eb :sview `=expand($HOME."/.vim/backup/") . substitute(expand("%:p"), "[\\\\/]", "%", "g") . "~"`<CR>
+nnoremap <Leader>eb :sview `=expand($HOME."/.vim/files/backup/") . substitute(expand("%:p"), "[\\\\/]", "%", "g") . "~"`<CR>
 nnoremap <silent> <Leader>ev :tabnew $HOME/.vimrc<CR>
+nnoremap <Leader>ew :e<Space>**/
 nnoremap <Leader>e<Space> :e<Space><C-Z>
 nnoremap <silent> <Leader>ep :tabnew .projections.json<CR>
 nnoremap <Leader>es :e $HOME/.vim/UltiSnips/<C-Z>
