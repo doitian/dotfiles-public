@@ -77,7 +77,7 @@ if ! tmux has-session -t "=$SESSION" > /dev/null 2>&1; then
     echo "$COMMANDS"
     echo "$COMMANDS" | xargs -L1 tmux
   elif [ -n "$FILE" ]; then
-    xargs -L1 tmux < "$FILE"
+    tmux source "$FILE"
   fi
   tmux select-window -t 1
 fi

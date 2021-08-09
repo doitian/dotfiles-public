@@ -1,0 +1,31 @@
+#!/bin/bash
+
+case "${1:-}" in
+  light)
+    if [ -f ~/.vimrc.local ]; then
+      if grep -qv 'set background=' ~/.vimrc.local; then
+        echo "sed -i.bak '/set background=.*/d' ~/.vimrc.local"
+      else
+        echo "mv -f ~/.vimrc.local ~/.vimrc.local.bak"
+      fi
+    fi
+    echo "export FZF_DEFAULT_OPTS='--color light,fg:#3c3b3a'"
+    echo "BAT_THEME=Coldark-Cold"
+    echo "tmux source ~/.tmux.light.conf"
+
+    echo '# eval "$(set-background light)"'
+    ;;
+  dark)
+    touch ~/.vimrc.local
+    if ! grep -q 'set background=dark' ~/.vimrc.local; then
+      echo "echo 'set background=dark' >> ~/.vimrc.local"
+    fi
+    echo "unset FZF_DEFAULT_OPTS BAT_THEME"
+    echo "tmux source ~/.tmux.dark.conf"
+
+    echo '# eval "$(set-background dark)"'
+    ;;
+  *)
+    echo 'eval "$(set-background light|dark)"'
+    ;;
+esac
