@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+export TERM_BACKGROUND="${TERM_BACKGROUND:-light}"
+
 # safe path
 SAFEBIN_SECRET=safebin
 if [ -f "$HOME/.safebin" ]; then
@@ -91,7 +93,10 @@ if [ type rustc &> /dev/null ]; then
 fi
 
 # bat
-export BAT_THEME='Coldark-Cold'
+unset BAT_THEME
+if [ "$TERM_BACKGROUND" = light ]; then
+  export BAT_THEME='Coldark-Cold'
+fi
 
 # gpg
 if [[ "$OSTYPE" = linux* ]]; then
@@ -119,10 +124,12 @@ export PATH="\
 "
 
 # fzf
-export FZF_DEFAULT_OPTS='--color light,fg:#3c3b3a'
+unset FZF_DEFAULT_OPTS
+if [ "$TERM_BACKGROUND" = light ]; then
+  export FZF_DEFAULT_OPTS='--color light,fg:#3c3b3a'
+fi
 if command -v fd &> /dev/null; then
   export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude ".git"'
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
   export FZF_ALT_C_COMMAND='fd --type d --no-ignore --hidden --follow --exclude ".git"'
 fi
-

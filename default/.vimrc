@@ -2,12 +2,13 @@
 if v:progname =~? "evim" | finish | endif
 set nocompatible
 set encoding=utf-8
-set background=light
-if has("win32") | language en | set ff=unix | endif
-if &term == 'win32' | set t_Co=256 | endif
 let loaded_matchparen = 1
 let s:has_rg = executable('rg')
+set background=light
+if $TERM_BACKGROUND != '' | let background=$TERM_BACKGROUND | endif
 if $SSH_HOME != '' | let $HOME = $SSH_HOME | endif
+if has("win32") | language en | set ff=unix | endif
+if &term == 'win32' | set t_Co=256 | endif
 
 " Plug {{{1
 silent! call plug#begin($HOME.'/.vim/plugged')
