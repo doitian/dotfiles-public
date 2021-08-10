@@ -475,6 +475,7 @@ set wildcharm=<C-Z>
 
 nnoremap <silent> t<CR> :TestNearest<CR>
 nnoremap <silent> g<CR> :Dispatch<CR>
+nnoremap <silent> f<CR> :Neoformat<Bar>up<CR>
 
 nnoremap <Leader><Space> :Files<CR>
 
@@ -595,7 +596,7 @@ nnoremap <Leader>u :MundoToggle<CR>
 " Reselect text that was just pasted
 nnoremap <Leader>v `[v`]
 
-nnoremap <silent> <Leader>w :Neoformat<Bar>up<CR>
+nnoremap <Leader>w <C-w>
 
 nnoremap <silent> <Leader>x :<C-u>set opfunc=<SID>TmuxSend<CR>g@
 nnoremap <silent> <Leader>xx :<C-u>set opfunc=<SID>TmuxSend<Bar>exe 'norm! 'v:count1.'g@_'<CR>
