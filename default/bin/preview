@@ -5,6 +5,9 @@ LINES="${FZF_PREVIEW_LINES:-$(tput lines)}"
 if [ -z "${FZF_PREVIEW_LINES:-}" ]; then
   LINES=$(( LINES - 3 ))
 fi
+if [ -n "${TMUX:-}" ]; then
+  LINES=$(( LINES - 1 ))
+fi
 
 if [ "${1:-}" = "--fzf-enable" ]; then
   echo ': "${FZF_ORIG_OPTS:="$FZF_DEFAULT_OPTS"}"'
