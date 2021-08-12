@@ -1,6 +1,12 @@
+format = "[$all](italic)"
+
 [directory]
 truncation_length = 5
 truncation_symbol = "…/"
 
 [directory.substitutions]
 "Dropbox/Brain" = "brain"
+
+[git_branch]
+symbol = "±"
+style = "purple bold italic"
