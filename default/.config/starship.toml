@@ -3,9 +3,6 @@ format = "[$all](italic)"
 [directory]
 format = '[%\(4~|%-1~/…/%2~|%~\)]($style)[$read_only]($read_only_style) '
 
-[directory.substitutions]
-"Dropbox/Brain" = "brain"
-
 [git_branch]
 symbol = "±"
 style = "purple bold italic"
