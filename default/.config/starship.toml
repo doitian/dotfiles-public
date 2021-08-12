@@ -6,3 +6,7 @@ format = '[%\(4~|%-1~/…/%2~|%~\)]($style)[$read_only]($read_only_style) '
 [git_branch]
 symbol = "±"
 style = "purple bold italic"
+
+[status]
+disabled = false
+
