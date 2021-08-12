@@ -24,31 +24,13 @@ else
   }
 
   export VIRTUAL_ENV_DISABLE_PROMPT=true
-  ZSH_THEME_ENABLE_ASDF=
-  if ! which asdf &> /dev/null; then
-    ZSH_THEME_ENABLE_ASDF=
-  fi
   function universe_env_info() {
-    local asdf_info
-    local virtualenv_info
-    if [ -n "$ZSH_THEME_ENABLE_ASDF" ]; then
-      asdf current 2>&1 | grep -v -F "set by $HOME/.tool-versions" | sed -n 's/\s*(set by.*//p' | while read asdf_info; do
-        echo -n " %F{cyan}${asdf_info%% *}»%f${asdf_info##* }"
-      done
-    fi
     if [ -n "$VIRTUAL_ENV" ]; then
-      name="${VIRTUAL_ENV%/py2env}"
-      name="${name%/py3env}"
-      name="${name%/.venv}"
-      if [ -n "$PIPENV_ACTIVE" ]; then
-        name="${name%-*}"
-        echo -n " %F{cyan}penv»%f$(basename "$name")"
-      fi
+      echo -n " %F{cyan}penv»%f${{VIRTUAL_ENV%/.venv}##*/}"
     elif [ -n "$CONDA_DEFAULT_ENV" ]; then
-      echo -n " %F{cyan}penv»%f$(CONDA_DEFAULT_ENV)"
+      echo -n " %F{cyan}conda»%f${CONDA_DEFAULT_ENV}"
     fi
   }
-
 
   PROMPT_HOST=
   if [ -n "$SSH_CONNECTION" ]; then
