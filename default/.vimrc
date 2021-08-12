@@ -141,6 +141,10 @@ function! StatusLineFileName()
   endif
 endfunction
 
+function! StatusLineCurDir()
+  return pathshorten(fnamemodify(getcwd(), ':~'))
+endfunction
+
 function! StatusLineFileFormat()
   let l:flags = []
   let l:encoding = &fileencoding != '' ? &fileencoding : &encoding
@@ -451,7 +455,7 @@ else
   let &listchars = 'tab:> ,trail:.,extends:>,precedes:<,nbsp:.'
 endif
 if &term != 'win32'
-  set statusline=%<%{StatusLineFileName()}\ %h%m%r%{HasPaste()}%=%{StatusLineFileFormat()}\ %l\ %P
+  set statusline=%<%{StatusLineFileName()}\ %h%m%r%{HasPaste()}%=%{StatusLineCurDir()}\ %{StatusLineFileFormat()}\ %l\ %P
 endif
 if has("nvim")
   set undodir=$HOME/.vim/files/nvim-undo//
