@@ -2,53 +2,47 @@
 set -e
 
 DIR="$(git config --get core.hooksPath 2>/dev/null || echo .git/hooks)"
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+NC='\033[0m' # No Color
+PREFIX="${GREEN}[PRECOMMIT]${NC}"
+FAILURE="${RED}FAILED${NC}"
+WARNING="${RED}[WARNING]${NC}"
+SKIPPED="${YELLOW}SKIPPED${NC}"
+SUCCESS="${GREEN}ok${NC}"
+FAILED=0
 
-if [ -z "$(git config user.email)" ]; then
-  echo "ERROR: [pre-commit hook] Aborting commit because of user.email is not set"
-  exit 1
+if git rev-parse --verify HEAD &>/dev/null; then
+  AGAINST_SHA=HEAD
+else
+  AGAINST_SHA=4b825dc642cb6eb9a060e54bf8d69288fbee4904
 fi
 
-if [ -f Cargo.toml ]; then
-  RED='\033[0;31m'
-  GREEN='\033[0;32m'
-  YELLOW='\033[0;33m'
-  NC='\033[0m' # No Color
-
-  PREFIX="${GREEN}[PRECOMMIT]${NC}"
-  FAILURE="${RED}FAILED${NC}"
-  WARNING="${RED}[WARNING]${NC}"
-  SKIPPED="${YELLOW}SKIPPED${NC}"
-  SUCCESS="${GREEN}ok${NC}"
-
-  if git rev-parse --verify HEAD &>/dev/null
-  then
-    against=HEAD
-  else
-    # Initial commit: diff against an empty tree object
-    against=4b825dc642cb6eb9a060e54bf8d69288fbee4904
-  fi
-
-  FAILED=0
-
-  printf "${PREFIX} Checking that all filenames are ascii ... "
-  # Note that the use of brackets around a tr range is ok here, (it's
-  # even required, for portability to Solaris 10's /usr/bin/tr), since
-  # the square bracket bytes happen to fall in the designated range.
-  if test $(git diff --cached --name-only --diff-filter=A -z $against | LC_ALL=C tr -d '[ -~]\0' | wc -c) != 0
-  then
-    FAILED=1
-    printf "${FAILURE}\n"
-  else
+check_git() {
+  printf "${PREFIX} Checking user.email is set ... "
+  if [ -n "$(git config user.email)" ]; then
     printf "${SUCCESS}\n"
+  else
+    printf "${FAILURE}\n"
+    return 1
   fi
+}
 
+check_whitespace() {
   printf "${PREFIX} Checking for bad whitespace ... "
-  if git diff-index --check --cached $against &>/dev/null; then
+  if git diff-index --check --cached $AGAINST_SHA &>/dev/null; then
     printf "${SUCCESS}\n"
   else
-    FAILED=1
-    git diff-index --check --cached $against -- || true
+    git diff-index --check --cached $AGAINST_SHA -- || true
     printf "${FAILURE}\n"
+    return 1
+  fi
+}
+
+check_cargo_fmt() {
+  if ! [[ -f Cargo.toml ]]; then
+    return
   fi
 
   printf "${PREFIX} Checking for cargo ... "
@@ -56,20 +50,40 @@ if [ -f Cargo.toml ]; then
     printf "${SUCCESS}\n"
   else
     printf "${FAILURE}\n"
-    exit 1
+    return 1
   fi
 
   printf "${PREFIX} Checking formatting ... "
-  FMTFAILED=0
-  if ! cargo fmt -- --check; then
-    FAILED=1
-    FMTFAILED=1
-  fi
-  if [ "$FMTFAILED" = 0 ]; then
+  if cargo fmt -- --check; then
     printf "${SUCCESS}\n"
+  else
+    printf "${FAILURE}\n"
+    return 1
+  fi
+}
+
+check_cargo_fmt() {
+  if ! [[ -f Cargo.toml ]]; then
+    return
   fi
 
-  if [ "$FAILED" != 0 ]; then
-    exit "$FAILED"
+  printf "${PREFIX} Checking for cargo ... "
+  if command -v cargo &>/dev/null; then
+    printf "${SUCCESS}\n"
+  else
+    printf "${FAILURE}\n"
+    return 1
   fi
-fi
+
+  printf "${PREFIX} Checking formatting ... "
+  if cargo fmt -- --check; then
+    printf "${SUCCESS}\n"
+  else
+    printf "${FAILURE}\n"
+    return 1
+  fi
+}
+
+check_git
+check_whitespace
+check_cargo_fmt
