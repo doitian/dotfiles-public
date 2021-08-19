@@ -450,7 +450,7 @@ if s:has_rg
   set grepprg=rg\ --hidden\ -g\ '!.git'\ --vimgrep\ $*
 endif
 if has('multi_byte') && &encoding ==# 'utf-8'
-  let &listchars = 'tab:▸\ ,trail:·,extends:»,precedes:«,nbsp:␣'
+  let &listchars = 'tab:▸ ,trail:·,extends:»,precedes:«,nbsp:␣'
 else
   let &listchars = 'tab:> ,trail:.,extends:>,precedes:<,nbsp:.'
 endif
