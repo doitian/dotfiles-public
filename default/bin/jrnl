@@ -5,7 +5,7 @@ set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
 DIARY_DIR="$HOME/.diary"
-if ! [ -e "$DIARY_DIR" ] && [ -d "$HOME/Dropbox/Brain/diary" ]; then
+if ! [ -e "$DIARY_DIR" ] && [ -d "$HOME/Dropbox/Brain/periodic" ]; then
   ln -snf "$HOME/Dropbox/Brain/diary" "$HOME/.diary"
 fi
 DIARY_FILE="$DIARY_DIR/$(date +'%Y-%m-%d').md"
