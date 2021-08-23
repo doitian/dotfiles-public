@@ -126,3 +126,11 @@
 [delta "interactive"]
   keep-plus-minus-markers = false
 
+[diff]
+  tool = vscode
+[difftool "vscode"]
+  cmd = code --wait --diff $LOCAL $REMOTE
+[merge]
+  tool = vscode
+[mergetool "vscode"]
+  cmd = code --wait $MERGED
