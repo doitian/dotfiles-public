@@ -1,22 +1,67 @@
-set runtimepath^=~/.vim
+if $SSH_HOME != '' | let $HOME = $SSH_HOME | endif
+set runtimepath^=$HOME/.vim
 let &packpath=&runtimepath
 
 function! LoadNvimPlugs()
-  " Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-  " Plug 'nvim-treesitter/playground'
-  Plug 'neovim/nvim-lspconfig'
   Plug 'hrsh7th/nvim-compe'
-  Plug 'nvim-lua/popup.nvim'
+  Plug 'neovim/nvim-lspconfig'
   Plug 'nvim-lua/plenary.nvim'
+  Plug 'nvim-lua/popup.nvim'
   Plug 'nvim-telescope/telescope.nvim'
-  " Plug 'folke/twilight.nvim'
+  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 endfunction
 
-source ~/.vimrc
+augroup nvim_init_au
+  autocmd!
+
+  autocmd ColorScheme *
+        \ highlight LspDiagnosticsDefaultError guifg=Red ctermfg=DarkRed |
+        \ highlight LspDiagnosticsDefaultWarning guifg=Orange ctermfg=LightMagenta |
+        \ highlight LspDiagnosticsDefaultInformation guifg=LightBlue ctermfg=LightBlue |
+        \ highlight LspDiagnosticsDefaultHint guifg=LightGrey ctermfg=LightGrey
+augroup END
+
+source $HOME/.vimrc
+
+command! Reload :source $HOME/.config/nvim/init.vim | :filetype detect | :nohl
 
 set completeopt=menuone,noselect,preview
 
 lua << EOF
+require'compe'.setup {
+  enabled = true;
+  autocomplete = true;
+  debug = false;
+  min_length = 3;
+  preselect = 'enable';
+  throttle_time = 80;
+  source_timeout = 200;
+  resolve_timeout = 800;
+  incomplete_delay = 400;
+  max_abbr_width = 100;
+  max_kind_width = 100;
+  max_menu_width = 100;
+  documentation = {
+    border = { '', '' ,'', ' ', '', '', '', ' ' }, -- the border option is the same as `|help nvim_open_win|`
+    winhighlight = "NormalFloat:CompeDocumentation,FloatBorder:CompeDocumentationBorder",
+    max_width = 120,
+    min_width = 60,
+    max_height = math.floor(vim.o.lines * 0.3),
+    min_height = 1,
+  };
+
+  source = {
+    path = true;
+    buffer = true;
+    calc = true;
+    nvim_lsp = true;
+    nvim_lua = true;
+    vsnip = false;
+    ultisnips = true;
+    luasnip = false;
+  };
+}
+
 local nvim_lsp = require('lspconfig')
 
 -- Use an on_attach function to only map the following keys
@@ -65,6 +110,14 @@ for _, lsp in ipairs(servers) do
   }
 end
 
+vim.lsp.handlers["textDocument/publishDiagnostics"] =
+  vim.lsp.with(
+    vim.lsp.diagnostic.on_publish_diagnostics,
+    {
+      underline = false
+    }
+  )
+
 local actions = require('telescope.actions')
 -- Global remapping
 ------------------------------
@@ -85,44 +138,16 @@ require('telescope').setup{
   }
 }
 
-require'compe'.setup {
-  enabled = true;
-  autocomplete = true;
-  debug = false;
-  min_length = 3;
-  preselect = 'enable';
-  throttle_time = 80;
-  source_timeout = 200;
-  resolve_timeout = 800;
-  incomplete_delay = 400;
-  max_abbr_width = 100;
-  max_kind_width = 100;
-  max_menu_width = 100;
-  documentation = {
-    border = { '', '' ,'', ' ', '', '', '', ' ' }, -- the border option is the same as `|help nvim_open_win|`
-    winhighlight = "NormalFloat:CompeDocumentation,FloatBorder:CompeDocumentationBorder",
-    max_width = 120,
-    min_width = 60,
-    max_height = math.floor(vim.o.lines * 0.3),
-    min_height = 1,
-  };
-
-  source = {
-    path = true;
-    buffer = true;
-    calc = true;
-    nvim_lsp = true;
-    nvim_lua = true;
-    vsnip = false;
-    ultisnips = true;
-    luasnip = false;
-  };
+require'nvim-treesitter.configs'.setup {
+  highlight = {
+    enable = true,
+  }
 }
 EOF
 
 nnoremap <silent> <Leader><Space> <cmd>Telescope find_files<CR>
 
-nnoremap <silent> <Leader>eV :tabnew ~/.config/nvim/init.vim<CR>
+nnoremap <silent> <Leader>eV :tabnew $HOME/.config/nvim/init.vim<CR>
 
 nnoremap <silent> <Leader>fb <cmd>Telescope buffers<CR>
 nnoremap <silent> <Leader>ff <cmd>Telescope find_files<CR>

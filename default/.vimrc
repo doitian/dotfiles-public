@@ -1,11 +1,8 @@
 " Preamble {{{1
-if v:progname =~? "evim" | finish | endif
 set nocompatible
 set encoding=utf-8
 let loaded_matchparen = 1
-let s:has_rg = executable('rg')
-set background=light
-if $TERM_BACKGROUND != '' | let &background = $TERM_BACKGROUND | endif
+let &background = $TERM_BACKGROUND != '' ? $TERM_BACKGROUND : 'light'
 if $SSH_HOME != '' | let $HOME = $SSH_HOME | endif
 if has("win32") | language en | set ff=unix | endif
 if &term == 'win32' | set t_Co=256 | endif
@@ -34,7 +31,6 @@ Plug 'tomtom/tcomment_vim' " gc
 Plug 'tpope/vim-abolish' " :A :S
 Plug 'tpope/vim-dispatch', { 'on': ['FocusDispatch', 'Dispatch'] }
 Plug 'tpope/vim-endwise'
-Plug 'tpope/vim-fugitive', { 'on': ['Git', 'Gstatus', 'Gdiffsplit'] }
 Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-repeat'
@@ -109,12 +105,8 @@ function! Tabline()
 
     let s .= '%' . tab . 'T'
     let s .= (tab == tabpagenr() ? '%#TabLineSel#' : '%#TabLine#')
-    let s .= ' ' . tab .':'
-    let s .= '['. title . '] '
-
-    if bufmodified
-      let s .= '[+] '
-    endif
+    let s .= ' ' . tab . ':'
+    let s .= '[' . title . (bufmodified ? ']+ ' : '] ')
   endfor
 
   let s .= '%#TabLineFill#'
@@ -141,16 +133,13 @@ function! StatusLineFileName()
   endif
 endfunction
 
-function! StatusLineCurDir()
-  return pathshorten(fnamemodify(getcwd(), ':~'))
-endfunction
-
 function! StatusLineFileFormat()
   let l:flags = []
+
   let l:encoding = &fileencoding != '' ? &fileencoding : &encoding
   if l:encoding != 'utf-8' | call add(l:flags, l:encoding) | endif
   if &bomb | call add(l:flags, '+bomb') | endif
-  if &fileformat != 'unix' | call add(l:flags, printf('[%s] ', &fileformat)) | endif
+  if &fileformat != 'unix' | call add(l:flags, printf('[%s]', &fileformat)) | endif
   return join(l:flags, '')
 endfunction
 
@@ -445,7 +434,7 @@ if has("cscope")
   set cscopequickfix=s-,c-,d-,i-,t-,e-
   set cscopequickfix+=a-
 endif
-if s:has_rg
+if executable('rg')
   set grepformat=%f:%l:%c:%m
   set grepprg=rg\ --hidden\ -g\ '!.git'\ --vimgrep\ $*
 endif
@@ -455,7 +444,7 @@ else
   let &listchars = 'tab:> ,trail:.,extends:>,precedes:<,nbsp:.'
 endif
 if &term != 'win32'
-  set statusline=%<%{StatusLineFileName()}\ %h%m%r%{HasPaste()}%=%{StatusLineCurDir()}\ %{StatusLineFileFormat()}\ %l\ %P
+  set statusline=%<%{StatusLineFileName()}\ %h%m%r%{HasPaste()}%=%{StatusLineFileFormat()}\ %l\ %P
 endif
 if has("nvim")
   set undodir=$HOME/.vim/files/nvim-undo//
@@ -482,6 +471,7 @@ nnoremap <silent> g<CR> :Dispatch<CR>
 nnoremap <silent> f<CR> :Neoformat<Bar>up<CR>
 
 nnoremap <Leader><Space> :Files<CR>
+nnoremap <Leader>? :Maps<CR>'<lt>Space>
 
 nnoremap <Leader>a :A<CR>
 
@@ -679,7 +669,6 @@ augroup vimrc_au
 
   autocmd FileType gitcommit,markdown,text setlocal spell
   autocmd FileType markdown set fo+=ro
-  autocmd FileType netrw setlocal bufhidden=wipe
   autocmd FileType rust setlocal winwidth=99
   autocmd FileType vim setlocal foldmethod=marker
 
