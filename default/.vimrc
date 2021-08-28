@@ -87,8 +87,9 @@ let g:cargo_makeprg_params = "check --all --all-targets"
 let g:vim_markdown_frontmatter = 1
 let g:vim_markdown_math = 1
 let g:vim_markdown_strikethrough = 1
-let g:UltiSnipsSnippetDirectories = [ $HOME.'/.vim/UltiSnips' ]
+let g:UltiSnipsEditSplit = 'tabdo'
 let g:UltiSnipsListSnippets = "<c-f>"
+let g:UltiSnipsSnippetDirectories = [ $HOME.'/.vim/UltiSnips' ]
 
 " Functions & Commands {{{1
 function! Tabline()
@@ -358,12 +359,6 @@ command! -bang Fcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sin
 command! -bang Flcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': 'lcd'}, <bang>0))
 command! -bang Fdir call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd'}, <bang>0))
 command! -bang Ffile call fzf#run(fzf#wrap('fasd -f', {'source': 'fasd -lRf'}, <bang>0))
-command! -bang -nargs=* Rg
-  \ call fzf#vim#grep(
-  \   'rg --hidden -g "!.git" --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
-  \   <bang>0 ? fzf#vim#with_preview('up:60%')
-  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
-  \   <bang>0)
 
 command! -nargs=1 -complete=file Cfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | cfile <args>
 command! -nargs=1 -complete=file Lfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | lfile <args>
@@ -417,6 +412,7 @@ set smartcase
 set smarttab
 set spellfile=$HOME/.vim-spell-en.utf-8.add,.vim-spell-en.utf-8.add
 set spelllang=en_us,cjk
+set switchbuf=useopen
 set tabline=%!Tabline()
 set tabpagemax=50
 set title
@@ -444,7 +440,7 @@ else
   let &listchars = 'tab:> ,trail:.,extends:>,precedes:<,nbsp:.'
 endif
 if &term != 'win32'
-  set statusline=%<%{StatusLineFileName()}\ %h%m%r%{HasPaste()}%=%{StatusLineFileFormat()}\ %l\ %P
+  set statusline=%<%{StatusLineFileName()}\ %h%m%r%{HasPaste()}%=%{StatusLineFileFormat()}\ \#%n\ L%l:%c\ %P
 endif
 if has("nvim")
   set undodir=$HOME/.vim/files/nvim-undo//
@@ -497,16 +493,16 @@ nnoremap <silent> <Leader>en :enew<CR>
 nnoremap <silent> <Leader>et :tabnew<CR>
 nnoremap <Leader>ee :e <C-r>=expand("%:r")<CR><C-Z>
 nnoremap <Leader>eb :sview `=expand($HOME."/.vim/files/backup/") . substitute(expand("%:p"), "[\\\\/]", "%", "g") . "~"`<CR>
-nnoremap <silent> <Leader>ev :tabnew $HOME/.vimrc<CR>
+nnoremap <silent> <Leader>ev :tab drop $HOME/.vimrc<CR>
 nnoremap <Leader>ew :e<Space>**/
 nnoremap <Leader>e<Space> :e<Space><C-Z>
-nnoremap <silent> <Leader>ep :tabnew .projections.json<CR>
-nnoremap <Leader>es :e $HOME/.vim/UltiSnips/<C-Z>
+nnoremap <silent> <Leader>ep :tab drop .projections.json<CR>
+nnoremap <Leader>es :tab drop $HOME/.vim/UltiSnips/<C-Z>
 nnoremap <Leader>eS :UltiSnipsEdit<CR>
-nnoremap <Leader>ed :e $HOME/.diary/<C-R>=strftime('%Y-%m-%d')<CR>.md<CR>
-nnoremap <Leader>eD :FZF $HOME/.diary/<CR>
-nnoremap <Leader>em :e $HOME/.diary/<C-R>=strftime('%Y-%m-%d', localtime() + 86400)<CR>.md<CR>
-nnoremap <Leader>ey :e $HOME/.diary/<C-R>=strftime('%Y-%m-%d', localtime() - 86400)<CR>.md<CR>
+nnoremap <Leader>ed :tab drop $HOME/.diary/<C-R>=strftime('%Y-%m-%d')<CR>.md<CR>
+nnoremap <Leader>eD :Files $HOME/.diary/<CR>
+nnoremap <Leader>em :tab drop $HOME/.diary/<C-R>=strftime('%Y-%m-%d', localtime() + 86400)<CR>.md<CR>
+nnoremap <Leader>ey :tab drop $HOME/.diary/<C-R>=strftime('%Y-%m-%d', localtime() - 86400)<CR>.md<CR>
 
 nnoremap <silent> <Leader>fb :Buffers<CR>
 nnoremap <silent> <Leader>fk :Bw<CR>
