@@ -9,24 +9,19 @@ function lslt() {
   fi
 }
 
-# proot(skip = 0)
+# groot(skip = 0)
 #
 # Go up until .git directory found.
 # @param skip skip this number of .git and continue go up
-function proot() {
-  local -i skip=
-  [ -n "$1" ] && skip="$1"
-  local dir=`pwd`
-  dir=${dir%/}
-
-  until [ -z "$dir" ] || [ "$skip" -le 0 -a -d "$dir/.git" ]; do
-    if [ -d "$dir/.git" ]; then
-      let skip=skip-1
-    fi
-    dir=${dir%/*}
+function groot() {
+  local -i skip="${1:-0}"
+  local cdup
+  cdup="$(git rev-parse --show-cdup)"
+  while (( skip > 0 )); do
+    cdup="$cdup/../$(git -C "$cdup/.." rev-parse --show-cdup)"
+    let skip=skip-1
   done
-
-  cd "$dir/"
+  cd "$cdup"
 }
 
 # vman
