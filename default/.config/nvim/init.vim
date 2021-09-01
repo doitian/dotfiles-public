@@ -4,11 +4,13 @@ let &packpath=&runtimepath
 
 function! LoadNvimPlugs()
   Plug 'hrsh7th/nvim-compe'
+  Plug 'mfussenegger/nvim-dap'
   Plug 'neovim/nvim-lspconfig'
   Plug 'nvim-lua/plenary.nvim'
   Plug 'nvim-lua/popup.nvim'
   Plug 'nvim-telescope/telescope.nvim'
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+  Plug 'simrat39/rust-tools.nvim'
 endfunction
 
 augroup nvim_init_au
@@ -18,7 +20,7 @@ augroup nvim_init_au
         \ highlight LspDiagnosticsDefaultError guifg=Red ctermfg=DarkRed |
         \ highlight LspDiagnosticsDefaultWarning guifg=Orange ctermfg=LightMagenta |
         \ highlight LspDiagnosticsDefaultInformation guifg=LightBlue ctermfg=LightBlue |
-        \ highlight LspDiagnosticsDefaultHint guifg=LightGrey ctermfg=LightGrey
+        \ highlight LspDiagnosticsDefaultHint guifg=LightGrey ctermfg=Grey
 augroup END
 
 source $HOME/.vimrc
@@ -121,7 +123,7 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] =
 local actions = require('telescope.actions')
 -- Global remapping
 ------------------------------
-require('telescope').setup{
+require('telescope').setup {
   defaults = {
     mappings = {
       i = {
@@ -143,6 +145,8 @@ require'nvim-treesitter.configs'.setup {
     enable = true,
   }
 }
+
+require('rust-tools').setup({})
 EOF
 
 nnoremap <silent> <Leader><Space> <cmd>Telescope find_files<CR>

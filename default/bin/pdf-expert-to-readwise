@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
+
+import csv
+import sys
+import argparse
+import re
+from itertools import zip_longest
+
+
+def grouper(iterable, n):
+    "Collect data into fixed-length chunks or blocks"
+    args = [iter(iterable)] * n
+    return zip_longest(*args)
+
+
+def consume_highlight(csv_writer, title, author, highlight):
+    if highlight is not None:
+        page, content = highlight
+        csv_writer.writerow([content, title, author, '', page])
+
+    return None
+
+
+parser = argparse.ArgumentParser(description='Kindle Clippings Cli')
+parser.add_argument('-o', '--output', help='output file', default='-')
+parser.add_argument('input', nargs='?', help='input file')
+
+args = parser.parse_args()
+if args.input == '-':
+    input_file = sys.stdin
+else:
+    input_file = open(args.input)
+
+if args.output == '-':
+    output_file = sys.stdout
+else:
+    output_file = open(args.output, 'w')
+
+
+SEPARATOR_RE = re.compile(r'^ \*([^\*]+) \[page (\d+)\]:\* ', re.M)
+
+blocks = SEPARATOR_RE.split(input_file.read())
+title = blocks[0][len('# Annotation Summary of '):].rstrip(
+    '.').rsplit('.', maxsplit=1)[0]
+title, author = title.rsplit(' - ', maxsplit=1)
+
+w = csv.writer(output_file, delimiter=',', quotechar='"')
+w.writerow(['Highlight', 'Title', 'Author', 'Note', 'Location'])
+
+prev_highlight = None
+for kind, page, content in grouper(blocks[1:], 3):
+    content = content.strip()
+    if kind == 'Highlight':
+        consume_highlight(w, title, author, prev_highlight)
+        prev_highlight = [page, content]
+    elif kind == 'and Note':
+        if prev_highlight is None:
+            raise AssertionError('Note must follow Highlight')
+        highlight_page, highlight_content = prev_highlight
+        prev_highlight = None
+        w.writerow([highlight_content, title, author, content, highlight_page])
+    else:
+        raise AssertionError(f'Unknown kind {kind}')
+
+
+consume_highlight(w, title, author, prev_highlight)
