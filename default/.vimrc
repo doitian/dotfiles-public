@@ -19,7 +19,7 @@ Plug 'NLKNguyen/papercolor-theme'
 
 Plug 'dyng/ctrlsf.vim', { 'on': 'CtrlSF' }
 Plug 'editorconfig/editorconfig-vim'
-Plug 'godlygeek/tabular', { 'on': 'Tabularize' }
+Plug 'godlygeek/tabular', { 'on': 'Tabularize', 'for': ['markdown'] }
 Plug 'janko-m/vim-test', { 'on': ['TestNearest', 'TestFile', 'TestSuite', 'TestLast', 'TestVisit'] }
 Plug 'junegunn/goyo.vim', { 'on': 'Goyo' }
 Plug 'junegunn/limelight.vim', { 'on': 'Limelight' }
