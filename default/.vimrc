@@ -4,7 +4,7 @@ set encoding=utf-8
 let loaded_matchparen = 1
 let &background = $TERM_BACKGROUND != '' ? $TERM_BACKGROUND : 'light'
 if $SSH_HOME != '' | let $HOME = $SSH_HOME | endif
-if has("win32") | language en | set ff=unix | endif
+if has('win32') | language en | set ff=unix | endif
 if &term == 'win32' | set t_Co=256 | endif
 
 " Plug {{{1
@@ -57,7 +57,7 @@ if has('python3')
   Plug 'SirVer/ultisnips'
 endif
 
-if has("nvim")
+if has('nvim')
   call LoadNvimPlugs()
   delfunction LoadNvimPlugs
 endif
@@ -83,12 +83,12 @@ let g:netrw_banner = 0
 let g:netrw_liststyle = 3
 let g:netrw_browse_split = 4 " open in prior window
 let g:netrw_altv = 1 " split to the right
-let g:cargo_makeprg_params = "check --all --all-targets"
+let g:cargo_makeprg_params = 'check --all --all-targets'
 let g:vim_markdown_frontmatter = 1
 let g:vim_markdown_math = 1
 let g:vim_markdown_strikethrough = 1
 let g:UltiSnipsEditSplit = 'tabdo'
-let g:UltiSnipsListSnippets = "<c-f>"
+let g:UltiSnipsListSnippets = '<c-f>'
 let g:UltiSnipsSnippetDirectories = [ $HOME.'/.vim/UltiSnips' ]
 
 " Functions & Commands {{{1
@@ -102,7 +102,7 @@ function! Tabline()
     let bufname = fnamemodify(bufname(bufnr), ':t')
     let rename = gettabvar(tab, 'tabline_rename')
     let title = rename != '' ? substitute(rename, '\C%f', bufname, 'g') : (bufname != '' ? bufname : 'No Name')
-    let bufmodified = getbufvar(bufnr, "&mod")
+    let bufmodified = getbufvar(bufnr, '&mod')
 
     let s .= '%' . tab . 'T'
     let s .= (tab == tabpagenr() ? '%#TabLineSel#' : '%#TabLine#')
@@ -125,10 +125,10 @@ function! HasPaste()
 endfunction
 
 function! StatusLineFileName()
-  if &filetype != "netrw"
-    return &buftype != "nofile" ? pathshorten(expand('%:~:.')) : expand("%")
+  if &filetype != 'netrw'
+    return &buftype != 'nofile' ? pathshorten(expand('%:~:.')) : expand('%')
   elseif b:netrw_curdir == getcwd()
-    return "./"
+    return './'
   else
     return pathshorten(fnamemodify(b:netrw_curdir, ':~:.')) . '/'
   endif
@@ -145,7 +145,7 @@ function! StatusLineFileFormat()
 endfunction
 
 function! s:QFixToggle()
-  if &filetype == "qf"
+  if &filetype == 'qf'
     cclose
   else
     copen 10
@@ -161,36 +161,36 @@ function! MyFoldText()
 
   " expand tabs into spaces
   let onetab = strpart('          ', 0, &tabstop)
-  let line = substitute(line, '\t', onetab, 'g')
+  let line = substitute(line, "\t", onetab, 'g')
 
   let line = strpart(line, 0, windowwidth - 2 -len(foldedlinecount))
   let fillcharcount = windowwidth - len(line) - len(foldedlinecount) - 4
-  return line . ' …' . repeat(" ",fillcharcount) . foldedlinecount . ' '
+  return line . ' …' . repeat(' ',fillcharcount) . foldedlinecount . ' '
 endfunction
 
-let s:DisturbingFiletypes = { "help": 1, "netrw": 1, "vim-": 1,
-      \ "godoc": 1, "git": 1, "man": 1 }
+let s:DisturbingFiletypes = { 'help': 1, 'netrw': 1, 'vim-': 1,
+      \ 'godoc': 1, 'git': 1, 'man': 1 }
 
 function! s:CloseDisturbingWin()
-  if ((&filetype == "" && &diff != 1) || has_key(s:DisturbingFiletypes, &filetype)) && !&modified
+  if ((&filetype == '' && &diff != 1) || has_key(s:DisturbingFiletypes, &filetype)) && !&modified
     let l:currentWindow = winnr()
     if s:currentWindow > l:currentWindow
       let s:currentWindow = s:currentWindow - 1
     endif
-    if winnr("$") == 1 | enew | else | close | endif
+    if winnr('$') == 1 | enew | else | close | endif
   endif
 endfunction
 
 function! s:CloseReadonlyWin()
   if &readonly
-    if winnr("$") == 1 | enew | else | close | endif
+    if winnr('$') == 1 | enew | else | close | endif
   endif
 endfunction
 
 function! CurDir()
-  if &filetype != "netrw"
-    let l:dir = expand("%:h")
-    if l:dir != ""
+  if &filetype != 'netrw'
+    let l:dir = expand('%:h')
+    if l:dir != ''
       return l:dir
     endif
     return getcwd()
@@ -213,52 +213,89 @@ function! s:PushMark(is_global)
   call setpos("'" . nr2char(l:curr), getpos("."))
 endfunction
 
-if !exists("g:bookmark_line_insert_newline")
+if !exists('g:bookmark_line_insert_newline')
   let g:bookmark_line_insert_newline = 0
-  let g:bookmark_line_prefix = ""
+  let g:bookmark_line_prefix = ''
 endif
 function! s:BookmarkLine(message, copy)
-  let l:line = g:bookmark_line_prefix . expand("%") . "|" . line(".") . " col " . col(".") . "| "
-  if a:message == ""
-    let l:line = l:line . getline(".")
+  let l:line = g:bookmark_line_prefix . expand('%') . '|' . line('.') . ' col ' . col('.') . '| '
+  if a:message == ''
+    let l:line = l:line . getline('.')
   else
     let l:line = l:line . a:message
   endif
   if g:bookmark_line_insert_newline
-    let l:list = ["", l:line]
+    let l:list = ['', l:line]
   else
     let l:list = [l:line]
   endif
-  call writefile(l:list, "bookmarks.qf", "a")
+  call writefile(l:list, 'bookmarks.qf', 'a')
   if a:copy
     let @+ = join(l:list)
   endif
 endfunction
 
-if !exists("g:tmux_send_target")
-  let g:tmux_send_target = ".+1"
-endif
-function! s:TmuxSend(type)
-  let l:sel_save = &selection
-  let l:reg_save = @@
-  let &selection = "inclusive"
-
-  if a:type == 'line'
-    silent normal! '[V']y
-  elseif a:type == 'char'
-    silent normal! `[v`]y
-  else
-    silent normal! gvy
+function Opfunc(type = '') abort
+  if type(a:type) == v:t_func
+    set opfunc=Opfunc
+    let g:OpfuncDo = a:type
+    return 'g@'
   endif
 
-  let l:tt_send = "tt -t " . shellescape(g:tmux_send_target) . " "
-  let l:lines = split(@@, '\n')
-  for l:line in l:lines
+  let sel_save = &selection
+  let reg_save = getreginfo('"')
+  let cb_save = &clipboard
+  let visual_marks_save = [getpos("'<"), getpos("'>")]
+
+  try
+    set clipboard= selection=inclusive
+    let commands = #{line: "'[V']y", char: "`[v`]y", block: "`[\<c-v>`]y"}
+    silent exe 'noautocmd keepjumps normal! ' .. get(commands, a:type, 'gvy')
+
+    call g:OpfuncDo()
+  finally
+    call setreg('"', reg_save)
+    call setpos("'<", visual_marks_save[0])
+    call setpos("'>", visual_marks_save[1])
+    let &clipboard = cb_save
+    let &selection = sel_save
+  endtry
+endfunction
+
+function! TmuxSend(lines = @")
+  if !exists('g:tmux_send_target')
+    let g:tmux_send_target = trim(system('tt -h -p'))
+  endif
+  let l:tt_send = 'tt -t ' . shellescape(trim(g:tmux_send_target)) . ' '
+  for l:line in split(a:lines, "\n")
     call system(l:tt_send . shellescape(l:line))
   endfor
+endfunction
 
-  let @@ = l:reg_save
-  let &selection = l:sel_save
+function! s:Preview(bufname, filetype, lines)
+  exec 'silent! pedit! +setlocal\ ' .
+        \ 'filetype=' .. a:filetype .. '\ ' .
+        \ 'buftype=nofile\ bh=wipe\ noswapfile ' .
+        \ fnameescape(a:bufname)
+
+  let l:nr = winnr()
+  silent! wincmd P
+  if &previewwindow
+    %delete | call setline(1, a:lines)
+    exec l:nr .. "wincmd w"
+  endif
+endfunction
+
+function! System(lines = @")
+  let l:list = split(a:lines, "\n")
+  let l:bufname = '> ' .. l:list[-1]
+  let l:preview = l:list + ['', 'cat << "OUTPUT"'] + systemlist(a:lines) + ['OUTPUT']
+  call s:Preview(l:bufname, 'sh', l:preview)
+endfunction
+
+function! PipeOut(lines = @")
+  let l:shellcmd = input('> ', '', 'shellcmd')
+  call System('echo ' .. shellescape(a:lines) .. " | \\\n" .. l:shellcmd)
 endfunction
 
 function! SearchAround(start_tag, end_tag, ...)
@@ -304,7 +341,7 @@ function! s:CopyAsWikiLink()
   if l:basename =~ '\.md$'
     let l:basename = l:basename[:-4]
   endif
-  let @@ = printf('[[%s]]', l:basename)
+  let @" = printf('[[%s]]', l:basename)
 endfunction
 
 function! s:Bufs()
@@ -331,8 +368,8 @@ function! s:Italic(enable)
   else
     hi Comment cterm=none gui=none
     hi Folded cterm=none gui=none
-    let &t_ZH = ""
-    let &t_ZR = ""
+    let &t_ZH = ''
+    let &t_ZR = ''
   endif
 endfunction
 
@@ -349,11 +386,11 @@ command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
 command! Close :pclose | :cclose | :lclose |
       \ let s:currentWindow = winnr() |
       \ :windo call s:CloseDisturbingWin() |
-      \ exe s:currentWindow . "wincmd w"
+      \ exe s:currentWindow . 'wincmd w'
 command! Diffoff :diffoff! | :windo call s:CloseReadonlyWin() | :Close
 command! Reload :source $HOME/.vimrc | :filetype detect | :nohl
 command! -bang Clear :silent! %bw<bang> | :silent! argd * | :nohl
-command! -nargs=* Diff2qf :cexpr system("diff2qf", system("git diff -U0 " . <q-args>))
+command! -nargs=* Diff2qf :cexpr system('diff2qf', system('git diff -U0 ' . <q-args>))
 
 command! -bang Fcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': 'cd'}, <bang>0))
 command! -bang Flcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': 'lcd'}, <bang>0))
@@ -369,10 +406,13 @@ command! Bw call fzf#run(fzf#wrap({
   \ 'options': '--multi --reverse --bind ctrl-a:select-all+accept'
 \ }))
 
+command! -nargs=* -complete=shellcmd TmuxSend call TmuxSend(<q-args>)
+command! -nargs=* -complete=shellcmd System call System(<q-args>)
+
 if has('win32') || has('ios')
   command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile | silent file __viper__ | nnoremap <buffer> <CR> ggvGg_"+y:%d <lt>Bar> redraw!<lt>CR>
 else
-  command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile | silent file __viper__ | nnoremap <buffer> <CR> :exec "w !ctrlc" <lt>Bar> %d <lt>Bar> redraw!<lt>CR>
+  command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile | silent file __viper__ | nnoremap <buffer> <CR> :exec 'w !ctrlc' <lt>Bar> %d <lt>Bar> redraw!<lt>CR>
 end
 
 " Config {{{1
@@ -426,7 +466,7 @@ set wildmenu
 set wildmode=list:longest,full
 set winwidth=78
 
-if has("cscope")
+if has('cscope')
   set cscopequickfix=s-,c-,d-,i-,t-,e-
   set cscopequickfix+=a-
 endif
@@ -442,7 +482,7 @@ endif
 if &term != 'win32'
   set statusline=%<%{StatusLineFileName()}\ %h%m%r%{HasPaste()}%=%{StatusLineFileFormat()}\ \#%n\ L%l:%c\ %P
 endif
-if has("nvim")
+if has('nvim')
   set undodir=$HOME/.vim/files/nvim-undo//
 else
   set undodir=$HOME/.vim/files/undo//
@@ -455,10 +495,10 @@ runtime! macros/matchit.vim
 
 " Keymap {{{1
 " leader
-let mapleader = " "
-let g:mapleader = " "
-let maplocalleader = "\\"
-let g:maplocalleader = "\\"
+let mapleader = ' '
+let g:mapleader = ' '
+let maplocalleader = '\\'
+let g:maplocalleader = '\\'
 set pastetoggle=<F2>
 set wildcharm=<C-Z>
 
@@ -486,13 +526,13 @@ nnoremap <silent> <Leader>cc :let @+ = @"<CR>
 nnoremap <silent> <Leader>cv :let @" = @+<CR>
 
 nnoremap <silent> <Leader>d "_d
-vnoremap <silent> <Leader>d "_d
+xnoremap <silent> <Leader>d "_d
 
 nnoremap <Leader>eh :e <C-r>=CurDir().'/'<CR>
 nnoremap <silent> <Leader>en :enew<CR>
 nnoremap <silent> <Leader>et :tabnew<CR>
-nnoremap <Leader>ee :e <C-r>=expand("%:r")<CR><C-Z>
-nnoremap <Leader>eb :sview `=expand($HOME."/.vim/files/backup/") . substitute(expand("%:p"), "[\\\\/]", "%", "g") . "~"`<CR>
+nnoremap <Leader>ee :e <C-r>=expand('%:r')<CR><C-Z>
+nnoremap <Leader>eb :sview `=expand($HOME.'/.vim/files/backup/') . substitute(expand('%:p'), '[\\\\/]', '%', 'g') . '-vimbackup'`<CR>
 nnoremap <silent> <Leader>ev :tab drop $HOME/.vimrc<CR>
 nnoremap <Leader>ew :e<Space>**/
 nnoremap <Leader>e<Space> :e<Space><C-Z>
@@ -520,8 +560,8 @@ nnoremap <silent> <Leader>f? :Helptags<CR>
 nnoremap <silent> <Leader>fz :FZF<CR>
 
 nnoremap <Leader>g<Space> :grep<Space>
-nnoremap <silent> <Leader>gw :silent grep "\b<cword>\b"<Bar>copen 10<CR>
-nnoremap <silent> <Leader>gW :silent grep "\b<cWORD>\b"<Bar>copen 10<CR>
+nnoremap <silent> <Leader>gw :silent grep '\b<cword>\b'<Bar>copen 10<CR>
+nnoremap <silent> <Leader>gW :silent grep '\b<cWORD>\b'<Bar>copen 10<CR>
 
 nnoremap <silent> <Leader>h :Files <C-r>=CurDir()<CR><CR>
 
@@ -560,12 +600,12 @@ nnoremap <silent> <Leader>q :call <SID>QFixToggle()<CR>
 " Reveal
 nnoremap <silent> <Leader>ri :call <SID>FollowWikiLink()<CR>
 nnoremap <silent> <Leader>rI :call <SID>CopyAsWikiLink()<CR>
-nnoremap <silent> <Leader>rt :exe "silent !open -a 'Terminal.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
-nnoremap <silent> <Leader>rf :exe "silent !open -R " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
-nnoremap <silent> <Leader>rm :exe "silent !open -a 'Marked 2.app' " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
-nnoremap <silent> <Leader>rM :exe "silent !open -a 'Marked 2.app' " . shellescape(CurDir()) . " &> /dev/null" \| :redraw!<CR>
-nnoremap <silent> <Leader>rr :exe "silent !open " . shellescape(expand('%')) . " &> /dev/null" \| :redraw!<CR>
-nnoremap <silent> <Leader>ro :exe "silent !open " . shellescape(expand('<cfile>')) . " &> /dev/null" \| :redraw!<CR>
+nnoremap <silent> <Leader>rt :exe 'silent !open -a "Terminal.app" ' . shellescape(CurDir()) . ' &> /dev/null' \| :redraw!<CR>
+nnoremap <silent> <Leader>rf :exe 'silent !open -R ' . shellescape(expand('%')) . ' &> /dev/null' \| :redraw!<CR>
+nnoremap <silent> <Leader>rm :exe 'silent !open -a "Marked 2.app" ' . shellescape(expand('%')) . ' &> /dev/null' \| :redraw!<CR>
+nnoremap <silent> <Leader>rM :exe 'silent !open -a "Marked 2.app" ' . shellescape(CurDir()) . ' &> /dev/null' \| :redraw!<CR>
+nnoremap <silent> <Leader>rr :exe 'silent !open ' . shellescape(expand('%')) . ' &> /dev/null' \| :redraw!<CR>
+nnoremap <silent> <Leader>ro :exe 'silent !open ' . shellescape(expand('<cfile>')) . ' &> /dev/null' \| :redraw!<CR>
 nnoremap <silent> <Leader>R :checktime<CR>
 
 " Strip all trailing whitespace from a file
@@ -588,13 +628,13 @@ nnoremap <Leader>v `[v`]
 
 nnoremap <Leader>w <C-w>
 
-nnoremap <silent> <Leader>x :<C-u>set opfunc=<SID>TmuxSend<CR>g@
-nnoremap <silent> <Leader>xx :<C-u>set opfunc=<SID>TmuxSend<Bar>exe 'norm! 'v:count1.'g@_'<CR>
-vnoremap <silent> <Leader>x :<C-u>call <SID>TmuxSend(visualmode())<CR>
+nnoremap <expr> <Leader>x Opfunc(funcref('TmuxSend'))
+xnoremap <expr> <Leader>x Opfunc(funcref('TmuxSend'))
+nnoremap <expr> <Leader>xx Opfunc(funcref('TmuxSend')) .. '_'
 
 nnoremap <Leader>y "+y
 nnoremap <Leader>Y "+yy
-vnoremap <Leader>y "+y
+xnoremap <Leader>y "+y
 
 nnoremap <silent> <leader>z "=<SID>ZoteroCite()<CR>p
 inoremap <C-r><C-z> <C-r>=<SID>ZoteroCite()<CR>
@@ -605,8 +645,17 @@ nnoremap <Leader>/w /\<\><Left><Left>
 nnoremap <silent> <Leader>] :tabclose<CR>
 nnoremap <silent> <Leader>[ :Diffoff<CR>
 
-cnoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
-inoremap <C-r><C-d> <C-r>=CurDir()."/"<CR>
+nnoremap <Leader>! :System<Space>
+nnoremap <expr> <Leader>$ Opfunc(funcref('System'))
+xnoremap <expr> <Leader>$ Opfunc(funcref('System'))
+nnoremap <expr> <Leader>$$ Opfunc(funcref('System')) .. '_'
+
+nnoremap <expr> <Leader>> Opfunc(funcref('PipeOut'))
+xnoremap <expr> <Leader>> Opfunc(funcref('PipeOut'))
+nnoremap <expr> <Leader>>> Opfunc(funcref('PipeOut')) .. '_'
+
+cnoremap <C-r><C-d> <C-r>=CurDir().'/'<CR>
+inoremap <C-r><C-d> <C-r>=CurDir().'/'<CR>
 
 inoremap <expr> <C-r><C-h> fzf#vim#complete#path('cd ' . shellescape(expand('%:p:h')) . ' && fd -t f')
 inoremap <expr> <C-r><C-f> fzf#vim#complete#path('cd ' . shellescape(getcwd()) . ' && fd -t f')
@@ -614,7 +663,7 @@ inoremap <expr> <C-r><C-i> fzf#vim#complete#path('cd ' . shellescape(getcwd()) .
 
 " OS specific settings {{{1
 if has('win32')
-  let &shell = executable("pwsh.exe") ? "pwsh.exe" : "powershell.exe"
+  let &shell = executable('pwsh.exe') ? 'pwsh.exe' : 'powershell.exe'
   set shellcmdflag=-NoLogo\ -NoProfile\ -NonInteractive\ -Command
   set shellquote=\"
   set shellxquote=
@@ -624,10 +673,10 @@ if has('win32')
 end
 
 if exists('$WSLENV')
-  let g:netrw_browsex_viewer= "wsl-open"
+  let g:netrw_browsex_viewer= 'wsl-open'
 endif
 
-if has("ios")
+if has('ios')
   set backupcopy=yes
   set noundofile
   let g:ctrlp_root_markers = []
@@ -653,11 +702,11 @@ augroup vimrc_au
   autocmd!
 
   autocmd BufReadPost *
-    \ if line("'\"") > 1 && line("'\"") <= line("$") && &filetype != "gitcommit" |
-    \   exe "normal! g`\"" |
+    \ if line("'\"") > 1 && line("'\"") <= line('$') && &filetype != 'gitcommit' |
+    \   exe 'normal! g`"' |
     \ endif
 
-  autocmd SwapExists * let v:swapchoice = "o"
+  autocmd SwapExists * let v:swapchoice = 'o'
 
   autocmd User ProjectionistActivate call s:ProjectionistActivate()
 
