@@ -60,6 +60,9 @@ for kind, page, content in grouper(blocks[1:], 3):
         highlight_page, highlight_content = prev_highlight
         prev_highlight = None
         w.writerow([highlight_content, title, author, content, highlight_page])
+    elif kind in ['Pens']:
+        # ignore
+        pass
     else:
         raise AssertionError(f'Unknown kind {kind}')
 

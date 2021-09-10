@@ -10,3 +10,5 @@ style = "purple bold italic"
 [status]
 disabled = false
 
+[nodejs]
+symbol = '🤖 '
