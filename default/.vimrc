@@ -29,7 +29,7 @@ Plug 'thinca/vim-visualstar' " * # g* g#
 Plug 'tommcdo/vim-exchange' " cx
 Plug 'tomtom/tcomment_vim' " gc
 Plug 'tpope/vim-abolish' " :A :S
-Plug 'tpope/vim-dispatch', { 'on': ['FocusDispatch', 'Dispatch'] }
+Plug 'tpope/vim-dispatch', { 'on': ['FocusDispatch', 'Dispatch', 'Start'] }
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-projectionist'
