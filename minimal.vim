@@ -56,6 +56,7 @@ set laststatus=2
 set lazyredraw
 set linebreak
 set list
+set report=0
 set scrolloff=2
 set sessionoptions-=options
 set shiftround
@@ -67,8 +68,12 @@ set smartcase
 set smarttab
 set spellfile=$HOME/.vim-spell-en.utf-8.add,.vim-spell-en.utf-8.add
 set spelllang=en_us,cjk
+set splitbelow
+set splitright
+set synmaxcol=200
 set tabpagemax=50
 set title
+set ttyfast
 set undofile
 set undolevels=1000
 set viminfo=!,'100,<2000
@@ -78,6 +83,7 @@ set wildignore=*.swp,*.bak,*.pyc,*.class,*.beam
 set wildmenu
 set wildmode=list:longest,full
 set winwidth=78
+set wrapscan
 
 if s:has_rg
   set grepformat=%f:%l:%c:%m
