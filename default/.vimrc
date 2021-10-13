@@ -332,7 +332,7 @@ function! s:FollowWikiLink()
       let g:ctrlp_default_input = 0
     endtry
   else
-    call fzf#vim#files('', {'options':['-1', '-q', l:filename]})
+    call fzf#vim#files('', {'options':['-1', '-e', '-q', substitute(l:filename, ' ', '\\ ', 'g')]})
   endif
 endfunction
 
@@ -719,7 +719,7 @@ augroup vimrc_au
   autocmd CmdwinEnter * map <buffer> <C-w><C-w> <CR>q:dd
 
   autocmd FileType gitcommit,markdown,text setlocal spell
-  autocmd FileType markdown set fo+=ro
+  autocmd FileType markdown set fo+=ro suffixesadd=.md
   autocmd FileType rust setlocal winwidth=99
   autocmd FileType vim setlocal foldmethod=marker
 
