@@ -38,9 +38,10 @@ else:
     output_file = open(args.output, 'w')
 
 
-SEPARATOR_RE = re.compile(r'^ \*([^\*]+) \[page (\d+)\]:\* ', re.M)
+SEPARATOR_RE = re.compile(r'^ \*([^\*]+) \[(?:page )?(\d+)\]:\* ', re.M)
 
 blocks = SEPARATOR_RE.split(input_file.read())
+print(blocks)
 title = blocks[0][len('# Annotation Summary of '):].rstrip(
     '.').rsplit('.', maxsplit=1)[0]
 title, author = title.rsplit(' - ', maxsplit=1)
