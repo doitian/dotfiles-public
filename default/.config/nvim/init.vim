@@ -25,7 +25,7 @@ augroup END
 
 source $HOME/.vimrc
 
-command! Reload :source $HOME/.config/nvim/init.vim | :filetype detect | :nohl
+command! Reload :exe 'source '.stdpath('config').'/init.vim' | :filetype detect | :nohl
 
 set completeopt=menuone,noselect,preview
 
@@ -151,7 +151,7 @@ EOF
 
 nnoremap <silent> <Leader><Space> <cmd>Telescope find_files<CR>
 
-nnoremap <silent> <Leader>eV :tabnew $HOME/.config/nvim/init.vim<CR>
+nnoremap <silent> <Leader>eV :tabnew <C-R>=stdpath('config')<CR>/init.vim<CR>
 
 nnoremap <silent> <Leader>fb <cmd>Telescope buffers<CR>
 nnoremap <silent> <Leader>ff <cmd>Telescope find_files<CR>
