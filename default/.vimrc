@@ -13,6 +13,7 @@ silent! call plug#begin($HOME.'/.vim/plugged')
 " filetypes
 Plug 'cespare/vim-toml'
 Plug 'plasticboy/vim-markdown'
+Plug 'nathangrigg/vim-beancount'
 
 " other
 Plug 'NLKNguyen/papercolor-theme'
