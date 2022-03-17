@@ -722,7 +722,7 @@ augroup vimrc_au
   autocmd FileType gitcommit,markdown,text setlocal spell
   autocmd FileType markdown set fo+=ro suffixesadd=.md
   autocmd FileType rust setlocal winwidth=99
-  autocmd FileType vim setlocal foldmethod=marker
+  autocmd FileType vim,beancount setlocal foldmethod=marker
 
   autocmd BufNewFile,BufRead *.bats set ft=sh
   autocmd BufNewFile,BufRead *.tid set ft=markdown
