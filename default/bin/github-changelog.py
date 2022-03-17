@@ -122,10 +122,23 @@ for line in logs.splitlines():
         change = Change(scope, module, title, [])
         Change = namedtuple('Change', ['scope', 'module', 'title', 'text'])
 
-        if scope not in changes:
-            changes[scope] = []
-
         body = pr['body'] or ""
+        if '```release-note' in body:
+            # ```release-note
+            # None: Exclude this PR from the release note.
+            # Title Only: Include only the PR title in the release note.
+            # Note: Add a note under the PR title in the release note.
+            # ```
+            body = body.split('```release-note')[1].split('```')[0].strip()
+            if body.startswith('None: '):
+                continue
+            elif body.startswith('Title Only: '):
+                body = ''
+            elif body.startswith('Note: '):
+                body = body[6:]
+                if body.strip() == 'Add a note under the PR title in the release note.':
+                    body = ''
+
         labels = [label['name'] for label in pr['labels']]
         is_breaking = "breaking change" in labels or any(
             l.startswith('b:') for l in labels)
@@ -141,6 +154,9 @@ for line in logs.splitlines():
                 body = breaking_banner
             elif breaking_banner != "":
                 body = breaking_banner + "\n\n" + body
+
+        if scope not in changes:
+            changes[scope] = []
 
         changes[scope].append(Change(scope, module, title, body))
 
