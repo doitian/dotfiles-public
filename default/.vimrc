@@ -236,7 +236,7 @@ function! s:BookmarkLine(message, copy)
   endif
 endfunction
 
-function Opfunc(type = '') abort
+function! Opfunc(type = '') abort
   if type(a:type) == v:t_func
     set opfunc=Opfunc
     let g:OpfuncDo = a:type
