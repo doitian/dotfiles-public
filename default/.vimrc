@@ -486,9 +486,7 @@ if has('multi_byte') && &encoding ==# 'utf-8'
 else
   let &listchars = 'tab:> ,trail:.,extends:>,precedes:<,nbsp:.'
 endif
-if &term != 'win32'
-  set statusline=%<%{StatusLineFileName()}\ %h%m%r%{HasPaste()}%=%{StatusLineFileFormat()}\ \#%n\ L%l:%c\ %P
-endif
+set statusline=%<%{StatusLineFileName()}\ %h%m%r%{HasPaste()}%=%{StatusLineFileFormat()}\ \#%n\ L%l:%c\ %P
 if has('nvim')
   set undodir=$HOME/.vim/files/nvim-undo//
 else
