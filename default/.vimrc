@@ -673,8 +673,7 @@ if has('win32')
   set shellcmdflag=-NoLogo\ -NoProfile\ -NonInteractive\ -Command
   set shellquote=\"
   set shellxquote=
-  set shellslash
-  let g:fzf_preview_window = ''
+  " set shellslash
   call setenv('FZF_DEFAULT_OPTS', '--color 16')
 end
 
