@@ -35,6 +35,7 @@ Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround' " ys s
 Plug 'tpope/vim-unimpaired' " various [, ] mappings
 Plug 'wellle/targets.vim' " Text objects
