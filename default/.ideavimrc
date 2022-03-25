@@ -2,12 +2,16 @@ set surround
 
 let mapleader = " "
 let g:mapleader = " "
-nnoremap <Leader>w :action ReformatCode<CR>
-nnoremap <Leader><Space> :action SearchEverywhere<CR>
-nnoremap g<CR> :action Run<CR>
-nnoremap t<CR> :action RunClass<CR>
-inoremap <C-p> <C-o>:action HippieCompletion<CR>
-inoremap <C-n> <C-o>:action HippieBackwardCompletion<CR>
-inoremap <C-x><C-o> <C-o>:action CodeCompletion<CR>
-inoremap <C-x><C-u> <C-o>:action SmartTypeCompletion<CR>
-vnoremap gc :action CommentByLineComment<CR>
+imap <C-p> <Action>(HippieCompletion)
+imap <C-n> <Action>(HippieBackwardCompletion)
+imap <C-x><C-o> <Action>(CodeCompletion)
+imap <C-x><C-u> <Action>(SmartTypeCompletion)
+
+map gc <Action>(CommentByLineComment)
+
+nmap g<CR> <Action>(Run)
+nmap t<CR> <Action>(RunClass)
+
+nmap <Leader>a <Action>(CIDR.Lang.SwitchHeaderSource)
+map <Leader>w <Action(ReformatCode)
+nmap <Leader><Space> <Action>(SearchEverywhere)
