@@ -38,7 +38,6 @@ jobs:
           cp default/.vimrc vimfiles/vimrc
 
           mkdir -p vimfiles/vim
-          mv default/.vim/projections vimfiles/vim
           mv default/.vim/scripts vimfiles/vim
           mv ~/.vim/autoload vimfiles/vim
           rsync -avu --delete --progress -h --copy-links --exclude '.git' ~/.vim/plugged vimfiles/vim/
