@@ -669,11 +669,6 @@ inoremap <expr> <C-r><C-i> fzf#vim#complete#path('cd ' . shellescape(getcwd()) .
 
 " OS specific settings {{{1
 if has('win32')
-  let &shell = executable('pwsh.exe') ? 'pwsh.exe' : 'powershell.exe'
-  set shellcmdflag=-NoLogo\ -NoProfile\ -NonInteractive\ -Command
-  set shellquote=\"
-  set shellxquote=
-  " set shellslash
   call setenv('FZF_DEFAULT_OPTS', '--color 16')
 end
 
