@@ -75,6 +75,8 @@ silent! colorscheme PaperColor
 
 " Plugins Options {{{1
 let test#strategy = 'dispatch'
+
+let g:cargo_makeprg_params = 'check --all --all-targets'
 let g:ctrlsf_default_root = 'cwd'
 let g:dispatch_compilers = {
       \ 'bundle exec': ''}
@@ -85,13 +87,13 @@ let g:netrw_banner = 0
 let g:netrw_liststyle = 3
 let g:netrw_browse_split = 4 " open in prior window
 let g:netrw_altv = 1 " split to the right
-let g:cargo_makeprg_params = 'check --all --all-targets'
-let g:vim_markdown_frontmatter = 1
-let g:vim_markdown_math = 1
-let g:vim_markdown_strikethrough = 1
+let g:shfmt_opt="-ci"
 let g:UltiSnipsEditSplit = 'tabdo'
 let g:UltiSnipsListSnippets = '<c-f>'
 let g:UltiSnipsSnippetDirectories = [ $HOME.'/.vim/UltiSnips' ]
+let g:vim_markdown_frontmatter = 1
+let g:vim_markdown_math = 1
+let g:vim_markdown_strikethrough = 1
 
 " Functions & Commands {{{1
 function! Tabline()
