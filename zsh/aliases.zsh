@@ -83,9 +83,6 @@ fi
 if command -v prettyping &> /dev/null; then
   alias ping=prettyping
 fi
-if command -v nnn &> /dev/null; then
-  alias nnd='eval "$(cat ~/.config/nnn/.lastd 2>/dev/null && rm -f ~/.config/nnn/.lastd)"'
-fi
 
 alias ssh="TERM=xterm-256color ssh"
 
