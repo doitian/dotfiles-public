@@ -27,6 +27,7 @@ lmake.mk
 *.qf
 .git
 .ignore
+.fdignore
 .tool-versions
 tempCodeRunnerFile
 *.code-workspace
