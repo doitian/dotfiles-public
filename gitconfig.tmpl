@@ -72,6 +72,9 @@
   rs = restore --staged
   fadd = "!f() { git diff --name-only | fzf -m --print0 | xargs -0 git add \"$@\"; }; f"
   frs = "!f() { git diff --name-only --cached | fzf -m --print0 | xargs -0 git restore --staged \"$@\"; }; f"
+  fdi = "!f() { git diff --name-only | fzf -m --print0 | xargs -0 git diff -p --stat; }; f"
+  fdc = "!f() { git diff --name-only --cached | fzf -m --print0 | xargs -0 git diff --cached -p --stat; }; f"
+  fda = "!f() { git diff --name-only HEAD | fzf -m --print0 | xargs -0 git diff -p --stat HEAD; }; f"
 
 [core]
   excludesfile = "__HOME__/.ignore"
