@@ -70,11 +70,11 @@
   config-current-remote = config user.currentRemote
 
   rs = restore --staged
-  fadd = "!f() { git diff --name-only | fzf -m --print0 --preview 'git diff --color -- {}' | xargs -0 git add \"$@\"; }; f"
-  frs = "!f() { git diff --name-only --cached | fzf -m --print0 --preview 'git diff --cached -- {}' | xargs -0 git restore --staged \"$@\"; }; f"
-  fdi = "!f() { git diff --name-only | fzf -m --print0 --preview 'git diff -- {}' | xargs -0 git diff -p --stat; }; f"
-  fdc = "!f() { git diff --name-only --cached | fzf -m --print0 --preview 'git diff --cached -- {}' | xargs -0 git diff --cached -p --stat; }; f"
-  fda = "!f() { git diff --name-only HEAD | fzf -m --print0 --preview 'git diff HEAD -- {}' | xargs -0 git diff -p --stat HEAD; }; f"
+  fa = "!f() { git diff --name-only | fzf -m --print0 --preview 'git diff --color -- {}' | xargs -0 git add \"$@\"; }; f"
+  frs = "!f() { git diff --name-only --cached | fzf -m --print0 --preview 'git diff --color --cached -- {}' | xargs -0 git restore --staged \"$@\"; }; f"
+  fdi = "!f() { git diff --name-only | fzf -m --print0 --preview 'git diff --color -- {}' | xargs -0 git diff -p --stat; }; f"
+  fdc = "!f() { git diff --name-only --cached | fzf -m --print0 --preview 'git diff --color --cached -- {}' | xargs -0 git diff --cached -p --stat; }; f"
+  fda = "!f() { git diff --name-only HEAD | fzf -m --print0 --preview 'git diff --color HEAD -- {}' | xargs -0 git diff -p --stat HEAD; }; f"
 
 [core]
   excludesfile = "__HOME__/.ignore"
