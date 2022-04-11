@@ -33,8 +33,6 @@
   mb = !git merge-base HEAD \"$(git config --get user.reviewBase || echo master)\"
   cpr = "!f() { git current -u; gh pr create \"$@\"; }; f"
 
-  del = "!f() { git reset HEAD \"$@\"; git clean -f -- \"$@\"; git checkout -- \"$@\" 2>/dev/null; }; f"
-
   rb = rebase
   rc = rebase --continue
   ra = rebase --abort
@@ -70,6 +68,10 @@
   me = "!f() { git config user.email __EMAIL__; git config user.signingkey FD7051CE32E62CE7; git config commit.gpgSign true; }; f"
   config-review-base = config user.reviewBase
   config-current-remote = config user.currentRemote
+
+  rs = restore --staged
+  fadd = "!f() { git diff --name-only | fzf -m --print0 | xargs -0 git add \"$@\"; }; f"
+  frs = "!f() { git diff --name-only --cached | fzf -m --print0 | xargs -0 git restore --staged \"$@\"; }; f"
 
 [core]
   excludesfile = "__HOME__/.ignore"
