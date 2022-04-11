@@ -718,6 +718,8 @@ augroup vimrc_au
   autocmd FileType markdown set fo+=ro suffixesadd=.md
   autocmd FileType rust setlocal winwidth=99
   autocmd FileType vim,beancount setlocal foldmethod=marker
+  " Edit qf: setlocal ma | cgetb
+  autocmd FileType qf setlocal errorformat=%f\|%l\ col\ %c\|%m
 
   autocmd BufNewFile,BufRead *.bats set ft=sh
   autocmd BufNewFile,BufRead *.tid set ft=markdown
