@@ -33,3 +33,4 @@ tempCodeRunnerFile
 *.code-workspace
 *-vimbackup
 desktop.ini
+.hugo_build.lock
