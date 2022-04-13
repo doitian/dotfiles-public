@@ -21,7 +21,12 @@ ensure_diary_file() {
 
     local week_number=$(($(date -j -f '%Y-%m-%d' $date +'%W') + 1))
 
-    echo "# $(date -j -f '%Y-%m-%d' $date +'%a, %b %d, %Y')
+    echo "
+---
+publish: false
+---
+
+# $(date -j -f '%Y-%m-%d' $date +'%a, %b %d, %Y')
 
 #journal
 
