@@ -87,15 +87,6 @@ alias ssh="TERM=xterm-256color ssh"
 
 alias mk=make
 
-function encode64() {
-  echo -n $1 | base64
-}
-function decode64() {
-  echo -n $1 | base64 --decode
-}
-alias e64=encode64
-alias d64=decode64
-
 alias fg=' fg'
 alias gfw='gfw '
 alias sudo='sudo '

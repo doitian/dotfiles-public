@@ -1,5 +1,6 @@
 
 [ -f "$HOME/.fzf.zsh" ] && source "$HOME/.fzf.zsh"
+
 if command -v fd &> /dev/null; then
   _fzf_compgen_path() {
     fd --type f --hidden --follow --exclude ".git" . "$1"

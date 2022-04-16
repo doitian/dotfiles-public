@@ -47,12 +47,6 @@ function vman() {
   fi
 }
 
-# pman
-# Open man page in Preview
-function pman() {
-  man -t "$@" | open -f -a Preview.app
-}
-
 function hs { [ -z "$1" ] && history || (history | grep "$@") }
 
 function nocaps {
@@ -85,6 +79,13 @@ function fomz() {
   if [ -n "$plugin" ]; then
     source "$plugindir/$plugin/$plugin.plugin.zsh"
   fi
+}
+
+function femoji() {
+  if [ "$#emoji" = 0 ]; then
+    source "$HOME/.oh-my-zsh/plugins/emoji/emoji.plugin.zsh"
+  fi
+  printf ":%s: %s\n" "${(kv)emoji[@]}" | fzf "$@"
 }
 
 # Copy from https://github.com/MorganGeek/dotfiles/blob/master/dot_zsh_functions#L165
