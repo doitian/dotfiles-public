@@ -27,12 +27,11 @@ alias gst="git status"
 
 ##################################################
 # File
-alias tree='tree -CFA -I ".git" --dirsfirst'
-
 alias rm="rm -i"
 alias mv="mv -i"
 alias cp="cp -i"
 alias cpv="rsync -poghb --backup-dir=/tmp/rsync -e /dev/null --progress --"
+alias ff="fd --type f"
 
 # fzf & fasd
 if which fasd > /dev/null 2>&1; then

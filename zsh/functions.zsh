@@ -79,6 +79,14 @@ function cbcb() {
   fi
 }
 
+function fomz() {
+  local plugindir="$HOME/.oh-my-zsh/plugins"
+  local plugin="$(fd --type d -d 1 . "$plugindir" -x echo '{/}' | sort | fzf --preview 'f() {bat --color always "$HOME/.oh-my-zsh/plugins/$1/README.md"; }; f {}')"
+  if [ -n "$plugin" ]; then
+    source "$plugindir/$plugin/$plugin.plugin.zsh"
+  fi
+}
+
 # Copy from https://github.com/MorganGeek/dotfiles/blob/master/dot_zsh_functions#L165
 function top_commands() {
   local max_results="${1:-50}"
