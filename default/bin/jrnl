@@ -29,7 +29,10 @@ publish: false
 
 #journal
 
-In week [[$(date -j -f '%Y-%m-%d' $date +'%Y-%m')-W$(printf '%02d\n' $week_number)]]" > "$DIARY_FILE"
+In week [[$(date -j -f '%Y-%m-%d' $date +'%Y-%m')-W$(printf '%02d\n' $week_number)]]
+
+## Journal
+" > "$DIARY_FILE"
   fi
 }
 
