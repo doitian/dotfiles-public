@@ -173,6 +173,6 @@ inoremap <silent><expr> <C-e> compe#close('<C-e>')
 
 imap <silent><expr> <CR>
       \ (pumvisible() ?
-        \ (complete_info()["selected"] == -1 ? "\<C-g>u\<CR>\<Plug>DiscretionaryEnd" : "\<C-y>")
-        \ : "\<CR>\<Plug>DiscretionaryEnd" )
+        \ (complete_info()["selected"] == -1 ? "<C-g>u<CR><Plug>DiscretionaryEnd" : "<C-y>")
+        \ : "<CR><Plug>DiscretionaryEnd" )
 
