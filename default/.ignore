@@ -34,3 +34,4 @@ tempCodeRunnerFile
 *-vimbackup
 desktop.ini
 .hugo_build.lock
+.gitpod.yml
