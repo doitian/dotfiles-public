@@ -10,4 +10,4 @@ shutil.copyfile('vimrc', home / '.vimrc')
 shutil.copytree('vim', dotvim)
 
 for dir in ['backup', 'swap', 'undo']:
-    (dotvim / 'files' / dir).mkdir()
+    (dotvim / 'files' / dir).mkdir(parents=True)
