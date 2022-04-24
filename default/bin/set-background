@@ -1,28 +1,28 @@
 #!/bin/bash
 
 case "${1:-}" in
-  light)
-    echo "export TERM_BACKGROUND=light"
-    echo "export FZF_DEFAULT_OPTS='--color light,fg:#3c3b3a'"
-    echo "export BAT_THEME=Coldark-Cold"
-    echo "unset DELTA_FEATURES"
-    if [ -n "${TMUX:-}" ]; then
-      echo "tmux source ~/.tmux.light.conf"
-    fi
+light)
+  echo "export TERM_BACKGROUND=light"
+  echo "export FZF_DEFAULT_OPTS='--color light,fg:#3c3b3a'"
+  echo "export BAT_THEME=Coldark-Cold"
+  echo "unset DELTA_FEATURES"
+  if [ -n "${TMUX:-}" ]; then
+    echo "tmux source ~/.tmux.light.conf"
+  fi
 
-    echo '# eval "$(set-background light)"'
-    ;;
-  dark)
-    echo "export TERM_BACKGROUND=dark"
-    echo "export DELTA_FEATURES='line-numbers decorations'"
-    echo "unset FZF_DEFAULT_OPTS BAT_THEME"
-    if [ -n "${TMUX:-}" ]; then
-      echo "tmux source ~/.tmux.dark.conf"
-    fi
+  echo '# eval "$(set-background light)"'
+  ;;
+dark)
+  echo "export TERM_BACKGROUND=dark"
+  echo "export DELTA_FEATURES='line-numbers decorations'"
+  echo "unset FZF_DEFAULT_OPTS BAT_THEME"
+  if [ -n "${TMUX:-}" ]; then
+    echo "tmux source ~/.tmux.dark.conf"
+  fi
 
-    echo '# eval "$(set-background dark)"'
-    ;;
-  *)
-    echo 'eval "$(set-background light|dark)"'
-    ;;
+  echo '# eval "$(set-background dark)"'
+  ;;
+*)
+  echo 'eval "$(set-background light|dark)"'
+  ;;
 esac

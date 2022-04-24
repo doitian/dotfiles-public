@@ -32,72 +32,72 @@ function main() {
   local tmux_send_opt_l=-l
   while [ "$#" -gt 0 ]; do
     case "$1" in
-      --help)
-        help
-        exit 0
-        ;;
-      -s)
-        shift
-        tmux_cmd=(env "TMUX=" tmux new-session -d -P)
-        ;;
-      -S)
-        shift
-        tmux_cmd=(env "TMUX=" tmux new-session -d -P -s "$1")
-        shift
-        ;;
-      -n)
-        shift
-        tmux_cmd=(env "TMUX=" tmux new-window -d -P)
-        ;;
-      -N)
-        shift
-        tmux_cmd=(env "TMUX=" tmux new-window -d -P -n "$1")
-        shift
-        ;;
-      -h|-v)
-        tmux_cmd=(env "TMUX=" tmux split-window -d $1 -P)
-        shift
-        ;;
-      -a)
-        shift
-        attach=true
-        ;;
-      -t)
-        shift
-        target="$1"
-        creation_opts=(-t "$1")
-        shift
-        ;;
-      -l)
-        shift
-        target="$([ -f ~/.tt_target ] && cat ~/.tt_target || true)"
-        if [ -n "$target" ]; then
-          creation_opts=(-t "$target")
-        fi
-        ;;
-      -L)
-        tmux_send_opt_l=
-        shift
-        ;;
-      -C)
-        commit=
-        shift
-        ;;
-      -p)
-        print_target=true
-        shift
-        ;;
-      --)
-        shift
-        break
-        ;;
-      -*)
-        help
-        exit 1;
-        ;;
-      *)
-        break
-        ;;
+    --help)
+      help
+      exit 0
+      ;;
+    -s)
+      shift
+      tmux_cmd=(env "TMUX=" tmux new-session -d -P)
+      ;;
+    -S)
+      shift
+      tmux_cmd=(env "TMUX=" tmux new-session -d -P -s "$1")
+      shift
+      ;;
+    -n)
+      shift
+      tmux_cmd=(env "TMUX=" tmux new-window -d -P)
+      ;;
+    -N)
+      shift
+      tmux_cmd=(env "TMUX=" tmux new-window -d -P -n "$1")
+      shift
+      ;;
+    -h | -v)
+      tmux_cmd=(env "TMUX=" tmux split-window -d $1 -P)
+      shift
+      ;;
+    -a)
+      shift
+      attach=true
+      ;;
+    -t)
+      shift
+      target="$1"
+      creation_opts=(-t "$1")
+      shift
+      ;;
+    -l)
+      shift
+      target="$([ -f ~/.tt_target ] && cat ~/.tt_target || true)"
+      if [ -n "$target" ]; then
+        creation_opts=(-t "$target")
+      fi
+      ;;
+    -L)
+      tmux_send_opt_l=
+      shift
+      ;;
+    -C)
+      commit=
+      shift
+      ;;
+    -p)
+      print_target=true
+      shift
+      ;;
+    --)
+      shift
+      break
+      ;;
+    -*)
+      help
+      exit 1
+      ;;
+    *)
+      break
+      ;;
     esac
   done
 
@@ -107,7 +107,7 @@ function main() {
     fi
     target="$("${tmux_cmd[@]}")"
   fi
-  echo "$target" > ~/.tt_target
+  echo "$target" >~/.tt_target
 
   local session="${target%%:*}"
   session="${session#=}"

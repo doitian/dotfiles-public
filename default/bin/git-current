@@ -7,12 +7,12 @@ main() {
 
   for a; do
     case "$a" in
-      (-*)
-        args=("${args[@]}" "$a")
-        ;;
-      (*)
-        remote="$a"
-        ;;
+    -*)
+      args=("${args[@]}" "$a")
+      ;;
+    *)
+      remote="$a"
+      ;;
     esac
   done
 

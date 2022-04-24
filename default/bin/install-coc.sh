@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-set -o nounset    # error when referencing undefined variable
-set -o errexit    # exit when command fails
+set -o nounset # error when referencing undefined variable
+set -o errexit # exit when command fails
 
 # Use package feature to install coc.nvim
 
@@ -15,9 +15,8 @@ mv coc.nvim-release coc
 # Install extensions
 mkdir -p ~/.config/coc/extensions
 cd ~/.config/coc/extensions
-if [ ! -f package.json ]
-then
-  echo '{"dependencies":{}}'> package.json
+if [ ! -f package.json ]; then
+  echo '{"dependencies":{}}' >package.json
 fi
 # Change extension names to the extensions you need
 #npm install coc-snippets --global-style --ignore-scripts --no-bin-links --no-package-lock --only=prod

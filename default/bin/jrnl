@@ -32,7 +32,7 @@ publish: false
 In week [[$(date -j -f '%Y-%m-%d' $date +'%Y-%m')-W$(printf '%02d\n' $week_number)]]
 
 ## Journal
-" > "$DIARY_FILE"
+" >"$DIARY_FILE"
   fi
 }
 
@@ -44,12 +44,15 @@ main() {
     sep_title=" $sep_title"
   fi
 
-  ( echo; echo "### $(date +'%H:%M')${sep_title}"; echo ) >> "$DIARY_FILE"
-  cat >> "$DIARY_FILE"
-  echo >> "$DIARY_FILE"
+  (
+    echo
+    echo "### $(date +'%H:%M')${sep_title}"
+    echo
+  ) >>"$DIARY_FILE"
+  cat >>"$DIARY_FILE"
+  echo >>"$DIARY_FILE"
 
   echo "$DIARY_FILE"
 }
 
 main "$@"
-

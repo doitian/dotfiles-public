@@ -10,7 +10,7 @@ trap "rm -rf $DIR" exit
 VIM=vim
 GVIM=
 if [ "${1:-}" = "-g" ]; then
-  if which gvim &> /dev/null; then
+  if which gvim &>/dev/null; then
     VIM=gvim
   fi
   GVIM="$1"

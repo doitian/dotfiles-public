@@ -69,7 +69,7 @@ if [ -n "${FILE}" ]; then
   fi
 fi
 
-if ! tmux has-session -t "=$SESSION" > /dev/null 2>&1; then
+if ! tmux has-session -t "=$SESSION" >/dev/null 2>&1; then
   TMUX='' tmux new-session -d -s "$SESSION"
   if [ -n "$COMMANDS" ]; then
     echo "Use default commands:"

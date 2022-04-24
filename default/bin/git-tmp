@@ -10,36 +10,36 @@ escape() {
 }
 
 case "$ACTION" in
-  init)
-    if git rev-parse --is-inside-work-tree &> /dev/null; then
-      echo 'Error: already in a git work tree' >&2
-      exit 1
-    fi
+init)
+  if git rev-parse --is-inside-work-tree &>/dev/null; then
+    echo 'Error: already in a git work tree' >&2
+    exit 1
+  fi
 
-    git init --separate-git-dir "$TMPDIR/$(pwd | escape).git" > /dev/null
-    git config user.email 'tmp@localhost' > /dev/null
-    git add --all > /dev/null
-    git commit -n -m 'initial commit' > /dev/null
-    git status
-    ;;
-  done)
-    GIT_DIR="$(git rev-parse --git-dir)"
-    TMP_GIT_DIR="$TMPDIR/$(git rev-parse --show-toplevel | escape).git"
+  git init --separate-git-dir "$TMPDIR/$(pwd | escape).git" >/dev/null
+  git config user.email 'tmp@localhost' >/dev/null
+  git add --all >/dev/null
+  git commit -n -m 'initial commit' >/dev/null
+  git status
+  ;;
+done)
+  GIT_DIR="$(git rev-parse --git-dir)"
+  TMP_GIT_DIR="$TMPDIR/$(git rev-parse --show-toplevel | escape).git"
 
-    if ! [ "${GIT_DIR#/private}" = "${TMP_GIT_DIR#/private}" ]; then
-      echo 'Error: this repo is not created by git tmp' >&2
-      echo "Expected: ${TMP_GIT_DIR}" >&2
-      echo "Real:     ${GIT_DIR}" >&2
-      exit 1
-    fi
+  if ! [ "${GIT_DIR#/private}" = "${TMP_GIT_DIR#/private}" ]; then
+    echo 'Error: this repo is not created by git tmp' >&2
+    echo "Expected: ${TMP_GIT_DIR}" >&2
+    echo "Real:     ${GIT_DIR}" >&2
+    exit 1
+  fi
 
-    DOT_GIT_FILE="$(git rev-parse --show-toplevel)/.git"
-    echo "rm -f '$DOT_GIT_FILE'"
-    rm -f "$DOT_GIT_FILE"
-    echo "rm -rf '$GIT_DIR'"
-    rm -rf "$GIT_DIR"
-    ;;
-  *)
-    echo "ckb tmp init|done"
-    ;;
+  DOT_GIT_FILE="$(git rev-parse --show-toplevel)/.git"
+  echo "rm -f '$DOT_GIT_FILE'"
+  rm -f "$DOT_GIT_FILE"
+  echo "rm -rf '$GIT_DIR'"
+  rm -rf "$GIT_DIR"
+  ;;
+*)
+  echo "ckb tmp init|done"
+  ;;
 esac

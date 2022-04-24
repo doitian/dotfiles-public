@@ -27,31 +27,31 @@ session=
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
-    -a|--all)
-      opt_a=-a
-      FORMAT='#S:#I.#P #S/#I.#W#{?window_active,*,}#{?window_last_flag,#,}/#P#{?pane_active,>,.}#{pane_current_command} #{pane_current_path}'
-      shift
-      ;;
-    -s|--session)
-      opt_s=-s
-      FORMAT='#I.#P #I.#W#{?window_active,*,}#{?window_last_flag,#,}/#P#{?pane_active,>,.}#{pane_current_command} #{pane_current_path}'
-      shift
-      ;;
-    -k|--kill)
-      kill_pane=true
-      shift
-      ;;
-    -p|--preview)
-      PREVIEW_WINDOW="${PREVIEW_WINDOW%:*}"
-      shift
-      ;;
-    -h|--help)
-      help
-      exit 0
-      ;;
-    *)
-      session="$1"
-      ;;
+  -a | --all)
+    opt_a=-a
+    FORMAT='#S:#I.#P #S/#I.#W#{?window_active,*,}#{?window_last_flag,#,}/#P#{?pane_active,>,.}#{pane_current_command} #{pane_current_path}'
+    shift
+    ;;
+  -s | --session)
+    opt_s=-s
+    FORMAT='#I.#P #I.#W#{?window_active,*,}#{?window_last_flag,#,}/#P#{?pane_active,>,.}#{pane_current_command} #{pane_current_path}'
+    shift
+    ;;
+  -k | --kill)
+    kill_pane=true
+    shift
+    ;;
+  -p | --preview)
+    PREVIEW_WINDOW="${PREVIEW_WINDOW%:*}"
+    shift
+    ;;
+  -h | --help)
+    help
+    exit 0
+    ;;
+  *)
+    session="$1"
+    ;;
   esac
 done
 
@@ -64,15 +64,15 @@ fi
 PREVIEW="tmux capture-pane -p -e -t '$target_prefix{1}'"
 
 if [ -n "$kill_pane" ]; then
-  tmux list-panes $opt_a $opt_s -F "$FORMAT" | grep -v '[0-9]\.TMUX_FZF_WIN' | \
+  tmux list-panes $opt_a $opt_s -F "$FORMAT" | grep -v '[0-9]\.TMUX_FZF_WIN' |
     fzf -n 2.. -0 -m -q "$session" \
-        --preview "$PREVIEW" --preview-window "$PREVIEW_WINDOW" \
-        --bind ctrl-t:toggle-preview | \
+      --preview "$PREVIEW" --preview-window "$PREVIEW_WINDOW" \
+      --bind ctrl-t:toggle-preview |
     awk "{print \"$target_prefix\" \$1}" | xargs -L 1 -I {} tmux kill-pane -t {}
   exit $?
 fi
 
-if [ -z "$session" ] || ! tmux has-session -t "=$session" &> /dev/null; then
+if [ -z "$session" ] || ! tmux has-session -t "=$session" &>/dev/null; then
   opt_select_1=
   if [ -n "$session" ]; then
     opt_select_1=-1
@@ -82,6 +82,6 @@ fi
 
 target="$target_prefix$session"
 
-if [ -n "$session" ] && tmux has-session -t "$target" &> /dev/null; then
+if [ -n "$session" ] && tmux has-session -t "$target" &>/dev/null; then
   [ -z "$TMUX" ] && tmux attach -t "$target" || tmux switch-client -t "$target"
 fi

@@ -3,10 +3,10 @@
 COLS="${FZF_PREVIEW_COLUMNS:-$(tput cols)}"
 LINES="${FZF_PREVIEW_LINES:-$(tput lines)}"
 if [ -z "${FZF_PREVIEW_LINES:-}" ]; then
-  LINES=$(( LINES - 3 ))
+  LINES=$((LINES - 3))
 fi
 if [ -n "${TMUX:-}" ]; then
-  LINES=$(( LINES - 1 ))
+  LINES=$((LINES - 1))
 fi
 
 if [ "${1:-}" = "--fzf-enable" ]; then
@@ -28,7 +28,7 @@ for arg; do
     if [ -n "${FZF_PREVIEW_LINES:-}" ]; then
       BAT_STYLE="--style=numbers"
     else
-      LINES=$(( LINES - 4 ))
+      LINES=$((LINES - 4))
     fi
     BAT_OPTS="--color=always --line-range=:$LINES --terminal-width=$COLS --wrap=never --paging=never $BAT_STYLE"
 

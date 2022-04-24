@@ -5,6 +5,6 @@ URL="https://whatismyipaddress.com/ip/$IP"
 
 echo "$URL"
 
-if type open &> /dev/null; then
+if type open &>/dev/null; then
   open "$URL"
 fi
