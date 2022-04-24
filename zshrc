@@ -15,18 +15,19 @@ MAGIC_ENTER_GIT_COMMAND='g st -u .'
 MAGIC_ENTER_OTHER_COMMAND='ls -lh .'
 SHELLPROXY_URL='http://127.0.0.1:7890'
 
-fpath=(
-  $HOME/.zsh-completions
-  $ZSH/plugins/brew
-  $ZSH/plugins/docker
-  $ZSH/plugins/gitfast
-  $ZSH/plugins/cargo
-  $fpath
-)
-
 if [ -d "$HOME/.asdf" ]; then
   fpath=($HOME/.asdf/completions $fpath)
 fi
+
+fpath=(
+  "$ZSH_CACHE_DIR/completions"
+  "$HOME/.zsh-completions"
+  "$ZSH/plugins/brew"
+  "$ZSH/plugins/docker"
+  "$ZSH/plugins/gitfast"
+  "$ZSH/plugins/cargo"
+  $fpath
+)
 
 # Figure out the SHORT hostname
 if [[ "$OSTYPE" = darwin* ]]; then
@@ -38,5 +39,5 @@ fi
 ZSH_COMPDUMP="$HOME/.zcompdump-${SHORT_HOST}-${ZSH_VERSION}"
 
 # Load and run compinit
-autoload -U compinit
+autoload -U compaudit compinit
 compinit -i -d "${ZSH_COMPDUMP}"
