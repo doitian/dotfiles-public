@@ -17,7 +17,7 @@ function groot() {
   local -i skip="${1:-0}"
   local cdup
   cdup="$(git rev-parse --show-cdup)"
-  while (( skip > 0 )); do
+  while ((skip > 0)); do
     cdup="$cdup/../$(git -C "$cdup/.." rev-parse --show-cdup)"
     let skip=skip-1
   done
@@ -35,7 +35,7 @@ function vman() {
         title="$title $arg"
       fi
     done
-    title="`sed 's/ /\\\\ /g' <<< "$title"`"
+    title="$(sed 's/ /\\\\ /g' <<<"$title")"
 
     if /usr/bin/man -w $@ >/dev/null 2>/dev/null; then
       /usr/bin/man $@ | col -b | vim -c "set ft=man nomod nonumber nolist fdm=indent fdn=2 sw=4 foldlevel=2 ro ignorecase incsearch hlsearch titlestring=$title | nmap q :q!<CR> | nmap <HOME> gg | nmap <END> G" -
@@ -47,15 +47,14 @@ function vman() {
   fi
 }
 
-function hs { [ -z "$1" ] && history || (history | grep "$@") }
+function hs { [ -z "$1" ] && history || (history | grep "$@"); }
 
 function nocaps {
   setxkbmap -option ctrl:nocaps
 }
 
 function marked() {
-  if [ "$1" ]
-  then
+  if [ "$1" ]; then
     open -a "Marked 2.app" "$1"
   else
     open -a "Marked 2.app"
@@ -63,7 +62,7 @@ function marked() {
 }
 
 function cbcb() {
-  local dir="$(fasd -dl | grep -v '^/Volumes' | sed 's|$|/.git|' | tr '\n' '\0' | xargs -0 ls -d 2> /dev/null | sed -e 's/.git$//' -e "s;^$HOME/;;" | fzf -1 -q "$*")"
+  local dir="$(fasd -dl | grep -v '^/Volumes' | sed 's|$|/.git|' | tr '\n' '\0' | xargs -0 ls -d 2>/dev/null | sed -e 's/.git$//' -e "s;^$HOME/;;" | fzf -1 -q "$*")"
   if [ -n "$dir" ]; then
     if [ -d "$dir" ]; then
       cd "$dir"

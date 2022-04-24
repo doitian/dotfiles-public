@@ -113,7 +113,7 @@ export PATH="\
 :$HOME/.local/bin\
 :$GOPATH/bin\
 :$HOME/.cargo/bin\
-:$HOME/.asdf/bin:$HOME/.asdf/shims\
+:$HOME/.asdf/bin\
 :$HOME/.node-packages/bin\
 :/PATH\
 :$PATH\

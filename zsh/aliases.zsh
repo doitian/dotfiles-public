@@ -34,7 +34,7 @@ alias cpv="rsync -poghb --backup-dir=/tmp/rsync -e /dev/null --progress --"
 alias ff="fd --type f"
 
 # fzf & fasd
-if which fasd > /dev/null 2>&1; then
+if which fasd >/dev/null 2>&1; then
   eval "$(fasd --init auto)"
   unalias z
   unalias zz
@@ -76,10 +76,10 @@ alias rsync-move="rsync -av --progress -h --remove-source-files"
 alias rsync-update="rsync -avu --progress -h"
 alias rsync-synchronize="rsync -avu --delete --progress -h"
 
-if command -v colordiff &> /dev/null; then
+if command -v colordiff &>/dev/null; then
   alias diff=colordiff
 fi
-if command -v prettyping &> /dev/null; then
+if command -v prettyping &>/dev/null; then
   alias ping=prettyping
 fi
 

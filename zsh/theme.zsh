@@ -1,6 +1,6 @@
 if [ "$TERM" = dumb ]; then
   unset zle_bracketed_paste
-elif command -v starship &> /dev/null; then
+elif command -v starship &>/dev/null; then
   eval "$(starship init zsh)"
 else
   # autoload colors; colors;

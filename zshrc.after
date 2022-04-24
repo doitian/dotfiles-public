@@ -1,7 +1,6 @@
-
 [ -f "$HOME/.fzf.zsh" ] && source "$HOME/.fzf.zsh"
 
-if command -v fd &> /dev/null; then
+if command -v fd &>/dev/null; then
   _fzf_compgen_path() {
     fd --type f --hidden --follow --exclude ".git" . "$1"
   }
@@ -25,9 +24,9 @@ if [ -n "${SSH_AGENT_FORWARD_AUTH_SOCK:-}" ]; then
   unset SSH_AGENT_FORWARD_AUTH_SOCK
 fi
 
-if command -v okc-ssh-agent &> /dev/null; then
-  if ! pgrep okc-ssh-agent &> /dev/null; then
-    okc-ssh-agent > "$PREFIX/tmp/okc-ssh-agent.env"
+if command -v okc-ssh-agent &>/dev/null; then
+  if ! pgrep okc-ssh-agent &>/dev/null; then
+    okc-ssh-agent >"$PREFIX/tmp/okc-ssh-agent.env"
   fi
   source "$PREFIX/tmp/okc-ssh-agent.env"
 fi

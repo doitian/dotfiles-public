@@ -3,7 +3,7 @@ function gi() {
   local _gitignore_list gitignore_type
   if [ -z "$1" -o "$1" = "-l" -o "$1" = "-s" ]; then
     if ! _retrieve_cache gitignore_list; then
-      _gitignore_list=( $(curl -sL https://www.gitignore.io/api/list | tr "," "\n") )
+      _gitignore_list=($(curl -sL https://www.gitignore.io/api/list | tr "," "\n"))
       _store_cache gitignore_list _gitignore_list
     fi
     if [ "$1" = "-s" ]; then
@@ -16,9 +16,9 @@ function gi() {
   fi
 }
 
-_gitignoreio () {
+_gitignoreio() {
   compset -P '*,'
-  compadd -S '' `gi`
+  compadd -S '' $(gi)
 }
 
 compdef _gitignoreio gi

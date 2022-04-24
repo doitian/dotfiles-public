@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-if [[  "$-" != *i* ]]; then return 0; fi
+if [[ "$-" != *i* ]]; then return 0; fi
 
 if [[ -n "$SSH_TTY" && -S "$SSH_AUTH_SOCK" ]]; then
   SSH_AGENT_FORWARD_AUTH_SOCK="$SSH_AUTH_SOCK"
