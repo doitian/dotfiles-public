@@ -40,4 +40,12 @@ ZSH_COMPDUMP="$HOME/.zcompdump-${SHORT_HOST}-${ZSH_VERSION}"
 
 # Load and run compinit
 autoload -U compaudit compinit
-compinit -i -d "${ZSH_COMPDUMP}"
+() {
+  setopt extendedglob local_options
+  if [[ -f "$ZSH_COMPDUMP"(#qN.m+1) ]]; then
+    compinit -i -d "${ZSH_COMPDUMP}"
+    touch "${ZSH_COMPDUMP}"
+  else
+    compinit -C -i -d "${ZSH_COMPDUMP}"
+  fi
+}
