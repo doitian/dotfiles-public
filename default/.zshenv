@@ -120,7 +120,6 @@ export PATH="\
 :/usr/local/bin\
 :/usr/local/sbin\
 :$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools\
-:.obsidian/bin\
 "
 
 # fzf
