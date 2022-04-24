@@ -40,10 +40,6 @@ Plug 'tpope/vim-surround' " ys s
 Plug 'tpope/vim-unimpaired' " various [, ] mappings
 Plug 'wellle/targets.vim' " Text objects
 
-if has('unix')
-  Plug 'tpope/vim-eunuch' " Linux commands
-endif
-
 if has('win32')
   Plug 'junegunn/fzf'
   Plug 'PProvost/vim-ps1'
