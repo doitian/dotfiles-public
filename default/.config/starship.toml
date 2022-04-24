@@ -1,8 +1,7 @@
 format = "[$all](italic)"
 
 [directory]
-#https://github.com/starship/starship/issues/3072
-#format = '[%\(4~|%-1~/…/%2~|%~\)]($style)[$read_only]($read_only_style) '
+format = '[%\(4~|%-1~/…/%2~|%~\)]($style)[$read_only]($read_only_style) '
 
 [git_branch]
 symbol = "±"
