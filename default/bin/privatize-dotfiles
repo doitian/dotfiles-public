@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+gpg-connect-agent KILLAGENT /bye
+gpg-connect-agent UPDATESTARTUPTTY /bye
+export GPG_TTY="$(tty)"
+echo "${GPG_SECRET_KEY}" | sed 's/|/\n/g' | gpg --import
+gpg --list-secret-keys --with-colons | sed -n -e '/:a:/{n;n;s/:$//;s/^grp::*//p;}' >> ~/.gnupg/sshcontrol
+
+git -C ~/.dotfiles remote set-url origin git@github.com:doitian/dotfiles.git
+git -C ~/.dotfiles/repos/public remote set-url origin git@github.com:doitian/dotfiles-public.git
+
+export SSH_AUTH_SOCK="$HOME/.gnupg/S.gpg-agent.ssh"
+echo 'cd ~/.dotfiles && ./manage.sh r -p && ./manage.sh i -p'

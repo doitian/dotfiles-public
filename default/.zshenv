@@ -99,7 +99,7 @@ if [ "$TERM_BACKGROUND" = light ]; then
 fi
 
 # gpg
-if [[ "$OSTYPE" = linux* ]]; then
+if [[ -n "$SSH_CONNECTION" || -n "$GITPOD_HOST" ]]; then
   export GPG_TTY="$(tty)"
 fi
 
