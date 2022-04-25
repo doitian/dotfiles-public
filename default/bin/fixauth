@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+gpg-connect-agent KILLAGENT /bye &> /dev/null
+gpg-connect-agent UPDATESTARTUPTTY /bye &> /dev/null
+
+echo 'export GPG_TTY="$(tty)"'
+echo 'export SSH_AUTH_SOCK="$HOME/.gnupg/S.gpg-agent.ssh"'
