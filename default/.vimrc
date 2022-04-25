@@ -726,5 +726,19 @@ augroup vimrc_au
   autocmd User GoyoLeave Limelight!
 augroup END
 
+if executable('fasd')
+  function! s:FasdUpdate() abort
+    if empty(&buftype)
+      let l:path = &filetype ==# 'netrw' ? b:netrw_curdir : expand('%:p')
+      let l:comm = ['fasd', '-A', l:path]
+      if has('nvim') | call jobstart(l:comm) | else | call job_start(l:comm) | endif
+    endif
+  endfunction
+  augroup fasd
+    autocmd!
+    autocmd BufWinEnter,BufFilePost * call s:FasdUpdate()
+  augroup END
+endif
+
 silent! source $HOME/.vim/UltiSnips/abbreviations.vim
 silent! source $HOME/.vimrc.local

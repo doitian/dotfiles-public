@@ -34,7 +34,8 @@ function help() {
 }
 
 query=
-fasd_opts="-Rfl"
+fasd_opts_fd="-f"
+fasd_opts="Rl"
 fzf_opts=()
 
 cmd=()
@@ -47,7 +48,11 @@ while [ "$#" -gt 0 ]; do
     ;;
   -d)
     shift
-    fasd_opts="-Rdl"
+    fasd_opts_fd="-d"
+    ;;
+  -t)
+    shift
+    fasd_opts="${fasd_opts}t"
     ;;
   -o)
     shift
@@ -90,7 +95,7 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-IFS=$'\n' lines=($(fasd $fasd_opts | fzf-tmux -1 -0 -q "$query" "${fzf_opts[@]}"))
+IFS=$'\n' lines=($(fasd "$fasd_opts_fd$fasd_opts" | fzf-tmux -1 -0 -q "$query" "${fzf_opts[@]}"))
 for l in "${lines[@]}"; do
   fasd -A "$l"
 done
