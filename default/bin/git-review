@@ -1,7 +1,22 @@
 #!/usr/bin/env bash
 
+guess() {
+  local review_base=
+  if git show-ref --quiet refs/heads/develop; then
+    review_base=develop
+  elif git show-ref --quiet refs/heads/main; then
+    review_base=main
+  else
+    review_base=master
+  fi
+
+  git config user.reviewBase "$review_base" &> /dev/null
+
+  echo "$review_base"
+}
+
 review() {
-  local review_base="$(git config --get user.reviewBase || echo master)"
+  local review_base="$(git config --get user.reviewBase || guess)"
   local merge_base="$(git merge-base HEAD $review_base)"
 
   local VIM=vim
