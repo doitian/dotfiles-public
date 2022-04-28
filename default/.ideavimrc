@@ -9,9 +9,10 @@ imap <C-x><C-u> <Action>(SmartTypeCompletion)
 
 map gc <Action>(CommentByLineComment)
 
+nmap m<CR> <Action>(BuildSolutionAction)
 nmap g<CR> <Action>(Run)
 nmap t<CR> <Action>(RunClass)
+nmap f<CR> <Action>(ReformatCode)
 
-nmap <Leader>a <Action>(CIDR.Lang.SwitchHeaderSource)
-map <Leader>w <Action(ReformatCode)
 nmap <Leader><Space> <Action>(SearchEverywhere)
+nmap <Leader>a <Action>(SwitchHeaderSource)
