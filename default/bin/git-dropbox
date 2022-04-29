@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+main() {
+  if [[ "$#" == 0 -o "$1" == "clone" ]]; then
+    if ! [ -f .git ]; then
+      echo "Error: not a git repository" >&2
+      exit 1
+    fi
+
+    local gitdir="$(cat .git | sed -n 's;gitdir: ;;p')"
+    if ! [ -d "$gitdir" ]; then
+      local repo="$(basename "$gitdir")"
+      repo="${repo%.git}"
+      git clone --bare "git@github.com:doitian/${repo}.git" "$gitdir"
+      git config core.bare false
+      git restore --staged .
+    else
+      echo "gitdir: $gitdir"
+    fi
+  elif [[ "$1" == "init" ]]; then
+    if [[ "$#" != 2 ]]; then
+      echo "Usage: git dropbox init <dir>" >&2
+      exit 1
+    fi
+    git init --separate-git-dir "$1"
+  else
+    echo "Usage: git dropbox ([clone] | init <dir>)" >&2
+    exit 1
+  fi
+}
+
+main "$@"
