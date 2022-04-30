@@ -2,10 +2,10 @@
 set nocompatible
 set encoding=utf-8
 let loaded_matchparen = 1
-let &background = $TERM_BACKGROUND != '' ? $TERM_BACKGROUND : 'light'
-if $SSH_HOME != '' | let $HOME = $SSH_HOME | endif
+let &background = $TERM_BACKGROUND !=# '' ? $TERM_BACKGROUND : 'light'
+if $SSH_HOME !=# '' | let $HOME = $SSH_HOME | endif
 if has('win32') | language en | set ff=unix | endif
-if &term == 'win32' | set t_Co=256 | endif
+if &term ==? 'win32' | set t_Co=256 | endif
 
 " Plug {{{1
 silent! call plug#begin($HOME.'/.vim/plugged')
@@ -101,11 +101,11 @@ function! Tabline()
     let bufnr = buflist[winnr - 1]
     let bufname = fnamemodify(bufname(bufnr), ':t')
     let rename = gettabvar(tab, 'tabline_rename')
-    let title = rename != '' ? substitute(rename, '\C%f', bufname, 'g') : (bufname != '' ? bufname : 'No Name')
+    let title = rename !=# '' ? substitute(rename, '\C%f', bufname, 'g') : (bufname !=# '' ? bufname : 'No Name')
     let bufmodified = getbufvar(bufnr, '&mod')
 
     let s .= '%' . tab . 'T'
-    let s .= (tab == tabpagenr() ? '%#TabLineSel#' : '%#TabLine#')
+    let s .= (tab ==# tabpagenr() ? '%#TabLineSel#' : '%#TabLine#')
     let s .= ' ' . tab . ':'
     let s .= '[' . title . (bufmodified ? ']+ ' : '] ')
   endfor
@@ -125,9 +125,9 @@ function! HasPaste()
 endfunction
 
 function! StatusLineFileName()
-  if &filetype != 'netrw'
-    return &buftype != 'nofile' ? pathshorten(expand('%:~:.')) : expand('%')
-  elseif b:netrw_curdir == getcwd()
+  if &filetype !=# 'netrw'
+    return &buftype !=# 'nofile' ? pathshorten(expand('%:~:.')) : expand('%')
+  elseif b:netrw_curdir ==? getcwd()
     return './'
   else
     return pathshorten(fnamemodify(b:netrw_curdir, ':~:.')) . '/'
@@ -137,15 +137,15 @@ endfunction
 function! StatusLineFileFormat()
   let l:flags = []
 
-  let l:encoding = &fileencoding != '' ? &fileencoding : &encoding
-  if l:encoding != 'utf-8' | call add(l:flags, l:encoding) | endif
+  let l:encoding = &fileencoding !=# '' ? &fileencoding : &encoding
+  if l:encoding !=# 'utf-8' | call add(l:flags, l:encoding) | endif
   if &bomb | call add(l:flags, '+bomb') | endif
-  if &fileformat != 'unix' | call add(l:flags, printf('[%s]', &fileformat)) | endif
+  if &fileformat !=# 'unix' | call add(l:flags, printf('[%s]', &fileformat)) | endif
   return join(l:flags, '')
 endfunction
 
 function! s:QFixToggle()
-  if &filetype == 'qf'
+  if &filetype ==# 'qf'
     cclose
   else
     copen 10
@@ -172,25 +172,25 @@ let s:DisturbingFiletypes = { 'help': 1, 'netrw': 1, 'vim-': 1,
       \ 'godoc': 1, 'git': 1, 'man': 1 }
 
 function! s:CloseDisturbingWin()
-  if ((&filetype == '' && &diff != 1) || has_key(s:DisturbingFiletypes, &filetype)) && !&modified
+  if ((&filetype ==# '' && &diff !=# 1) || has_key(s:DisturbingFiletypes, &filetype)) && !&modified
     let l:currentWindow = winnr()
     if s:currentWindow > l:currentWindow
       let s:currentWindow = s:currentWindow - 1
     endif
-    if winnr('$') == 1 | enew | else | close | endif
+    if winnr('$') ==# 1 | enew | else | close | endif
   endif
 endfunction
 
 function! s:CloseReadonlyWin()
   if &readonly
-    if winnr('$') == 1 | enew | else | close | endif
+    if winnr('$') ==# 1 | enew | else | close | endif
   endif
 endfunction
 
 function! CurDir()
-  if &filetype != 'netrw'
+  if &filetype !=# 'netrw'
     let l:dir = expand('%:h')
-    if l:dir != ''
+    if l:dir !=# ''
       return l:dir
     endif
     return getcwd()
@@ -219,7 +219,7 @@ if !exists('g:bookmark_line_insert_newline')
 endif
 function! s:BookmarkLine(message, copy)
   let l:line = g:bookmark_line_prefix . expand('%') . '|' . line('.') . ' col ' . col('.') . '| '
-  if a:message == ''
+  if a:message ==# ''
     let l:line = l:line . getline('.')
   else
     let l:line = l:line . a:message
@@ -236,7 +236,7 @@ function! s:BookmarkLine(message, copy)
 endfunction
 
 function! Opfunc(type = '') abort
-  if type(a:type) == v:t_func
+  if type(a:type) ==# v:t_func
     set opfunc=Opfunc
     let g:OpfuncDo = a:type
     return 'g@'
@@ -288,14 +288,33 @@ endfunction
 
 function! System(lines = @")
   let l:list = split(a:lines, "\n")
-  let l:bufname = '> ' .. l:list[-1]
+  let l:bufname = '$ ' .. l:list[-1]
   let l:preview = l:list + ['', 'cat << "OUTPUT"'] + systemlist(a:lines) + ['OUTPUT']
   call s:Preview(l:bufname, 'sh', l:preview)
 endfunction
 
-function! PipeOut(lines = @")
+function! Pipe(lines = @")
   let l:shellcmd = input('> ', '', 'shellcmd')
-  call System('echo ' .. shellescape(a:lines) .. " | \\\n" .. l:shellcmd)
+  if l:shellcmd !=# ''
+    call System('echo -n ' .. shellescape(a:lines) .. " |\n" .. l:shellcmd)
+  endif
+endfunction
+
+function! SystemReplace(lines = @")
+  let reg_save = getreginfo('"')
+  let @" = join(systemlist(a:lines), "\n")
+  silent exe "noautocmd keepjumps normal! gv\"_c\<c-r>\"\<esc>"
+  call setreg('"', reg_save)
+endfunction
+
+function! PipeReplace(lines = @")
+  let l:shellcmd = input('< ', '', 'shellcmd')
+  if l:shellcmd !=# ''
+    let reg_save = getreginfo('"')
+    let @" = join(systemlist(l:shellcmd, a:lines), "\n")
+    silent exe "noautocmd keepjumps normal! gv\"_c\<c-r>\"\<esc>"
+    call setreg('"', reg_save)
+  endif
 endfunction
 
 function! SearchAround(start_tag, end_tag, ...)
@@ -306,7 +325,7 @@ function! SearchAround(start_tag, end_tag, ...)
   call cursor(l:pos_save[1], l:pos_save[2])
 
   " Add a dummy third argument to search after current position.
-  if l:pos_end[0] == l:line && l:pos_start[0] == l:line && (a:0 > 0 || l:pos_start[1] <= l:pos_save[2])
+  if l:pos_end[0] ==# l:line && l:pos_start[0] ==# l:line && (a:0 > 0 || l:pos_start[1] <= l:pos_save[2])
     return strpart(getline('.'), l:pos_start[1] + len(a:start_tag) - 1, l:pos_end[1] - l:pos_start[1] - len(a:start_tag))
   endif
   return ''
@@ -316,7 +335,7 @@ function! s:FollowWikiLink()
   let l:line_text = getline('.')
 
   let l:wikilink = SearchAround('[[', ']]')
-  if l:wikilink == ''
+  if l:wikilink ==# ''
     echomsg 'WikiLink not found' | return
   endif
 
@@ -407,7 +426,7 @@ command! Bw call fzf#run(fzf#wrap({
 \ }))
 
 command! -nargs=* -complete=shellcmd TmuxSend call TmuxSend(<q-args>)
-command! -nargs=* -complete=shellcmd System call System(<q-args>)
+command! -nargs=* -complete=shellcmd System call System('', <q-args>)
 
 if has('win32') || has('ios')
   command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile | silent file __viper__ | nnoremap <buffer> <CR> ggvGg_"+y:%d <lt>Bar> redraw!<lt>CR>
@@ -649,14 +668,22 @@ nnoremap <Leader>/w /\<\><Left><Left>
 nnoremap <silent> <Leader>] :tabclose<CR>
 nnoremap <silent> <Leader>[ :Diffoff<CR>
 
-nnoremap <Leader>! :System<Space>
+nnoremap <Leader>$<Space> :System<Space>
 nnoremap <expr> <Leader>$ Opfunc(funcref('System'))
 xnoremap <expr> <Leader>$ Opfunc(funcref('System'))
 nnoremap <expr> <Leader>$$ Opfunc(funcref('System')) .. '_'
 
-nnoremap <expr> <Leader>> Opfunc(funcref('PipeOut'))
-xnoremap <expr> <Leader>> Opfunc(funcref('PipeOut'))
-nnoremap <expr> <Leader>>> Opfunc(funcref('PipeOut')) .. '_'
+nnoremap <expr> <Leader>> Opfunc(funcref('Pipe'))
+xnoremap <expr> <Leader>> Opfunc(funcref('Pipe'))
+nnoremap <expr> <Leader>>> Opfunc(funcref('Pipe')) .. '_'
+
+nnoremap <expr> <Leader>% Opfunc(funcref('SystemReplace'))
+xnoremap <expr> <Leader>% Opfunc(funcref('SystemReplace'))
+nnoremap <expr> <Leader>%% Opfunc(funcref('SystemReplace')) .. '_'
+
+nnoremap <expr> <Leader>< Opfunc(funcref('PipeReplace'))
+xnoremap <expr> <Leader>< Opfunc(funcref('PipeReplace'))
+nnoremap <expr> <Leader><< Opfunc(funcref('PipeReplace')) .. '_'
 
 cnoremap <C-r><C-d> <C-r>=CurDir().'/'<CR>
 inoremap <C-r><C-d> <C-r>=CurDir().'/'<CR>
@@ -700,7 +727,7 @@ augroup vimrc_au
   autocmd!
 
   autocmd BufReadPost *
-    \ if line("'\"") > 1 && line("'\"") <= line('$') && &filetype != 'gitcommit' |
+    \ if line("'\"") > 1 && line("'\"") <= line('$') && &filetype !=# 'gitcommit' |
     \   exe 'normal! g`"' |
     \ endif
 
