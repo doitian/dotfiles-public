@@ -22,6 +22,8 @@ Plug 'dyng/ctrlsf.vim', { 'on': 'CtrlSF' }
 Plug 'editorconfig/editorconfig-vim'
 Plug 'godlygeek/tabular', { 'on': 'Tabularize', 'for': ['markdown'] }
 Plug 'janko-m/vim-test', { 'on': ['TestNearest', 'TestFile', 'TestSuite', 'TestLast', 'TestVisit'] }
+Plug 'junegunn/fzf'
+Plug 'junegunn/fzf.vim'
 Plug 'junegunn/goyo.vim', { 'on': 'Goyo' }
 Plug 'junegunn/limelight.vim', { 'on': 'Limelight' }
 Plug 'sbdchd/neoformat', { 'on': 'Neoformat' }
@@ -41,14 +43,7 @@ Plug 'tpope/vim-unimpaired' " various [, ] mappings
 Plug 'wellle/targets.vim' " Text objects
 
 if has('win32')
-  Plug 'junegunn/fzf'
   Plug 'PProvost/vim-ps1'
-endif
-
-if has('ios')
-  Plug 'ctrlpvim/ctrlp.vim'
-else
-  Plug 'junegunn/fzf.vim'
 endif
 
 if has('python3')
@@ -61,8 +56,6 @@ if has('nvim')
 endif
 
 call plug#end()
-
-set rtp+=/usr/local/opt/fzf
 
 " Theme {{{1
 syntax on

@@ -18,7 +18,7 @@ jobs:
 
       - name: Setup vimrc
         run: |
-          sed -e 's;junegunn/fzf\.vim;ctrlpvim/ctrlp.vim;' default/.vimrc > ~/.vimrc
+          sed -e 's;junegunn/fzf\.vim;ctrlpvim/ctrlp.vim;' -e 's;.*junegunn/fzf;" &;' default/.vimrc > ~/.vimrc
           mkdir -p ~/.vim/backup
           mkdir -p ~/.vim/undo
           mkdir -p ~/.vim/swap
@@ -35,7 +35,7 @@ jobs:
 
           cp .github/files/install-vimfiles.py vimfiles/install.py
 
-          cp default/.vimrc vimfiles/vimrc
+          cp ~/.vimrc vimfiles/vimrc
 
           mkdir -p vimfiles/vim
           mv default/.vim/scripts vimfiles/vim
