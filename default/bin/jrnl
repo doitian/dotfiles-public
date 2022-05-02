@@ -24,12 +24,11 @@ ensure_diary_file() {
     echo "---
 publish: false
 ---
+![[$(date -j -f '%Y-%m-%d' $date +'%Y-%m')-W$(printf '%02d\n' $week_number)#^index]]
 
 # $(date -j -f '%Y-%m-%d' $date +'%a, %b %d, %Y')
 
 #journal
-
-In week [[$(date -j -f '%Y-%m-%d' $date +'%Y-%m')-W$(printf '%02d\n' $week_number)]]
 
 ## Journal
 " >"$DIARY_FILE"

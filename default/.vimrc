@@ -419,7 +419,7 @@ command! Bw call fzf#run(fzf#wrap({
 \ }))
 
 command! -nargs=* -complete=shellcmd TmuxSend call TmuxSend(<q-args>)
-command! -nargs=* -complete=shellcmd System call System('', <q-args>)
+command! -nargs=* -complete=shellcmd System call System(<q-args>)
 
 if has('win32') || has('ios')
   command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile | silent file __viper__ | nnoremap <buffer> <CR> ggvGg_"+y:%d <lt>Bar> redraw!<lt>CR>
@@ -637,6 +637,7 @@ nnoremap <silent> <Leader>te :TestVisit<CR>
 nnoremap <Leader>th :tabnew <C-r>=CurDir().'/'<CR>
 nnoremap <Leader>td :tabnew <C-r>=CurDir().'/'<CR><CR>
 nnoremap <silent> <Leader>tn :tabnew<CR>
+nnoremap <silent> <Leader>tz :tabnew %<CR>
 
 nnoremap <Leader>u :MundoToggle<CR>
 " Reselect text that was just pasted
