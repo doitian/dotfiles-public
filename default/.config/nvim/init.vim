@@ -1,23 +1,20 @@
 " Preamble {{{1
-set nocompatible
-set encoding=utf-8
-let loaded_matchparen = 1
 let &background = $TERM_BACKGROUND !=# '' ? $TERM_BACKGROUND : 'light'
-if $SSH_HOME !=# '' | let $HOME = $SSH_HOME | endif
 if has('win32') | language en | set ff=unix | endif
 if &term ==? 'win32' | set t_Co=256 | endif
 
 " Plug {{{1
-silent! call plug#begin($HOME.'/.vim/plugged')
+call plug#begin()
 
 " filetypes
 Plug 'cespare/vim-toml'
 Plug 'plasticboy/vim-markdown'
 Plug 'nathangrigg/vim-beancount'
 
-" other
+" theme
 Plug 'NLKNguyen/papercolor-theme'
 
+" other
 Plug 'dyng/ctrlsf.vim', { 'on': 'CtrlSF' }
 Plug 'editorconfig/editorconfig-vim'
 Plug 'godlygeek/tabular', { 'on': 'Tabularize', 'for': ['markdown'] }
@@ -41,19 +38,28 @@ Plug 'tpope/vim-surround' " ys s
 Plug 'tpope/vim-unimpaired' " various [, ] mappings
 Plug 'wellle/targets.vim' " Text objects
 
-if has('win32')
-  Plug 'PProvost/vim-ps1'
-endif
+" neovim only
+Plug 'github/copilot.vim'
+Plug 'nvim-treesitter/nvim-treesitter'
 
-if has('python3')
-  Plug 'SirVer/ultisnips'
-endif
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
+
+" For vsnip users.
+" Plug 'hrsh7th/cmp-vsnip'
+" Plug 'hrsh7th/vim-vsnip'
+
+" For ultisnips users.
+Plug 'SirVer/ultisnips'
+Plug 'quangnguyen30192/cmp-nvim-ultisnips'
 
 call plug#end()
 
 " Theme {{{1
-syntax on
-
 silent! colorscheme PaperColor
 
 " Plugins Options {{{1
@@ -77,6 +83,7 @@ let g:UltiSnipsSnippetDirectories = [ $HOME.'/.vim/UltiSnips' ]
 let g:vim_markdown_frontmatter = 1
 let g:vim_markdown_math = 1
 let g:vim_markdown_strikethrough = 1
+let g:copilot_node_command = "~/.asdf/installs/nodejs/16.16.0/bin/node"
 
 " Functions & Commands {{{1
 function! Tabline()
@@ -330,16 +337,7 @@ function! s:FollowWikiLink()
   if l:filename =~ '^\./'
     let l:filename = l:filename[2:]
   endif
-  if has('ios')
-    let g:ctrlp_default_input = l:filename
-    try
-      call ctrlp#init(0)
-    finally
-      let g:ctrlp_default_input = 0
-    endtry
-  else
-    call fzf#vim#files('', {'options':['-1', '-e', '-q', substitute(l:filename, ' ', '\\ ', 'g')]})
-  endif
+  call fzf#vim#files('', {'options':['-1', '-e', '-q', substitute(l:filename, ' ', '\\ ', 'g')]})
 endfunction
 
 function! s:CopyAsWikiLink()
@@ -394,7 +392,7 @@ command! Close :pclose | :cclose | :lclose |
       \ :windo call s:CloseDisturbingWin() |
       \ exe s:currentWindow . 'wincmd w'
 command! Diffoff :diffoff! | :windo call s:CloseReadonlyWin() | :Close
-command! Reload :source $HOME/.vimrc | :filetype detect | :nohl
+command! Reload :source $HOME/.config/nvim/init.vim | :filetype detect | :nohl
 command! -bang Clear :silent! %bw<bang> | :silent! argd * | :nohl
 command! -nargs=* Diff2qf :cexpr system('diff2qf', system('git diff -U0 ' . <q-args>))
 
@@ -415,7 +413,7 @@ command! Bw call fzf#run(fzf#wrap({
 command! -nargs=* -complete=shellcmd TmuxSend call TmuxSend(<q-args>)
 command! -nargs=* -complete=shellcmd System call System(<q-args>)
 
-if has('win32') || has('ios')
+if has('win32')
   command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile | silent file __viper__ | nnoremap <buffer> <CR> ggvGg_"+y:%d <lt>Bar> redraw!<lt>CR>
 else
   command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile | silent file __viper__ | nnoremap <buffer> <CR> :exec 'w !ctrlc' <lt>Bar> %d <lt>Bar> redraw!<lt>CR>
@@ -492,7 +490,7 @@ else
   let &listchars = 'tab:> ,trail:.,extends:>,precedes:<,nbsp:.'
 endif
 set statusline=%<%{StatusLineFileName()}\ %h%m%r%{HasPaste()}%=%{StatusLineFileFormat()}\ \#%n\ L%l:%c\ %P
-set undodir=$HOME/.vim/files/undo//
+set undodir=$HOME/.vim/files/nvim-undo//
 
 let $cb = $HOME . '/codebase'
 let $kb = $HOME . '/Dropbox/Brain'
@@ -539,7 +537,7 @@ nnoremap <silent> <Leader>en :enew<CR>
 nnoremap <silent> <Leader>et :tabnew<CR>
 nnoremap <Leader>ee :e <C-r>=expand('%:r')<CR><C-Z>
 nnoremap <Leader>eb :sview `=expand($HOME.'/.vim/files/backup/') . substitute(expand('%:p'), '[\\\\/]', '%', 'g') . '-vimbackup'`<CR>
-nnoremap <silent> <Leader>ev :tab drop $HOME/.vimrc<CR>
+nnoremap <silent> <Leader>ev :tab drop $HOME/.config/nvim/init.vim<CR>
 nnoremap <Leader>ew :e<Space>**/
 nnoremap <Leader>e<Space> :e<Space><C-Z>
 nnoremap <silent> <Leader>ep :tab drop .projections.json<CR>
@@ -685,15 +683,6 @@ if exists('$WSLENV')
   let g:netrw_browsex_viewer= 'wsl-open'
 endif
 
-if has('ios')
-  set backupcopy=yes
-  set noundofile
-  let g:ctrlp_root_markers = []
-  let g:ctrlp_working_path_mode = 'a'
-  nnoremap <Leader><Space> :CtrlP<CR>
-  nnoremap <silent> <Leader>b :CtrlPBuffer<CR>
-endif
-
 " Filetype specific handling {{{1
 filetype indent plugin on
 
@@ -751,5 +740,107 @@ if executable('fasd')
   augroup END
 endif
 
+" Lua {{{1
+set completeopt=menu,menuone,noselect
+
+lua <<EOF
+  -- Setup nvim-cmp.
+  local cmp = require'cmp'
+
+  cmp.setup({
+    snippet = {
+      -- REQUIRED - you must specify a snippet engine
+      expand = function(args)
+        -- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+        vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+      end,
+    },
+    window = {
+      completion = cmp.config.window.bordered(),
+      documentation = cmp.config.window.bordered(),
+    },
+    mapping = cmp.mapping.preset.insert({
+      ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+      ['<C-f>'] = cmp.mapping.scroll_docs(4),
+      ['<C-Space>'] = cmp.mapping.complete(),
+      ['<C-e>'] = cmp.mapping.abort(),
+      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    }),
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+      -- { name = 'vsnip' }, -- For vsnip users.
+      { name = 'ultisnips' }, -- For ultisnips users.
+    }, {
+      { name = 'buffer' },
+    })
+  })
+
+  -- Set configuration for specific filetype.
+  cmp.setup.filetype('gitcommit', {
+    sources = cmp.config.sources({
+      { name = 'cmp_git' }, -- You can specify the `cmp_git` source if you were installed it.
+    }, {
+      { name = 'buffer' },
+    })
+  })
+
+  -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline('/', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = {
+      { name = 'buffer' }
+    }
+  })
+
+  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline(':', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+      { name = 'path' }
+    }, {
+      { name = 'cmdline' }
+    })
+  })
+
+  -- Setup lspconfig.
+  local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+  -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
+  require('lspconfig')['pyright'].setup {
+    capabilities = capabilities
+  }
+
+  require'nvim-treesitter.configs'.setup {
+    -- A list of parser names, or "all"
+    ensure_installed = {},
+
+    -- Install parsers synchronously (only applied to `ensure_installed`)
+    sync_install = false,
+
+    -- Automatically install missing parsers when entering buffer
+    auto_install = false,
+
+    -- List of parsers to ignore installing (for "all")
+    ignore_install = {},
+
+    highlight = {
+      -- `false` will disable the whole extension
+      enable = true,
+
+      -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
+      -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
+      -- the name of the parser)
+      -- list of language that will be disabled
+      disable = {},
+
+      -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+      -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+      -- Using this option may slow down your editor, and you may see some duplicate highlights.
+      -- Instead of true it can also be a list of languages
+      additional_vim_regex_highlighting = false,
+    },
+  }
+EOF
+
+" Local Config {{{1
 silent! source $HOME/.vim/UltiSnips/abbreviations.vim
-silent! source $HOME/.vimrc.local
+silent! source $HOME/.nvim.local
