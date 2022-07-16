@@ -49,6 +49,11 @@ if has('python3')
   Plug 'SirVer/ultisnips'
 endif
 
+if has('nvim')
+  call LoadNvimPlugs()
+  delfunction LoadNvimPlugs
+endif
+
 call plug#end()
 
 " Theme {{{1
@@ -493,6 +498,7 @@ else
 endif
 set statusline=%<%{StatusLineFileName()}\ %h%m%r%{HasPaste()}%=%{StatusLineFileFormat()}\ \#%n\ L%l:%c\ %P
 set undodir=$HOME/.vim/files/undo//
+if has('nvim') | set undodir=$HOME/.vim/files/nvim-undo// | endif
 
 let $cb = $HOME . '/codebase'
 let $kb = $HOME . '/Dropbox/Brain'
