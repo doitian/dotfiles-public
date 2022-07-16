@@ -85,6 +85,10 @@ let g:vim_markdown_math = 1
 let g:vim_markdown_strikethrough = 1
 let g:copilot_node_command = "~/.asdf/installs/nodejs/16.16.0/bin/node"
 
+if filereadable("/usr/local/bin/python3")
+  let g:python3_host_prog = "/usr/local/bin/python3"
+end
+
 " Functions & Commands {{{1
 function! Tabline()
   let s = ''
