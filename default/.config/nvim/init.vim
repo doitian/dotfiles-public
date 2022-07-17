@@ -4,7 +4,7 @@ let &packpath=&runtimepath
 
 function! LoadNvimPlugs()
   Plug 'github/copilot.vim'
-  Plug 'nvim-treesitter/nvim-treesitter'
+  Plug 'nvim-treesitter/nvim-treesitter' , {'do': ':TSUpdate'}
 
   Plug 'neovim/nvim-lspconfig'
   Plug 'hrsh7th/cmp-nvim-lsp'
@@ -23,12 +23,21 @@ function! LoadNvimPlugs()
   Plug 'lewis6991/gitsigns.nvim'
 endfunction
 
+if filereadable("/usr/local/bin/python3")
+  let g:python3_host_prog = "/usr/local/bin/python3"
+endif
+
 source ~/.vimrc
+
 command! Reload :source $HOME/.config/nvim/init.vim | :filetype detect | :nohl
-nnoremap <silent> <Leader>ev :tab drop $HOME/.config/nvim/init.vim<CR>
+command! LspFold setlocal foldmethod=expr foldexpr=nvim_treesitter#foldexpr()
+
+nnoremap <silent> <Leader>eV :tab drop $HOME/.config/nvim/init.vim<CR>
 
 set signcolumn=number
 set completeopt=menu,menuone,noselect
+set foldmethod=expr
+set foldexpr=nvim_treesitter#foldexpr()
 
 " Lua {{{1
 lua <<EOF
@@ -133,28 +142,28 @@ lua <<EOF
     }
   end
 
+  vim.diagnostic.config {
+    virtual_text = false,
+    underline = false,
+  }
+
+  -- treesitter
   require'nvim-treesitter.configs'.setup {
     -- A list of parser names, or "all"
-    ensure_installed = {},
+    ensure_installed = {'rust', 'python'},
 
     -- Install parsers synchronously (only applied to `ensure_installed`)
     sync_install = false,
 
     -- Automatically install missing parsers when entering buffer
-    auto_install = false,
+    auto_install = true,
 
     -- List of parsers to ignore installing (for "all")
-    ignore_install = {},
+    ignore_install = {'vim'},
 
     highlight = {
-      -- `false` will disable the whole extension
       enable = true,
-
-      -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
-      -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
-      -- the name of the parser)
-      -- list of language that will be disabled
-      disable = {},
+      disable = {'vim'},
 
       -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
       -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
@@ -164,5 +173,31 @@ lua <<EOF
     },
   }
 
-  require('gitsigns').setup()
+  require('gitsigns').setup{
+    on_attach = function(bufnr)
+      local gs = package.loaded.gitsigns
+
+      local function map(mode, l, r, opts)
+        opts = opts or {}
+        opts.buffer = bufnr
+        vim.keymap.set(mode, l, r, opts)
+      end
+
+      -- Navigation
+      map('n', ']c', function()
+        if vim.wo.diff then return ']c' end
+        vim.schedule(function() gs.next_hunk() end)
+        return '<Ignore>'
+      end, {expr=true, buffer=bufnr})
+
+      map('n', '[c', function()
+        if vim.wo.diff then return '[c' end
+        vim.schedule(function() gs.prev_hunk() end)
+        return '<Ignore>'
+      end, {expr=true, buffer=bufnr})
+
+      -- Text object
+      map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>', {buffer=bufnr})
+    end
+  }
 EOF
