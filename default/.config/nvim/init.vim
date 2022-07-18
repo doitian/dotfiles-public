@@ -26,14 +26,17 @@ endfunction
 let g:copilot_node_command = $HOME . "/.asdf/installs/nodejs/16.16.0/bin/node"
 if filereadable("/usr/local/bin/python3")
   let g:python3_host_prog = "/usr/local/bin/python3"
+elseif exists("$SCOOP")
+  let g:python3_host_prog = $SCOOP . "/shims/python3.exe"
+  let g:copilot_node_command = $SCOOP . "/apps/nodejs-lts/current/node.exe"
 endif
 
 source ~/.vimrc
 
-command! Reload :source $HOME/.config/nvim/init.vim | :filetype detect | :nohl
+command! Reload :eval "source " . stdpath('config') . "/init.vim" | :filetype detect | :nohl
 command! LspFold setlocal foldmethod=expr foldexpr=nvim_treesitter#foldexpr()
 
-nnoremap <silent> <Leader>eV :tab drop $HOME/.config/nvim/init.vim<CR>
+nnoremap <silent> <Leader>eV :tab drop <C-R>=stdpath('config')<CR>/init.vim<CR>
 
 set signcolumn=number
 set completeopt=menu,menuone,noselect
