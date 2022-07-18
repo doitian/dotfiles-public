@@ -23,6 +23,7 @@ function! LoadNvimPlugs()
   Plug 'lewis6991/gitsigns.nvim'
 endfunction
 
+let g:copilot_node_command = $HOME . "/.asdf/installs/nodejs/16.16.0/bin/node"
 if filereadable("/usr/local/bin/python3")
   let g:python3_host_prog = "/usr/local/bin/python3"
 endif
