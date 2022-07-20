@@ -6,6 +6,7 @@ function! LoadNvimPlugs()
   Plug 'github/copilot.vim'
   Plug 'nvim-treesitter/nvim-treesitter' , {'do': ':TSUpdate'}
 
+  Plug 'williamboman/nvim-lsp-installer'
   Plug 'neovim/nvim-lspconfig'
   Plug 'hrsh7th/cmp-nvim-lsp'
   Plug 'hrsh7th/cmp-buffer'
@@ -18,7 +19,7 @@ function! LoadNvimPlugs()
   " Plug 'hrsh7th/vim-vsnip'
 
   " For ultisnips users.
-  Plug 'SirVer/ultisnips'
+  Plug 'quangnguyen30192/cmp-nvim-ultisnips'
 
   Plug 'lewis6991/gitsigns.nvim'
 endfunction
@@ -104,6 +105,8 @@ lua <<EOF
   })
 
   -- Setup lspconfig.
+  require("nvim-lsp-installer").setup {}
+
   local lsp_mapping_opts = { noremap=true, silent=true }
   vim.keymap.set('n', '<Leader>je', vim.diagnostic.open_float, lsp_mapping_opts)
   vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, lsp_mapping_opts)
@@ -138,12 +141,18 @@ lua <<EOF
 
   local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
   local lspconfig = require('lspconfig')
+  local servers = {
+    pyright = {},
+    rust_analyzer = {}
+  }
 
-  for server in ipairs({'pyright'}) do
-    lspconfig['pyright'].setup {
+  for server, server_local_opts in pairs(servers) do
+    local server_opts = {
       on_attach = on_attach,
       capabilities = capabilities
     }
+    server_opts = vim.tbl_deep_extend('force', server_opts, server_local_opts)
+    lspconfig[server].setup(server_opts)
   end
 
   vim.diagnostic.config {
