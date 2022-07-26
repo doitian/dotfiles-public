@@ -539,6 +539,7 @@ nnoremap <silent> <Leader>cv :let @" = @+<CR>
 
 nnoremap <silent> <Leader>d "_d
 xnoremap <silent> <Leader>d "_d
+nnoremap <silent> <Leader>D :Diffoff<CR>
 
 nnoremap <Leader>eh :e <C-r>=CurDir().'/'<CR>
 nnoremap <silent> <Leader>en :enew<CR>
@@ -634,6 +635,7 @@ nnoremap <Leader>th :tabnew <C-r>=CurDir().'/'<CR>
 nnoremap <Leader>td :tabnew <C-r>=CurDir().'/'<CR><CR>
 nnoremap <silent> <Leader>tn :tabnew<CR>
 nnoremap <silent> <Leader>tz :tabnew %<CR>
+nnoremap <silent> <Leader>tc :tabclose<CR>
 
 nnoremap <Leader>u :MundoToggle<CR>
 " Reselect text that was just pasted
@@ -655,8 +657,8 @@ inoremap <C-r><C-z> <C-r>=<SID>ZoteroCite()<CR>
 nnoremap <silent> <Leader>/t /\|.\{-}\|<CR>
 nnoremap <Leader>/w /\<\><Left><Left>
 
-nnoremap <silent> <Leader>] :tabclose<CR>
-nnoremap <silent> <Leader>[ :Diffoff<CR>
+nnoremap <silent> <Leader>] :call <SID>FollowWikiLink()<CR>
+nnoremap <silent> <Leader>[ :call <SID>CopyAsWikiLink()<CR>
 
 nnoremap <Leader>$<Space> :System<Space>
 nnoremap <expr> <Leader>$ Opfunc(funcref('System'))
