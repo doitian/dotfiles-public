@@ -3,7 +3,7 @@ format = "[$all](italic)"
 [directory]
 truncation_length = 5
 truncation_symbol = "…/"
-repo_root_style = "purple bold italic"
+repo_root_style = "cyan bold italic"
 
 [git_branch]
 symbol = "±"
