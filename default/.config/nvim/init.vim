@@ -8,6 +8,8 @@ function! LoadNvimPlugs()
 
   Plug 'williamboman/nvim-lsp-installer'
   Plug 'neovim/nvim-lspconfig'
+  Plug 'ii14/lsp-command'
+
   Plug 'hrsh7th/cmp-nvim-lsp'
   Plug 'hrsh7th/cmp-buffer'
   Plug 'hrsh7th/cmp-path'
@@ -123,21 +125,18 @@ lua <<EOF
     -- See `:help vim.lsp.*` for documentation on any of the below functions
     local bufopts = { noremap=true, silent=true, buffer=bufnr }
     vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
-    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
     vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
+    vim.keymap.set('n', 'go', vim.lsp.buf.type_definition, bufopts)
     vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
     vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
+    vim.keymap.set('n', '<Leader>jx', vim.lsp.buf.code_action, bufopts)
+    vim.keymap.set('x', '<Leader>jx', vim.lsp.buf.code_action, bufopts)
     vim.keymap.set('n', '<Leader>jwa', vim.lsp.buf.add_workspace_folder, bufopts)
     vim.keymap.set('n', '<Leader>jwr', vim.lsp.buf.remove_workspace_folder, bufopts)
     vim.keymap.set('n', '<Leader>jwl', function()
       print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
     end, bufopts)
-    vim.keymap.set('n', '<Leader>j2', vim.lsp.buf.rename, bufopts)
-    vim.keymap.set('n', '<Leader>jx', vim.lsp.buf.code_action, bufopts)
-    vim.keymap.set('x', '<Leader>jx', vim.lsp.buf.code_action, bufopts)
-    vim.keymap.set('n', 'go', vim.lsp.buf.type_definition, bufopts)
-    vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
-    vim.keymap.set('n', '<Leader>jf', vim.lsp.buf.formatting, bufopts)
   end
 
   local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
