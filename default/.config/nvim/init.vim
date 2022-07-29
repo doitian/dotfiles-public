@@ -64,9 +64,9 @@ lua <<EOF
     mapping = cmp.mapping.preset.insert({
       ['<C-b>'] = cmp.mapping.scroll_docs(-4),
       ['<C-f>'] = cmp.mapping.scroll_docs(4),
-      ['<C-Space>'] = cmp.mapping.complete(),
+      ['<C-l>'] = cmp.mapping.complete(),
       ['<C-e>'] = cmp.mapping.abort(),
-      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+      ['<CR>'] = cmp.mapping.confirm({ select = true }),
     }),
     sources = cmp.config.sources({
       { name = 'nvim_lsp' },
@@ -108,9 +108,9 @@ lua <<EOF
   require("nvim-lsp-installer").setup {}
 
   local lsp_mapping_opts = { noremap=true, silent=true }
-  vim.keymap.set('n', '<Leader>je', vim.diagnostic.open_float, lsp_mapping_opts)
   vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, lsp_mapping_opts)
   vim.keymap.set('n', ']d', vim.diagnostic.goto_next, lsp_mapping_opts)
+  vim.keymap.set('n', '<Leader>je', vim.diagnostic.open_float, lsp_mapping_opts)
   vim.keymap.set('n', '<Leader>jq', vim.diagnostic.setloclist, lsp_mapping_opts)
 
   -- Use an on_attach function to only map the following keys
@@ -124,17 +124,18 @@ lua <<EOF
     local bufopts = { noremap=true, silent=true, buffer=bufnr }
     vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
     vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
-    vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
     vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
     vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
     vim.keymap.set('n', '<Leader>jwa', vim.lsp.buf.add_workspace_folder, bufopts)
     vim.keymap.set('n', '<Leader>jwr', vim.lsp.buf.remove_workspace_folder, bufopts)
     vim.keymap.set('n', '<Leader>jwl', function()
       print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
     end, bufopts)
-    vim.keymap.set('n', '<Leader>jD', vim.lsp.buf.type_definition, bufopts)
-    vim.keymap.set('n', '<Leader>jrn', vim.lsp.buf.rename, bufopts)
-    vim.keymap.set('n', '<Leader>jca', vim.lsp.buf.code_action, bufopts)
+    vim.keymap.set('n', '<Leader>j2', vim.lsp.buf.rename, bufopts)
+    vim.keymap.set('n', '<Leader>jx', vim.lsp.buf.code_action, bufopts)
+    vim.keymap.set('x', '<Leader>jx', vim.lsp.buf.code_action, bufopts)
+    vim.keymap.set('n', 'go', vim.lsp.buf.type_definition, bufopts)
     vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
     vim.keymap.set('n', '<Leader>jf', vim.lsp.buf.formatting, bufopts)
   end
