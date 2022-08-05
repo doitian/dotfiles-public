@@ -407,9 +407,9 @@ command! -bang Fcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sin
 command! -bang Flcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': 'lcd'}, <bang>0))
 command! -bang Fdir call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd'}, <bang>0))
 command! -bang Ffile call fzf#run(fzf#wrap('fasd -f', {'source': 'fasd -lRf'}, <bang>0))
-command! -bang DrillDown call fzf#run(fzf#wrap('fd -type d', {
+command! -bang -nargs=? DrillDown call fzf#run(fzf#wrap('fd -type d', {
   \ 'source': 'fd --type d --no-ignore --hidden --follow --exclude ".git"',
-  \ 'sink': 'cd'
+  \ 'sink': ( empty("<args>") ? "cd" : "<args>" )
 \ }, <bang>0))
 
 command! -nargs=1 -complete=file Cfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | cfile <args>
