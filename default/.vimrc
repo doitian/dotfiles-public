@@ -407,6 +407,10 @@ command! -bang Fcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sin
 command! -bang Flcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': 'lcd'}, <bang>0))
 command! -bang Fdir call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd'}, <bang>0))
 command! -bang Ffile call fzf#run(fzf#wrap('fasd -f', {'source': 'fasd -lRf'}, <bang>0))
+command! -bang DrillDown call fzf#run(fzf#wrap('fd -type d', {
+  \ 'source': 'fd --type d --no-ignore --hidden --follow --exclude ".git"',
+  \ 'sink': 'cd'
+\ }, <bang>0))
 
 command! -nargs=1 -complete=file Cfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | cfile <args>
 command! -nargs=1 -complete=file Lfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | lfile <args>
@@ -525,8 +529,9 @@ nnoremap <Leader>a :A<CR>
 
 nnoremap <silent> <Leader>b :Buffers<CR>
 
-nnoremap <Leader>cd :Fcd<CR>
-nnoremap <Leader>lcd :Flcd<CR>
+nnoremap <Leader>cw :pwd<CR>
+nnoremap <Leader>cb :cd -<bar>pwd<CR>
+nnoremap <Leader>cd :DrillDown<CR>
 nnoremap <Leader>lch :lcd <C-r>=CurDir().'/'<CR>
 nnoremap <Leader>ch :cd <C-r>=CurDir().'/'<CR>
 nnoremap <Leader>c<Space> :cd<Space><C-Z>
@@ -571,6 +576,8 @@ nnoremap <silent> <Leader>fm :Marks<CR>
 nnoremap <silent> <Leader>fw :Windows<CR>
 nnoremap <silent> <Leader>f? :Helptags<CR>
 nnoremap <silent> <Leader>fz :FZF<CR>
+nnoremap <Leader>fcd :Fcd<CR>
+nnoremap <Leader>flcd :Flcd<CR>
 
 nnoremap <Leader>g<Space> :grep<Space>
 nnoremap <silent> <Leader>gw :silent grep '\b<cword>\b'<Bar>copen 10<CR>
