@@ -403,14 +403,14 @@ command! Reload :source $HOME/.vimrc | :filetype detect | :nohl
 command! -bang Clear :silent! %bw<bang> | :silent! argd * | :nohl
 command! -nargs=* Diff2qf :cexpr system('diff2qf', system('git diff -U0 ' . <q-args>))
 
-command! -bang Fcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': 'cd'}, <bang>0))
-command! -bang Flcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': 'lcd'}, <bang>0))
-command! -bang Fdir call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd'}, <bang>0))
-command! -bang Ffile call fzf#run(fzf#wrap('fasd -f', {'source': 'fasd -lRf'}, <bang>0))
-command! -bang -nargs=? DrillDown call fzf#run(fzf#wrap('fd -type d', {
-  \ 'source': 'fd --type d --no-ignore --hidden --follow --exclude ".git"',
-  \ 'sink': ( empty("<args>") ? "cd" : "<args>" )
-\ }, <bang>0))
+command! -bang FasdCd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': 'cd'}, <bang>0))
+command! -bang FasdLcd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': 'lcd'}, <bang>0))
+command! -bang FasdDir call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd'}, <bang>0))
+command! -bang FasdFile call fzf#run(fzf#wrap('fasd -f', {'source': 'fasd -lRf'}, <bang>0))
+
+let g:fd_alt_c_command = 'fd --type d --no-ignore --hidden --follow --exclude ".git" . '
+command! -bang -nargs=? FzfCd call fzf#run(fzf#wrap('fd -t d', {'source': g:fd_alt_c_command . <q-args>, 'sink': 'cd'}, <bang>0))
+command! -bang -nargs=? FzfLcd call fzf#run(fzf#wrap('fd -t d', {'source': g:fd_alt_c_command . <q-args>, 'sink': 'lcd'}, <bang>0))
 
 command! -nargs=1 -complete=file Cfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | cfile <args>
 command! -nargs=1 -complete=file Lfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | lfile <args>
@@ -531,7 +531,8 @@ nnoremap <silent> <Leader>b :Buffers<CR>
 
 nnoremap <Leader>cw :pwd<CR>
 nnoremap <Leader>cb :cd -<bar>pwd<CR>
-nnoremap <Leader>cd :DrillDown<CR>
+nnoremap <Leader>cd :FzfCd<CR>
+nnoremap <Leader>cl :FzfLcd<CR>
 nnoremap <Leader>lch :lcd <C-r>=CurDir().'/'<CR>
 nnoremap <Leader>ch :cd <C-r>=CurDir().'/'<CR>
 nnoremap <Leader>c<Space> :cd<Space><C-Z>
@@ -564,8 +565,8 @@ nnoremap <Leader>ey :tab drop $HOME/.diary/<C-R>=strftime('%Y-%m-%d', localtime(
 
 nnoremap <silent> <Leader>fb :Buffers<CR>
 nnoremap <silent> <Leader>fk :Bw<CR>
-nnoremap <silent> <Leader>ff :Ffile<CR>
-nnoremap <silent> <Leader>fd :Fdir<CR>
+nnoremap <silent> <Leader>ff :FasdFile<CR>
+nnoremap <silent> <Leader>fd :FasdDir<CR>
 nnoremap <silent> <Leader>fo :BLines<CR>
 nnoremap <silent> <Leader>fO :Lines<CR>
 nnoremap <silent> <Leader>fr :History<CR>
@@ -576,8 +577,8 @@ nnoremap <silent> <Leader>fm :Marks<CR>
 nnoremap <silent> <Leader>fw :Windows<CR>
 nnoremap <silent> <Leader>f? :Helptags<CR>
 nnoremap <silent> <Leader>fz :FZF<CR>
-nnoremap <Leader>fcd :Fcd<CR>
-nnoremap <Leader>flcd :Flcd<CR>
+nnoremap <Leader>fcd :FasdCd<CR>
+nnoremap <Leader>flcd :FasdLcd<CR>
 
 nnoremap <Leader>g<Space> :grep<Space>
 nnoremap <silent> <Leader>gw :silent grep '\b<cword>\b'<Bar>copen 10<CR>
