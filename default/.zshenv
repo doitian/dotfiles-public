@@ -125,7 +125,7 @@ export PATH="\
 # fzf
 unset FZF_DEFAULT_OPTS
 if [ "$TERM_BACKGROUND" = light ]; then
-  export FZF_DEFAULT_OPTS='--color light,fg:#3c3b3a'
+  export FZF_DEFAULT_OPTS='--color light'
 fi
 if command -v fd &> /dev/null; then
   export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude ".git"'

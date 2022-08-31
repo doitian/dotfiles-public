@@ -3,7 +3,7 @@
 case "${1:-}" in
 light)
   echo "export TERM_BACKGROUND=light"
-  echo "export FZF_DEFAULT_OPTS='--color light,fg:#3c3b3a'"
+  echo "export FZF_DEFAULT_OPTS='--color light'"
   echo "export BAT_THEME=Coldark-Cold"
   echo "unset DELTA_FEATURES"
   if [ -n "${TMUX:-}" ]; then
