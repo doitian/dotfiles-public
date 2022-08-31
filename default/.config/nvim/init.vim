@@ -26,7 +26,7 @@ function! LoadNvimPlugs()
   Plug 'lewis6991/gitsigns.nvim'
 endfunction
 
-let g:copilot_node_command = $HOME . "/.asdf/installs/nodejs/16.16.0/bin/node"
+let g:copilot_node_command = $HOME . "/.asdf/shims/node"
 if filereadable("/usr/local/bin/python3")
   let g:python3_host_prog = "/usr/local/bin/python3"
 elseif exists("$SCOOP")
@@ -169,7 +169,7 @@ lua <<EOF
     sync_install = false,
 
     -- Automatically install missing parsers when entering buffer
-    auto_install = true,
+    auto_install = false,
 
     -- List of parsers to ignore installing (for "all")
     ignore_install = {'vim'},
