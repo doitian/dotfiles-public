@@ -27,11 +27,16 @@ function! LoadNvimPlugs()
 endfunction
 
 let g:copilot_node_command = $HOME . "/.asdf/shims/node"
-if filereadable("/usr/local/bin/python3")
+if exists("$SCOOP")
+  let g:copilot_node_command = $SCOOP . "/apps/nodejs-lts/current/node.exe"
+endif
+
+if exists("$VIM_PYTHON3_HOST_PROG")
+  let g:python3_host_prog = $VIM_PYTHON3_HOST_PROG
+elseif filereadable("/usr/local/bin/python3")
   let g:python3_host_prog = "/usr/local/bin/python3"
 elseif exists("$SCOOP")
   let g:python3_host_prog = $SCOOP . "/shims/python3.exe"
-  let g:copilot_node_command = $SCOOP . "/apps/nodejs-lts/current/node.exe"
 endif
 
 source ~/.vimrc
