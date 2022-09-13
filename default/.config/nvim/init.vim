@@ -9,6 +9,7 @@ function! LoadNvimPlugs()
   Plug 'williamboman/nvim-lsp-installer'
   Plug 'neovim/nvim-lspconfig'
   Plug 'ii14/lsp-command'
+  Plug 'ojroques/nvim-lspfuzzy'
 
   Plug 'hrsh7th/cmp-nvim-lsp'
   Plug 'hrsh7th/cmp-buffer'
@@ -113,12 +114,14 @@ lua <<EOF
 
   -- Setup lspconfig.
   require("nvim-lsp-installer").setup {}
+  require('lspfuzzy').setup {}
 
   local lsp_mapping_opts = { noremap=true, silent=true }
   vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, lsp_mapping_opts)
   vim.keymap.set('n', ']d', vim.diagnostic.goto_next, lsp_mapping_opts)
-  vim.keymap.set('n', '<Leader>je', vim.diagnostic.open_float, lsp_mapping_opts)
-  vim.keymap.set('n', '<Leader>jq', vim.diagnostic.setloclist, lsp_mapping_opts)
+  vim.keymap.set('n', '<Leader>jj', vim.diagnostic.open_float, lsp_mapping_opts)
+  vim.keymap.set('n', '<Leader>jqq', vim.diagnostic.setqflist, lsp_mapping_opts)
+  vim.keymap.set('n', '<Leader>jql', vim.diagnostic.setloclist, lsp_mapping_opts)
 
   -- Use an on_attach function to only map the following keys
   -- after the language server attaches to the current buffer
