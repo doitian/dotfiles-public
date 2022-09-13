@@ -4,6 +4,7 @@ set -e
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
+export GOPASS_NO_AUTOSYNC=true
 export GPG_TTY="$(tty)"
 
 function fpass() {
