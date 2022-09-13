@@ -6,6 +6,6 @@ pandoc \
   --variable linestretch=1.5 \
   --variable geometry=a4paper \
   --variable documentclass=scrbook \
-  --variable mainfont="Times" \
+  --variable mainfont="PT Serif" \
   --variable CJKmainfont="Noto Serif CJK SC" \
   "$@"
