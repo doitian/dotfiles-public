@@ -522,6 +522,7 @@ set wildcharm=<C-Z>
 nnoremap <silent> t<CR> :TestNearest<CR>
 nnoremap <silent> g<CR> :Dispatch<CR>
 nnoremap <silent> f<CR> :Neoformat<Bar>up<CR>
+vmap R <Plug>(abolish-coerce)
 
 nnoremap <Leader><Space> :Files<CR>
 nnoremap <Leader>? :Maps<CR>'<lt>Space>
