@@ -95,15 +95,30 @@ def ignore_case_formatter(text, _):
     return text.lower()
 
 
+def langid_formatter(text, _):
+    if text == 'eng':
+        return 'english'
+    elif text == 'zho':
+        return 'chinese'
+    else:
+        return text
+
+
+def keywords_formatter(text, _):
+    return text.replace(', ', ',').split(',').sort()
+
+
 ALIASES = {
     'calibreid': 'id',
     'custom_progress': '#progress',
-    'custom_pages': '#pages',
+    'pagetotal': '#pages',
+    'keywords': 'tags',
     'custom_topic': '#topic',
     'note': 'comments',
     'author': 'authors',
     'volume': 'series_index',
     'date': 'pubdate',
+    'langid': 'languages'
 }
 
 
@@ -120,6 +135,8 @@ FORMATTERS = {
     'author': author_formatter,
     'options': ignore_formatter,
     'title': ignore_case_formatter,
+    'langid': langid_formatter,
+    'keywords': keywords_formatter,
 }
 
 
@@ -163,7 +180,7 @@ finally:
 
 URL = "http://127.0.0.1:23119/better-bibtex/export/collection?/1/Calibre%20Library.biblatex&exportNotes=true"
 
-book = {}
+book = {'keywords': ''}
 for line in urllib.request.urlopen(URL).read().decode('utf-8').splitlines():
     if line.startswith('@book{'):
         book = {}
