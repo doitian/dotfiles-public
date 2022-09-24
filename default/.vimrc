@@ -533,13 +533,10 @@ nnoremap <silent> <Leader>b :Buffers<CR>
 
 nnoremap <Leader>cw :pwd<CR>
 nnoremap <Leader>cb :cd -<bar>pwd<CR>
-nnoremap <Leader>cd :FzfCd<CR>
-nnoremap <Leader>cl :FzfLcd<CR>
-nnoremap <Leader>lch :lcd <C-r>=CurDir().'/'<CR>
 nnoremap <Leader>ch :cd <C-r>=CurDir().'/'<CR>
+nnoremap <Leader>lch :lcd <C-r>=CurDir().'/'<CR>
 nnoremap <Leader>c<Space> :cd<Space><C-Z>
 nnoremap <Leader>lc<Space> :lcd<Space><C-Z>
-nnoremap <Leader>ct :tabnew<Bar>Flcd<CR>
 nnoremap <Leader>css :colorscheme PaperColor<CR>
 nnoremap <Leader>csd :colorscheme default<CR>
 nnoremap <silent> <Leader>cc :let @+ = @"<CR>
@@ -599,6 +596,7 @@ nnoremap <silent> <Leader>K <C-^>:bd #<Bar>let @# = 1<CR>
 " lc used in <Leader>c
 nnoremap <silent> <Leader>ll :25Lexplore<CR>
 nnoremap <silent> <Leader>la :args<CR>
+nnoremap <silent> <Leader>ld :help digraph-table<CR>
 nnoremap <silent> <Leader>lj :jumps<CR>
 nnoremap <silent> <Leader>lt :tags<CR>
 nnoremap <silent> <Leader>lT :tabs<CR>
@@ -692,7 +690,6 @@ inoremap <C-r><C-d> <C-r>=CurDir().'/'<CR>
 
 inoremap <expr> <C-r><C-h> fzf#vim#complete#path('cd ' . shellescape(expand('%:p:h')) . ' && fd -t f')
 inoremap <expr> <C-r><C-f> fzf#vim#complete#path('cd ' . shellescape(getcwd()) . ' && fd -t f')
-inoremap <expr> <C-r><C-i> fzf#vim#complete#path('cd ' . shellescape(getcwd()) . ' && fd -t f -e md')
 
 " OS specific settings {{{1
 if has('win32')
@@ -728,17 +725,6 @@ endfunction
 augroup vimrc_au
   autocmd!
 
-  autocmd BufReadPost *
-    \ if line("'\"") > 1 && line("'\"") <= line('$') && &filetype !=# 'gitcommit' |
-    \   exe 'normal! g`"' |
-    \ endif
-
-  autocmd SwapExists * let v:swapchoice = 'o'
-
-  autocmd User ProjectionistActivate call s:ProjectionistActivate()
-
-  autocmd CmdwinEnter * map <buffer> <C-w><C-w> <CR>q:dd
-
   autocmd FileType gitcommit,markdown,text setlocal spell
   autocmd FileType markdown set fo+=ro suffixesadd=.md
   autocmd FileType rust setlocal winwidth=99
@@ -746,11 +732,20 @@ augroup vimrc_au
   " Edit qf: setlocal ma | cgetb
   autocmd FileType qf setlocal errorformat=%f\|%l\ col\ %c\|%m
 
-  autocmd BufNewFile,BufRead *.bats set ft=sh
+  autocmd BufNewFile,BufRead *.bats set ft=bats.sh
   autocmd BufNewFile,BufRead *.tid set ft=markdown
   autocmd BufNewFile,BufRead */gopass-*/* set ft=gopass
   au BufNewFile,BufRead */gopass-*/* setlocal noswapfile nobackup noundofile
   autocmd BufNewFile,BufRead PULLREQ_EDITMSG set ft=gitcommit
+
+  autocmd BufReadPost *
+    \ if line("'\"") > 1 && line("'\"") <= line('$') && &filetype !=# 'gitcommit' |
+    \   exe 'normal! g`"' |
+    \ endif
+  autocmd SwapExists * let v:swapchoice = 'o'
+  autocmd CmdwinEnter * map <buffer> <C-w><C-w> <CR>q:dd
+
+  autocmd User ProjectionistActivate silent! call s:ProjectionistActivate()
   autocmd User GoyoEnter Limelight
   autocmd User GoyoLeave Limelight!
 augroup END

@@ -14,7 +14,6 @@ function! LoadNvimPlugs()
   Plug 'hrsh7th/cmp-nvim-lsp'
   Plug 'hrsh7th/cmp-buffer'
   Plug 'hrsh7th/cmp-path'
-  Plug 'hrsh7th/cmp-cmdline'
   Plug 'hrsh7th/nvim-cmp'
 
   " For vsnip users.
@@ -42,7 +41,7 @@ endif
 
 source ~/.vimrc
 
-command! Reload :eval "source " . stdpath('config') . "/init.vim" | :filetype detect | :nohl
+command! Reload :exe "source " . stdpath('config') . "/init.vim" | :filetype detect | :nohl
 command! LspFold setlocal foldmethod=expr foldexpr=nvim_treesitter#foldexpr()
 
 nnoremap <silent> <Leader>eV :tab drop <C-R>=stdpath('config')<CR>/init.vim<CR>
@@ -82,33 +81,7 @@ lua <<EOF
       { name = 'ultisnips' }, -- For ultisnips users.
     }, {
       { name = 'buffer' },
-    })
-  })
-
-  -- Set configuration for specific filetype.
-  cmp.setup.filetype('gitcommit', {
-    sources = cmp.config.sources({
-      { name = 'cmp_git' }, -- You can specify the `cmp_git` source if you were installed it.
-    }, {
-      { name = 'buffer' },
-    })
-  })
-
-  -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
-  cmp.setup.cmdline('/', {
-    mapping = cmp.mapping.preset.cmdline(),
-    sources = {
-      { name = 'buffer' }
-    }
-  })
-
-  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-  cmp.setup.cmdline(':', {
-    mapping = cmp.mapping.preset.cmdline(),
-    sources = cmp.config.sources({
-      { name = 'path' }
-    }, {
-      { name = 'cmdline' }
+      { name = 'path' },
     })
   })
 
