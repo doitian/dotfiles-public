@@ -425,6 +425,9 @@ command! Bw call fzf#run(fzf#wrap({
 command! -nargs=* -complete=shellcmd TmuxSend call TmuxSend(<q-args>)
 command! -nargs=* -complete=shellcmd System call System(<q-args>)
 
+command! Delete call delete(expand('%')) | bd | let @# = 1
+command! -nargs=1 -complete=file Move saveas <args> | call delete(expand('#')) | exec "bd #" | let @# = 1
+
 if has('win32') || has('ios')
   command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile | silent file __viper__ | nnoremap <buffer> <CR> ggvGg_"+y:%d <lt>Bar> redraw!<lt>CR>
 else
