@@ -4,36 +4,34 @@ set -e
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
-DIARY_DIR="$HOME/.diary"
-if ! [ -e "$DIARY_DIR" ] && [ -d "$HOME/Dropbox/Brain/periodic" ]; then
-  ln -snf "$HOME/Dropbox/Brain/diary" "$HOME/.diary"
+JOURNAL_DIR="$HOME/.journal"
+if ! [ -e "$JOURNAL_DIR" ] && [ -d "$HOME/Dropbox/Brain/journal" ]; then
+  ln -snf "$HOME/Dropbox/Brain/journal" "$HOME/.journal"
 fi
-DIARY_FILE="$DIARY_DIR/$(date +'%Y-%m-%d').md"
+JOURNAL_FILE="$JOURNAL_DIR/Journal $(date +'%Y-%m-%d').md"
 
-ensure_diary_file() {
-  if ! [ -e "$DIARY_DIR" ]; then
-    mkdir -p "$DIARY_DIR"
+ensure_journal_file() {
+  if ! [ -e "$JOURNAL_DIR" ]; then
+    mkdir -p "$JOURNAL_DIR"
   fi
 
-  if ! [ -e "$DIARY_FILE" ]; then
-    local date="${DIARY_FILE%.md}"
-    date="${date##*/}"
+  if ! [ -e "$JOURNAL_FILE" ]; then
+    local date="${JOURNAL_FILE%.md}"
+    date="${date##* }"
 
-    local week_number=$(($(date -j -f '%Y-%m-%d' $date +'%W') + 1))
+    echo "# Journal on $(date -j -f '%Y-%m-%d' $date +'%a, %b %d, %Y')
 
-    echo "![[$(date -j -f '%Y-%m-%d' $date +'%Y-%m')-W$(printf '%02d\n' $week_number)#^index]]
+## Metadata
 
-# $(date -j -f '%Y-%m-%d' $date +'%a, %b %d, %Y')
+**Date**:: [[$date]]
+**Kind**:: #journal
 
-#journal
-
-## Journal
-" >"$DIARY_FILE"
+## Journal" >"$JOURNAL_FILE"
   fi
 }
 
 main() {
-  ensure_diary_file
+  ensure_journal_file
 
   sep_title="$*"
   if [ -n "$sep_title" ]; then
@@ -44,11 +42,11 @@ main() {
     echo
     echo "### $(date +'%H:%M')${sep_title}"
     echo
-  ) >>"$DIARY_FILE"
-  cat >>"$DIARY_FILE"
-  echo >>"$DIARY_FILE"
+  ) >>"$JOURNAL_FILE"
+  cat >>"$JOURNAL_FILE"
+  echo >>"$JOURNAL_FILE"
 
-  echo "$DIARY_FILE"
+  echo "$JOURNAL_FILE"
 }
 
 main "$@"
