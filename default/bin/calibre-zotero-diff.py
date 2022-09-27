@@ -97,9 +97,11 @@ def ignore_case_formatter(text, _):
 
 def langid_formatter(text, _):
     if text == 'eng':
-        return 'english'
+        return 'en-US'
     elif text == 'zho':
-        return 'chinese'
+        return 'zh-CN'
+    elif text == 'och':
+        return 'zh-CN'
     else:
         return text
 
@@ -178,7 +180,7 @@ finally:
 # }
 
 
-URL = "http://127.0.0.1:23119/better-bibtex/export/collection?/1/Calibre%20Library.biblatex&exportNotes=true"
+URL = "http://127.0.0.1:23119/better-bibtex/export/collection?/1/4%20Archive/Calibre%20Library.biblatex&exportNotes=true"
 
 book = {'keywords': ''}
 for line in urllib.request.urlopen(URL).read().decode('utf-8').splitlines():
