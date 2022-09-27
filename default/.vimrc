@@ -401,7 +401,7 @@ command! Close :pclose | :cclose | :lclose |
       \ exe s:currentWindow . 'wincmd w'
 command! Diffoff :diffoff! | :windo call s:CloseReadonlyWin() | :Close
 command! Reload :source $HOME/.vimrc | :filetype detect | :nohl
-command! -bang Clear :silent! %bw<bang> | :silent! argd * | :nohl
+command! -bang Clear :silent! %bdelete | :silent! argd * | :nohl
 command! -nargs=* Diff2qf :cexpr system('diff2qf', system('git diff -U0 ' . <q-args>))
 
 command! -bang FasdCd call fzf#run(fzf#wrap('fasd -d', {'source': 'fasd -lRd', 'sink': 'cd'}, <bang>0))
@@ -416,17 +416,17 @@ command! -bang -nargs=? FzfLcd call fzf#run(fzf#wrap('fd -t d', {'source': g:fd_
 command! -nargs=1 -complete=file Cfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | cfile <args>
 command! -nargs=1 -complete=file Lfile let &errorformat = g:bookmark_line_prefix . '%f|%l col %c| %m' | lfile <args>
 command! -bang -nargs=* Bm call <SID>BookmarkLine(<q-args>, <bang>0)
-command! Bw call fzf#run(fzf#wrap({
+command! Bd call fzf#run(fzf#wrap({
   \ 'source': <SID>Bufs(),
-  \ 'sink*': { lines -> execute('bwipeout '.join(map(lines, {_, line -> split(line)[0]}))) },
+  \ 'sink*': { lines -> execute('bdelete '.join(map(lines, {_, line -> split(line)[0]}))) },
   \ 'options': '--multi --reverse --bind ctrl-a:select-all+accept'
 \ }))
 
 command! -nargs=* -complete=shellcmd TmuxSend call TmuxSend(<q-args>)
 command! -nargs=* -complete=shellcmd System call System(<q-args>)
 
-command! Delete call delete(expand('%')) | bd | let @# = 1
-command! -nargs=1 -complete=file Move saveas <args> | call delete(expand('#')) | exec "bd #" | let @# = 1
+command! Delete call delete(expand('%')) | bdelete | let @# = 1
+command! -nargs=1 -complete=file Move saveas <args> | call delete(expand('#')) | exec "bdelete #" | let @# = 1
 
 if has('win32') || has('ios')
   command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile | silent file __viper__ | nnoremap <buffer> <CR> ggvGg_"+y:%d <lt>Bar> redraw!<lt>CR>
@@ -560,13 +560,11 @@ nnoremap <Leader>e<Space> :e<Space><C-Z>
 nnoremap <silent> <Leader>ep :tab drop .projections.json<CR>
 nnoremap <Leader>es :tab drop $HOME/.vim/UltiSnips/<C-Z>
 nnoremap <Leader>eS :UltiSnipsEdit<CR>
-nnoremap <Leader>ed :tab drop $HOME/.diary/<C-R>=strftime('%Y-%m-%d')<CR>.md<CR>
-nnoremap <Leader>eD :Files $HOME/.diary/<CR>
-nnoremap <Leader>em :tab drop $HOME/.diary/<C-R>=strftime('%Y-%m-%d', localtime() + 86400)<CR>.md<CR>
-nnoremap <Leader>ey :tab drop $HOME/.diary/<C-R>=strftime('%Y-%m-%d', localtime() - 86400)<CR>.md<CR>
+nnoremap <Leader>ej :tab drop $HOME/.journal/<C-R>=strftime('%Y-%m-%d')<CR>.md<CR>
+nnoremap <Leader>eJ :Files $HOME/.journal/<CR>
 
 nnoremap <silent> <Leader>fb :Buffers<CR>
-nnoremap <silent> <Leader>fk :Bw<CR>
+nnoremap <silent> <Leader>fk :Bd<CR>
 nnoremap <silent> <Leader>ff :FasdFile<CR>
 nnoremap <silent> <Leader>fd :FasdDir<CR>
 nnoremap <silent> <Leader>fo :BLines<CR>
@@ -594,7 +592,7 @@ nnoremap <silent> <Leader>I :Tags<CR>
 " j localmap
 
 nnoremap <silent> <Leader>k :Close<CR>
-nnoremap <silent> <Leader>K <C-^>:bd #<Bar>let @# = 1<CR>
+nnoremap <silent> <Leader>K <C-^>:bdelete #<Bar>let @# = 1<CR>
 
 " lc used in <Leader>c
 nnoremap <silent> <Leader>ll :25Lexplore<CR>
