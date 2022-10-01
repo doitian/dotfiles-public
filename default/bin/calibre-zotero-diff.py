@@ -96,7 +96,7 @@ def ignore_case_formatter(text, _):
 
 
 def langid_formatter(text, _):
-    if text == 'eng':
+    if text == 'eng' or text == 'american':
         return 'en-US'
     elif text == 'zho':
         return 'zh-CN'
@@ -107,7 +107,7 @@ def langid_formatter(text, _):
 
 
 def keywords_formatter(text, _):
-    return text.replace(', ', ',').split(',').sort()
+    return sorted(text.replace(', ', ',').split(','))
 
 
 ALIASES = {
@@ -120,7 +120,9 @@ ALIASES = {
     'author': 'authors',
     'volume': 'series_index',
     'date': 'pubdate',
-    'langid': 'languages'
+    'langid': 'languages',
+    'custom_metadata': '#metadata',
+    'custom_mdnotes': '#mdnotes',
 }
 
 
