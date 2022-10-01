@@ -1,141 +1,142 @@
 [alias]
-  snapshot = "!f() { git stash save -u \"snapshot $(date)\" && git stash apply \"stash@{0}\"; }; f"
+	snapshot = "!f() { git stash save -u \"snapshot $(date)\" && git stash apply \"stash@{0}\"; }; f"
 
-  br = branch
-  whereami = rev-parse --abbrev-ref HEAD
+	br = branch
+	whereami = rev-parse --abbrev-ref HEAD
 
-  cm = commit
-  ca = commit --amend
-  co = checkout
-  cb = checkout -b
+	cm = commit
+	ca = commit --amend
+	co = checkout
+	cb = checkout -b
 
-  cp = cherry-pick
+	cp = cherry-pick
 
-  di = diff -p --stat # show difference between working tree and the index
-  dc = diff --cached -p --stat # what would be committed with "git commit"
-  da = diff -p --stat HEAD # what would be committed with "git commit -a"
-  ds = diff --stat # show different files between working tree and the index
-  dt = difftool
-  last = diff HEAD^
+	di = diff -p --stat # show difference between working tree and the index
+	dc = diff --cached -p --stat # what would be committed with "git commit"
+	da = diff -p --stat HEAD # what would be committed with "git commit -a"
+	ds = diff --stat # show different files between working tree and the index
+	dt = difftool
+	last = diff HEAD^
 
-  fp = format-patch -s
+	fp = format-patch -s
 
-  l = log --pretty=tformat:'%C(auto)%h %s <%aN %ad>' --date=relative
-  lg = log --pretty=tformat:'%C(auto)%h %s <%aN %ad>%d' --date=relative --decorate --graph
-  l1 = !git --no-pager log -1 --decorate --date=relative
-  lref = log --pretty=tformat:'%C(auto)%h %aN %s %ad' --date=relative 'HEAD@{1}'...
-  lpref = log -p --pretty=tformat:'%C(auto)%h %aN %s %ad' --date=relative 'HEAD@{1}'...
-  lp = log -p
-  stat = log --stat
+	l = log --pretty=tformat:'%C(auto)%h %s <%aN %ad>' --date=relative
+	lg = log --pretty=tformat:'%C(auto)%h %s <%aN %ad>%d' --date=relative --decorate --graph
+	l1 = !git --no-pager log -1 --decorate --date=relative
+	lref = log --pretty=tformat:'%C(auto)%h %aN %s %ad' --date=relative 'HEAD@{1}'...
+	lpref = log -p --pretty=tformat:'%C(auto)%h %aN %s %ad' --date=relative 'HEAD@{1}'...
+	lp = log -p
+	stat = log --stat
 
-  mt = mergetool
+	mt = mergetool
 
-  mb = !git merge-base HEAD \"$(git config --get user.reviewBase || echo master)\"
-  cpr = "!f() { git current -u; gh pr create \"$@\"; }; f"
+	mb = !git merge-base HEAD \"$(git config --get user.reviewBase || echo master)\"
+	cpr = "!f() { git current -u; gh pr create \"$@\"; }; f"
 
-  rb = rebase
-  rc = rebase --continue
-  ra = rebase --abort
-  rs = rebase --skip
+	rb = rebase
+	rc = rebase --continue
+	ra = rebase --abort
+	rs = rebase --skip
 
-  st = status --short --branch
-  dotfiles = "!git multistatus ~/.dotfiles ~/.dotfiles/repos/public ~/.dotfiles/repos/private"
-  all = "!f() { fd -t d -I -H -g --prune \"$@\" .git -X git multistatus \"{//}\"; }; f"
+	st = status --short --branch
+	dotfiles = "!git multistatus ~/.dotfiles ~/.dotfiles/repos/public ~/.dotfiles/repos/private"
+	all = "!f() { fd -t d -I -H -g --prune \"$@\" .git -X git multistatus \"{//}\"; }; f"
 
-  ls = ls-files
-  grep = grep -Ii
-  rg = "!git ls-files -z | xargs -0 rg"
+	ls = ls-files
+	grep = grep -Ii
+	rg = "!git ls-files -z | xargs -0 rg"
 
-  assume = update-index --assume-unchanged
-  unassume = update-index --no-assume-unchanged
-  assumed = "!git ls-files -v | grep '^h' | cut -c 3-"
-  unassumeall = "!git assumed | xargs git update-index --no-assume-unchanged"
-  assumeall = "!git status -s | awk {'print $2'} | xargs git assume"
-  exclude = "!f() { dir=$(git rev-parse --show-toplevel 2> /dev/null); [ -n \"$dir\" ] || return 1; for i in \"$@\"; do echo \"$i\" >> \"$dir\"/.git/info/exclude; done; }; f"
+	assume = update-index --assume-unchanged
+	unassume = update-index --no-assume-unchanged
+	assumed = "!git ls-files -v | grep '^h' | cut -c 3-"
+	unassumeall = "!git assumed | xargs git update-index --no-assume-unchanged"
+	assumeall = "!git status -s | awk {'print $2'} | xargs git assume"
+	exclude = "!f() { dir=$(git rev-parse --show-toplevel 2> /dev/null); [ -n \"$dir\" ] || return 1; for i in \"$@\"; do echo \"$i\" >> \"$dir\"/.git/info/exclude; done; }; f"
 
-  lasttag = describe --tags --abbrev=0
+	lasttag = describe --tags --abbrev=0
 
-  ours = "!f() { git checkout --ours \"$@\" && git add \"$@\"; }; f"
-  theirs = "!f() { git checkout --theirs "$@" && git add \"$@\"; }; f"
+	ours = "!f() { git checkout --ours \"$@\" && git add \"$@\"; }; f"
+	theirs = "!f() { git checkout --theirs "$@" && git add \"$@\"; }; f"
 
-  purr = pull --rebase
-  new = "!f() { git init; cp ~/.ignore .gitignore; git add -f .gitignore; git commit -m 'initial commit'; }; f"
+	purr = pull --rebase
+	new = "!f() { git init; cp ~/.ignore .gitignore; git add -f .gitignore; git commit -m 'initial commit'; }; f"
 
-  ready = rebase -i @{u}
-  whatsup = diff @{u}
-  giveup = reset --hard @{u}
+	ready = rebase -i @{u}
+	whatsup = diff @{u}
+	giveup = reset --hard @{u}
 
-  me = "!f() { git config user.email __EMAIL__; git config user.signingkey FD7051CE32E62CE7; git config commit.gpgSign true; }; f"
-  config-review-base = config user.reviewBase
-  config-current-remote = config user.currentRemote
+	me = "!f() { git config user.email __EMAIL__; git config user.signingkey FD7051CE32E62CE7; git config commit.gpgSign true; }; f"
+	config-review-base = config user.reviewBase
+	config-current-remote = config user.currentRemote
 
-  rs = restore --staged
-  fa = "!f() { git diff --name-only | fzf -m --print0 --preview 'git diff --color -- {}' | xargs -0 git add \"$@\"; }; f"
-  frs = "!f() { git diff --name-only --cached | fzf -m --print0 --preview 'git diff --color --cached -- {}' | xargs -0 git restore --staged \"$@\"; }; f"
-  fdi = "!f() { git diff --name-only | fzf -m --print0 --preview 'git diff --color -- {}' | xargs -0 git diff -p --stat; }; f"
-  fdc = "!f() { git diff --name-only --cached | fzf -m --print0 --preview 'git diff --color --cached -- {}' | xargs -0 git diff --cached -p --stat; }; f"
-  fda = "!f() { git diff --name-only HEAD | fzf -m --print0 --preview 'git diff --color HEAD -- {}' | xargs -0 git diff -p --stat HEAD; }; f"
+	rs = restore --staged
+	fa = "!f() { git diff --name-only | fzf -m --print0 --preview 'git diff --color -- {}' | xargs -0 git add \"$@\"; }; f"
+	frs = "!f() { git diff --name-only --cached | fzf -m --print0 --preview 'git diff --color --cached -- {}' | xargs -0 git restore --staged \"$@\"; }; f"
+	fdi = "!f() { git diff --name-only | fzf -m --print0 --preview 'git diff --color -- {}' | xargs -0 git diff -p --stat; }; f"
+	fdc = "!f() { git diff --name-only --cached | fzf -m --print0 --preview 'git diff --color --cached -- {}' | xargs -0 git diff --cached -p --stat; }; f"
+	fda = "!f() { git diff --name-only HEAD | fzf -m --print0 --preview 'git diff --color HEAD -- {}' | xargs -0 git diff -p --stat HEAD; }; f"
 
 [core]
-  excludesfile = "__HOME__/.ignore"
-  autocrlf = false
-  safecrlf = true
-  quotepath = off
+	excludesfile = "__HOME__/.ignore"
+	attributesFile = "__HOME__/.gitattributes"
+	autocrlf = false
+	safecrlf = true
+	quotepath = off
 [init]
-  defaultBranch = main
+	defaultBranch = main
 
 [log]
-  date = iso
+	date = iso
 [pull]
-  ff = only
+	ff = only
 [push]
-  default = upstream
+	default = upstream
 [diff]
-  algorithm = patience
+	algorithm = patience
 [difftool]
-  prompt = false
+	prompt = false
 [merge]
-  defaultToUpstream = true
+	defaultToUpstream = true
 [mergetool]
-  prompt = false
+	prompt = false
 
 [rerere]
-  enabled = true
+	enabled = true
 
 [filter "lfs"]
-  clean = git-lfs clean -- %f
-  smudge = git-lfs smudge -- %f
-  process = git-lfs filter-process
-  required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
 
 [user]
-  name = __NAME__
-  useConfigOnly = true
+	name = __NAME__
+	useConfigOnly = true
 
 [pager]
-  branch = false
+	branch = false
 
 [color "diff"]
-  meta = blue bold
+	meta = blue bold
 
 [delta]
-  features = light-background line-numbers decorations
+	features = light-background line-numbers decorations
 
 [delta "light-background"]
-  light = true
+	light = true
 
 [delta "decorations"]
-  commit-decoration-style = bold yellow box ul
-  file-style = bold blue ul
-  hunk-header-decoration-style = cyan box ul
+	commit-decoration-style = bold yellow box ul
+	file-style = bold blue ul
+	hunk-header-decoration-style = cyan box ul
 
 [delta "interactive"]
-  keep-plus-minus-markers = false
+	keep-plus-minus-markers = false
 
 [difftool "vscode"]
-  cmd = code --wait --diff $LOCAL $REMOTE
+	cmd = code --wait --diff $LOCAL $REMOTE
 [mergetool "vscode"]
-  cmd = code --wait $MERGED
+	cmd = code --wait $MERGED
 
 [gitflow "branch"]
-  master = main
+	master = main
