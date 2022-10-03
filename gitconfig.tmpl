@@ -39,7 +39,7 @@
 	rs = rebase --skip
 
 	st = status --short --branch
-	dotfiles = "!git multistatus ~/.dotfiles ~/.dotfiles/repos/public ~/.dotfiles/repos/private"
+	dotfiles = "!git multistatus ~/.dotfiles ~/.dotfiles/repos/public ~/.dotfiles/repos/private ~/Dropbox/Brain/.obsidian"
 	all = "!f() { fd -t d -I -H -g --prune \"$@\" .git -X git multistatus \"{//}\"; }; f"
 
 	ls = ls-files
