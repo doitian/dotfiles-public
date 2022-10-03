@@ -734,6 +734,7 @@ augroup vimrc_au
   autocmd FileType qf setlocal errorformat=%f\|%l\ col\ %c\|%m
 
   autocmd BufNewFile,BufRead *.bats set ft=bats.sh
+  autocmd BufNewFile,BufRead .envrc set ft=envrc.sh
   autocmd BufNewFile,BufRead *.tid set ft=markdown
   autocmd BufNewFile,BufRead */gopass-*/* set ft=gopass
   au BufNewFile,BufRead */gopass-*/* setlocal noswapfile nobackup noundofile
