@@ -560,7 +560,7 @@ nnoremap <Leader>e<Space> :e<Space><C-Z>
 nnoremap <silent> <Leader>ep :tab drop .projections.json<CR>
 nnoremap <Leader>es :tab drop $HOME/.vim/UltiSnips/<C-Z>
 nnoremap <Leader>eS :UltiSnipsEdit<CR>
-nnoremap <Leader>ej :tab drop $HOME/.journal/<C-R>=strftime('%Y-%m-%d')<CR>.md<CR>
+nnoremap <Leader>ej :tab drop $HOME/.journal/Journal <C-R>=strftime('%Y-%m-%d')<CR>.md<CR>
 nnoremap <Leader>eJ :Files $HOME/.journal/<CR>
 
 nnoremap <silent> <Leader>fb :Buffers<CR>
