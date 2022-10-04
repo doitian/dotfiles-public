@@ -95,6 +95,10 @@ def ignore_case_formatter(text, _):
     return text.lower()
 
 
+def join_lines_formatter(text, is_zotero):
+    return text.replace('\n', ' ')
+
+
 def langid_formatter(text, _):
     if text == 'eng' or text == 'american':
         return 'en-US'
@@ -141,6 +145,8 @@ FORMATTERS = {
     'title': ignore_case_formatter,
     'langid': langid_formatter,
     'keywords': keywords_formatter,
+    'custom_mdnotes': join_lines_formatter,
+    'custom_metadata': join_lines_formatter,
 }
 
 
@@ -184,10 +190,21 @@ finally:
 
 URL = "http://127.0.0.1:23119/better-bibtex/export/collection?/1/4%20Archive/Calibre%20Library.biblatex&exportNotes=true"
 
-book = {'keywords': ''}
+
+def default_book():
+    return {
+        'keywords': '',
+        'custom_mdnotes': '',
+        'custom_progress': '',
+        'custom_topic': '',
+        'custom_metadata': ''
+    }
+
+
+book = default_book()
 for line in urllib.request.urlopen(URL).read().decode('utf-8').splitlines():
     if line.startswith('@book{'):
-        book = {}
+        book = default_book()
     elif line.startswith('}'):
         id = book.get('calibreid')
         calibre_entry = calibredb.get(id)
