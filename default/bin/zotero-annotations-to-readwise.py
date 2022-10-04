@@ -14,7 +14,8 @@ ANNOTATION_RE = re.compile(r"""
 """, re.VERBOSE)
 QUOTED_RE = re.compile(r"\\([\\\[\]*_-`])")
 LINK_RE = re.compile(r"\(\[.*?\]\((.*?)\)\)")
-PAGE_RE = re.compile(r"page=([0-9]+)")
+BOOK_PAGE_RE = re.compile(r", p\. ([0-9]+)\]")
+PDF_PAGE_RE = re.compile(r"page=([0-9]+)")
 
 
 @dataclass
@@ -54,8 +55,14 @@ class State:
         links = LINK_RE.findall(raw_links)
         self.article_link = links[0]
         self.pdf_link = f'([pdf →]({links[1]}))'
-        page_match = PAGE_RE.search(self.pdf_link)
-        self.page = int(page_match.group(1)) if page_match is not None else 0
+        book_page_match = BOOK_PAGE_RE.search(raw_links)
+        self.page = 0
+        if book_page_match:
+            self.page = int(book_page_match.group(1))
+        else:
+            pdf_page_match = PDF_PAGE_RE.search(self.pdf_link)
+            if pdf_page_match:
+                self.page = int(pdf_page_match.group(1))
 
     def flush(self):
         note = self.combined_note()
