@@ -11,7 +11,7 @@ ANNOTATION_RE = re.compile(r"""
         (?:\ (.*))?
 """, re.VERBOSE)
 TAG_RE = re.compile(r"\.([a-zA-Z0-9_-]+)\b")
-QUOTED_RE = re.compile(r"\\([\\\[\]*_-`])")
+QUOTED_RE = re.compile(r"\\([\\\[\]*_`-])")
 ACTION_RE = re.compile(r"#([ch])([1-9])(?:\s|$)")
 
 
@@ -123,6 +123,8 @@ def process(line, state):
     elif line.rstrip("\r\n") == '':
         print()
     elif state.action_type == 'h':
+        print(unquote(line.rstrip()))
+    elif line.startswith('#'):
         print(unquote(line.rstrip()))
     else:
         print(f'    {unquote(line.rstrip())}')
