@@ -111,7 +111,12 @@ def langid_formatter(text, _):
 
 
 def keywords_formatter(text, _):
-    return sorted(text.replace(', ', ',').split(','))
+    keywords = sorted(text.replace(', ', ',').split(','))
+    try:
+        keywords.remove('_tablet')
+    except ValueError:
+        pass
+    return keywords
 
 
 ALIASES = {
@@ -209,7 +214,7 @@ for line in urllib.request.urlopen(URL).read().decode('utf-8').splitlines():
         id = book.get('calibreid')
         calibre_entry = calibredb.get(id)
         if calibre_entry is None:
-            print(f'Zotero Only: {book["title"]}')
+            print(f'---Z-- {book["title"]}')
         else:
             del calibredb[id]
             for zotero_key, zotero_value in book.items():
@@ -220,14 +225,14 @@ for line in urllib.request.urlopen(URL).read().decode('utf-8').splitlines():
                     calibre_entry.get(calibre_key, ""), False)
                 if zotero_value != calibre_value:
                     print(
-                        f'Diff: {book["title"]}\n<<<<<<< zotero[{zotero_key}]\n{zotero_value}\n=======\n{calibre_value}\n>>>>>>> calibre[{calibre_key}]')
+                        f'±±CZ±± {book["title"]}\n<<<<<<< zotero[{zotero_key}]\n{zotero_value}\n=======\n{calibre_value}\n>>>>>>> calibre[{calibre_key}]')
     else:
         entry = parse_bib_entry(line)
         if entry:
             book[entry[0]] = entry[1]
 
 for entry in calibredb.values():
-    print(f'Calibre Only: {entry["title"]}')
+    print(f'++C+++ {entry["title"]}')
 
 
 # @book{AaronGustafson235,
