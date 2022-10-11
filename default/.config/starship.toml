@@ -7,6 +7,17 @@ repo_root_style = "cyan bold italic"
 symbol = "±"
 style = "purple bold italic"
 
+[git_status]
+format = '([[\[](white bold)$all_status$ahead_behind[\]](white bold)]($style) )'
+ahead = "↑"
+behind = "↓"
+conflicted = "[!](red)"
+diverged = "↕"
+modified = '[!](bright-yellow bold)'
+renamed = '[»](bright-yellow bold)'
+staged = '[+](green bold)'
+up_to_date = '[≡](green bold)'
+
 [status]
 disabled = false
 
