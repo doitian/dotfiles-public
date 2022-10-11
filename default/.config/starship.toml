@@ -1,23 +1,30 @@
-format = "[$all](italic)"
-
 [directory]
 truncation_length = 5
 truncation_symbol = "…/"
 repo_root_style = "cyan bold italic"
 
 [git_branch]
-symbol = "±"
+# symbol = "±"
+symbol = ""
 style = "purple bold italic"
 
 [status]
 disabled = false
+format = "[$symbol $status]($style) "
 
-[nodejs]
-symbol = '🤖 '
+# [nodejs]
+# symbol = '🤖 '
 
 [battery]
-full_symbol = "🔋 "
-charging_symbol = "⚡️ "
-discharging_symbol = "💀 "
-unknown_symbol = "💀 "
-empty_symbol = "🪫 "
+# full_symbol = "🔋 "
+# charging_symbol = "⚡️ "
+# discharging_symbol = "💀 "
+# unknown_symbol = "💀 "
+# empty_symbol = "🪫 "
+
+[[battery.display]]
+threshold = 10
+style = "bold red"
+[[battery.display]]
+threshold = 30
+style = "bold yellow"

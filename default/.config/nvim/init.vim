@@ -2,28 +2,30 @@
 set runtimepath^=~/.vim
 let &packpath=&runtimepath
 
+augroup csfix_au
+  autocmd!
+  autocmd ColorScheme PaperColor hi VertSplit cterm=reverse
+augroup END
+
 function! LoadNvimPlugs()
-  Plug 'github/copilot.vim'
   Plug 'nvim-treesitter/nvim-treesitter' , {'do': ':TSUpdate'}
 
-  Plug 'williamboman/nvim-lsp-installer'
-  Plug 'neovim/nvim-lspconfig'
+  Plug 'github/copilot.vim'
   Plug 'ii14/lsp-command'
+  Plug 'neovim/nvim-lspconfig'
   Plug 'ojroques/nvim-lspfuzzy'
+  Plug 'williamboman/nvim-lsp-installer'
 
+  Plug 'folke/trouble.nvim'
+  Plug 'kyazdani42/nvim-web-devicons'
+  Plug 'lewis6991/gitsigns.nvim'
+
+  " cmp
   Plug 'hrsh7th/cmp-nvim-lsp'
   Plug 'hrsh7th/cmp-buffer'
   Plug 'hrsh7th/cmp-path'
   Plug 'hrsh7th/nvim-cmp'
-
-  " For vsnip users.
-  " Plug 'hrsh7th/cmp-vsnip'
-  " Plug 'hrsh7th/vim-vsnip'
-
-  " For ultisnips users.
   Plug 'quangnguyen30192/cmp-nvim-ultisnips'
-
-  Plug 'lewis6991/gitsigns.nvim'
 endfunction
 
 let g:copilot_node_command = $HOME . "/.asdf/shims/node"
@@ -44,12 +46,20 @@ source ~/.vimrc
 command! Reload :exe "source " . stdpath('config') . "/init.vim" | :filetype detect | :nohl
 command! LspFold setlocal foldmethod=expr foldexpr=nvim_treesitter#foldexpr()
 
-nnoremap <silent> <Leader>eV :tab drop <C-R>=stdpath('config')<CR>/init.vim<CR>
-
 set signcolumn=number
 set completeopt=menu,menuone,noselect
 set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
+set fillchars=foldopen:,foldsep:▏,foldclose:,diff:,vert:\| # eol
+
+" Test {{{2
+nnoremap <silent> <Leader>eV :tab drop <C-R>=stdpath('config')<CR>/init.vim<CR>
+nnoremap <leader>jtt <cmd>TroubleToggle<cr>
+nnoremap <leader>jtw <cmd>TroubleToggle workspace_diagnostics<cr>
+nnoremap <leader>jtd <cmd>TroubleToggle document_diagnostics<cr>
+nnoremap <leader>jtq <cmd>TroubleToggle quickfix<cr>
+nnoremap <leader>jtl <cmd>TroubleToggle loclist<cr>
+nnoremap <leader>jtr <cmd>TroubleToggle lsp_references<cr>
 
 " Lua {{{1
 lua <<EOF
@@ -93,8 +103,8 @@ lua <<EOF
   vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, lsp_mapping_opts)
   vim.keymap.set('n', ']d', vim.diagnostic.goto_next, lsp_mapping_opts)
   vim.keymap.set('n', '<Leader>jj', vim.diagnostic.open_float, lsp_mapping_opts)
-  vim.keymap.set('n', '<Leader>jqq', vim.diagnostic.setqflist, lsp_mapping_opts)
-  vim.keymap.set('n', '<Leader>jql', vim.diagnostic.setloclist, lsp_mapping_opts)
+  vim.keymap.set('n', '<Leader>jq', vim.diagnostic.setqflist, lsp_mapping_opts)
+  vim.keymap.set('n', '<Leader>jl', vim.diagnostic.setloclist, lsp_mapping_opts)
 
   -- Use an on_attach function to only map the following keys
   -- after the language server attaches to the current buffer
@@ -141,6 +151,12 @@ lua <<EOF
     underline = false,
   }
 
+  local signs = { Error = ' ', Warn = ' ', Hint = ' ', Info = ' ' }
+  for type, icon in pairs(signs) do
+    local hl = "DiagnosticSign" .. type
+    vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+  end
+
   -- treesitter
   require'nvim-treesitter.configs'.setup {
     -- A list of parser names, or "all"
@@ -168,6 +184,16 @@ lua <<EOF
   }
 
   require('gitsigns').setup{
+    signs = {
+      add          = { hl = 'GitGutterAdd', text = '▎', numhl='GitGutterAdd', linehl='GitGutterAddLine' },
+      change       = { hl = 'GitGutterChange', text = '▎', numhl='GitGutterChange', linehl='GitGutterChangeLine' },
+      delete       = { hl = 'GitGutterDelete', text = '契', numhl='GitGutterDelete', linehl='GitGutterDeleteLine' },
+      topdelete    = { hl = 'GitGutterDelete', text = '契', numhl='GitGutterDelete', linehl='GitGutterDeleteLine' },
+      changedelete = { hl = 'GitGutterChange', text = '▎', numhl='GitGutterChange', linehl='GitGutterChangeLine' },
+    },
+
+    numhl = true,
+
     on_attach = function(bufnr)
       local gs = package.loaded.gitsigns
 
