@@ -60,6 +60,14 @@ call plug#end()
 " Theme {{{1
 syntax on
 
+let g:PaperColor_Theme_Options = {
+      \   'theme': {
+      \     'default': {
+      \       'allow_bold': 1,
+      \       'allow_italic': 1
+      \     }
+      \   }
+      \ }
 silent! colorscheme PaperColor
 
 " Plugins Options {{{1
@@ -384,6 +392,7 @@ function! s:Italic(enable)
     let &t_ZR = ''
   endif
 endfunction
+call s:Italic(1)
 
 " Use %f as the base bufname, e.g., brain[%f]
 command! -nargs=1 Trename call s:TabRename(<q-args>)
@@ -501,8 +510,10 @@ if executable('rg')
 endif
 if has('multi_byte') && &encoding ==# 'utf-8'
   let &listchars = 'tab:▸ ,trail:·,extends:»,precedes:«,nbsp:␣'
+  let &fillchars = 'foldopen:▾,foldsep:│,foldclose:▸,vert:│'
 else
   let &listchars = 'tab:> ,trail:.,extends:>,precedes:<,nbsp:.'
+  let &fillchars = 'foldopen:v,foldsep:|,foldclose:>,vert:|'
 endif
 set statusline=%<%{StatusLineFileName()}\ %h%m%r%{HasPaste()}%=%{StatusLineFileFormat()}\ \#%n\ L%l:%c\ %P
 set undodir=$HOME/.vim/files/undo//

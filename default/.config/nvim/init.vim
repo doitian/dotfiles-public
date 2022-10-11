@@ -17,7 +17,6 @@ function! LoadNvimPlugs()
   Plug 'williamboman/nvim-lsp-installer'
 
   Plug 'folke/trouble.nvim'
-  Plug 'kyazdani42/nvim-web-devicons'
   Plug 'lewis6991/gitsigns.nvim'
 
   " cmp
@@ -50,7 +49,6 @@ set signcolumn=number
 set completeopt=menu,menuone,noselect
 set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
-set fillchars=foldopen:,foldsep:▏,foldclose:,diff:,vert:\| # eol
 
 " Test {{{2
 nnoremap <silent> <Leader>eV :tab drop <C-R>=stdpath('config')<CR>/init.vim<CR>
@@ -151,11 +149,13 @@ lua <<EOF
     underline = false,
   }
 
-  local signs = { Error = ' ', Warn = ' ', Hint = ' ', Info = ' ' }
-  for type, icon in pairs(signs) do
-    local hl = "DiagnosticSign" .. type
-    vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-  end
+  require("trouble").setup {
+    icons = false,
+    fold_open = "v",
+    fold_closed = ">",
+    indent_lines = false,
+    use_diagnostic_signs = true
+  }
 
   -- treesitter
   require'nvim-treesitter.configs'.setup {
@@ -185,11 +185,11 @@ lua <<EOF
 
   require('gitsigns').setup{
     signs = {
-      add          = { hl = 'GitGutterAdd', text = '▎', numhl='GitGutterAdd', linehl='GitGutterAddLine' },
-      change       = { hl = 'GitGutterChange', text = '▎', numhl='GitGutterChange', linehl='GitGutterChangeLine' },
-      delete       = { hl = 'GitGutterDelete', text = '契', numhl='GitGutterDelete', linehl='GitGutterDeleteLine' },
-      topdelete    = { hl = 'GitGutterDelete', text = '契', numhl='GitGutterDelete', linehl='GitGutterDeleteLine' },
-      changedelete = { hl = 'GitGutterChange', text = '▎', numhl='GitGutterChange', linehl='GitGutterChangeLine' },
+      add          = { hl = 'GitGutterAdd'   , text = '▏', numhl='GitGutterAdd'   , linehl='GitGutterAddLine'    },
+      change       = { hl = 'GitGutterChange', text = '▏', numhl='GitGutterChange', linehl='GitGutterChangeLine' },
+      delete       = { hl = 'GitGutterDelete', text = '▸', numhl='GitGutterDelete', linehl='GitGutterDeleteLine' },
+      topdelete    = { hl = 'GitGutterDelete', text = '▸', numhl='GitGutterDelete', linehl='GitGutterDeleteLine' },
+      changedelete = { hl = 'GitGutterChange', text = '▏', numhl='GitGutterChange', linehl='GitGutterChangeLine' },
     },
 
     numhl = true,
