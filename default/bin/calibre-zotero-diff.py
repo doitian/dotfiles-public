@@ -54,6 +54,8 @@ def ignore_whitespaces_formatter(text, _):
 
 
 def rich_text_formatter(text, is_zotero):
+    if text.startswith('\\section{Annotations'):
+        return ''
     text = ignore_whitespaces_formatter(text, is_zotero)
     text = text.replace('–', '--')
     text = LINK_RE.sub(r'<\1>', text)
@@ -95,7 +97,7 @@ def ignore_case_formatter(text, _):
     return text.lower()
 
 
-def join_lines_formatter(text, is_zotero):
+def join_lines_formatter(text, _):
     return text.replace('\n', ' ')
 
 
@@ -114,6 +116,10 @@ def keywords_formatter(text, _):
     keywords = sorted(text.replace(', ', ',').split(','))
     try:
         keywords.remove('_tablet')
+    except ValueError:
+        pass
+    try:
+        keywords.remove('_tablet_modified')
     except ValueError:
         pass
     return keywords
@@ -217,6 +223,11 @@ for line in urllib.request.urlopen(URL).read().decode('utf-8').splitlines():
             print(f'---Z-- {book["title"]}')
         else:
             del calibredb[id]
+            if calibre_entry['rating'] != '':
+                calibre_entry['tags'] += ',' + \
+                    ('⭐️' * int(calibre_entry['rating']))
+                if calibre_entry['tags'].startswith(','):
+                    calibre_entry['tags'] = calibre_entry['tags'][1:]
             for zotero_key, zotero_value in book.items():
                 calibre_key = ALIASES.get(zotero_key, zotero_key)
                 formatter = FORMATTERS.get(zotero_key, default_formatter)
