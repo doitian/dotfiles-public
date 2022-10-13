@@ -100,9 +100,9 @@ lua <<EOF
   local lsp_mapping_opts = { noremap=true, silent=true }
   vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, lsp_mapping_opts)
   vim.keymap.set('n', ']d', vim.diagnostic.goto_next, lsp_mapping_opts)
-  vim.keymap.set('n', '<Leader>jj', vim.diagnostic.open_float, lsp_mapping_opts)
-  vim.keymap.set('n', '<Leader>jq', vim.diagnostic.setqflist, lsp_mapping_opts)
-  vim.keymap.set('n', '<Leader>jl', vim.diagnostic.setloclist, lsp_mapping_opts)
+  vim.keymap.set('n', '<Leader><CR>', vim.diagnostic.open_float, lsp_mapping_opts)
+  vim.api.nvim_create_user_command('Cdiag', vim.diagnostic.setqflist, {})
+  vim.api.nvim_create_user_command('Ldiag', vim.diagnostic.setloclist, {})
 
   -- Use an on_attach function to only map the following keys
   -- after the language server attaches to the current buffer

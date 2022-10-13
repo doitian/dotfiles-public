@@ -601,7 +601,7 @@ nnoremap <silent> <Leader>h :Files <C-r>=CurDir()<CR><CR>
 nnoremap <silent> <Leader>i :BTags<CR>
 nnoremap <silent> <Leader>I :Tags<CR>
 
-" j localmap
+" j lsp
 
 nnoremap <silent> <Leader>k :Close<CR>
 nnoremap <silent> <Leader>K <C-^>:bdelete #<Bar>let @# = 1<CR>
@@ -642,8 +642,8 @@ nnoremap <silent> <Leader>rr :exe 'silent !open ' . shellescape(expand('%')) . '
 nnoremap <silent> <Leader>ro :exe 'silent !open ' . shellescape(expand('<cfile>')) . ' &> /dev/null' \| :redraw!<CR>
 nnoremap <silent> <Leader>R :checktime<CR>
 
-" Strip all trailing whitespace from a file
 nnoremap <Leader>ss :source $HOME/.vim/scripts/<C-Z>
+" Strip all trailing whitespace from a file
 nnoremap <silent> <Leader>sw :let _s=@/<Bar>%s/\s\+$//e<Bar>let @/=_s<Bar>unlet _s<Bar>nohl<CR>
 
 nnoremap <Leader>tq :Copen<CR>
