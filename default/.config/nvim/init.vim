@@ -169,11 +169,11 @@ lua <<EOF
     auto_install = false,
 
     -- List of parsers to ignore installing (for "all")
-    ignore_install = {'vim'},
+    ignore_install = false,
 
     highlight = {
       enable = true,
-      disable = {'vim'},
+      disable = false,
 
       -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
       -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
