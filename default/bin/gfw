@@ -2,9 +2,9 @@
 
 export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles
 PROXY_PROTOCOL="${PROXY_PROTOCOL:-http}"
+PROXY="${PROXY_HOST:-127.0.0.1}"
 
-if nc -z 127.0.0.1 7890 &>/dev/null; then
-  PROXY="${PROXY_HOST:-127.0.0.1}"
+if nc -z "$PROXY" 7890 &>/dev/null; then
   export https_proxy=$PROXY_PROTOCOL://${PROXY}:7890
   export http_proxy=$PROXY_PROTOCOL://${PROXY}:7890
   export all_proxy=$PROXY_PROTOCOL://${PROXY}:7890
