@@ -24,6 +24,12 @@ alias tu=tmux-up
 # Git
 alias g="git"
 alias gst="git status"
+alias gf="git flow"
+alias gff="git flow feature"
+alias gfb="git flow bugfix"
+alias gfr="git flow release"
+alias gfh="git flow hotfix"
+alias gfs="git flow support"
 
 ##################################################
 # File
