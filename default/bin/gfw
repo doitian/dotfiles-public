@@ -8,6 +8,11 @@ if nc -z "$PROXY_HOST" 7890 &>/dev/null; then
   export https_proxy=$PROXY_PROTOCOL://${PROXY_HOST}:7890
   export http_proxy=$PROXY_PROTOCOL://${PROXY_HOST}:7890
   export all_proxy=$PROXY_PROTOCOL://${PROXY_HOST}:7890
+elif nc -z 192.168.2.6 7890 &>/dev/null; then
+  PROXY_HOST="192.168.2.6"
+  export https_proxy=$PROXY_PROTOCOL://${PROXY_HOST}:7890
+  export http_proxy=$PROXY_PROTOCOL://${PROXY_HOST}:7890
+  export all_proxy=$PROXY_PROTOCOL://${PROXY_HOST}:7890
 elif nc -z 192.168.2.5 7890 &>/dev/null; then
   PROXY_HOST="192.168.2.5"
   export https_proxy=$PROXY_PROTOCOL://${PROXY_HOST}:7890
