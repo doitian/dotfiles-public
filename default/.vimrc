@@ -510,7 +510,7 @@ if executable('rg')
 endif
 if has('multi_byte') && &encoding ==# 'utf-8'
   let &listchars = 'tab:▸ ,trail:·,extends:»,precedes:«,nbsp:␣'
-  let &fillchars = 'foldopen:▾,foldsep:│,foldclose:▸,vert:│'
+  let &fillchars = 'foldopen:▾,foldsep:⏐,foldclose:▸,vert:╎'
 else
   let &listchars = 'tab:> ,trail:.,extends:>,precedes:<,nbsp:.'
   let &fillchars = 'foldopen:v,foldsep:|,foldclose:>,vert:|'

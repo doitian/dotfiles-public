@@ -9,7 +9,7 @@ symbol = "±"
 style = "purple bold italic"
 
 [git_status]
-format = '([\[](white bold)[$all_status$ahead_behind]($style)[\]](white bold) )'
+format = '([\[](white bold)[$all_status$ahead_behind]($style)[\]](white bold)) '
 ahead = "↑"
 behind = "↓"
 conflicted = "[!](red)"
