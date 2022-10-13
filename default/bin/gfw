@@ -2,12 +2,17 @@
 
 export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles
 PROXY_PROTOCOL="${PROXY_PROTOCOL:-http}"
-PROXY="${PROXY_HOST:-127.0.0.1}"
+PROXY_HOST="${PROXY_HOST:-127.0.0.1}"
 
-if nc -z "$PROXY" 7890 &>/dev/null; then
-  export https_proxy=$PROXY_PROTOCOL://${PROXY}:7890
-  export http_proxy=$PROXY_PROTOCOL://${PROXY}:7890
-  export all_proxy=$PROXY_PROTOCOL://${PROXY}:7890
+if nc -z "$PROXY_HOST" 7890 &>/dev/null; then
+  export https_proxy=$PROXY_PROTOCOL://${PROXY_HOST}:7890
+  export http_proxy=$PROXY_PROTOCOL://${PROXY_HOST}:7890
+  export all_proxy=$PROXY_PROTOCOL://${PROXY_HOST}:7890
+elif nc -z 192.168.2.5 7890 &>/dev/null; then
+  PROXY_HOST="192.168.2.5"
+  export https_proxy=$PROXY_PROTOCOL://${PROXY_HOST}:7890
+  export http_proxy=$PROXY_PROTOCOL://${PROXY_HOST}:7890
+  export all_proxy=$PROXY_PROTOCOL://${PROXY_HOST}:7890
 elif command -v powershell.exe &>/dev/null; then
   IP="$(powershell.exe -NoProfile -Command "(Get-NetIPAddress -InterfaceAlias Wi-Fi -AddressFamily IPv4).IPAddress | Write-Host -NoNewLine")"
   export https_proxy=$PROXY_PROTOCOL://$IP:7890
