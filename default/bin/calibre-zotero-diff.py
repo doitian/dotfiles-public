@@ -138,6 +138,7 @@ ALIASES = {
     'langid': 'languages',
     'custom_metadata': '#metadata',
     'custom_mdnotes': '#mdnotes',
+    'custom_date_read': '#date_read',
 }
 
 
@@ -158,6 +159,7 @@ FORMATTERS = {
     'keywords': keywords_formatter,
     'custom_mdnotes': join_lines_formatter,
     'custom_metadata': join_lines_formatter,
+    'custom_date_read': date_formatter,
 }
 
 
