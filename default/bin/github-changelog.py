@@ -91,8 +91,12 @@ for line in logs.splitlines():
             print("get pr #" + pr_number, file=sys.stderr)
             api_endpoint = 'https://api.github.com/repos/{}/pulls/{}'.format(
                 repo, pr_number)
-            pr = requests.get(api_endpoint, auth=auth).json()
+            pr_resp = requests.get(api_endpoint, auth=auth)
+            if pr_resp.status_code == 404:
+                print("PR {} not found".format(pr_number), file=sys.stderr)
+                continue
 
+            pr = pr_resp.json()
             if 'message' in pr:
                 print(pr['message'], file=sys.stderr)
                 sys.exit(1)
