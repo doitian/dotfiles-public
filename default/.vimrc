@@ -1,4 +1,5 @@
 " Preamble {{{1
+set guicursor=
 set nocompatible
 set encoding=utf-8
 let loaded_matchparen = 1
