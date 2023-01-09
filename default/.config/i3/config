@@ -56,7 +56,7 @@ bindsym $mod+d exec --no-startup-id dmenu_run
 # bindcode $mod+40 exec "rofi -modi drun,run -show drun"
 # There also is i3-dmenu-desktop which only displays applications shipping a
 # .desktop file. It is a wrapper around dmenu, so you need that installed.
-# bindcode $mod+40 exec --no-startup-id i3-dmenu-desktop
+bindsym $mod+Shift+d exec --no-startup-id i3-dmenu-desktop
 bindsym $mod+Shift+Return exec google-chrome --proxy-pac-url="http://192.168.2.5/proxy.pac"
 
 # change focus
@@ -113,14 +113,14 @@ bindsym $mod+a focus parent
 
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.
-set $ws1 "1"
-set $ws2 "2"
-set $ws3 "3"
-set $ws4 "4"
-set $ws5 "5"
-set $ws6 "6"
-set $ws7 "7"
-set $ws8 "8"
+set $ws1 "1:Obsidian"
+set $ws2 "2:Work"
+set $ws3 "3:Chore"
+set $ws4 "4:Four"
+set $ws5 "5:Five"
+set $ws6 "6:Six"
+set $ws7 "7:Seven"
+set $ws8 "8:Eight"
 set $ws9 "9:Discord"
 
 # switch to workspace
