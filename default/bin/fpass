@@ -13,4 +13,16 @@ function fpass() {
   gopass "$@" "$selected"
 }
 
-fpass "$@"
+case "${1:-}" in
+  "--rofi")
+    shift
+    if [ "$#" = 0 ]; then
+      gopass list -f
+    else
+      gopass show -c "$@" > /dev/null
+    fi
+    ;;
+  *)
+    fpass "$@"
+    ;;
+esac

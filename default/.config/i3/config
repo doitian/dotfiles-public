@@ -51,13 +51,15 @@ bindsym $mod+Return exec alacritty
 bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
-bindsym $mod+d exec --no-startup-id dmenu_run
+# bindsym $mod+d exec --no-startup-id dmenu_run
 # A more modern dmenu replacement is rofi:
-# bindcode $mod+40 exec "rofi -modi drun,run -show drun"
+bindsym $mod+d exec "rofi -modes drun,run -show drun"
 # There also is i3-dmenu-desktop which only displays applications shipping a
 # .desktop file. It is a wrapper around dmenu, so you need that installed.
-bindsym $mod+Shift+d exec --no-startup-id i3-dmenu-desktop
+# bindsym $mod+Shift+d exec --no-startup-id i3-dmenu-desktop
 bindsym $mod+Shift+Return exec google-chrome --proxy-pac-url="http://192.168.2.5/proxy.pac"
+bindsym $mod+Shift+p exec "rofi -modes 'Gopass:fpass --rofi' -show Gopass"
+bindsym $mod+g exec "rofi -show window"
 
 # change focus
 bindsym $mod+h focus left
@@ -145,7 +147,7 @@ bindsym $mod+Shift+7 move container to workspace number $ws7
 bindsym $mod+Shift+8 move container to workspace number $ws8
 bindsym $mod+Shift+9 move container to workspace number $ws9
 
-bindsym $mod+Escape workspace back_and_forth
+bindsym $mod+o workspace back_and_forth
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -180,6 +182,15 @@ mode "resize" {
 }
 
 bindsym $mod+r mode "resize"
+
+# Make the currently focused window a scratchpad
+bindsym $mod+Shift+minus move scratchpad
+
+# Show the first scratchpad window
+bindsym $mod+minus scratchpad show
+
+# Show the terminal with Super+Enter
+bindsym $mod+grave [class="Alacritty"] scratchpad show
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
