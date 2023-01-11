@@ -54,9 +54,7 @@ bindsym $mod+Shift+q kill
 # bindsym $mod+d exec --no-startup-id dmenu_run
 # A more modern dmenu replacement is rofi:
 bindsym $mod+d exec "rofi -modes drun,run -show drun"
-# There also is i3-dmenu-desktop which only displays applications shipping a
-# .desktop file. It is a wrapper around dmenu, so you need that installed.
-# bindsym $mod+Shift+d exec --no-startup-id i3-dmenu-desktop
+bindsym $mod+Shift+d exec "rofi -modes drun,run -show drun -run-command 'gfw {cmd}'"
 bindsym $mod+Shift+Return exec google-chrome --proxy-pac-url="http://192.168.2.5/proxy.pac"
 bindsym $mod+Shift+p exec "rofi -modes 'Gopass:fpass --rofi' -show Gopass"
 bindsym $mod+g exec "rofi -show window"
@@ -67,25 +65,13 @@ bindsym $mod+j focus down
 bindsym $mod+k focus up
 bindsym $mod+l focus right
 bindsym $mod+Tab focus right
-bindsym $mod+Shift+Tab focus right
-
-# alternatively, you can use the cursor keys:
-bindsym $mod+Left focus left
-bindsym $mod+Down focus down
-bindsym $mod+Up focus up
-bindsym $mod+Right focus right
+bindsym $mod+Shift+Tab focus left
 
 # move focused window
 bindsym $mod+Shift+h move left
 bindsym $mod+Shift+j move down
 bindsym $mod+Shift+k move up
 bindsym $mod+Shift+l move right
-
-# alternatively, you can use the cursor keys:
-bindsym $mod+Shift+Left move left
-bindsym $mod+Shift+Down move down
-bindsym $mod+Shift+Up move up
-bindsym $mod+Shift+Right move right
 
 # split in horizontal orientation
 bindsym $mod+Shift+v split h
@@ -98,8 +84,8 @@ bindsym $mod+f fullscreen toggle
 
 # change container layout (stacked, tabbed, toggle split)
 bindsym $mod+s layout stacking
-bindsym $mod+w layout tabbed
-bindsym $mod+e layout toggle split
+bindsym $mod+e layout tabbed
+bindsym $mod+w layout toggle split
 
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
@@ -108,10 +94,9 @@ bindsym $mod+Shift+space floating toggle
 bindsym $mod+space focus mode_toggle
 
 # focus the parent container
-bindsym $mod+a focus parent
-
+bindsym $mod+Ctrl+k focus parent
 # focus the child container
-#bindsym $mod+d focus child
+bindsym $mod+Ctrl+j focus child
 
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.
@@ -148,6 +133,10 @@ bindsym $mod+Shift+8 move container to workspace number $ws8
 bindsym $mod+Shift+9 move container to workspace number $ws9
 
 bindsym $mod+o workspace back_and_forth
+bindsym $mod+Left workspace prev_on_output
+bindsym $mod+Right workspace next_on_output
+bindsym $mod+Shift+Left move container to workspace prev
+bindsym $mod+Shift+Right move container to workspace next
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
