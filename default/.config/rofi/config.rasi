@@ -2,3 +2,17 @@ configuration {
   font: "mono 12";
   dpi: 144;
 }
+
+* {
+    background:     #F1F1F1FF;
+    background-alt: #E0E0E0FF;
+    foreground:     #252525FF;
+    selected:       #008EC4FF;
+    active:         #10A778FF;
+    urgent:         #C30771FF;
+    lightbg:        #E0E0E0E0;
+    selected-normal-foreground:  #EEEEEEFF;
+    lightfg:        #0087AFFF;
+    blue:           #53A4F3FF;
+    red:            #E83A3FFF;
+}
