@@ -22,7 +22,7 @@ def consume_highlight(csv_writer, title, author, highlight):
     return None
 
 
-parser = argparse.ArgumentParser(description='Kindle Clippings Cli')
+parser = argparse.ArgumentParser(description='PDF Expert to Readwise')
 parser.add_argument('-o', '--output', help='output file', default='-')
 parser.add_argument('input', nargs='?', help='input file')
 
