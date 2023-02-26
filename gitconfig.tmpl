@@ -1,5 +1,6 @@
 [alias]
-	snapshot = "!f() { git stash save -u \"snapshot $(date)\" && git stash apply \"stash@{0}\"; }; f"
+	snapshot = "!f() { git stash push -u -m \"snapshot-$(date '+%Y%m%d%H%M%S')\" && git stash apply \"stash@{0}\"; }; f"
+	pushsnap = "!f() { git push origin \"stash@{0}:refs/stashes/$(git stash list --pretty='%s' | sed -e 's/^On //' -e 's/: /\\//' -e 's/[^\\/a-zA-Z0-9_-]/-/')\"; }; f"
 
 	br = branch
 	whereami = rev-parse --abbrev-ref HEAD
