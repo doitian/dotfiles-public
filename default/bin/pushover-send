@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+CREDENTIALS="$(gopass show -f web/pushover.net/ian | grep '^\(key\|personal\):')"
+PUSHOVER_USER="$(echo "$CREDENTIALS" | sed -n -e 's/key: //p')"
+PUSHOVER_TOKEN="$(echo "$CREDENTIALS" | sed -n -e 's/personal: //p')"
+
+curl -X POST "https://api.pushover.net/1/messages.json" -d "message=$*" -d "user=${PUSHOVER_USER}" -d "token=${PUSHOVER_TOKEN}"
