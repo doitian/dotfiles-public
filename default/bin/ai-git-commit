@@ -5,7 +5,7 @@ if [ -z "${OPENAI_API_KEY:-}" ]; then
 fi
 
 system_message="You are a helpful assistant who writes short git commit messages."
-user_message="Write the commit message for the following changes. Do not capitalize the first word and do not end in punctuation.
+user_message="Write the commit message for the following changes. Do not capitalize the first word and do not end the first line in punctuation.
 
 $(git diff --cached)"
 
