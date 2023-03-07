@@ -1,0 +1,83 @@
+#!/usr/bin/env python3
+
+import yaml
+try:
+    from yaml import CLoader as YLoader
+except ImportError:
+    from yaml import Loader as YLoader
+
+import sys
+import time
+import json
+import re
+from pathlib import Path
+from urllib.request import urlopen
+
+CACHE_DIR = Path.home() / '.cache' / 'chatgpt-prompts'
+
+
+def cached_result(filename, expiration_time):
+    """
+    A decorator that caches the result of a function in a file
+    and serves the file content if the file is fresh.
+
+    The `expiration_time` parameter represents the time in seconds after which the cache will expire.
+    """
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            cache_path = CACHE_DIR / filename
+            # Check if the cache file exists and is not expired
+            if cache_path.exists() and (time.time() - cache_path.stat().st_mtime) < expiration_time:
+                with cache_path.open('r') as f:
+                    return f.read()
+            else:
+                # Call the decorated function
+                result = func(*args, **kwargs)
+                # Write the result to the cache file
+                CACHE_DIR.mkdir(parents=True, exist_ok=True)
+                with cache_path.open('w') as f:
+                    f.write(result)
+                return result
+        return wrapper
+    return decorator
+
+
+@cached_result('rockbenben_chatgpt_shortcut_prompts.json', 86400)
+def fetch_rockbenben_chatgpt_shortcut_prompts():
+    resp = urlopen(
+        'https://github.com/rockbenben/ChatGPT-Shortcut/raw/main/src/data/users.tsx')
+    code = resp.read().decode('utf-8')
+    prompts = code.split('const Users: User[] = [', 1)[1].split('];', 1)[0]
+    prompts_json = load_relaxed_json_array(prompts)
+    return json.dumps(prompts_json, ensure_ascii=False, indent=4)
+
+
+def load_relaxed_json_array(js_input):
+    js_input = re.sub(r'^(\s*)\{(\s*)$', r'-', js_input, flags=re.MULTILINE)
+    js_input = re.sub(
+        r'^(\s*)\}\s*,\s*\{(\s*)$', r'-', js_input, flags=re.MULTILINE)
+    js_input = re.sub(r'^(\s*)\},?(\s*)$', '', js_input, flags=re.MULTILINE)
+
+    # Remove comments
+    js_input = re.sub(r'^\s*//.*', '', js_input, flags=re.MULTILINE)
+    js_input = re.sub(r'^\s*/\*.*?\*/', '', js_input,
+                      flags=re.DOTALL | re.MULTILINE)
+
+    # Remove trailing commas
+    js_input = re.sub(r',\s*$', '', js_input, flags=re.MULTILINE)
+
+    # Fix format
+    js_input = js_input.replace("descn:'", "descn: '")
+
+    print(js_input)
+
+    return yaml.load(js_input, Loader=YLoader)
+
+
+def pipe_input(fp=sys.stdout):
+    for prompt in json.loads(fetch_rockbenben_chatgpt_shortcut_prompts()):
+        json.dump(prompt, fp, ensure_ascii=False)
+        print(file=fp)
+
+
+pipe_input()

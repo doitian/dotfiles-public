@@ -1,0 +1,3 @@
+#!/bin/bash
+
+chatgpt-prompts | fzf -m --preview 'jq -C <<< {}' | jq -r .description

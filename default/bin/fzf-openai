@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+ask_prompt() {
+  sed -n -e s'/ !.*//' -e 's/^## //p' "$HOME/Dropbox/Brain/para/lets/a/AIGC/ChatGPT Prompts.md" | tail +2 | fzf
+
+}
+
+get_prompt()  {
+  sed -E -n "/^## $1( !.*)?/,/^## /{/^## /!p;}" "$HOME/Dropbox/Brain/para/lets/a/AIGC/ChatGPT Prompts.md"
+}
+
+get_field() {
+  local name="$1"
+  local content="$2"
+  local selection="$3"
+
+  local field="$(echo "$content" | sed -E -n -e "/^### $1$/,/^### /{/^### /!p;}" | sed '/./,$!d')"
+  if grep -q '{SELECTION}' <<<"$field"; then
+    field="$(sed 's/{SELECTION}/%s/' <<<"$field")"
+    printf "$field\n" "$selection"
+  else
+    echo "$field"
+  fi
+}
+
+title="$(ask_prompt)"
+prompt="$(get_prompt "$title")"
+selection="$(cat)"
+user_message="$(get_field User "$prompt" "$selection")"
+system_message="$(get_field Systemx "$prompt" "$selection")"
+
+openai_args=()
+if [ -n "$system_message" ]; then
+  openai_args+=(-g system "$system_message")
+fi
+openai_args+=(-g user "$user_message")
+
+if [ -z "${OPENAI_API_KEY:-}" ]; then
+  export OPENAI_API_KEY="$(gopass show key/openai.com/personal)"
+fi
+openai api chat_completions.create -m gpt-3.5-turbo "${openai_args[@]}"
+echo
