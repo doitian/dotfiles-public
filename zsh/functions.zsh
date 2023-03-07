@@ -92,3 +92,9 @@ function top_commands() {
   local max_results="${1:-50}"
   history | \cat | awk '{$1=$1};1' | sed 's/^[0-9\* TAB]*//g' | awk '{CMD[$0]++;count++;}END { for (a in CMD)print CMD[a] " " CMD[a]/count*100 "%\t" a; }' | sort --numeric-sort --reverse | nl | head -n "$max_results"
 }
+
+function ai-env() {
+  if [ -z "${OPENAI_API_KEY:-}" ]; then
+    export OPENAI_API_KEY="$(gopass show key/openai.com/personal)"
+  fi
+}
