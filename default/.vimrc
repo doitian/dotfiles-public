@@ -19,7 +19,7 @@ Plug 'nathangrigg/vim-beancount'
 " other
 Plug 'NLKNguyen/papercolor-theme'
 
-Plug 'christoomey/vim-titlecase'
+Plug 'christoomey/vim-titlecase' " gz
 Plug 'dyng/ctrlsf.vim', { 'on': 'CtrlSF' }
 Plug 'editorconfig/editorconfig-vim'
 Plug 'godlygeek/tabular', { 'on': 'Tabularize', 'for': ['markdown'] }
