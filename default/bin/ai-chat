@@ -1,0 +1,185 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+OPTION_QUIET=
+OPTION_DRY_RUN=
+
+send_session() {
+  local args=()
+  local content_lines=()
+  local line role content
+  while read -r line; do
+    case "$line" in
+      "### System" | "### User" | "### Assistant" )
+        if [ -n "$role" ]; then
+          content="$(printf "%s\n" "${content_lines[@]}" | sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba')"
+          if [ -n "$content" ]; then
+            args+=(-g "$role" "$content")
+          fi
+        fi
+        role="$(echo "${line#* }" | tr 'A-Z' 'a-z')"
+        content_lines=()
+        ;;
+      *)
+        content_lines+=("$line")
+        ;;
+    esac
+  done <<< "$1"
+  if [ "${#args[@]}" = 0 ]; then
+    role=user
+  fi
+  if [ -n "$role" ]; then
+    content="$(printf "%s\n" "${content_lines[@]}" | sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba')"
+    if [ -n "$content" ]; then
+      args+=(-g "$role" "$content")
+    fi
+  fi
+  if [ -z "${OPENAI_API_KEY:-}" ]; then
+    export OPENAI_API_KEY="$(gopass show key/openai.com/personal)"
+  fi
+  if [ "${#args[@]}" != 0 ]; then
+    openai api chat_completions.create -m "${OPENAI_MODEL:-gpt-3.5-turbo}" "${args[@]}" |\
+      sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba'
+  fi
+}
+
+get_preset() {
+  local name="$1"
+  sed -n -E "/^## ${name}( !.*)?$/I,/^## /{/^## /!p;}" "$HOME/Dropbox/Brain/para/lets/a/AIGC/ChatGPT Prompts.md" | sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba'
+}
+
+handle_usage() {
+  echo "ai-chat [-q] [-n] [session|p|present|show|list|search]"
+}
+
+handle_list() {
+  sed -n -e s'/ !.*//' -e 's/^## //p' "$HOME/Dropbox/Brain/para/lets/a/AIGC/ChatGPT Prompts.md" | tail +2
+}
+
+handle_show() {
+  local name="${1:-}"
+  if [ -z "$name" ]; then
+    name="$(handle_list | fzf)"
+  fi
+  if [ -z "$name" ]; then
+    echo "ai-chat preset name"
+    exit 1
+  fi
+  get_preset "$name"
+}
+
+handle_session() {
+  if [ -t 0 ]; then
+    echo "Session (Ctrl-D to Finish) >"
+  fi
+  local input="$(cat)"
+  if ! grep -q '^### \(User\|System\|Assistant\)$' <<<"$input"; then
+    input="### User
+
+$input"
+  fi
+
+  if [ -z "$OPTION_QUIET" ]; then
+    echo "#chatgpt-session"
+    echo
+    echo "$input"
+    if [ -z "$OPTION_DRY_RUN" ]; then
+      echo
+      echo "## Assistant"
+      echo
+    fi
+  fi
+  if [ -z "$OPTION_DRY_RUN" ]; then
+    send_session "$input"
+  fi
+}
+
+handle_preset() {
+  local preset="$(handle_show "$*")"
+  if grep -q '{input}' <<<"$preset"; then
+    if [ -t 0 ]; then
+      echo "Input (Ctrl-D to Finish) >"
+    fi
+    local input="$(cat)"
+    preset="$(sed 's/{input}/%s/' <<<"$preset")"
+    preset="$(printf "$preset\n" "$input")"
+  fi
+
+  if [ -z "$OPTION_QUIET" ]; then
+    echo "#chatgpt-session"
+    echo
+    echo "$preset"
+    if [ -z "$OPTION_DRY_RUN" ]; then
+      echo
+      echo "## Assistant"
+      echo
+    fi
+  fi
+  if [ -z "$OPTION_DRY_RUN" ]; then
+    send_session "$preset"
+  fi
+}
+
+handle_search() {
+  chatgpt-prompts | fzf -m --preview 'jq -C <<< {}' | jq -r .description
+}
+
+main() {
+  while [[ "${1:-}" = -* ]]; do
+    case "$1" in
+      -q|--quiet)
+        OPTION_QUIET=yes
+        shift
+        ;;
+      -n|--dry-run)
+        OPTION_DRY_RUN=yes
+        shift
+        ;;
+      -h|--help)
+        handle_usage
+        exit 0
+        ;;
+      *)
+        handle_usage
+        echo 1
+        ;;
+    esac
+  done
+
+  local action=
+  if (($# > 0)); then
+    action="$1"
+    shift
+  fi
+
+  case "x$action" in
+    x | xsession)
+      handle_session
+      ;;
+    xp | xpreset)
+      handle_preset "$*"
+      ;;
+    xshow)
+      handle_show "$*"
+      ;;
+    xlist)
+      handle_list
+      ;;
+    xsearch)
+      handle_search
+      ;;
+    help)
+      handle_usage
+      exit 0
+      ;;
+    *)
+      handle_usage
+      exit 1
+      ;;
+  esac
+}
+
+main "$@"
