@@ -62,7 +62,7 @@ handle_list() {
 handle_show() {
   local name="${1:-}"
   if [ -z "$name" ]; then
-    name="$(handle_list | fzf)"
+    name="$(handle_list | fzf --preview 'ai-chat show {}')"
   fi
   if [ -z "$name" ]; then
     echo "ai-chat preset name"
