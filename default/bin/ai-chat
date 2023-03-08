@@ -13,7 +13,7 @@ send_session() {
   local line role content
   while read -r line; do
     case "$line" in
-      "### System" | "### User" | "### Assistant" )
+      "### System" | "### User" | "### Assistant")
         if [ -n "$role" ]; then
           content="$(printf "%s\n" "${content_lines[@]}" | sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba')"
           if [ -n "$content" ]; then
@@ -27,7 +27,7 @@ send_session() {
         content_lines+=("$line")
         ;;
     esac
-  done <<< "$1"
+  done <<<"$1"
   if [ "${#args[@]}" = 0 ]; then
     role=user
   fi
@@ -41,7 +41,7 @@ send_session() {
     export OPENAI_API_KEY="$(gopass show key/openai.com/personal)"
   fi
   if [ "${#args[@]}" != 0 ]; then
-    openai api chat_completions.create -m "${OPENAI_MODEL:-gpt-3.5-turbo}" "${args[@]}" |\
+    openai api chat_completions.create -m "${OPENAI_MODEL:-gpt-3.5-turbo}" "${args[@]}" |
       sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba'
   fi
 }
@@ -130,15 +130,15 @@ handle_search() {
 main() {
   while [[ "${1:-}" = -* ]]; do
     case "$1" in
-      -q|--quiet)
+      -q | --quiet)
         OPTION_QUIET=yes
         shift
         ;;
-      -n|--dry-run)
+      -n | --dry-run)
         OPTION_DRY_RUN=yes
         shift
         ;;
-      -h|--help)
+      -h | --help)
         handle_usage
         exit 0
         ;;
