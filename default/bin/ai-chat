@@ -4,7 +4,7 @@ set -e
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
-OPTION_QUIET=
+OPTION_VERBOSE=
 OPTION_DRY_RUN=
 : ${OPENAI_MODEL:=gpt-3.5-turbo}
 : ${OPENAI_PROMPTS_FILE:="$HOME/Dropbox/Brain/para/lets/c/ChatGPT Sessions/ChatGPT Prompts.md"}
@@ -54,7 +54,7 @@ get_preset() {
 }
 
 handle_usage() {
-  echo "ai-chat [-q] [-n] [session|p|present|show|list|search]"
+  echo "ai-chat [-s] [-n] [session|p|present|show|list|search]"
 }
 
 handle_list() {
@@ -84,7 +84,7 @@ handle_session() {
 $input"
   fi
 
-  if [ -z "$OPTION_QUIET" ]; then
+  if [ -n "$OPTION_VERBOSE" ]; then
     echo "#chatgpt-session"
     echo
     echo "$input"
@@ -110,7 +110,7 @@ handle_preset() {
     preset="$(printf "$preset\n" "$input")"
   fi
 
-  if [ -z "$OPTION_QUIET" ]; then
+  if [ -n "$OPTION_VERBOSE" ]; then
     echo "#chatgpt-session"
     echo
     echo "$preset"
@@ -132,8 +132,8 @@ handle_search() {
 main() {
   while [[ "${1:-}" = -* ]]; do
     case "$1" in
-      -q | --quiet)
-        OPTION_QUIET=yes
+      -v | --verbose)
+        OPTION_VERBOSE=yes
         shift
         ;;
       -n | --dry-run)

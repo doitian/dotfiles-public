@@ -1,5 +1,5 @@
 #!/bin/bash
 
-message="$(git diff --cached | ai-chat -q preset "Git Commit")"
+message="$(git diff --cached | ai-chat preset "Git Commit")"
 message="$(tr '[:upper:]' '[:lower:]' <<< ${message:0:1})$(sed -e '1s/[.!?]$//' <<< ${message:1})"
 git commit -m "$message" -e
