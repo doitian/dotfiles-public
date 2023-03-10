@@ -6,6 +6,8 @@ set -u
 
 OPTION_QUIET=
 OPTION_DRY_RUN=
+: ${OPENAI_MODEL:=gpt-3.5-turbo}
+: ${OPENAI_PROMPTS_FILE:="$HOME/Dropbox/Brain/para/lets/c/ChatGPT Sessions/ChatGPT Prompts.md"}
 
 send_session() {
   local args=()
@@ -41,14 +43,14 @@ send_session() {
     export OPENAI_API_KEY="$(gopass show key/openai.com/personal)"
   fi
   if [ "${#args[@]}" != 0 ]; then
-    openai api chat_completions.create -m "${OPENAI_MODEL:-gpt-3.5-turbo}" "${args[@]}" |
+    openai api chat_completions.create -m "${OPENAI_MODEL}" "${args[@]}" |
       sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba'
   fi
 }
 
 get_preset() {
   local name="$1"
-  sed -n -E "/^## ${name}( !.*)?$/I,/^## /{/^## /!p;}" "$HOME/Dropbox/Brain/para/lets/a/AIGC/ChatGPT Prompts.md" | sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba'
+  sed -n -E "/^## ${name}( !.*)?$/I,/^## /{/^## /!p;}" "$OPENAI_PROMPTS_FILE" | sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba'
 }
 
 handle_usage() {
@@ -56,7 +58,7 @@ handle_usage() {
 }
 
 handle_list() {
-  sed -n -e s'/ !.*//' -e 's/^## //p' "$HOME/Dropbox/Brain/para/lets/a/AIGC/ChatGPT Prompts.md" | tail +2
+  sed -n -e s'/ !.*//' -e 's/^## //p' "$OPENAI_PROMPTS_FILE" | tail +2
 }
 
 handle_show() {
