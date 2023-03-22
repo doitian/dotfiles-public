@@ -1,13 +1,36 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-changes="$(git diff --staged --ignore-all-space --diff-algorithm=minimal --function-context --no-ext-diff --no-color)"
-words_count="$(echo "$changes" | wc -w)"
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
 
-if (( $words_count > 2048 )); then
-  echo "Too many changes, please use gptcommit" >&2
-  exit 1
-fi
+run_gptcommit() {
+  if [ -z "${OPENAI_API_KEY:-}" ]; then
+    export OPENAI_API_KEY="$(gopass show key/openai.com/personal)"
+  fi
+  local MSG_FILE="$(git rev-parse --git-dir)/GPTCOMMIT_EDITMSG"
+  rm -f "$MSG_FILE"
+  gptcommit prepare-commit-msg --commit-msg-file "$MSG_FILE" --commit-source ''
+  git commit -F "$MSG_FILE" -e
+}
 
-message="$(echo "$changes" | ai-chat preset "Git Commit")"
-message="$(tr '[:upper:]' '[:lower:]' <<< ${message:0:1})$(sed -e '1s/[.!?]$//' <<< ${message:1})"
-git commit -m "$message" -e
+main() {
+  local CHANGES="$(git diff --staged --ignore-all-space --diff-algorithm=minimal --function-context --no-ext-diff --no-color)"
+  local WORDS_COUNT="$(echo "$CHANGES" | wc -w)"
+
+  if (( $WORDS_COUNT > 2048 )); then
+    if command -v gptcommit &>/dev/null; then
+      run_gptcommit
+      exit 0
+    else
+      echo "Too many changes, please use gptcommit" >&2
+      exit 1
+    fi
+  fi
+
+  local MESSAGE="$(echo "$CHANGES" | ai-chat preset "Git Commit")"
+  MESSAGE="$(tr '[:upper:]' '[:lower:]' <<< ${MESSAGE:0:1})$(sed -e '1s/[.!?]$//' <<< "${MESSAGE:1}")"
+  git commit -m "$MESSAGE" -e
+}
+
+main "$@"
