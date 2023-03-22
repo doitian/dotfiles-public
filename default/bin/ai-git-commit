@@ -1,5 +1,13 @@
 #!/bin/bash
 
-message="$(git diff --cached | ai-chat preset "Git Commit")"
+changes="$(git diff --staged --ignore-all-space --diff-algorithm=minimal --function-context --no-ext-diff --no-color)"
+words_count="$(echo "$changes" | wc -w)"
+
+if (( $words_count > 2048 )); then
+  echo "Too many changes, please use gptcommit" >&2
+  exit 1
+fi
+
+message="$(echo "$changes" | ai-chat preset "Git Commit")"
 message="$(tr '[:upper:]' '[:lower:]' <<< ${message:0:1})$(sed -e '1s/[.!?]$//' <<< ${message:1})"
 git commit -m "$message" -e
