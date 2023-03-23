@@ -45,6 +45,7 @@ send_session() {
   if [ "${#args[@]}" != 0 ]; then
     openai api chat_completions.create -m "${OPENAI_MODEL}" "${args[@]}" |
       sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba'
+    echo
   fi
 }
 
@@ -112,12 +113,12 @@ handle_preset() {
 
   local HIST="$HOME/.chatgpt_history"
   echo "#chatgpt-session" > "$HIST.$$"
-  echo > "$HIST.$$"
-  echo "$preset" > "$HIST.$$"
+  echo >> "$HIST.$$"
+  echo "$preset" >> "$HIST.$$"
   if [ -z "$OPTION_DRY_RUN" ]; then
-    echo > "$HIST.$$"
-    echo "## Assistant" > "$HIST.$$"
-    echo > "$HIST.$$"
+    echo >> "$HIST.$$"
+    echo "## Assistant" >> "$HIST.$$"
+    echo >> "$HIST.$$"
   fi
 
   if [ -n "$OPTION_VERBOSE" ]; then
