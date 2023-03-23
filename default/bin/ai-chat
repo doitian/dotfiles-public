@@ -110,19 +110,26 @@ handle_preset() {
     preset="$(printf "$preset\n" "$input")"
   fi
 
-  if [ -n "$OPTION_VERBOSE" ]; then
-    echo "#chatgpt-session"
-    echo
-    echo "$preset"
-    if [ -z "$OPTION_DRY_RUN" ]; then
-      echo
-      echo "## Assistant"
-      echo
-    fi
-  fi
+  local HIST="$HOME/.chatgpt_history"
+  echo "#chatgpt-session" > "$HIST.$$"
+  echo > "$HIST.$$"
+  echo "$preset" > "$HIST.$$"
   if [ -z "$OPTION_DRY_RUN" ]; then
-    send_session "$preset"
+    echo > "$HIST.$$"
+    echo "## Assistant" > "$HIST.$$"
+    echo > "$HIST.$$"
   fi
+
+  if [ -n "$OPTION_VERBOSE" ]; then
+    cat "$HIST.$$"
+  fi
+
+  if [ -z "$OPTION_DRY_RUN" ]; then
+    send_session "$preset" | tee -a "$HIST.$$"
+  fi
+
+  rm -f "$HIST"
+  mv -f "$HIST.$$" "$HIST"
 }
 
 handle_search() {
