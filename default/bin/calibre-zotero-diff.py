@@ -85,9 +85,16 @@ def author_formatter(text, is_zotero):
     if is_zotero:
         authors = []
         for author in text.split(' and '):
-            parts = author.split(', ', maxsplit=1)
-            authors.append(f'{parts[1]} {parts[0]}' if len(
-                parts) == 2 else author)
+            if 'useprefix=true' in author:
+                fields = {}
+                for kv in author.split(', '):
+                    k, v = kv.split('=', maxsplit=1)
+                    fields[k] = v
+                authors.append(f'{fields["given"]} {fields["prefix"]} {fields["family"]}')
+            else:
+                parts = author.split(', ', maxsplit=1)
+                authors.append(f'{parts[1]} {parts[0]}' if len(
+                    parts) == 2 else author)
         return ' & '.join(authors)
 
     return text
