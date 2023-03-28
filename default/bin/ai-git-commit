@@ -28,9 +28,13 @@ main() {
     fi
   fi
 
-  local MESSAGE="$(echo "$CHANGES" | ai-chat preset "Git Commit")"
+  local MESSAGE="$(echo "$CHANGES" | ai-chat preset "Git Commit" | grep -v '^Co-authored-by: ' | sed -e :a -e '/^\n*$/{$d;N;};/\n$/ba')"
   MESSAGE="$(tr '[:upper:]' '[:lower:]' <<< ${MESSAGE:0:1})$(sed -e '1s/[.!?]$//' <<< "${MESSAGE:1}")"
   git commit -m "$MESSAGE" -e
 }
 
-main "$@"
+if [ "${1:-}" = "--gptcommit" ]; then
+  run_gptcommit "$@"
+else
+  main "$@"
+fi
