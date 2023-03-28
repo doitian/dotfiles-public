@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+if [ -z "${1:-}" ]; then
+  swaymsg -t get_tree |
+    jq -r '.nodes[].nodes[] | . as $ws | if .nodes then [recurse(.nodes[])] else [] end + .floating_nodes |  .[]  |
+    select(.pid) | ("[" + ($ws | .name) + "] " + (.id | tostring) + " " + .name)'
+else
+  echo "$*" | {
+    read -r ws id name
+    swaymsg "[con_id=$id]" focus >&2
+  }
+fi
