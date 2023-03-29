@@ -1,10 +1,18 @@
 #!/bin/bash
+# Start Sway
+#
+# - Configure GTK: LXAppearance
 
+export XDG_DATA_DIRS="/usr/share:/var/lib/flatpak/exports/share:/home/ian/.local/share/flatpak/exports/share"
 export WLR_NO_HARDWARE_CURSORS=1
 export WLC_REPEAT_RATE=100
 export WLC_REPEAT_DELAY=150
+export INPUT_METHOD=ibus
+export GTK_IM_MODULE=ibus
+export QT_IM_MODULE=ibus
+export XMODIFIERS=@im=ibus
 
 if ! [ -e "$HOME/.Xdefaults" ]; then
   ln -snf .Xresources "$HOME/.Xdefaults"
 fi
-exec sway
+exec dbus-run-session sway

@@ -116,7 +116,7 @@ function! Tabline()
   return s
 endfunction
 
-" To rename the current tab.
+" To rename the current tab. Use `%f` for default buffer name.
 function! s:TabRename(label)
   call settabvar(tabpagenr(), 'tabline_rename', a:label)
   exec 'set showtabline=' . &showtabline
