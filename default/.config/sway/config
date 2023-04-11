@@ -20,7 +20,7 @@ set $term foot
 # on the original workspace that the command was run on.
 set $menu "rofi -modi drun,run -show drun"
 set $gfwmenu "rofi -modi drun,run -show drun -run-command 'gfw {cmd}'"
-set $browser 'gfw google-chrome'
+set $browser 'gfw /var/lib/flatpak/exports/bin/com.microsoft.Edge'
 
 include /etc/sway/config-vars.d/*
 
