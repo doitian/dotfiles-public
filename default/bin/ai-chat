@@ -50,6 +50,9 @@ send_session() {
   if [ -z "${OPENAI_API_KEY:-}" ]; then
     export OPENAI_API_KEY="$(gopass show key/openai.com/personal)"
   fi
+  if [ -z "${http_proxy:-}" ]; then
+    eval $(gfw)
+  fi
   if [ "${#args[@]}" != 0 ]; then
     openai api chat_completions.create -m "${OPENAI_MODEL}" "${args[@]}" |
       sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba'
