@@ -72,6 +72,7 @@
 
 	rs = restore --staged
 	fa = "!f() { git diff --name-only | fzf -m --print0 --preview 'git diff --color -- {}' | xargs -0 git add \"$@\"; }; f"
+	ft = "!f() { git ls-files --other --exclude-standard | fzf -m --print0 --preview 'preview {}' | xargs -0 git add \"$@\"; }; f"
 	frs = "!f() { git diff --name-only --cached | fzf -m --print0 --preview 'git diff --color --cached -- {}' | xargs -0 git restore --staged \"$@\"; }; f"
 	fdi = "!f() { git diff --name-only | fzf -m --print0 --preview 'git diff --color -- {}' | xargs -0 git diff -p --stat; }; f"
 	fdc = "!f() { git diff --name-only --cached | fzf -m --print0 --preview 'git diff --color --cached -- {}' | xargs -0 git diff --cached -p --stat; }; f"
