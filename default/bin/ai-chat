@@ -118,9 +118,9 @@ handle_preset() {
       echo "Input (Ctrl-D to Finish) >"
     fi
     local input="$(cat)"
-    preset="$(sed 's/{input}/%s/' <<<"$preset")"
-    preset="$(printf "$preset\n" "$input")"
+    export input
   fi
+  preset="$(envsubst <<<"$preset")"
 
   local HIST="$HOME/.chatgpt_history"
   echo "#chatgpt-session" > "$HIST.$$"
