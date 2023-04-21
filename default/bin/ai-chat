@@ -23,7 +23,7 @@ send_session() {
         parameter_name="${parameter_name%%\*\*::*}"
         args+=("--${parameter_name}" "${line##*:: }")
         ;;
-      "### System" | "### User" | "### Assistant")
+      "### .System" | "### .User" | "### .Assistant")
         if [ -n "$role" ]; then
           content="$(printf "%s\n" "${content_lines[@]}" | sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba')"
           if [ -n "$content" ]; then
@@ -90,8 +90,8 @@ handle_session() {
     echo "Session (Ctrl-D to Finish) >"
   fi
   local input="$(cat)"
-  if ! grep -q '^### \(User\|System\|Assistant\)$' <<<"$input"; then
-    input="### User
+  if ! grep -q '^### \.\(User\|System\|Assistant\)$' <<<"$input"; then
+    input="### .User
 
 $input"
   fi
