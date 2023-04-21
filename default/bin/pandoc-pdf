@@ -8,6 +8,9 @@ MAINFONT="${MAINFONT:-Helvetica}"
 MONOFONT="${MONOFONT:-Cartograph CF}"
 CJK_MAINFONT="${CJK_MAINFONT:-Noto Serif CJK SC}"
 
+# scrbook, scrreprt, scrartcl, scrlttr2 and typearea
+DOCUMENTCLASS="${DOCUMENTCLASS:-scrreprt}"
+
 PANDOC_OPTIONS=(
   --pdf-engine=xelatex
   --lua-filter "$HOME/.pandoc/filters/highlightings.lua"
@@ -15,7 +18,7 @@ PANDOC_OPTIONS=(
   --variable fontsize=12pt
   --variable linestretch=1.5
   --variable geometry=a4paper
-  --variable documentclass=scrbook
+  --variable documentclass=${DOCUMENTCLASS}
   --variable mainfont="$MAINFONT"
   --variable monofont="$MONOFONT"
 )
