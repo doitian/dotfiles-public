@@ -30,7 +30,7 @@ send_session() {
             args+=(-g "$role" "$content")
           fi
         fi
-        role="$(echo "${line#* }" | tr 'A-Z' 'a-z')"
+        role="$(echo "${line#* .}" | tr 'A-Z' 'a-z')"
         content_lines=()
         ;;
       *)
