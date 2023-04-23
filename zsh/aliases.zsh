@@ -81,6 +81,7 @@ alias rsync-copy="rsync -av --progress -h"
 alias rsync-move="rsync -av --progress -h --remove-source-files"
 alias rsync-update="rsync -avu --progress -h"
 alias rsync-synchronize="rsync -avu --delete --progress -h"
+alias rsync-diff="rsync -nav --delete"
 
 if command -v colordiff &>/dev/null; then
   alias diff=colordiff
