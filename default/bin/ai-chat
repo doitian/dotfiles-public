@@ -48,7 +48,10 @@ send_session() {
     fi
   fi
   if [ -z "${OPENAI_API_KEY:-}" ]; then
-    export OPENAI_API_KEY="$(gopass show key/openai.com/personal)"
+    local credentials="$(gopass show key/openai.com/personal)"
+    local line key value
+    export OPENAI_API_KEY="$(echo "$credentials" | head -1)"
+    eval "$(echo "$credentials" | tail -n '+2' | sed -e 's/^\([^:]*\): /export \1=/')"
   fi
   if [ -z "${http_proxy:-}" ]; then
     eval $(gfw)
