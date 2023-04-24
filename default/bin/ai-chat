@@ -8,6 +8,10 @@ OPTION_VERBOSE=
 OPTION_DRY_RUN=
 : ${OPENAI_MODEL:=gpt-3.5-turbo}
 : ${OPENAI_PROMPTS_FILE:="$HOME/Dropbox/Brain/para/lets/c/ChatGPT Sessions/ChatGPT Prompts.md"}
+OPENAI_PROMPTS_FILE_ALTERNATIVE="$HOME/Brain/para/lets/c/ChatGPT Sessions/ChatGPT Prompts.md"
+if [ -f "$OPENAI_PROMPTS_FILE_ALTERNATIVE" ] && ! [ -f "$OPENAI_PROMPTS_FILE" ]; then
+  OPENAI_PROMPTS_FILE="$OPENAI_PROMPTS_FILE_ALTERNATIVE"
+fi
 
 send_session() {
   local args=()
