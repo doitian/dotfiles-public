@@ -145,10 +145,10 @@ for line in logs.splitlines():
 
         labels = [label['name'] for label in pr['labels']]
         is_breaking = "breaking change" in labels or any(
-            l.startswith('b:') for l in labels)
+            label.startswith('b:') for label in labels)
         if is_breaking:
             breaking_banner = ", ".join(
-                l for l in labels if l.startswith('b:'))
+                label for label in labels if label.startswith('b:'))
             if breaking_banner != "" or "breaking change" not in body.lower():
                 if breaking_banner == "":
                     breaking_banner = "This is a breaking change"

@@ -70,7 +70,8 @@ def timestamp_formatter(text, is_zotero):
     if is_zotero:
         return text
 
-    return datetime.datetime.fromisoformat(text).astimezone(datetime.timezone.utc).strftime('%Y-%m-%d')
+    return datetime.datetime.fromisoformat(text).astimezone(
+        datetime.timezone.utc).strftime('%Y-%m-%d')
 
 
 def date_formatter(text, _):
@@ -90,7 +91,8 @@ def author_formatter(text, is_zotero):
                 for kv in author.split(', '):
                     k, v = kv.split('=', maxsplit=1)
                     fields[k] = v
-                authors.append(f'{fields["given"]} {fields["prefix"]} {fields["family"]}')
+                authors.append(
+                    f'{fields["given"]} {fields["prefix"]} {fields["family"]}')
             else:
                 parts = author.split(', ', maxsplit=1)
                 authors.append(f'{parts[1]} {parts[0]}' if len(
@@ -185,7 +187,7 @@ finally:
 #     'author_sort': 'Young, Scott',
 #     'authors': 'Scott Young',
 #     'comments': '',
-#     'cover': '/Users/ian/Dropbox/Calibre Library/Scott Young/Ultralearning - Shortform Summary (362)/cover.jpg',
+#     'cover': '/home/ian/Calibre Library/Scott Young/Ultralearning (362)/cover.jpg',
 #     'formats': 'pdf',
 #     'id': '362',
 #     'identifiers': '',

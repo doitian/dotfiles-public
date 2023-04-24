@@ -14,7 +14,9 @@ def export(citekeys, format):
     payload = json.dumps({"jsonrpc": "2.0", "method": "item.export", "params": [
                          citekeys, format], "id": 1}).encode("utf-8")
     request = urllib.request.Request(JSON_RPC_ENDPOINT, headers={
-                                     "Content-Type": "application/json", "Accept": "application/json"}, data=payload)
+                                     "Content-Type": "application/json",
+                                     "Accept": "application/json"
+                                     }, data=payload)
     response = urllib.request.urlopen(request)
     response_json = json.loads(response.read().decode("utf-8"))
     if 'error' in response_json:
