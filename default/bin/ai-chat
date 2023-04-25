@@ -27,8 +27,8 @@ send_session() {
         parameter_name="${parameter_name%%\*\*::*}"
         args+=("--${parameter_name}" "${line##*:: }")
         ;;
-      "### .System" | "### .User" | "### .Assistant")
-        if [ -n "$role" ]; then
+      "### .System" | "### .User" | "### .Assistant" | "### .x"* )
+        if [ -n "$role" ] && ! [[ $role == x* ]]; then
           content="$(printf "%s\n" "${content_lines[@]}" | sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba')"
           if [ -n "$content" ]; then
             args+=(-g "$role" "$content")
@@ -45,7 +45,7 @@ send_session() {
   if [ "${#args[@]}" = 0 ]; then
     role=user
   fi
-  if [ -n "$role" ]; then
+  if [ -n "$role" ] && ! [[ $role == x* ]]; then
     content="$(printf "%s\n" "${content_lines[@]}" | sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba')"
     if [ -n "$content" ]; then
       args+=(-g "$role" "$content")
