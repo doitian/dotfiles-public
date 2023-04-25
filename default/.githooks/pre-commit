@@ -62,28 +62,6 @@ check_cargo_fmt() {
   fi
 }
 
-check_cargo_fmt() {
-  if ! [[ -f Cargo.toml ]]; then
-    return
-  fi
-
-  printf "${PREFIX} Checking for cargo ... "
-  if command -v cargo &>/dev/null; then
-    printf "${SUCCESS}\n"
-  else
-    printf "${FAILURE}\n"
-    return 1
-  fi
-
-  printf "${PREFIX} Checking formatting ... "
-  if cargo fmt -- --check; then
-    printf "${SUCCESS}\n"
-  else
-    printf "${FAILURE}\n"
-    return 1
-  fi
-}
-
 check_git
 check_whitespace
 check_cargo_fmt
