@@ -1,5 +1,6 @@
 " Preamble {{{1
 set runtimepath^=~/.vim
+set mouse=vi
 let &packpath=&runtimepath
 
 augroup csfix_au
