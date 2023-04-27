@@ -2,6 +2,10 @@
 # Start Sway
 #
 # - Configure GTK: LXAppearance
+# - Notifications: dunst
+# - Power: swayidle swaylock
+
+exec &> ~/.sway.log
 
 export XDG_DATA_DIRS="/usr/share:/var/lib/flatpak/exports/share:/home/ian/.local/share/flatpak/exports/share"
 export WLR_NO_HARDWARE_CURSORS=1
