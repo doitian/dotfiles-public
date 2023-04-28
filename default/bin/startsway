@@ -15,6 +15,8 @@ export INPUT_METHOD=fcitx
 export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
+export QT_AUTO_SCREEN_SCALE_FACTOR=0
+export QT_SCALE_FACTOR=2
 
 if ! [ -e "$HOME/.Xdefaults" ]; then
   ln -snf .Xresources "$HOME/.Xdefaults"
