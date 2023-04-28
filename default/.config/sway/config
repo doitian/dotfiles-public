@@ -239,7 +239,7 @@ include /etc/sway/config.d/*
 #
 # Autostart:
 #
-exec --no-startup-id ibus-daemon -xdr
+exec --no-startup-id fcitx5 -d --replace
 # exec --no-startup-id nm-applet
 # Start XDG autostart .desktop files using dex. See also
 # https://wiki.archlinux.org/index.php/XDG_Autostart
