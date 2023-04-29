@@ -18,9 +18,9 @@ PANDOC_OPTIONS=(
   --variable fontsize=12pt
   --variable linestretch=1.5
   --variable geometry=a4paper
-  --variable documentclass=${DOCUMENTCLASS}
-  --variable mainfont="$MAINFONT"
-  --variable monofont="$MONOFONT"
+  --variable documentclass="${DOCUMENTCLASS}"
+  --variable mainfont="${MAINFONT}"
+  --variable monofont="${MONOFONT}"
 )
 
 if [ -n "${CJK:-}" ]; then
