@@ -5,12 +5,4 @@ function CodeBlock(el)
   return el
 end
 
-function replace (el)
-  if vars[el.text] then
-    return pandoc.Span(vars[el.text])
-  else
-    return el
-  end
-end
-
 return {{CodeBlock = CodeBlock}}
