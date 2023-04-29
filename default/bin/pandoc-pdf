@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# Usage:
+# pandoc-pdf -i test.md -o test.pdf
+#
+# Enable CJK:
+# CJK=1 pandoc-pdf -i test.md -o test.pdf
+
 set -e
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true
