@@ -748,7 +748,7 @@ augroup vimrc_au
 
   autocmd BufNewFile,BufRead *.bats set ft=bats.sh
   autocmd BufNewFile,BufRead .envrc set ft=envrc.sh
-  autocmd BufNewFile,BufRead *.tid set ft=markdown
+  autocmd BufNewFile,BufRead *.wiki set ft=wiki
   autocmd BufNewFile,BufRead */gopass-*/* set ft=gopass
   au BufNewFile,BufRead */gopass-*/* setlocal noswapfile nobackup noundofile
   autocmd BufNewFile,BufRead PULLREQ_EDITMSG set ft=gitcommit
