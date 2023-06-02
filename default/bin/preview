@@ -1,5 +1,5 @@
 #!/bin/bash
-
+EXA_TREE="${FZF_PREVIEW_EXA_TREE:-3}"
 COLS="${FZF_PREVIEW_COLUMNS:-$(tput cols)}"
 LINES="${FZF_PREVIEW_LINES:-$(tput lines)}"
 if [ -z "${FZF_PREVIEW_LINES:-}" ]; then
@@ -22,7 +22,7 @@ fi
 
 for arg; do
   if [ -d "$arg" ]; then
-    exa --color always -T -L 3 "$arg" | head -n "$LINES"
+    exa --color always -T -L "$EXA_TREE" "$arg" | head -n "$LINES"
   else
     BAT_STYLE=
     if [ -n "${FZF_PREVIEW_LINES:-}" ]; then

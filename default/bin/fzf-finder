@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+POSITIONAL_ARGS=()
+OPT_PREVIEW="${OPT_PREVIEW:-yes}"
+OPT_DIRECTORY="."
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --no-preview)
+      OPT_PREVIEW=
+      shift # past argument
+      ;;
+    -d | --directory)
+      OPT_DIRECTORY="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    -* | --*)
+      echo "Unknown option $1"
+      exit 1
+      ;;
+    *)
+      POSITIONAL_ARGS+=("$1") # save positional arg
+      shift                   # past argument
+      ;;
+  esac
+done
+
+set -- "${POSITIONAL_ARGS[@]+"${POSITIONAL_ARGS[@]}"}" # restore positional parameters
+
+if [[ $# -gt 1 ]]; then
+  shift
+  echo "Unknown args $*"
+  exit 1
+fi
+if [[ $# -gt 0 ]]; then
+  OPT_DIRECTORY="$1"
+fi
+
+cd "$OPT_DIRECTORY"
+
+export OPT_PREVIEW
+export FZF_PREVIEW_EXA_TREE=1
+FZF_ARGS=(--header "$(pwd)/" --ansi --multi --bind "ctrl-f:accept" --bind "ctrl-l:become(echo :cd {})")
+if [ -n "$OPT_PREVIEW" ]; then
+  FZF_ARGS+=(--preview 'preview {}')
+fi
+
+ACCEPTED_LINES="$( (exa --color=always; echo '..') | fzf "${FZF_ARGS[@]}" )"
+
+while read line; do
+  case "$line" in
+    ":cd "*)
+      NEW_OPT_DIRECTORY="${line#:cd }"
+      if [ -d "$NEW_OPT_DIRECTORY" ]; then
+        exec fzf-finder "$NEW_OPT_DIRECTORY"
+      else
+        exec fzf-finder
+      fi
+      ;;
+    *)
+      echo "$(pwd)/$line"
+      ;;
+  esac
+done <<<"$ACCEPTED_LINES"
