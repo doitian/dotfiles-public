@@ -45,12 +45,12 @@ cd "$OPT_DIRECTORY"
 
 export OPT_PREVIEW
 export FZF_PREVIEW_EXA_TREE=1
-FZF_ARGS=(--header "$(pwd)/" --ansi --multi --bind "ctrl-f:accept" --bind "ctrl-l:become(echo :cd {})")
+FZF_ARGS=(--header "$(pwd)/" --ansi --multi --bind "ctrl-f:accept" --bind "ctrl-l:become(echo :cd {})" --bind "ctrl-h:become(echo :cd ..)")
 if [ -n "$OPT_PREVIEW" ]; then
   FZF_ARGS+=(--preview 'preview {}')
 fi
 
-ACCEPTED_LINES="$( (exa --color=always; echo '..') | fzf "${FZF_ARGS[@]}" )"
+ACCEPTED_LINES="$(exa --color=always | fzf "${FZF_ARGS[@]}")"
 
 while read line; do
   case "$line" in
