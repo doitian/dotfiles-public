@@ -28,7 +28,7 @@ function! LoadNvimPlugs()
   Plug 'quangnguyen30192/cmp-nvim-ultisnips'
 endfunction
 
-let g:copilot_node_command = $HOME . "/.asdf/shims/node"
+let g:copilot_node_command = $HOME . "/.asdf/installs/nodejs/lts/bin/node"
 if exists("$SCOOP")
   let g:copilot_node_command = $SCOOP . "/apps/nodejs-lts/current/node.exe"
 endif
