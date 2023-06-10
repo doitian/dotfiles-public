@@ -33,5 +33,6 @@ desktop.ini
 errors.txt
 lmake.mk
 tags
+.tags.in
 tempCodeRunnerFile
 .index.md

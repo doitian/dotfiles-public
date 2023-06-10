@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ -x "./.tags.in" ]; then
+  exec ./.tags.in "$@"
+elif [ -f "./.tags.in" ]; then
+  exec ctags -L ./.tags.in "$@"
+elif [ -e ".git" ]; then
+  git ls-files -zco --exclude-standard | xargs -0 ctags "$@"
+else
+  exec ctags "$@"
+fi

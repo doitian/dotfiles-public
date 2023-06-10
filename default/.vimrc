@@ -80,6 +80,7 @@ let g:dispatch_compilers = {
       \ 'bundle exec': ''}
 let g:fzf_buffers_jump = 1
 let g:fzf_layout = { 'down': '40%' }
+let g:fzf_tags_command = "ctags-dwim"
 let g:go_fmt_fail_silently = 1
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
