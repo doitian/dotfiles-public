@@ -15,3 +15,5 @@
 --regex-Rust=/^[ \t]*(pub[ \t]+)?(unsafe[ \t]+)?trait[ \t]+([a-zA-Z0-9_]+)/\3/t,traits,traits/
 --regex-Rust=/^[ \t]*(pub[ \t]+)?(unsafe[ \t]+)?impl([ \t\n]*<[^>]*>)?[ \t]+(([a-zA-Z0-9_:]+)[ \t]*(<[^>]*>)?[ \t]+(for)[ \t]+)?([a-zA-Z0-9_]+)/\8/i,impls,trait implementations/
 --regex-Rust=/^[ \t]*macro_rules![ \t]+([a-zA-Z0-9_]+)/\1/d,macros,macro definitions/
+--regex-JavaScript=/^export[ \t]+(default[ \t]+)?(async[ \t]+)?function\*?[ \t]+([A-Za-z0-9_$]+)[ \t]*\([^)]*\)/\3/f,functions/
+--regex-JavaScript=/^export[ \t]+(default[ \t]+)?class[ \t]+([A-Za-z0-9_$]+)/\2/c,classes/
