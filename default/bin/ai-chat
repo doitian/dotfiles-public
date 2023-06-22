@@ -13,21 +13,58 @@ if [ -f "$OPENAI_PROMPTS_FILE_ALTERNATIVE" ] && ! [ -f "$OPENAI_PROMPTS_FILE" ];
   OPENAI_PROMPTS_FILE="$OPENAI_PROMPTS_FILE_ALTERNATIVE"
 fi
 
+: ${AZURE_API_VERSION:=2023-05-15}
+: ${AZURE_RESOURCE_NAME:=doitian-chatgpt}
+: ${AZURE_MODEL:=gpt-35-turbo}
+
+: ${OPENAI_BACKEND:=azure}
+
+jsonize_messages() {
+  while [ "$#" != 0 ]; do
+    jq --null-input --compact-output --arg role "$2" --arg content "$3" \
+      '{"role": $role, "content": $content}'
+    shift
+    shift
+    shift
+  done | jq --slurp --compact-output '{messages: .}'
+}
+
+call_api() {
+  if [ "$OPENAI_BACKEND" = "openai" ]; then
+    if [ -z "${OPENAI_API_KEY:-}" ]; then
+      local credentials="$(gopass show key/openai.com/personal)"
+      export OPENAI_API_KEY="$(echo "$credentials" | head -1)"
+      eval "$(echo "$credentials" | tail -n '+2' | sed -e 's/^\([^:]*\): /export \1=/')"
+    fi
+    openai api chat_completions.create -m "${OPENAI_MODEL}" "$@"
+    echo
+  else
+    if [ -z "${AZURE_API_KEY:-}" ]; then
+      local credentials="$(gopass show key/azure.com/openai-key-1)"
+      export AZURE_API_KEY="$(echo "$credentials" | head -1)"
+    fi
+
+    local endpoint="https://${AZURE_RESOURCE_NAME}.openai.azure.com/openai/deployments/${AZURE_MODEL}/chat/completions?api-version=${AZURE_API_VERSION}"
+    curl -s -X POST -H "api-key: ${AZURE_API_KEY}" -H "Content-Type: application/json" -d "$(jsonize_messages "$@")" "$endpoint" | jq -r ".choices[0].message.content"
+  fi
+}
+
 send_session() {
   local args=()
   local content_lines=()
   local line role content
   while read -r line; do
     case "$line" in
-      \*\*model\*\*::\ * )
+      \*\*model\*\*::\ *)
         OPENAI_MODEL="${line##*:: }"
+        AZURE_MODEL="${OPENAI_MODEL}"
         ;;
-      \*\**\*\*::\ * )
+      \*\**\*\*::\ *)
         local parameter_name="${line#\*\*}"
         parameter_name="${parameter_name%%\*\*::*}"
         args+=("--${parameter_name}" "${line##*:: }")
         ;;
-      "### .System" | "### .User" | "### .Assistant" | "### .x"* )
+      "### .System" | "### .User" | "### .Assistant" | "### .x"*)
         if [ -n "$role" ] && ! [[ $role == x* ]]; then
           content="$(printf "%s\n" "${content_lines[@]}" | sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba')"
           if [ -n "$content" ]; then
@@ -51,19 +88,11 @@ send_session() {
       args+=(-g "$role" "$content")
     fi
   fi
-  if [ -z "${OPENAI_API_KEY:-}" ]; then
-    local credentials="$(gopass show key/openai.com/personal)"
-    local line key value
-    export OPENAI_API_KEY="$(echo "$credentials" | head -1)"
-    eval "$(echo "$credentials" | tail -n '+2' | sed -e 's/^\([^:]*\): /export \1=/')"
-  fi
   if [ -z "${http_proxy:-}" ]; then
     eval $(gfw)
   fi
   if [ "${#args[@]}" != 0 ]; then
-    openai api chat_completions.create -m "${OPENAI_MODEL}" "${args[@]}" |
-      sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba'
-    echo
+    call_api "${args[@]}" | sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba'
   fi
 }
 
@@ -130,13 +159,13 @@ handle_preset() {
   preset="$(envsubst <<<"$preset")"
 
   local HIST="$HOME/.chatgpt_history"
-  echo "#chatgpt-session" > "$HIST.$$"
-  echo >> "$HIST.$$"
-  echo "$preset" >> "$HIST.$$"
+  echo "#chatgpt-session" >"$HIST.$$"
+  echo >>"$HIST.$$"
+  echo "$preset" >>"$HIST.$$"
   if [ -z "$OPTION_DRY_RUN" ]; then
-    echo >> "$HIST.$$"
-    echo "## Assistant" >> "$HIST.$$"
-    echo >> "$HIST.$$"
+    echo >>"$HIST.$$"
+    echo "## Assistant" >>"$HIST.$$"
+    echo >>"$HIST.$$"
   fi
 
   if [ -n "$OPTION_VERBOSE" ]; then
