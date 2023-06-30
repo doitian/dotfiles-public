@@ -4,26 +4,48 @@ set -e
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
+UNAME_S="$(uname -s)"
+
 JOURNAL_DIR="$HOME/.journal"
 if ! [ -e "$JOURNAL_DIR" ] && [ -d "$HOME/Dropbox/Brain/journal" ]; then
   ln -snf "$HOME/Dropbox/Brain/journal" "$HOME/.journal"
 fi
 JOURNAL_FILE="$JOURNAL_DIR/Journal $(date +'%Y-%m-%d').md"
 
-ensure_journal_file() {
-  if ! [ -e "$JOURNAL_DIR" ]; then
-    mkdir -p "$JOURNAL_DIR"
+_date() {
+  if [ "$UNAME_S" = "Darwin" ]; then
+    date -j -f '%Y-%m-%d' "$1" +'%a, %b %d, %Y'
+  else
+    date --date="$1" +'%a, %b %d, %Y'
   fi
+}
+_tommorow() {
+  if [ "$UNAME_S" = "Darwin" ]; then
+    date -j -v +1d -f '%Y-%m-%d' "$1" +'%Y-%m-%d'
+  else
+    date --date="$1 + 1 day" +'%Y-%m-%d'
+  fi
+}
+_yesterday() {
+  if [ "$UNAME_S" = "Darwin" ]; then
+    date -j -v -1d -f '%Y-%m-%d' "$1" +'%Y-%m-%d'
+  else
+    date --date="$1 - 1 day" +'%Y-%m-%d'
+  fi
+}
 
+ensure_journal_file() {
   if ! [ -e "$JOURNAL_FILE" ]; then
     local date="${JOURNAL_FILE%.md}"
     date="${date##* }"
 
-    echo "# Journal on $(date -j -f '%Y-%m-%d' $date +'%a, %b %d, %Y')
+    echo "# Journal on $(_date $date)
 
 ## Metadata
 
 **Date**:: [[$date]]
+**Next**:: [[Journal $(_tommorow $date)]]
+**Prev**:: [[Journal $(_yesterday $date)]]
 **Kind**:: #journal
 
 ## Journal" >"$JOURNAL_FILE"

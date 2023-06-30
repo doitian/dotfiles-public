@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# Scan citation keys like `[@citation]` in the input files and export the bibliographic data from Zotero.
+
 import argparse
 import urllib.request
 import json
