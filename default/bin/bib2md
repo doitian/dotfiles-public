@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+echo "---
+bibliography: $(ctrlv)
+nocite: '@*'
+..." | pandoc --wrap=none --markdown-headings=atx --from markdown --to commonmark-raw_html --citeproc
