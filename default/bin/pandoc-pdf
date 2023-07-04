@@ -2,36 +2,64 @@
 
 # Usage:
 # pandoc-pdf -i test.md -o test.pdf
-#
-# Enable CJK:
-# CJK=1 pandoc-pdf -i test.md -o test.pdf
 
 set -e
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
-MAINFONT="${MAINFONT:-Helvetica}"
-MONOFONT="${MONOFONT:-Cartograph CF}"
-CJK_MAINFONT="${CJK_MAINFONT:-Noto Serif CJK SC}"
+detect_format() {
+  case "$1" in
+    markdown* | *.md)
+      echo "markdown"
+      ;;
+    html* | *.html)
+      echo "html"
+      ;;
+    pdf* | *.pdf | latex* | tex* | *.tex)
+      echo "pdf"
+      ;;
+    word* | *.docx | *.doc)
+      echo "doc"
+      ;;
+    *)
+      echo "other"
+      ;;
+  esac
+}
+
+TO_FORMAT=other
+DETECT_THIS=
+
+for arg; do
+  case "$arg" in
+    -o | --output | -t | --to | -w | --write)
+      DETECT_THIS=true
+      ;;
+    --output=* | --to=* | --write=*)
+      DETECT_THIS=
+      TO_FORMAT="$(detect_format "${arg#*=}")"
+      ;;
+    *)
+      if [ -n "${DETECT_THIS}" ]; then
+        DETECT_THIS=
+        TO_FORMAT="$(detect_format "$arg")"
+      fi
+      ;;
+  esac
+done
+
+echo "$TO_FORMAT"
 
 # scrbook, scrreprt, scrartcl, scrlttr2 and typearea
 DOCUMENTCLASS="${DOCUMENTCLASS:-scrreprt}"
 
 PANDOC_OPTIONS=(
-  --pdf-engine=xelatex
   --lua-filter "$HOME/.pandoc/filters/highlightings.lua"
   -H "$HOME/.pandoc/headers/latex.tex"
   --variable fontsize=12pt
   --variable linestretch=1.5
   --variable geometry=a4paper
   --variable documentclass="${DOCUMENTCLASS}"
-  --variable mainfont="${MAINFONT}"
-  --variable monofont="${MONOFONT}"
 )
 
-if [ -n "${CJK:-}" ]; then
-  PANDOC_OPTIONS+=(--variable CJKmainfont="$CJK_MAINFONT")
-  PANDOC_OPTIONS+=(-H "$HOME/.pandoc/headers/cjk.tex")
-fi
-
-pandoc "${PANDOC_OPTIONS[@]}" "$@"
+pandoc "${PANDOC_OPTIONS[@]}" "$@" --pdf-engine=lualatex

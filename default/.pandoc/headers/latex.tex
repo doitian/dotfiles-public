@@ -12,3 +12,12 @@
 } {
   \endorigfigure
 }
+
+\directlua{
+  luaotfload.add_fallback("noto-sans", { "Noto Sans CJK SC:mode=harf;", "Apple Color Emoji:mode=harf;" })
+  luaotfload.add_fallback("noto-serif", { "Noto Serif CJK SC:mode=harf;", "Apple Color Emoji:mode=harf;" })
+  luaotfload.add_fallback("noto-mono", { "Noto Sans Mono CJK SC:mode=harf;", "Noto Sans CJK SC:mode=harf;", "Apple Color Emoji:mode=harf;" })
+}
+\setmainfont{Helvetica Neue}[RawFeature={fallback=noto-sans}]
+\setsansfont{Lato}[RawFeature={fallback=noto-sans}]
+\setmonofont{Cartograph CF}[RawFeature={fallback=noto-mono}]
