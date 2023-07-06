@@ -1,0 +1,17 @@
+# to: commonmark-raw_html
+# to: gfm
+filters:
+  - pandoc-crossref
+  - cleanup-meta.lua
+wrap: none
+markdown-headings: atx
+resource-path:
+  - .
+  - ./res
+  - ${.}/markdown
+number-sections: true
+top-level-division: chapter
+shift-heading-level-by: -1
+reference-links: false
+metadata-file:
+  - ${HOME}/.pandoc-crossref/config-markdown.yaml

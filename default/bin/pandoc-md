@@ -1,3 +1,0 @@
-#!/bin/bash
-
-exec pandoc --wrap=none --markdown-headings=atx --to commonmark-raw_html "$@"

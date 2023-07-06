@@ -1,0 +1,73 @@
+\makeatletter
+\@ifpackageloaded{subfig}{}{\usepackage{subfig}}
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\captionsetup[subfloat]{margin=0.5em}
+\AtBeginDocument{%
+\renewcommand*\figurename{Figure}
+\renewcommand*\tablename{Table}
+}
+\AtBeginDocument{%
+\renewcommand*\listfigurename{List of Figures}
+\renewcommand*\listtablename{List of Tables}
+}
+\newcounter{pandoccrossref@subfigures@footnote@counter}
+\newenvironment{pandoccrossrefsubfigures}{%
+\setcounter{pandoccrossref@subfigures@footnote@counter}{0}
+\begin{figure}\centering%
+\gdef\global@pandoccrossref@subfigures@footnotes{}%
+\DeclareRobustCommand{\footnote}[1]{\footnotemark%
+\stepcounter{pandoccrossref@subfigures@footnote@counter}%
+\ifx\global@pandoccrossref@subfigures@footnotes\empty%
+\gdef\global@pandoccrossref@subfigures@footnotes{{##1}}%
+\else%
+\g@addto@macro\global@pandoccrossref@subfigures@footnotes{, {##1}}%
+\fi}}%
+{\end{figure}%
+\addtocounter{footnote}{-\value{pandoccrossref@subfigures@footnote@counter}}
+\@for\f:=\global@pandoccrossref@subfigures@footnotes\do{\stepcounter{footnote}\footnotetext{\f}}%
+\gdef\global@pandoccrossref@subfigures@footnotes{}}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\@ifundefined{KOMAClassName}{}{
+  \@ifpackageloaded{tocbasic}{}{\usepackage{tocbasic}}
+  \renewcommand\newfloat[3]{%
+    \addtotoclist[float]{#3}%
+    \setuptoc{#3}{chapteratlist}%
+    \@namedef{ext@#1}{#3}%
+    \let\float@do=\relax
+    \xdef\@tempa{\noexpand\float@exts{\the\float@exts \float@do{#3}}}%
+    \@tempa
+    \floatplacement{#1}{#2}%
+    \@ifundefined{fname@#1}{\floatname{#1}{#1}}{}%
+    \expandafter\edef\csname ftype@#1\endcsname{\value{float@type}}%
+    \addtocounter{float@type}{\value{float@type}}
+    \restylefloat{#1}%
+    \expandafter\edef\csname fnum@#1\endcsname%
+    {\expandafter\noexpand\csname fname@#1\endcsname{}
+      \expandafter\noexpand\csname the#1\endcsname}%
+    \@ifnextchar[%]
+    {\float@newx{#1}}%
+    {\@ifundefined{c@#1}{\newcounter{#1}\@namedef{the#1}{\arabic{#1}}}%
+      {}}}%
+  \renewcommand*\listof[2]{%
+    \@ifundefined{ext@#1}{\float@error{#1}}{%
+      \@ifundefined{l@#1}{\expandafter\let\csname l@#1\endcsname\l@figure
+        \@ifundefined{l@#1}{%
+          \DeclareTOCStyleEntry[level=1,numwidth=2.3em,indent=1.5em]
+          {default}{#1}%
+        }{}%
+      }{}%
+      \listoftoc[{#2}]{\csname ext@#1\endcsname}%
+    }%
+  }%
+}
+\newcommand\floatc@codelisting[2]{{\@fs@cfont #1} #2\par}
+\newcommand\fs@codelisting{\def\@fs@cfont{\bfseries}\let\@fs@capt\floatc@codelisting
+  \def\@fs@pre{\hrule height.8pt depth0pt \kern2pt}%
+  \def\@fs@post{\kern-13pt\hrule\relax}%
+  \def\@fs@mid{\kern2pt\hrule\kern-13pt}%
+  \let\@fs@iftopcapt\iftrue}
+\floatstyle{codelisting}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother

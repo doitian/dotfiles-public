@@ -1,0 +1,12 @@
+standalone: true
+embed-resources: true
+filters:
+  - pandoc-crossref
+resource-path:
+  - .
+  - ./res
+  - ${.}/docx
+number-sections: true
+top-level-division: chapter
+shift-heading-level-by: -1
+reference-links: true

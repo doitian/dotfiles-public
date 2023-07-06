@@ -1,0 +1,7 @@
+resource-path:
+  - .
+  - ./res
+  - ${.}
+top-level-division: chapter
+shift-heading-level-by: -1
+reference-links: true

@@ -1,0 +1,15 @@
+filters:
+  - pandoc-crossref
+resource-path:
+  - .
+  - ./res
+  - ${.}/html
+number-sections: true
+top-level-division: chapter
+shift-heading-level-by: -1
+reference-links: true
+variables:
+  mainfont: |
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "LXGW WenKai", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif
+  monofont: |
+    "Cartograph CF", "JetBrain Mono", Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', 'LXGW WenKai Mono', monospace
