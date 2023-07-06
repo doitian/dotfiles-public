@@ -1,14 +1,17 @@
 standalone: true
 pdf-engine: lualatex
 filters:
-  - highlightings.lua
+  - listings.lua
+  - table-col-specs.lua
+  - fullwidth.lua
   - pandoc-crossref
 resource-path:
   - .
   - ./res
   - ${.}/latex
 include-in-header:
-  - base.tex
+  - listings.tex
+  - fullwidth.tex
   - lualatex-font-noto.tex
   - crossref.tex
 shift-heading-level-by: -1

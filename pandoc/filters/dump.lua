@@ -1,5 +1,5 @@
 local logging = require 'logging'
 
-function Pandoc(pandoc)
-  logging.temp('pandoc', pandoc)
+function Pandoc(doc)
+  logging.temp('doc', doc)
 end

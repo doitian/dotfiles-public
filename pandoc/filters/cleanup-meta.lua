@@ -64,6 +64,8 @@ local DENYLIST = {
   tblPrefix = true,
   tblPrefixTemplate = true,
   titleDelim = true,
+  tableColSpecs = true,
+  tableColSpecsSameWidth = true,
 }
 
 function Meta(meta)

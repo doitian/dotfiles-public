@@ -1,4 +1,4 @@
-function Pandoc(pandoc)
-  table.remove(pandoc.blocks, 1)
+function Pandoc(doc)
+  table.remove(doc.blocks, 1)
   return pandoc
 end

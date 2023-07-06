@@ -1,31 +1,6 @@
-standalone: true
-pdf-engine: xelatex
-filters:
-  - highlightings.lua
-  - pandoc-crossref
-resource-path:
-  - .
-  - ./res
-  - ${.}/latex
-include-in-header:
-  - base.tex
-  - crossref.tex
-shift-heading-level-by: -1
-reference-links: true
-number-sections: true
+defaults:
+  - latex
 variables:
-  # scrbook, scrreprt, scrartcl, scrlttr2 and typearea
-  documentclass: scrreprt
-  classoption:
-    - listof=totoc
-
-  fontsize: 12pt
-  mainfont: IBM Plex Sans
-  sansfont: Lato
-  monofont: JetBrains Mono
   CJKmainfont: LXGW Bright GB
   CJKsansfont: LXGW Bright GB
   CJKmonofont: LXGW WenKai Mono
-
-  linestretch: 1.5
-  geometry: a4paper

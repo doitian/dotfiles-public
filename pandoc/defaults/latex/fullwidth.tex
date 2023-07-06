@@ -1,0 +1,10 @@
+\usepackage[strict]{changepage}
+\makeatletter
+\if@twoside%
+   \newcommand\fwleft{\the\dimexpr-\ifoddpage\oddsidemargin\else\evensidemargin\fi-(1in/2)\relax}
+   \newcommand\fwtext{\the\dimexpr\paperwidth-1in\relax}
+\else%
+   \newcommand\fwleft{\the\dimexpr-\oddsidemargin-(1in/2)\relax}
+   \newcommand\fwtext{\the\dimexpr\paperwidth-1in\relax}
+\fi%
+\makeatother
