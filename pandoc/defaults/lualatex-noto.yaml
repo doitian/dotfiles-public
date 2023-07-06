@@ -1,0 +1,25 @@
+standalone: true
+pdf-engine: lualatex
+filters:
+  - highlightings.lua
+  - pandoc-crossref
+resource-path:
+  - .
+  - ./res
+  - ${.}/latex
+include-in-header:
+  - base.tex
+  - lualatex-font-noto.tex
+  - crossref.tex
+shift-heading-level-by: -1
+reference-links: true
+number-sections: true
+variables:
+  # scrbook, scrreprt, scrartcl, scrlttr2 and typearea
+  documentclass: scrreprt
+  classoption:
+    - listof=totoc
+
+  fontsize: 12pt
+  linestretch: 1.5
+  geometry: a4paper
