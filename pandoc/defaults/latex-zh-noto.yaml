@@ -22,7 +22,7 @@ variables:
   fontsize: 12pt
   mainfont: IBM Plex Sans
   sansfont: Lato
-  monofont: Jetbrain Mono
+  monofont: JetBrains Mono
   CJKmainfont: Noto Sans CJK SC
   CJKsansfont: Noto Sans CJK SC
   CJKmonofont: Noto Sans CJK SC

@@ -22,7 +22,7 @@ variables:
   fontsize: 12pt
   mainfont: IBM Plex Sans
   sansfont: Lato
-  monofont: Jetbrain Mono
+  monofont: JetBrains Mono
   CJKmainfont: LXGW Bright GB
   CJKsansfont: LXGW Bright GB
   CJKmonofont: LXGW Wenkai Mono

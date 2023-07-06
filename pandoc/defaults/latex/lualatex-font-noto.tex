@@ -1,8 +1,8 @@
 \directlua{
-  luaotfload.add_fallback("noto-sans", { "Noto Sans CJK SC:mode=harf;", "Jetbrain Mono:", "Twitter Color Emoji:mode=harf;" })
-  luaotfload.add_fallback("noto-serif", { "Noto Serif CJK SC:mode=harf;", "Jetbrain Mono:", "Twitter Color Emoji:mode=harf;" })
-  luaotfload.add_fallback("noto-mono", { "Noto Sans Mono CJK SC:mode=harf;", "Noto Sans CJK SC:mode=harf;", "Jetbrain Mono:", "Twitter Color Emoji:mode=harf;" })
+  luaotfload.add_fallback("noto-sans", { "Noto Sans CJK SC:mode=harf;", "JetBrains Mono:", "Twitter Color Emoji:mode=harf;" })
+  luaotfload.add_fallback("noto-serif", { "Noto Serif CJK SC:mode=harf;", "JetBrains Mono:", "Twitter Color Emoji:mode=harf;" })
+  luaotfload.add_fallback("noto-mono", { "Noto Sans Mono CJK SC:mode=harf;", "Noto Sans CJK SC:mode=harf;", "JetBrains Mono:", "Twitter Color Emoji:mode=harf;" })
 }
 \setmainfont{IBM Plex Sans}[RawFeature={fallback=noto-sans}]
 \setsansfont{Lato}[RawFeature={fallback=noto-sans}]
-\setmonofont{Jetbrain Mono}[RawFeature={fallback=noto-mono}]
+\setmonofont{JetBrains Mono}[RawFeature={fallback=noto-mono}]
