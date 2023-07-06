@@ -25,7 +25,7 @@ variables:
   monofont: JetBrains Mono
   CJKmainfont: LXGW Bright GB
   CJKsansfont: LXGW Bright GB
-  CJKmonofont: LXGW Wenkai Mono
+  CJKmonofont: LXGW WenKai Mono
 
   linestretch: 1.5
   geometry: a4paper
