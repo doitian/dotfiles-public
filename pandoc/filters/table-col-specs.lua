@@ -6,22 +6,21 @@ function Pandoc(doc)
   local tableColSpecs = pandoc.json.decode(doc.meta.tableColSpecs or '[]');
 
   local tableId = 0
-  for _, block in ipairs(doc.blocks) do
-    if block.t == 'Table' then
-      tableId = tableId + 1
-      local specs = tableColSpecs[tableId] or {}
-      if #specs > 0 then
-        for i, spec in ipairs(specs) do
-          block.colspecs[i][2] = spec
-        end
-      elseif doc.meta.tableColSpecsSameWidth then
-        local width = 1 / #block.colspecs
-        for i, spec in ipairs(block.colspecs) do
-          spec[2] = width
-        end
+  function Table(table)
+    tableId = tableId + 1
+    local specs = tableColSpecs[tableId] or tableColSpecs[tostring(tableId)] or {}
+    if #specs > 0 then
+      for i, spec in ipairs(specs) do
+        table.colspecs[i][2] = spec
+      end
+    elseif doc.meta.tableColSpecsSameWidth then
+      local width = 1 / #table.colspecs
+      for i, spec in ipairs(table.colspecs) do
+        spec[2] = width
       end
     end
+    return table
   end
 
-  return doc
+  return doc:walk {Table = Table}
 end

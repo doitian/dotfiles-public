@@ -1,5 +1,5 @@
-local prelogue = pandoc.RawInline('latex', '\\checkoddpage\\begin{adjustwidth}{\\fwleft}{}\\begin{minipage}{\\fwtext}')
-local epilogue = pandoc.RawInline('latex', '\\end{minipage}\\end{adjustwidth}')
+local prelogue = pandoc.RawInline('latex', '\\begin{fullwidth}')
+local epilogue = pandoc.RawInline('latex', '\\end{fullwidth}')
 
 function Block(el)
   return { prelogue, el, epilogue }

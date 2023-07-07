@@ -1,3 +1,5 @@
 % Wrap lines in code blocks, and add border around them.
-\usepackage{fvextra}
-\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,breaknonspaceingroup,breakanywhere,frame=single,framesep=8pt,rulecolor=\color[HTML]{aaaaaa},commandchars=\\\{\}}
+\makeatletter
+\@ifpackageloaded{fvextra}{}{\usepackage{fvextra}}
+\makeatother
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,breakautoindent=false,breaknonspaceingroup,breakanywhere,frame=single,framesep=8pt,rulecolor=\color[HTML]{aaaaaa},commandchars=\\\{\}}

@@ -1,6 +1,8 @@
 % Disable figures floating.
 % <https://stackoverflow.com/a/58840456/667158>
-\usepackage{float}
+\makeatletter
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\makeatother
 \let\origfigure\figure
 \let\endorigfigure\endfigure
 \renewenvironment{figure}[1][2] {

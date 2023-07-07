@@ -1,10 +1,11 @@
-\usepackage[strict]{changepage}
 \makeatletter
-\if@twoside%
-   \newcommand\fwleft{\the\dimexpr-\ifoddpage\oddsidemargin\else\evensidemargin\fi-(1in/2)\relax}
-   \newcommand\fwtext{\the\dimexpr\paperwidth-1in\relax}
-\else%
-   \newcommand\fwleft{\the\dimexpr-\oddsidemargin-(1in/2)\relax}
-   \newcommand\fwtext{\the\dimexpr\paperwidth-1in\relax}
-\fi%
+\@ifpackageloaded{changepage}{}{\usepackage[strict]{changepage}}
+\@ifpackageloaded{ifoddpage}{}{\usepackage{ifoddpage}}
+\newenvironment{fullwidth}{%
+  \checkoddpage%
+  \@parboxrestore%
+  \begin{adjustwidth}{\the\dimexpr-\ifoddpageoroneside\oddsidemargin\else\evensidemargin\fi-(1in/2)\relax}{}%
+    \begin{minipage}{\the\dimexpr\paperwidth-1in\relax}%
+      }{%
+    \end{minipage}\end{adjustwidth}}
 \makeatother
