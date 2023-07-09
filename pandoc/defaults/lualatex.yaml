@@ -1,28 +1,4 @@
-standalone: true
-pdf-engine: lualatex
-filters:
-  - listings.lua
-  - table-col-specs.lua
-  - fullwidth.lua
-  - pandoc-crossref
-resource-path:
-  - .
-  - ./res
-  - ${.}/latex
+defaults:
+  - lualatex-base
 include-in-header:
-  - listings.tex
-  - fullwidth.tex
   - lualatex-font.tex
-  - crossref.tex
-shift-heading-level-by: -1
-reference-links: true
-number-sections: true
-variables:
-  # scrbook, scrreprt, scrartcl, scrlttr2 and typearea
-  documentclass: scrreprt
-  classoption:
-    - listof=totoc
-
-  fontsize: 12pt
-  linestretch: 1.5
-  geometry: a4paper

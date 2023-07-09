@@ -1,31 +1,7 @@
-standalone: true
+defaults:
+  - latex-base
 pdf-engine: xelatex
-filters:
-  - listings.lua
-  - table-col-specs.lua
-  - fullwidth.lua
-  - pandoc-crossref
-resource-path:
-  - .
-  - ./res
-  - ${.}/latex
-include-in-header:
-  - listings.tex
-  - fullwidth.tex
-  - crossref.tex
-shift-heading-level-by: -1
-reference-links: true
-number-sections: true
 variables:
-  # scrbook, scrreprt, scrartcl, scrlttr2 and typearea
-  documentclass: scrreprt
-  classoption:
-    - listof=totoc
-
-  fontsize: 12pt
   mainfont: IBM Plex Sans
   sansfont: Lato
   monofont: JetBrains Mono
-
-  linestretch: 1.5
-  geometry: a4paper
