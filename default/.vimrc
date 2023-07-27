@@ -48,8 +48,8 @@ let g:vsnip_snippet_dir = expand("~/.vim/snippets")
 " Functions & Commands {{{1
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
       \ | wincmd p | diffthis
-command! Delete call delete(expand('%')) | bdelete | let @# = 1
-command! -nargs=1 -complete=file Move saveas <args> | call delete(expand('#')) | exec "bdelete #" | let @# = 1
+command! Delete call delete(expand('%')) | bdelete | let @# = bufnr('%')
+command! -nargs=1 -complete=file Move saveas <args> | call delete(expand('#')) | exec "bdelete #" | let @# = bufnr('%')
 
 if has('win32') || has('ios')
   command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile | silent file __viper__ | nnoremap <buffer> <cr> ggvGg_"+y:%d <lt>Bar> redraw!<lt>CR>
