@@ -18,12 +18,10 @@ jobs:
 
       - name: Setup vimrc
         run: |
-          sed -e 's;junegunn/fzf\.vim;ctrlpvim/ctrlp.vim;' -e 's;.*junegunn/fzf;" &;' default/.vimrc > ~/.vimrc
           mkdir -p ~/.vim/backup
           mkdir -p ~/.vim/undo
           mkdir -p ~/.vim/swap
           mkdir -p ~/.vim/autoload
-          mkdir -p ~/.vim/UltiSnips
           curl -sSLo ~/.vim/autoload/plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
       - name: Install Vim packages
