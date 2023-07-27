@@ -8,8 +8,3 @@ vim.keymap.set({ "n", "x" }, "<Leader>y", '"+y', { desc = "Yank to system clipbo
 vim.keymap.set({ "n", "x" }, "<Leader>Y", '"+Y', { desc = "which_key_ignore" })
 vim.keymap.set({ "n", "x" }, "<Leader>d", '"_d', { desc = "Delete into black hole", silent = true })
 vim.keymap.set({ "n", "x" }, "<Leader>D", '"_D', { desc = "which_key_ignore", silent = true })
-
-local format = function()
-  require("lazyvim.plugins.lsp.format").format({ force = true })
-end
-vim.keymap.set("n", "f<cr>", format, { desc = "Format Document" })

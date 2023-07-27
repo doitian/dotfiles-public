@@ -1,5 +1,14 @@
 return {
-  "editorconfig/editorconfig-vim",
-  "tpope/vim-sleuth",
-  "tpope/vim-unimpaired",
+  {
+    "editorconfig/editorconfig-vim",
+    event = { "BufReadPre", "BufNewFile" },
+  },
+  {
+    "tpope/vim-sleuth",
+    event = { "BufReadPre", "BufNewFile" },
+  },
+  {
+    "tpope/vim-unimpaired",
+    event = "VeryLazy",
+  },
 }

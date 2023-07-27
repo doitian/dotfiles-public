@@ -17,7 +17,6 @@ Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround' " ys s
 Plug 'tpope/vim-unimpaired'
 
-Plug 'ctrlpvim/ctrlp.vim'
 Plug 'hrsh7th/vim-vsnip'
 Plug 'hrsh7th/vim-vsnip-integ'
 Plug 'rafamadriz/friendly-snippets'
@@ -37,10 +36,7 @@ silent! colorscheme catppuccin_latte
 " Plugins Options {{{1
 let loaded_matchparen = 1
 
-let g:ctrlp_root_markers = []
-let g:ctrlp_show_hidden = 1
-let g:ctrlp_working_path_mode = 'a'
-
+let g:mucomplete#no_mappings = 1
 let g:mucomplete#enable_auto_at_startup = 1
 let g:mucomplete#chains = {
 \ 'default' : ['vsnip', 'path', 'omni', 'keyn', 'dict', 'uspl'],
@@ -146,9 +142,9 @@ let g:maplocalleader = '\\'
 set pastetoggle=<F2>
 set wildcharm=<C-z>
 
-nnoremap <silent> <Leader><Space> :CtrlP<cr>
-nnoremap <silent> <Leader>ff :CtrlP<cr>
-nnoremap <silent> <Leader>fb :CtrlPBuffer<cr>
+nnoremap <Leader><Space> :e <C-z>
+nnoremap <Leader>ff :e <C-z>
+nnoremap <Leader>fb :b <C-z>
 
 nnoremap <Leader>p "+p
 nnoremap <Leader>P "+P
@@ -160,6 +156,11 @@ nnoremap <Leader>d "_d
 nnoremap <Leader>D "_D
 xnoremap <Leader>d "_d
 xnoremap <Leader>D "_D
+
+imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
 
 " OS specific settings {{{1
 if exists('$WSLENV')
