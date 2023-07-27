@@ -13,13 +13,9 @@ Plug 'ctrlpvim/ctrlp.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'thinca/vim-visualstar' " * # g* g#
 Plug 'tomtom/tcomment_vim' " gc
-Plug 'tpope/vim-abolish' " cr :A :S
-Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround' " ys s
-Plug 'tpope/vim-unimpaired' " various [, ] mappings
-Plug 'wellle/targets.vim' " Text objects
 
 if has('win32')
   Plug 'PProvost/vim-ps1'
