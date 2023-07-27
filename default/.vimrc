@@ -9,13 +9,19 @@ silent! call plug#begin($HOME.'/.vim/plugged')
 
 Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 
-Plug 'ctrlpvim/ctrlp.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'thinca/vim-visualstar' " * # g* g#
 Plug 'tomtom/tcomment_vim' " gc
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround' " ys s
+Plug 'tpope/vim-unimpaired'
+
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/vim-vsnip-integ'
+Plug 'rafamadriz/friendly-snippets'
+Plug 'lifepillar/vim-mucomplete'
 
 if has('win32')
   Plug 'PProvost/vim-ps1'
@@ -30,8 +36,18 @@ silent! colorscheme catppuccin_latte
 
 " Plugins Options {{{1
 let loaded_matchparen = 1
+
 let g:ctrlp_root_markers = []
+let g:ctrlp_show_hidden = 1
 let g:ctrlp_working_path_mode = 'a'
+
+let g:mucomplete#enable_auto_at_startup = 1
+let g:mucomplete#chains = {
+\ 'default' : ['vsnip', 'path', 'omni', 'keyn', 'dict', 'uspl'],
+\ 'vim'     : ['vsnip', 'path', 'cmd', 'keyn']
+\ }
+
+let g:vsnip_snippet_dir = expand("~/.vim/snippets")
 
 " Functions & Commands {{{1
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
@@ -45,18 +61,6 @@ else
   command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile | silent file __viper__ | nnoremap <buffer> <cr> :exec 'w !ctrlc' <lt>Bar> %d <lt>Bar> redraw!<lt>CR>
 end
 
-function! s:ExpandAlias(cmdtype, trigger, content)
-  return getcmdtype() is# a:cmdtype && getcmdline() is# a:trigger ? a:content : a:trigger
-endfunction
-
-cnoreabbrev <expr> mapcr <SID>ExpandAlias(":", "mapcr", "nnoremap <buffer> <lt>CR> :up<lt>Bar>!<lt>CR><Left><Left><Left><Left>")
-cnoreabbrev <expr> cpcd <SID>ExpandAlias(":", "cpcd", "let @+ = 'cd ' . shellescape(getcwd())<cr>")
-cnoreabbrev <expr> cp% <SID>ExpandAlias(":", "cp%", "let @+ = expand('%')<cr>")
-
-if has('win32')
-  cnoreabbrev <expr> cmd <SID>ExpandAlias(":", "cmd", "set shell=cmd.exe shellcmdflag=/c noshellslash guioptions-=!")
-endif
-
 " Config {{{1
 set autoindent
 set autoread
@@ -66,6 +70,7 @@ set backupdir=$HOME/.vim/files/backup//,.
 set backupext=-vimbackup
 set breakindent
 set cursorline
+set completeopt=menuone,noinsert
 set copyindent
 set directory=$HOME/.vim/files/swap//,.
 set display+=lastline
@@ -88,6 +93,7 @@ set sessionoptions-=options
 set shiftround
 set shiftwidth=2
 set shortmess-=S
+set shortmess+=c
 set sidescrolloff=5
 set smartcase
 set smarttab
@@ -97,7 +103,6 @@ set splitbelow
 set splitright
 set switchbuf=useopen
 set synmaxcol=200
-" set tabline=%!Tabline()
 set tabpagemax=50
 set title
 set ttyfast
@@ -139,12 +144,22 @@ let g:mapleader = ' '
 let maplocalleader = '\\'
 let g:maplocalleader = '\\'
 set pastetoggle=<F2>
-set wildcharm=<C-Z>
+set wildcharm=<C-z>
 
 nnoremap <silent> <Leader><Space> :CtrlP<cr>
 nnoremap <silent> <Leader>ff :CtrlP<cr>
 nnoremap <silent> <Leader>fb :CtrlPBuffer<cr>
-nnoremap <silent> <Leader>n :noh<cr>
+
+nnoremap <Leader>p "+p
+nnoremap <Leader>P "+P
+nnoremap <Leader>y "+y
+nnoremap <Leader>Y "+Y
+xnoremap <Leader>y "+y
+xnoremap <Leader>Y "+Y
+nnoremap <Leader>d "_d
+nnoremap <Leader>D "_D
+xnoremap <Leader>d "_d
+xnoremap <Leader>D "_D
 
 " OS specific settings {{{1
 if exists('$WSLENV')
@@ -158,16 +173,6 @@ endif
 
 " Filetype specific handling {{{1
 filetype indent plugin on
-
-function! s:ProjectionistActivate() abort
-  let l:vars_query = projectionist#query('vars')
-  if len(l:vars_query) > 0
-    let l:vars = l:vars_query[0][1]
-    for name in keys(l:vars)
-      call setbufvar('%', name, l:vars[name])
-    endfor
-  endif
-endfunction
 
 augroup vimrc_au
   autocmd!
@@ -190,24 +195,6 @@ augroup vimrc_au
     \   exe 'normal! g`"' |
     \ endif
   autocmd SwapExists * let v:swapchoice = 'o'
-  autocmd CmdwinEnter * map <buffer> <C-w><C-w> <cr>q:dd
-
-  autocmd User ProjectionistActivate silent! call s:ProjectionistActivate()
 augroup END
-
-if executable('fasd')
-  function! s:FasdUpdate() abort
-    if empty(&buftype)
-      let l:path = &filetype ==# 'netrw' ? b:netrw_curdir : expand('%:p')
-      let l:comm = ['fasd', '-A', l:path]
-      " nvim: jobstart
-      call job_start(l:comm)
-    endif
-  endfunction
-  augroup fasd
-    autocmd!
-    autocmd BufWinEnter,BufFilePost * call s:FasdUpdate()
-  augroup END
-endif
 
 silent! source $HOME/.vimrc.local
