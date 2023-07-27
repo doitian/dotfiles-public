@@ -129,6 +129,7 @@ def keywords_formatter(text, _):
         keywords.remove('_tablet_modified')
     except ValueError:
         pass
+    keywords = [k for k in keywords if not k.startswith('action/')]
     return keywords
 
 
@@ -152,7 +153,7 @@ ALIASES = {
 FORMATTERS = {
     'rating': rating_formatter,
     'note': rich_text_formatter,
-    'size': size_formatter,
+    'size': ignore_formatter,
     'cover': ignore_formatter,
     'timestamp': timestamp_formatter,
     'date': date_formatter,
