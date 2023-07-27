@@ -152,10 +152,6 @@ nnoremap <Leader>y "+y
 nnoremap <Leader>Y "+Y
 xnoremap <Leader>y "+y
 xnoremap <Leader>Y "+Y
-nnoremap <Leader>d "_d
-nnoremap <Leader>D "_D
-xnoremap <Leader>d "_d
-xnoremap <Leader>D "_D
 
 imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
 smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
@@ -178,18 +174,17 @@ filetype indent plugin on
 augroup vimrc_au
   autocmd!
 
-  autocmd FileType gitcommit,markdown,text setlocal spell
-  autocmd FileType markdown set fo+=ro suffixesadd=.md
+  autocmd FileType gitcommit,markdown setlocal spell
+  autocmd FileType markdown setlocal fo+=ro suffixesadd=.md
   autocmd FileType rust setlocal winwidth=99
   autocmd FileType vim,beancount,i3config setlocal foldmethod=marker
 
-  autocmd BufNewFile,BufRead *.bats set ft=bats.sh
-  autocmd BufNewFile,BufRead .envrc set ft=envrc.sh
-  autocmd BufNewFile,BufRead *.wiki set ft=wiki.text
-  autocmd BufNewFile,BufRead *.anki set ft=anki.html
-  autocmd BufNewFile,BufRead */gopass-*/* set ft=gopass
-  au BufNewFile,BufRead */gopass-*/* setlocal noswapfile nobackup noundofile
-  autocmd BufNewFile,BufRead PULLREQ_EDITMSG set ft=gitcommit
+  autocmd BufNewFile,BufRead *.bats setlocal ft=bats.sh
+  autocmd BufNewFile,BufRead .envrc setlocal ft=envrc.sh
+  autocmd BufNewFile,BufRead *.wiki setlocal ft=wiki.text
+  autocmd BufNewFile,BufRead *.anki setlocal ft=anki.html
+  autocmd BufNewFile,BufRead PULLREQ_EDITMSG setlocal ft=gitcommit
+  au BufNewFile,BufRead */gopass-*/* setlocal ft=gopass noswapfile nobackup noundofile
 
   autocmd BufReadPost *
     \ if line("'\"") > 1 && line("'\"") <= line('$') && &filetype !=# 'gitcommit' |
