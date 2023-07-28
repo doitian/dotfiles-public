@@ -10,4 +10,8 @@ config.font = wezterm.font_with_fallback({
   "JetBrains Mono",
 })
 
+config.window_frame = {
+  font_size = 12,
+}
+
 return config
