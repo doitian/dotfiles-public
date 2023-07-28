@@ -49,30 +49,32 @@ let g:vsnip_snippet_dir = expand("~/.vim/snippets")
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
       \ | wincmd p | diffthis
 command! Delete call delete(expand('%')) | bdelete | let @# = bufnr('%')
-command! -nargs=1 -complete=file Move saveas <args> | call delete(expand('#')) | exec "bdelete #" | let @# = bufnr('%')
+command! -nargs=1 -complete=file Move saveas <args>
+      \ | call delete(expand('#')) | exec "bdelete #" | let @# = bufnr('%')
 
 if has('win32') || has('ios')
-  command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile | silent file __viper__ | nnoremap <buffer> <cr> ggvGg_"+y:%d <lt>Bar> redraw!<lt>CR>
+  command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile
+        \ | silent file __viper__ | nnoremap <buffer> <cr> ggvGg_"+y:%d <lt>Bar> redraw!<lt>cr>
 else
-  command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile | silent file __viper__ | nnoremap <buffer> <cr> :exec 'w !ctrlc' <lt>Bar> %d <lt>Bar> redraw!<lt>CR>
+  command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile
+        \ | silent file __viper__ | nnoremap <buffer> <cr> :exec 'w !ctrlc' <lt>Bar> %d <lt>Bar> redraw!<lt>cr>
 end
 
 " Config {{{1
 set autoindent
 set autoread
+set autowrite
 set backspace=indent,eol,start
-set backup
 set backupdir=$HOME/.vim/files/backup//,.
-set backupext=-vimbackup
-set breakindent
-set cursorline
 set completeopt=menuone,noinsert
-set copyindent
+set conceallevel=3
+set confirm
+set cursorline
 set directory=$HOME/.vim/files/swap//,.
 set display+=lastline
 set expandtab
 set nofoldenable
-set formatoptions+=1jmBo
+set formatoptions=jcroqlnt
 set hidden
 set history=3000
 set hlsearch
@@ -81,37 +83,39 @@ set incsearch
 set nojoinspaces
 set laststatus=2
 set lazyredraw
-set linebreak
 set list
-set report=0
-set scrolloff=2
-set sessionoptions-=options
+set pumheight=10
+set scrolloff=4
+set sessionoptions=buffers,curdir,tabpages,winsize
 set shiftround
 set shiftwidth=2
 set shortmess-=S
-set shortmess+=c
-set sidescrolloff=5
+set shortmess+=WIc
+set sidescrolloff=8
 set smartcase
+set smartindent
 set smarttab
 set spellfile=$HOME/.vim-spell-en.utf-8.add,.vim-spell-en.utf-8.add
-set spelllang=en_us,cjk
+set spelllang=en
 set splitbelow
 set splitright
 set switchbuf=useopen
 set synmaxcol=200
 set tabpagemax=50
-set title
+set tabstop=2
+set timeoutlen=300
 set ttyfast
 set undofile
 set undolevels=1000
-set viminfo=!,'100,<2000
-set virtualedit="block,insert"
+set updatetime=1800
+set viminfo=!,'100,<50,s10,h
 set visualbell
 set wildignore=*.swp,*.bak,*.pyc,*.class,*.beam
 set wildmenu
-set wildmode=list:longest,full
+set wildmode=longest:full,full
+set winminwidth=5
 set winwidth=78
-set wrapscan
+set nowrap
 
 if has('cscope')
   set cscopequickfix=s-,c-,d-,i-,t-,e-
@@ -122,7 +126,6 @@ if executable('rg')
   set grepprg=rg\ --hidden\ -g\ '!.git'\ --vimgrep\ $*
 endif
 if has('multi_byte') && &encoding ==# 'utf-8'
-  set showbreak=│
   let &listchars = 'tab:▸ ,trail:·,extends:»,precedes:«,nbsp:␣'
   let &fillchars = 'foldopen:▾,foldsep:⏐,foldclose:▸,vert:╎'
 else
@@ -141,6 +144,9 @@ let maplocalleader = '\\'
 let g:maplocalleader = '\\'
 set pastetoggle=<F2>
 set wildcharm=<C-z>
+
+nnoremap <silent> H :bprevious<cr>
+nnoremap <silent> L :bnext<cr>
 
 nnoremap <Leader><Space> :e <C-z>
 nnoremap <Leader>ff :e <C-z>
