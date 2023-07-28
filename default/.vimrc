@@ -15,7 +15,6 @@ Plug 'tomtom/tcomment_vim' " gc
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround' " ys s
-Plug 'tpope/vim-unimpaired'
 
 Plug 'hrsh7th/vim-vsnip'
 Plug 'hrsh7th/vim-vsnip-integ'
