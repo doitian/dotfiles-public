@@ -11,13 +11,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Install Vim
         run: sudo apt-get install -y vim
 
       - name: Setup vimrc
         run: |
+          cp default/.vimrc ~/.vimrc
           mkdir -p ~/.vim/backup
           mkdir -p ~/.vim/undo
           mkdir -p ~/.vim/swap
@@ -33,7 +34,7 @@ jobs:
 
           cp .github/files/install-vimfiles.py vimfiles/install.py
 
-          cp ~/.vimrc vimfiles/vimrc
+          cp default/.vimrc vimfiles/vimrc
 
           mkdir -p vimfiles/vim
           mv default/.vim/scripts vimfiles/vim
