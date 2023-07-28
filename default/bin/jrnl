@@ -4,8 +4,6 @@ set -e
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
-UNAME_S="$(uname -s)"
-
 JOURNAL_DIR="$HOME/.journal"
 if ! [ -e "$JOURNAL_DIR" ] && [ -d "$HOME/Dropbox/Brain/journal" ]; then
   ln -snf "$HOME/Dropbox/Brain/journal" "$HOME/.journal"
@@ -13,21 +11,21 @@ fi
 JOURNAL_FILE="$JOURNAL_DIR/Journal $(date +'%Y-%m-%d').md"
 
 _date() {
-  if [ "$UNAME_S" = "Darwin" ]; then
+  if [[ "$OSTYPE" == "darwin"* ]]; then
     date -j -f '%Y-%m-%d' "$1" +'%a, %b %d, %Y'
   else
     date --date="$1" +'%a, %b %d, %Y'
   fi
 }
 _tommorow() {
-  if [ "$UNAME_S" = "Darwin" ]; then
+  if [[ "$OSTYPE" == "darwin"* ]]; then
     date -j -v +1d -f '%Y-%m-%d' "$1" +'%Y-%m-%d'
   else
     date --date="$1 + 1 day" +'%Y-%m-%d'
   fi
 }
 _yesterday() {
-  if [ "$UNAME_S" = "Darwin" ]; then
+  if [[ "$OSTYPE" == "darwin"* ]]; then
     date -j -v -1d -f '%Y-%m-%d' "$1" +'%Y-%m-%d'
   else
     date --date="$1 - 1 day" +'%Y-%m-%d'

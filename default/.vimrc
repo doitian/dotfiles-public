@@ -144,6 +144,8 @@ set wildcharm=<C-z>
 
 nnoremap <silent> H :bprevious<cr>
 nnoremap <silent> L :bnext<cr>
+nnoremap ]<Space> :call append(line('.'), '')<cr>
+nnoremap [<Space> :call append(line('.')-1, '')<cr>
 
 nnoremap <Leader><Space> :e <C-z>
 nnoremap <Leader>ff :e <C-z>

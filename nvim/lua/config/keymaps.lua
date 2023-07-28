@@ -11,6 +11,23 @@ vim.keymap.set({ "n", "x" }, "<Leader>Y", '"+Y', { desc = "which_key_ignore" })
 
 vim.keymap.set("n", "<leader>fh", Util.telescope("files", { cwd = "%:h" }), { desc = "Find Files Here" })
 
+local function blank_lines(count)
+  local lines = {}
+  for i = 1, count do
+    lines[i] = ""
+  end
+  return lines
+end
+
+vim.keymap.set("n", "]<Space>", function()
+  ---@diagnostic disable-next-line: param-type-mismatch
+  vim.fn.append(vim.fn.line("."), blank_lines(vim.v.count1))
+end, { desc = "Insert lines below" })
+vim.keymap.set("n", "[<Space>", function()
+  ---@diagnostic disable-next-line: param-type-mismatch
+  vim.fn.append(vim.fn.line(".") - 1, blank_lines(vim.v.count1))
+end, { desc = "Insert lines below" })
+
 vim.api.nvim_create_user_command("Delete", function()
   vim.fn.delete(vim.fn.expand("%"))
   vim.cmd.bdelete()
