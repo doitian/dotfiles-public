@@ -83,7 +83,9 @@ set nojoinspaces
 set laststatus=2
 set lazyredraw
 set list
+set number
 set pumheight=10
+set relativenumber
 set scrolloff=4
 set sessionoptions=buffers,curdir,tabpages,winsize
 set shiftround

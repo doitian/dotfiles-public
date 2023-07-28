@@ -16,10 +16,6 @@ function mksafebin() {
   fi
 }
 
-if echo "$PATH" | grep -q ':/PATH:'; then
-  return
-fi
-
 if [ -z "$HOME" ]; then
   HOME="$(cd ~ && pwd)"
 fi
@@ -107,7 +103,8 @@ fi
 export HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK=1
 
 # path
-export PATH="\
+if ! echo "$PATH" | grep -q ':/PATH:'; then
+  export PATH="\
 .git/$SAFEBIN_SECRET/../../bin\
 :$HOME/bin\
 :$HOME/.local/bin\
@@ -121,6 +118,7 @@ export PATH="\
 :/usr/local/sbin\
 :$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools\
 "
+fi
 
 # fzf
 unset FZF_DEFAULT_OPTS
