@@ -160,11 +160,8 @@ smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-T
 
 nmap gzd <Plug>Dsurround
 nmap gzr <Plug>Csurround
-nmap gzR <Plug>CSurround
 nmap gza <Plug>Ysurround
-nmap gzA <Plug>YSurround
 xmap gza <Plug>VSurround
-xmap gza <Plug>VgSurround
 
 " OS specific settings {{{1
 if exists('$WSLENV')
@@ -183,16 +180,15 @@ augroup vimrc_au
   autocmd!
 
   autocmd FileType gitcommit,markdown setlocal spell
-  autocmd FileType markdown setlocal fo+=ro suffixesadd=.md
-  autocmd FileType rust setlocal winwidth=99
+  autocmd FileType markdown setlocal suffixesadd=.md
   autocmd FileType vim,beancount,i3config setlocal foldmethod=marker
 
-  autocmd BufNewFile,BufRead *.bats setlocal ft=bats.sh
-  autocmd BufNewFile,BufRead .envrc setlocal ft=envrc.sh
-  autocmd BufNewFile,BufRead *.wiki setlocal ft=wiki.text
-  autocmd BufNewFile,BufRead *.anki setlocal ft=anki.html
-  autocmd BufNewFile,BufRead PULLREQ_EDITMSG setlocal ft=gitcommit
-  au BufNewFile,BufRead */gopass-*/* setlocal ft=gopass noswapfile nobackup noundofile
+  autocmd BufNewFile,BufRead *.bats setlocal filetype=bats.sh
+  autocmd BufNewFile,BufRead .envrc setlocal filetype=envrc.sh
+  autocmd BufNewFile,BufRead *.wiki setlocal filetype=wiki.text
+  autocmd BufNewFile,BufRead *.anki setlocal filetype=anki.html
+  autocmd BufNewFile,BufRead PULLREQ_EDITMSG setlocal filetype=gitcommit
+  autocmd BufNewFile,BufRead */gopass-*/* setlocal filetype=gopass noswapfile nobackup noundofile
 
   autocmd BufReadPost *
     \ if line("'\"") > 1 && line("'\"") <= line('$') && &filetype !=# 'gitcommit' |

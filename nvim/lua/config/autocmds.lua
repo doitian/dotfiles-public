@@ -3,39 +3,32 @@
 -- Add any additional autocmds here
 
 local vimrc_au = vim.api.nvim_create_augroup("vimrc_au", { clear = true })
+local function autocmd(event, pattern, callback)
+  vim.api.nvim_create_autocmd(event, {
+    group = vimrc_au,
+    pattern = pattern,
+    callback = callback,
+  })
+end
 
-vim.api.nvim_create_autocmd({ "FileType" }, {
-  group = vimrc_au,
-  pattern = "markdown",
-  callback = function()
-    vim.opt_local.formatoptions:append("ro")
-    vim.opt_local.suffixesadd = ".md"
-  end,
-})
+autocmd("FileType", "markdown", function()
+  vim.opt_local.suffixesadd = ".md"
+end)
 
-vim.api.nvim_create_autocmd({ "FileType" }, {
-  group = vimrc_au,
-  pattern = "rust",
-  callback = function()
-    vim.opt_local.winwidth = 99
-  end,
-})
+autocmd("FileType", { "vim", "beancount", "i3config" }, function()
+  vim.opt_local.foldmethod = "marker"
+end)
 
-vim.api.nvim_create_autocmd({ "FileType" }, {
-  group = vimrc_au,
-  pattern = { "vim", "beancount", "i3config" },
-  callback = function()
-    vim.opt_local.foldmethod = "marker"
-  end,
-})
+autocmd({ "BufNewFile", "BufRead" }, "*/gopass-*/*", function()
+  vim.opt_local.filetype = "gopass"
+  vim.opt_local.swapfile = false
+  vim.opt_local.backup = false
+  vim.opt_local.undofile = false
+end)
 
-vim.api.nvim_create_autocmd("SwapExists", {
-  group = vimrc_au,
-  pattern = "*",
-  callback = function()
-    vim.v.swapchoice = "o"
-  end,
-})
+autocmd("SwapExists", "*", function()
+  vim.v.swapchoice = "o"
+end)
 
 local ft_maps = {
   ["*.bats"] = "bats.sh",
@@ -45,11 +38,7 @@ local ft_maps = {
   PULLREQ_EDITMSG = "gitcommit",
 }
 for pattern, ft in pairs(ft_maps) do
-  vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
-    group = vimrc_au,
-    pattern = pattern,
-    callback = function()
-      vim.opt_local.filetype = ft
-    end,
-  })
+  autocmd({ "BufNewFile", "BufRead" }, pattern, function()
+    vim.opt_local.filetype = ft
+  end)
 end
