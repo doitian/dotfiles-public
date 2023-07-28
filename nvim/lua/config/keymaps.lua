@@ -10,6 +10,12 @@ vim.keymap.set({ "n", "x" }, "<Leader>y", '"+y', { desc = "Yank to system clipbo
 vim.keymap.set({ "n", "x" }, "<Leader>Y", '"+Y', { desc = "which_key_ignore" })
 
 vim.keymap.set("n", "<leader>fh", Util.telescope("files", { cwd = "%:h" }), { desc = "Find Files Here" })
+vim.keymap.set(
+  "n",
+  "<leader>fs",
+  Util.telescope("files", { cwd = vim.fn.expand("~/.config/nvim/snippets/") }),
+  { desc = "Find Snippets" }
+)
 
 local function blank_lines(count)
   local lines = {}
@@ -28,6 +34,7 @@ vim.keymap.set("n", "[<Space>", function()
   vim.fn.append(vim.fn.line(".") - 1, blank_lines(vim.v.count1))
 end, { desc = "Insert lines below" })
 
+--- User Commands
 vim.api.nvim_create_user_command("Delete", function()
   vim.fn.delete(vim.fn.expand("%"))
   vim.cmd.bdelete()
@@ -42,3 +49,13 @@ vim.api.nvim_create_user_command("Move", function(opts)
   ---@diagnostic disable-next-line: param-type-mismatch
   vim.fn.setreg("#", vim.fn.bufnr("%"))
 end, { nargs = 1, complete = "file" })
+
+vim.api.nvim_create_user_command("DiffOrig", function(_)
+  vim.cmd.new({ mods = { vertical = true } })
+  vim.opt_local.buftype = "nofile"
+  vim.cmd.r("#")
+  vim.cmd("0d_")
+  vim.cmd.diffthis()
+  vim.cmd.wincmd("p")
+  vim.cmd.diffthis()
+end, {})

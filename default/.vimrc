@@ -43,6 +43,7 @@ let g:mucomplete#chains = {
 \ }
 
 let g:vsnip_snippet_dir = expand("~/.vim/snippets")
+let g:surround_no_mappings = 1
 
 " Functions & Commands {{{1
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
@@ -50,14 +51,7 @@ command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
 command! Delete call delete(expand('%')) | bdelete | let @# = bufnr('%')
 command! -nargs=1 -complete=file Move saveas <args>
       \ | call delete(expand('#')) | exec "bdelete #" | let @# = bufnr('%')
-
-if has('win32') || has('ios')
-  command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile
-        \ | silent file __viper__ | nnoremap <buffer> <cr> ggvGg_"+y:%d <lt>Bar> redraw!<lt>cr>
-else
-  command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile
-        \ | silent file __viper__ | nnoremap <buffer> <cr> :exec 'w !ctrlc' <lt>Bar> %d <lt>Bar> redraw!<lt>cr>
-end
+command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile | silent file __viper__
 
 " Config {{{1
 set autoindent
@@ -163,6 +157,17 @@ imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab
 smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
 imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
 smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+
+nmap gzd <Plug>Dsurround
+nmap gzr <Plug>Csurround
+nmap gzR <Plug>CSurround
+nmap gza <Plug>Ysurround
+nmap gzA <Plug>YSurround
+nmap gzz <Plug>Yssurround
+nmap gZz <Plug>YSsurround
+nmap gZZ <Plug>YSsurround
+xmap gza <Plug>VSurround
+xmap gza <Plug>VgSurround
 
 " OS specific settings {{{1
 if exists('$WSLENV')

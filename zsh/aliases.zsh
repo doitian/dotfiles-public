@@ -30,6 +30,7 @@ alias gfb="git flow bugfix"
 alias gfr="git flow release"
 alias gfh="git flow hotfix"
 alias gfs="git flow support"
+alias lg="lazygit"
 
 ##################################################
 # File
