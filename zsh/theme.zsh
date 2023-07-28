@@ -1,3 +1,15 @@
+autoload -Uz add-zsh-hook
+function new_line_before_promopt() {
+    # Print a newline before the prompt, unless it's the
+    # first prompt in the process.
+    if [ -z "$ZSH_THEME_NEW_LINE_BEFORE_PROMPT" ]; then
+        ZSH_THEME_NEW_LINE_BEFORE_PROMPT=1
+    elif [ "$ZSH_THEME_NEW_LINE_BEFORE_PROMPT" -eq 1 ]; then
+        echo
+    fi
+}
+add-zsh-hook precmd new_line_before_promopt
+
 if [ "$TERM" = dumb ]; then
   unset zle_bracketed_paste
 elif command -v starship &>/dev/null; then
@@ -42,7 +54,6 @@ else
     PROMPT_HOST='%n@%F{yellow}$HOSTNAME%f:'
   fi
   PROMPT='%(?..%F{red}%?⏎
-)%f
-# '"$PROMPT_HOST"'%F{blue}%(4~|%-1~/…/%2~|%~)%f$(git_prompt_info)$(universe_env_info)
+)%f# '"$PROMPT_HOST"'%F{blue}%(4~|%-1~/…/%2~|%~)%f$(git_prompt_info)$(universe_env_info)
 %(1j.%F{yellow}%%%j.)%f$ '
 fi

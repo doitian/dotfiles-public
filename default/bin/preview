@@ -1,5 +1,5 @@
 #!/bin/bash
-EXA_TREE="${FZF_PREVIEW_EXA_TREE:-3}"
+EXA_TREE="${FZF_PREVIEW_EXA_TREE:-1}"
 COLS="${FZF_PREVIEW_COLUMNS:-$(tput cols)}"
 LINES="${FZF_PREVIEW_LINES:-$(tput lines)}"
 if [ -z "${FZF_PREVIEW_LINES:-}" ]; then
@@ -20,22 +20,27 @@ elif [ "${1:-}" = "--fzf-disable" ]; then
   exit 0
 fi
 
-for arg; do
+BAT_STYLE=
+if [ -n "${FZF_PREVIEW_LINES:-}" ]; then
+  BAT_STYLE="--style=numbers"
+else
+  LINES=$((LINES - 4))
+fi
+BAT_OPTS="--color=always --line-range=:$LINES --terminal-width=$COLS --wrap=never --paging=never $BAT_STYLE"
+
+function preview() {
+  local arg="$1"
   if [ -d "$arg" ]; then
     exa --color always -T -L "$EXA_TREE" "$arg" | head -n "$LINES"
   else
-    BAT_STYLE=
-    if [ -n "${FZF_PREVIEW_LINES:-}" ]; then
-      BAT_STYLE="--style=numbers"
-    else
-      LINES=$((LINES - 4))
-    fi
-    BAT_OPTS="--color=always --line-range=:$LINES --terminal-width=$COLS --wrap=never --paging=never $BAT_STYLE"
-
     if [ -e "$arg" ]; then
       bat $BAT_OPTS "$arg"
     else
       echo "$arg" | bat $BAT_OPTS --plain
     fi
   fi
+}
+
+for arg; do
+  preview "$arg"
 done
