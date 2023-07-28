@@ -163,9 +163,6 @@ nmap gzr <Plug>Csurround
 nmap gzR <Plug>CSurround
 nmap gza <Plug>Ysurround
 nmap gzA <Plug>YSurround
-nmap gzz <Plug>Yssurround
-nmap gZz <Plug>YSsurround
-nmap gZZ <Plug>YSsurround
 xmap gza <Plug>VSurround
 xmap gza <Plug>VgSurround
 
