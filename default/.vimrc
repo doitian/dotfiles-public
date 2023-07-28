@@ -145,6 +145,7 @@ nnoremap <Leader><Space> :e <C-z>
 nnoremap <Leader>ff :e <C-z>
 nnoremap <Leader>fb :b <C-z>
 nnoremap <Leader>fh :e %:h<C-z><C-z>
+nnoremap <Leader>fs :e ~/.vim/snippets/<C-z>
 
 nnoremap <Leader>p "+p
 nnoremap <Leader>P "+P
