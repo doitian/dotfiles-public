@@ -1,3 +1,4 @@
+-- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/lsp/init.lua
 return {
   -- Global
   {

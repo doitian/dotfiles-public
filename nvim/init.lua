@@ -1,4 +1,4 @@
--- bootstrap lazy.nvim, LazyVim and your plugins
+-- vim +Viper
 vim.api.nvim_create_user_command("Viper", function(_)
   vim.opt_local.bin = true
   vim.opt_local.eol = false
@@ -8,4 +8,5 @@ vim.api.nvim_create_user_command("Viper", function(_)
   vim.cmd.file({ "__viper__", mods = { silent = true } })
 end, {})
 
+-- bootstrap lazy.nvim, LazyVim and your plugins
 require("config.lazy")

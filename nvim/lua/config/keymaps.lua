@@ -3,36 +3,36 @@
 -- Add any additional keymaps here
 
 local Util = require("lazyvim.util")
+local map = vim.keymap.set
 
-vim.keymap.set("n", "<Leader>p", '"+p', { desc = "Paste from system clipboard" })
-vim.keymap.set("n", "<Leader>P", '"+P', { desc = "which_key_ignore" })
-vim.keymap.set({ "n", "x" }, "<Leader>y", '"+y', { desc = "Yank to system clipboard" })
-vim.keymap.set({ "n", "x" }, "<Leader>Y", '"+Y', { desc = "which_key_ignore" })
+map("n", "<Leader>p", '"+p', { desc = "Paste from system clipboard" })
+map("n", "<Leader>P", '"+P', { desc = "which_key_ignore" })
+map({ "n", "x" }, "<Leader>y", '"+y', { desc = "Yank to system clipboard" })
+map({ "n", "x" }, "<Leader>Y", '"+Y', { desc = "which_key_ignore" })
 
-vim.keymap.set("n", "<leader>fh", Util.telescope("files", { cwd = "%:h" }), { desc = "Find Files Here" })
-vim.keymap.set(
+map(
+  "n",
+  "<S-h>",
+  "v:count == 0 ? '<cmd>BufferLineCyclePrev<cr>' : '<S-h>'",
+  { expr = true, replace_keycodes = false, silent = true, desc = "Next Tab" }
+)
+map(
+  "n",
+  "<S-l>",
+  "v:count == 0 ? '<cmd>BufferLineCycleNext<cr>' : '<S-l>'",
+  { expr = true, replace_keycodes = false, silent = true, desc = "Prev Tab" }
+)
+
+map("n", "<leader>fh", Util.telescope("find_files", { cwd = "%:h" }), { desc = "Find Files Here" })
+map(
   "n",
   "<leader>fs",
-  Util.telescope("files", { cwd = vim.fn.expand("~/.config/nvim/snippets/") }),
+  Util.telescope("find_files", { cwd = vim.fn.expand("~/.config/nvim/snippets/") }),
   { desc = "Find Snippets" }
 )
 
-local function blank_lines(count)
-  local lines = {}
-  for i = 1, count do
-    lines[i] = ""
-  end
-  return lines
-end
-
-vim.keymap.set("n", "]<Space>", function()
-  ---@diagnostic disable-next-line: param-type-mismatch
-  vim.fn.append(vim.fn.line("."), blank_lines(vim.v.count1))
-end, { desc = "Insert lines below" })
-vim.keymap.set("n", "[<Space>", function()
-  ---@diagnostic disable-next-line: param-type-mismatch
-  vim.fn.append(vim.fn.line(".") - 1, blank_lines(vim.v.count1))
-end, { desc = "Insert lines below" })
+map("n", "]<Space>", "<cmd>call append(line('.'), repeat([''], v:count1))<cr>", { desc = "Insert lines below" })
+map("n", "[<Space>", "<cmd>call append(line('.')-1, repeat([''], v:count1))<cr>", { desc = "Insert lines above" })
 
 --- User Commands
 vim.api.nvim_create_user_command("Delete", function()

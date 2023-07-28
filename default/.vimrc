@@ -81,7 +81,7 @@ set number
 set pumheight=10
 set relativenumber
 set scrolloff=4
-set sessionoptions=buffers,curdir,tabpages,winsize
+set sessionoptions=buffers,curdir,tabpages,winsize,help,globals,skiprtp
 set shiftround
 set shiftwidth=2
 set shortmess-=S
@@ -98,7 +98,7 @@ set switchbuf=useopen
 set synmaxcol=200
 set tabpagemax=50
 set tabstop=2
-set timeoutlen=300
+set timeoutlen=700
 set ttyfast
 set undofile
 set undolevels=1000
@@ -136,8 +136,19 @@ let g:maplocalleader = '\\'
 set pastetoggle=<F2>
 set wildcharm=<C-z>
 
-nnoremap <silent> H :bprevious<cr>
-nnoremap <silent> L :bnext<cr>
+nmap <silent> <expr> H v:count == 0 ? '<cmd>bprevious<cr>' : 'H'
+nmap <silent> <expr> L v:count == 0 ? '<cmd>bnext<cr>' : 'L'
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+nnoremap <C-k> <C-w>k
+nnoremap <C-j> <C-w>j
+nnoremap <Leader>ww <C-w>p
+nnoremap <Leader>wd <C-w>c
+nnoremap <Leader>w- <C-w>s
+nnoremap <Leader>w<bar> <C-w>v
+nnoremap <Leader>- <C-w>s
+nnoremap <Leader><bar> <C-w>v
+
 nnoremap ]<Space> :call append(line('.'), '')<cr>
 nnoremap [<Space> :call append(line('.')-1, '')<cr>
 
@@ -146,6 +157,16 @@ nnoremap <Leader>ff :e <C-z>
 nnoremap <Leader>fb :b <C-z>
 nnoremap <Leader>fh :e %:h<C-z><C-z>
 nnoremap <Leader>fs :e ~/.vim/snippets/<C-z>
+nnoremap <Leader>bd <cmd>bdelete<cr>
+nnoremap <Leader>bb <cmd>e #<cr>
+nnoremap <Leader>` <cmd>e #<cr>
+nnoremap <Leader><Tab><Tab> <cmd>tabnew<cr>
+nnoremap <Leader><Tab>d <cmd>tabclose<cr>
+nnoremap <Leader><Tab>l <cmd>tablast<cr>
+nnoremap <Leader><Tab>f <cmd>tabclose<cr>
+nnoremap <Leader><Tab>] gt
+nnoremap <Leader><Tab>[ gT
+nnoremap <Leader>ur <cmd>noh<bar>diffupdate<bar>normal! <C-L><cr>
 
 nnoremap <Leader>p "+p
 nnoremap <Leader>P "+P
