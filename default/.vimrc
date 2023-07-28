@@ -118,10 +118,6 @@ set winminwidth=5
 set winwidth=78
 set nowrap
 
-if has('cscope')
-  set cscopequickfix=s-,c-,d-,i-,t-,e-
-  set cscopequickfix+=a-
-endif
 if executable('rg')
   set grepformat=%f:%l:%c:%m
   set grepprg=rg\ --hidden\ -g\ '!.git'\ --vimgrep\ $*
@@ -152,6 +148,7 @@ nnoremap <silent> L :bnext<cr>
 nnoremap <Leader><Space> :e <C-z>
 nnoremap <Leader>ff :e <C-z>
 nnoremap <Leader>fb :b <C-z>
+nnoremap <Leader>fh :e %:h<C-z><C-z>
 
 nnoremap <Leader>p "+p
 nnoremap <Leader>P "+P
