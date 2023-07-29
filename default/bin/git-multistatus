@@ -9,6 +9,7 @@ source "$ZSH/lib/git.zsh"
 source "$ZSH/plugins/gitfast/git-prompt.sh"
 
 main() {
+  unset GIT_DIR
   local GIT_PS1_SHOWUPSTREAM="auto"
   local ZSH_THEME_GIT_PROMPT_DIRTY="D"
   local ZSH_THEME_GIT_PROMPT_CLEAN="C"
