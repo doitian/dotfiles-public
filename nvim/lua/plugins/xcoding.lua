@@ -44,15 +44,6 @@ return {
 
   -- compatible mappings with surround
   {
-    "echasnovski/mini.surround",
-    keys = {
-      { "ys", "gza", desc = "Add surrounding", remap = true },
-      { "S", "gza", desc = "Add surrounding", mode = "v", remap = true },
-      { "ds", "gzd", desc = "Delete surrounding", remap = true },
-      { "cs", "gzr", desc = "Replace surrounding", remap = true },
-    },
-  },
-  {
     "folke/flash.nvim",
     keys = {
       -- use z becasue s is used by surround
@@ -64,6 +55,10 @@ return {
         mode = "o",
         desc = "Flash",
       },
+      { "ys", "gza", desc = "Add surrounding", remap = true },
+      { "S", "gza", desc = "Add surrounding", mode = "v", remap = true },
+      { "ds", "gzd", desc = "Delete surrounding", remap = true },
+      { "cs", "gzr", desc = "Replace surrounding", remap = true },
     },
   },
 }
