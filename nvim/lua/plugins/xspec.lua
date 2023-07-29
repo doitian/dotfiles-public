@@ -1,13 +1,13 @@
 return {
   {
-    "doitian/diff-orig.nvim",
+    "doitian/x-diff-orig.nvim",
     dev = true,
     cmd = "DiffOrig",
     config = true,
   },
 
   {
-    "doitian/nanofs.nvim",
+    "doitian/x-nanofs.nvim",
     dev = true,
     cmd = { "Delete", "Remove" },
     config = true,

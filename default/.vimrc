@@ -43,8 +43,8 @@ let g:mucomplete#chains = {
 \ 'vim'     : ['vsnip', 'path', 'cmd', 'keyn']
 \ }
 
-let g:vsnip_snippet_dir = expand("~/.vim/snippets")
-let g:szaurround_no_mappings = 1
+let g:vsnip_snippet_dir = expand("~/.dotfiles/repos/private/snippets/snippets")
+exec 'set rtp+='..fnamemodify(g:vsnip_snippet_dir, ':h')
 
 " Functions & Commands {{{1
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
@@ -169,7 +169,7 @@ nnoremap <Leader><Space> :e <C-z>
 nnoremap <Leader>ff :e <C-z>
 nnoremap <Leader>fb :b <C-z>
 nnoremap <Leader>fh :e %:h<C-z><C-z>
-nnoremap <Leader>fs :e ~/.vim/snippets/<C-z>
+nnoremap <Leader>fs :e <C-r>=g:vsnip_snippet_dir<cr>/<C-z>
 nnoremap <Leader>bd <cmd>bdelete<cr>
 nnoremap <Leader>bb <cmd>e #<cr>
 nnoremap <Leader>` <cmd>e #<cr>
