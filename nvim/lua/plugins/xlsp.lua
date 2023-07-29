@@ -7,8 +7,8 @@ return {
       local format = function()
         require("lazyvim.plugins.lsp.format").format({ force = true })
       end
-      local keymaps = require("lazyvim.plugins.lsp.keymaps").get()
-      keymaps[#keymaps + 1] = { "f<cr>", format, desc = "Format Document", has = "formatting" }
+      local keys = require("lazyvim.plugins.lsp.keymaps").get()
+      keys[#keys + 1] = { "f<cr>", format, desc = "Format Document", has = "formatting" }
     end,
   },
   {
