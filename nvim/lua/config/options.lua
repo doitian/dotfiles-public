@@ -4,7 +4,6 @@
 
 local opt = vim.opt
 
-opt.clipboard = ""
 opt.listchars = { tab = "▸ ", trail = "·", extends = "»", precedes = "«", nbsp = "␣" }
 opt.spellfile = vim.env.HOME .. "/.vim-spell-en.utf-8.add,.vim-spell-en.utf-8.add"
 opt.visualbell = true

@@ -55,12 +55,14 @@ command! -nargs=1 -complete=file Move saveas <args>
 command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile | silent file __viper__
 
 " Config {{{1
+" sort /set (no)?/
 set autoindent
 set autoread
 set autowrite
 set backspace=indent,eol,start
 set backupdir=$HOME/.vim/files/backup//,.
 set completeopt=menuone,noinsert
+set clipboard^=unnamedplus,unnamed
 set conceallevel=3
 set confirm
 set cursorline
@@ -101,6 +103,7 @@ set tabpagemax=50
 set tabstop=2
 set timeoutlen=700
 set ttyfast
+set undodir=$HOME/.vim/files/undo//
 set undofile
 set undolevels=1000
 set updatetime=1800
@@ -113,10 +116,6 @@ set winminwidth=5
 set winwidth=78
 set nowrap
 
-if executable('rg')
-  set grepformat=%f:%l:%c:%m
-  set grepprg=rg\ --hidden\ -g\ '!.git'\ --vimgrep\ $*
-endif
 if has('multi_byte') && &encoding ==# 'utf-8'
   let &listchars = 'tab:▸ ,trail:·,extends:»,precedes:«,nbsp:␣'
   let &fillchars = 'foldopen:▾,foldsep:⏐,foldclose:▸,vert:╎'
@@ -124,7 +123,20 @@ else
   let &listchars = 'tab:> ,trail:.,extends:>,precedes:<,nbsp:.'
   let &fillchars = 'foldopen:v,foldsep:|,foldclose:>,vert:|'
 endif
-set undodir=$HOME/.vim/files/undo//
+
+if executable('rg')
+  set grepformat=%f:%l:%c:%m
+  set grepprg=rg\ --hidden\ -g\ '!.git'\ --vimgrep\ $*
+endif
+
+if exists('$WSLENV')
+  let g:netrw_browsex_viewer= 'wsl-open'
+endif
+
+if has('ios')
+  set backupcopy=yes
+  set noundofile
+endif
 
 runtime! macros/matchit.vim
 
@@ -181,15 +193,6 @@ smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab
 imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
 smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
 
-" OS specific settings {{{1
-if exists('$WSLENV')
-  let g:netrw_browsex_viewer= 'wsl-open'
-endif
-
-if has('ios')
-  set backupcopy=yes
-  set noundofile
-endif
 
 " Filetype specific handling {{{1
 filetype indent plugin on
