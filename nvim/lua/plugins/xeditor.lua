@@ -1,7 +1,8 @@
--- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/editor.lua
+-- https://github.com/LazyVim/LazyVim/blob/main/lua/lazy/vim/plugins/editor.lua
 local Util = require("lazyvim.util")
 
 return {
+  -- { "folke/which-key.nvim", enabled = false },
   {
     "nvim-telescope/telescope.nvim",
     cmd = "Telescope",

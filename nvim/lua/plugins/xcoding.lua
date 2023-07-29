@@ -46,17 +46,11 @@ return {
   -- compatible mappings with surround
   {
     "echasnovski/mini.surround",
-    opts = {
-      mappings = {
-        add = "ys", -- Add surrounding in Normal and Visual modes
-        delete = "ds", -- Delete surrounding
-        replace = "cs", -- Replace surrounding
-
-        find = "gzf", -- Find surrounding (to the right)
-        find_left = "gzF", -- Find surrounding (to the left)
-        highlight = "gzh", -- Highlight surrounding
-        update_n_lines = "gzn", -- Update `n_lines`
-      },
+    keys = {
+      { "ys", "gza", desc = "Add surrounding", remap = true },
+      { "S", "gza", desc = "Add surrounding", mode = "v", remap = true },
+      { "ds", "gzd", desc = "Delete surrounding", remap = true },
+      { "cs", "gzr", desc = "Replace surrounding", remap = true },
     },
   },
   {
