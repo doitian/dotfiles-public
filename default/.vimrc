@@ -39,9 +39,9 @@ let loaded_matchparen = 1
 let g:mucomplete#no_mappings = 1
 let g:mucomplete#enable_auto_at_startup = 1
 let g:mucomplete#chains = {
-\ 'default' : ['vsnip', 'path', 'omni', 'keyn', 'dict', 'uspl'],
-\ 'vim'     : ['vsnip', 'path', 'cmd', 'keyn']
-\ }
+      \ 'default' : ['vsnip', 'path', 'omni', 'keyn', 'dict', 'uspl'],
+      \ 'vim'     : ['vsnip', 'path', 'cmd', 'keyn']
+      \ }
 
 let g:vsnip_snippet_dir = expand("~/.dotfiles/repos/private/snippets/snippets")
 exec 'set rtp+='..fnamemodify(g:vsnip_snippet_dir, ':h')
@@ -149,19 +149,16 @@ let g:maplocalleader = '\\'
 set pastetoggle=<F2>
 set wildcharm=<C-z>
 
+nnoremap <Leader>p "+p
+nnoremap <Leader>P "+P
+nnoremap <Leader>y "+y
+nnoremap <Leader>Y "+Y
+xnoremap <Leader>y "+y
+xnoremap <Leader>Y "+Y
+
 nmap <silent> <expr> H v:count == 0 ? '<cmd>bprevious<cr>' : 'H'
 nmap <silent> <expr> L v:count == 0 ? '<cmd>bnext<cr>' : 'L'
-nnoremap <C-h> <C-w>h
-nnoremap <C-l> <C-w>l
-nnoremap <C-k> <C-w>k
-nnoremap <C-j> <C-w>j
-nnoremap <Leader>ww <C-w>p
-nnoremap <Leader>wd <C-w>c
-nnoremap <Leader>w- <C-w>s
-nnoremap <Leader>w<bar> <C-w>v
-nnoremap <Leader>- <C-w>s
-nnoremap <Leader><bar> <C-w>v
-
+nnoremap f<cr> gg=G<C-o><C-o><cmd>w<cr>
 nnoremap ]<Space> :call append(line('.'), '')<cr>
 nnoremap [<Space> :call append(line('.')-1, '')<cr>
 
@@ -170,29 +167,38 @@ nnoremap <Leader>ff :e <C-z>
 nnoremap <Leader>fb :b <C-z>
 nnoremap <Leader>fh :e %:h<C-z><C-z>
 nnoremap <Leader>fs :e <C-r>=g:vsnip_snippet_dir<cr>/<C-z>
+
 nnoremap <Leader>bd <cmd>bdelete<cr>
 nnoremap <Leader>bb <cmd>e #<cr>
 nnoremap <Leader>` <cmd>e #<cr>
+
+nnoremap <Leader>ww <C-w>p
+nnoremap <Leader>wd <C-w>c
+nnoremap <Leader>w- <C-w>s
+nnoremap <Leader>w<bar> <C-w>v
+nnoremap <Leader>- <C-w>s
+nnoremap <Leader><bar> <C-w>v
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+nnoremap <C-k> <C-w>k
+nnoremap <C-j> <C-w>j
+
 nnoremap <Leader><Tab><Tab> <cmd>tabnew<cr>
 nnoremap <Leader><Tab>d <cmd>tabclose<cr>
 nnoremap <Leader><Tab>l <cmd>tablast<cr>
 nnoremap <Leader><Tab>f <cmd>tabclose<cr>
 nnoremap <Leader><Tab>] gt
 nnoremap <Leader><Tab>[ gT
+
 nnoremap <Leader>ur <cmd>noh<bar>diffupdate<bar>normal! <C-L><cr>
 
-nnoremap <Leader>p "+p
-nnoremap <Leader>P "+P
-nnoremap <Leader>y "+y
-nnoremap <Leader>Y "+Y
-xnoremap <Leader>y "+y
-xnoremap <Leader>Y "+Y
+nnoremap <Leader>xQ <cmd>cw<cr>
+nnoremap <Leader>xL <cmd>lw<cr>
 
 imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
 smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
 imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
 smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-
 
 " Filetype specific handling {{{1
 filetype indent plugin on
@@ -212,9 +218,9 @@ augroup vimrc_au
   autocmd BufNewFile,BufRead */gopass-*/* setlocal filetype=gopass noswapfile nobackup noundofile
 
   autocmd BufReadPost *
-    \ if line("'\"") > 1 && line("'\"") <= line('$') && &filetype !=# 'gitcommit' |
-    \   exe 'normal! g`"' |
-    \ endif
+        \ if line("'\"") > 1 && line("'\"") <= line('$') && &filetype !=# 'gitcommit' |
+        \   exe 'normal! g`"' |
+        \ endif
   autocmd SwapExists * let v:swapchoice = 'o'
 augroup END
 
