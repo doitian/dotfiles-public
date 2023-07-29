@@ -34,13 +34,12 @@ return {
         desc = "Edit Snippets",
       },
     },
-    dependencies = {
-      {
-        "doitian/x-snippets",
-        name = "x-snippets",
-        dir = snippets_dir,
-      },
-    },
+  },
+  {
+    "doitian/x-snippets",
+    event = "VeryLazy",
+    name = "x-snippets",
+    dir = snippets_dir,
   },
 
   -- compatible mappings with surround
