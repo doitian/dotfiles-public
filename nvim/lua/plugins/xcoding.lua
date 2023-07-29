@@ -7,6 +7,7 @@ return {
     },
   },
 
+  -- compatible mappings with surround
   {
     "echasnovski/mini.surround",
     opts = {
@@ -22,7 +23,6 @@ return {
       },
     },
   },
-
   {
     "folke/flash.nvim",
     keys = {
