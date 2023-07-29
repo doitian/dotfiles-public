@@ -20,11 +20,4 @@ return {
       { "<Leader>gzz", "<Plug>TitlecaseLine", desc = "which_key_ignore" },
     },
   },
-  {
-    "folke/which-key.nvim",
-    optional = true,
-    opts = {
-      operators = { ["<Leader>gz"] = "Titlecase" },
-    },
-  },
 }
