@@ -10,6 +10,7 @@ silent! call plug#begin($HOME.'/.vim/plugged')
 Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 
 Plug 'editorconfig/editorconfig-vim'
+Plug 'justinmk/vim-sneak'
 Plug 'thinca/vim-visualstar' " * # g* g#
 Plug 'tomtom/tcomment_vim' " gc
 Plug 'tpope/vim-repeat'
@@ -43,7 +44,7 @@ let g:mucomplete#chains = {
 \ }
 
 let g:vsnip_snippet_dir = expand("~/.vim/snippets")
-let g:surround_no_mappings = 1
+let g:szaurround_no_mappings = 1
 
 " Functions & Commands {{{1
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
@@ -179,11 +180,6 @@ imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab
 smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
 imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
 smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-
-nmap gzd <Plug>Dsurround
-nmap gzr <Plug>Csurround
-nmap gza <Plug>Ysurround
-xmap gza <Plug>VSurround
 
 " OS specific settings {{{1
 if exists('$WSLENV')
