@@ -223,12 +223,12 @@ augroup vimrc_au
         \ if &buftype ==# 'quickfix' | nnoremap <silent> <buffer> q <cmd>cclose<cr> | endif |
         \ setlocal errorformat=%f\|%l\ col\ %c\|%m
 
-  autocmd BufNewFile,BufRead *.bats setlocal filetype=bats.sh
+  autocmd BufNewFile,BufRead PULLREQ_EDITMSG setlocal filetype=gitcommit
   autocmd BufNewFile,BufRead .envrc setlocal filetype=envrc.sh
+  autocmd BufNewFile,BufRead *.bats setlocal filetype=bats.sh
   autocmd BufNewFile,BufRead *.wiki setlocal filetype=wiki.text
   autocmd BufNewFile,BufRead *.anki setlocal filetype=anki.html
   autocmd BufNewFile,BufRead *.qf setlocal filetype=qf
-  autocmd BufNewFile,BufRead PULLREQ_EDITMSG setlocal filetype=gitcommit
   autocmd BufNewFile,BufRead */gopass-*/* setlocal filetype=gopass noswapfile nobackup noundofile
 
   autocmd BufReadPost *
