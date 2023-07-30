@@ -178,9 +178,10 @@ nnoremap f<cr> gg=G<C-o><C-o><cmd>w<cr>
 " finder {{{2
 nnoremap <Leader><Space> :e <C-z>
 nnoremap <Leader>ff :e <C-z>
-nnoremap <Leader>fb :b <C-z>
+nnoremap <Leader>fb <cmd>ls<cr>:b <C-z>
 nnoremap <Leader>fh :e %:h<C-z><C-z>
 nnoremap <Leader>fs :e <C-r>=g:vsnip_snippet_dir<cr>/<C-z>
+nnoremap <Leader>sm <cmd>marks<cr>:norm '
 
 " buffer {{{2
 nnoremap <silent> <Leader>bd <cmd>bdelete<cr>
