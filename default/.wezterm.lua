@@ -26,4 +26,27 @@ config.window_padding = {
 config.initial_rows = 36
 config.initial_cols = 90
 
+config.keys = {
+  {
+    key = "p",
+    mods = "CMD|SHIFT",
+    action = wezterm.action.ActivateCommandPalette,
+  },
+  {
+    key = "d",
+    mods = "CMD",
+    action = wezterm.action.SplitHorizontal,
+  },
+  {
+    key = "d",
+    mods = "CMD|SHIFT",
+    action = wezterm.action.SplitVertical,
+  },
+  {
+    key = "w",
+    mods = "CMD",
+    action = wezterm.action.CloseCurrentPane({ confirm = true }),
+  },
+}
+
 return config
