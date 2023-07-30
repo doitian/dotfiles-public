@@ -21,6 +21,14 @@ autocmd("FileType", { "vim", "beancount", "i3config" }, function()
   vim.opt_local.foldmethod = "marker"
 end)
 
+autocmd("FileType", { "qf" }, function()
+  vim.opt_local.errorformat = "%f|%l col %c|%m"
+
+  if vim.o.buftype ~= "quickfix" then
+    vim.keymap.del("n", "q", { buffer = true })
+  end
+end)
+
 autocmd({ "BufNewFile", "BufRead" }, "*/gopass-*/*", function()
   vim.opt_local.filetype = "gopass"
   vim.opt_local.swapfile = false
@@ -33,11 +41,12 @@ autocmd("SwapExists", "*", function()
 end)
 
 local ft_maps = {
-  ["*.bats"] = "bats.sh",
-  [".envrc"] = "envrc.sh",
-  [".wiki"] = "wiki.text",
-  [".anki"] = "anki.html",
   PULLREQ_EDITMSG = "gitcommit",
+  ["*.qf"] = "qf",
+  [".envrc"] = "envrc.sh",
+  ["*.bats"] = "bats.sh",
+  ["*.wiki"] = "wiki.text",
+  ["*.anki"] = "anki.html",
 }
 for pattern, ft in pairs(ft_maps) do
   autocmd({ "BufNewFile", "BufRead" }, pattern, function()

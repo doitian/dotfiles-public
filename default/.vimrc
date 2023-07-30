@@ -9,6 +9,7 @@ silent! call plug#begin($HOME.'/.vim/plugged')
 
 Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 
+Plug 'tpope/vim-dispatch', { 'on': ['FocusDispatch', 'Dispatch', 'Start'] }
 Plug 'editorconfig/editorconfig-vim'
 Plug 'justinmk/vim-sneak'
 Plug 'thinca/vim-visualstar' " * # g* g#
@@ -47,12 +48,19 @@ let g:vsnip_snippet_dir = expand("~/.dotfiles/repos/private/snippets/snippets")
 exec 'set rtp+='..fnamemodify(g:vsnip_snippet_dir, ':h')
 
 " Functions & Commands {{{1
+function! s:BookmarkLine(message)
+  let l:line = expand('%') . '|' . line('.') . ' col ' . col('.') . '| '
+        \ . (a:message ==# '' ? getline('.') : a:message)
+  call writefile([l:list], 'bookmarks.qf', 'a')
+endfunction
+
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
       \ | wincmd p | diffthis
 command! Delete call delete(expand('%')) | bdelete | let @# = bufnr('%')
 command! -nargs=1 -complete=file Move saveas <args>
       \ | call delete(expand('#')) | exec "bdelete #" | let @# = bufnr('%')
 command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile | silent file __viper__
+command! -nargs=* Bm call <SID>BookmarkLine(<q-args>)
 
 " Config {{{1
 " sort /set (no)?/
@@ -158,9 +166,10 @@ xnoremap <Leader>Y "+Y
 
 nmap <silent> <expr> H v:count == 0 ? '<cmd>bprevious<cr>' : 'H'
 nmap <silent> <expr> L v:count == 0 ? '<cmd>bnext<cr>' : 'L'
+nnoremap <silent> g<cr> <cmd>Dispatch<cr>
 nnoremap f<cr> gg=G<C-o><C-o><cmd>w<cr>
-nnoremap ]<Space> :call append(line('.'), '')<cr>
-nnoremap [<Space> :call append(line('.')-1, '')<cr>
+nnoremap <silent> ]<Space> :call append(line('.'), '')<cr>
+nnoremap <silent> [<Space> :call append(line('.')-1, '')<cr>
 
 nnoremap <Leader><Space> :e <C-z>
 nnoremap <Leader>ff :e <C-z>
@@ -168,7 +177,7 @@ nnoremap <Leader>fb :b <C-z>
 nnoremap <Leader>fh :e %:h<C-z><C-z>
 nnoremap <Leader>fs :e <C-r>=g:vsnip_snippet_dir<cr>/<C-z>
 
-nnoremap <Leader>bd <cmd>bdelete<cr>
+nnoremap <silent> <Leader>bd <cmd>bdelete<cr>
 nnoremap <Leader>bb <cmd>e #<cr>
 nnoremap <Leader>` <cmd>e #<cr>
 
@@ -192,8 +201,8 @@ nnoremap <Leader><Tab>[ gT
 
 nnoremap <Leader>ur <cmd>noh<bar>diffupdate<bar>normal! <C-L><cr>
 
-nnoremap <Leader>xQ <cmd>cw<cr>
-nnoremap <Leader>xL <cmd>lw<cr>
+nnoremap <Leader>xq <cmd>copen<cr>
+nnoremap <Leader>xl <cmd>lopen<cr>
 
 imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
 smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
@@ -209,11 +218,16 @@ augroup vimrc_au
   autocmd FileType gitcommit,markdown setlocal spell
   autocmd FileType markdown setlocal suffixesadd=.md
   autocmd FileType vim,beancount,i3config setlocal foldmethod=marker
+  " edit qf: set ma | ... | cgetb
+  autocmd FileType qf
+        \ if &buftype ==# 'quickfix' | nnoremap <silent> <buffer> q <cmd>cclose<cr> | endif |
+        \ setlocal errorformat=%f\|%l\ col\ %c\|%m
 
   autocmd BufNewFile,BufRead *.bats setlocal filetype=bats.sh
   autocmd BufNewFile,BufRead .envrc setlocal filetype=envrc.sh
   autocmd BufNewFile,BufRead *.wiki setlocal filetype=wiki.text
   autocmd BufNewFile,BufRead *.anki setlocal filetype=anki.html
+  autocmd BufNewFile,BufRead *.qf setlocal filetype=qf
   autocmd BufNewFile,BufRead PULLREQ_EDITMSG setlocal filetype=gitcommit
   autocmd BufNewFile,BufRead */gopass-*/* setlocal filetype=gopass noswapfile nobackup noundofile
 
