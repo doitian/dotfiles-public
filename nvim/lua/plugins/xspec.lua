@@ -33,9 +33,27 @@ return {
     cmd = { "FocusDispatch", "Dispatch", "Start", "Spawn" },
     keys = {
       { "g<cr>", "<cmd>Dispatch<cr>", desc = "Dispatch" },
+      { "m<cr>", "<cmd>Dispatch<cr>", desc = "Make" },
+      { "'<cr>", "<cmd>Start<cr>", desc = "Start" },
     },
     init = function()
       vim.g.dispatch_no_maps = 1
+    end,
+  },
+
+  {
+    "jvgrootveld/telescope-zoxide",
+    dependencies = {
+      { "nvim-telescope/telescope.nvim" },
+    },
+    cond = function()
+      return vim.fn.executable("zoxide") == 1
+    end,
+    keys = {
+      { "<leader>fj", "<cmd>Telescope zoxide list<cr>", desc = "Zoxide" },
+    },
+    config = function()
+      require("telescope").load_extension("zoxide")
     end,
   },
 }

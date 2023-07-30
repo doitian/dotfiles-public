@@ -39,32 +39,6 @@ alias mv="mv -i"
 alias cp="cp -i"
 alias cpv="rsync -poghb --backup-dir=/tmp/rsync -e /dev/null --progress --"
 alias ff="fzf-finder"
-
-# fzf & fasd
-if which fasd >/dev/null 2>&1; then
-  eval "$(fasd --init auto)"
-  unalias z
-  unalias zz
-  unalias f
-  unalias a
-  unalias s
-  unalias sf
-  unalias sd
-  unalias d
-
-  alias j='fasd_cd -d'
-  alias z='fasd_cd -d'
-  alias zl='fasd -Rdl'
-  function jj() {
-    local dir="$(fasd -Rdl | fzf-tmux -1 -0 -q "$*")"
-    [ -n "$dir" ] && cd "$dir"
-  }
-
-  alias f='fasd_fzf -m'
-  alias d='fasd_fzf -m -d'
-  alias e='fasd_fzf -e -m'
-fi
-
 alias di='dirs -v | head -n 10'
 
 ##################################################

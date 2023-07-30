@@ -7,9 +7,8 @@ if &term ==? 'win32' | set t_Co=256 | endif
 " Plug {{{1
 silent! call plug#begin($HOME.'/.vim/plugged')
 
-Plug 'catppuccin/vim', { 'as': 'catppuccin' }
+Plug 'NLKNguyen/papercolor-theme'
 
-Plug 'tpope/vim-dispatch', { 'on': ['FocusDispatch', 'Dispatch', 'Start'] }
 Plug 'editorconfig/editorconfig-vim'
 Plug 'justinmk/vim-sneak'
 Plug 'thinca/vim-visualstar' " * # g* g#
@@ -31,11 +30,12 @@ call plug#end()
 
 " Theme {{{1
 syntax on
-set termguicolors
-silent! colorscheme catppuccin_latte
+silent! colorscheme PaperColor
 
 " Plugins Options {{{1
-let loaded_matchparen = 1
+let g:netrw_winsize = -40
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
 
 let g:mucomplete#no_mappings = 1
 let g:mucomplete#enable_auto_at_startup = 1
@@ -51,7 +51,7 @@ exec 'set rtp+='..fnamemodify(g:vsnip_snippet_dir, ':h')
 function! s:BookmarkLine(message)
   let l:line = expand('%') . '|' . line('.') . ' col ' . col('.') . '| '
         \ . (a:message ==# '' ? getline('.') : a:message)
-  call writefile([l:list], 'bookmarks.qf', 'a')
+  call writefile([l:line], 'bookmarks.qf', 'a')
 endfunction
 
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
@@ -149,7 +149,7 @@ endif
 runtime! macros/matchit.vim
 
 " Keymap {{{1
-" leader
+" leader {{{2
 let mapleader = ' '
 let g:mapleader = ' '
 let maplocalleader = '\\'
@@ -157,6 +157,7 @@ let g:maplocalleader = '\\'
 set pastetoggle=<F2>
 set wildcharm=<C-z>
 
+" clipboard {{{2
 nnoremap <Leader>p "+p
 nnoremap <Leader>P "+P
 nnoremap <Leader>y "+y
@@ -164,23 +165,29 @@ nnoremap <Leader>Y "+Y
 xnoremap <Leader>y "+y
 xnoremap <Leader>Y "+Y
 
+" editor {{{2
 nmap <silent> <expr> H v:count == 0 ? '<cmd>bprevious<cr>' : 'H'
 nmap <silent> <expr> L v:count == 0 ? '<cmd>bnext<cr>' : 'L'
-nnoremap <silent> g<cr> <cmd>Dispatch<cr>
-nnoremap f<cr> gg=G<C-o><C-o><cmd>w<cr>
 nnoremap <silent> ]<Space> :call append(line('.'), '')<cr>
 nnoremap <silent> [<Space> :call append(line('.')-1, '')<cr>
 
+" coding {{{2
+nnoremap <silent> g<cr> <cmd>make<cr>
+nnoremap f<cr> gg=G<C-o><C-o><cmd>w<cr>
+
+" finder {{{2
 nnoremap <Leader><Space> :e <C-z>
 nnoremap <Leader>ff :e <C-z>
 nnoremap <Leader>fb :b <C-z>
 nnoremap <Leader>fh :e %:h<C-z><C-z>
 nnoremap <Leader>fs :e <C-r>=g:vsnip_snippet_dir<cr>/<C-z>
 
+" buffer {{{2
 nnoremap <silent> <Leader>bd <cmd>bdelete<cr>
 nnoremap <Leader>bb <cmd>e #<cr>
 nnoremap <Leader>` <cmd>e #<cr>
 
+" window {{{2
 nnoremap <Leader>ww <C-w>p
 nnoremap <Leader>wd <C-w>c
 nnoremap <Leader>w- <C-w>s
@@ -192,6 +199,7 @@ nnoremap <C-l> <C-w>l
 nnoremap <C-k> <C-w>k
 nnoremap <C-j> <C-w>j
 
+" tab {{{2
 nnoremap <Leader><Tab><Tab> <cmd>tabnew<cr>
 nnoremap <Leader><Tab>d <cmd>tabclose<cr>
 nnoremap <Leader><Tab>l <cmd>tablast<cr>
@@ -199,11 +207,17 @@ nnoremap <Leader><Tab>f <cmd>tabclose<cr>
 nnoremap <Leader><Tab>] gt
 nnoremap <Leader><Tab>[ gT
 
+" ui {{{2
 nnoremap <Leader>ur <cmd>noh<bar>diffupdate<bar>normal! <C-L><cr>
+nnoremap <silent> <Leader>e <cmd>Lexplore<cr>
 
+" qf {{{2
 nnoremap <Leader>xq <cmd>copen<cr>
 nnoremap <Leader>xl <cmd>lopen<cr>
+nnoremap <silent> ]q <cmd>cnext<cr>
+nnoremap <silent> [q <cmd>cprevious<cr>
 
+" complete {{{2
 imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
 smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
 imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'

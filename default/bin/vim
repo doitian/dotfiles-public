@@ -1,0 +1,4 @@
+if [ "$TERM_PROGRAM" = "Apple_Terminal" ]; then
+  exec mvim -v "$@"
+fi
+exec nvim "$@"
