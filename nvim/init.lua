@@ -1,3 +1,13 @@
+-- no 24-bit colors
+local lazy = vim.env.LAZY or vim.tbl_contains({ "truecolor", "24bit" }, vim.env.COLORTERM)
+if not lazy or lazy == "0" then
+  vim.opt.rtp:prepend("~/.vim")
+  vim.opt.rtp:append("~/.vim/after")
+  vim.opt.packpath = vim.opt.rtp:get()
+  vim.cmd.source("~/.vimrc")
+  return
+end
+
 -- vim +Viper
 vim.api.nvim_create_user_command("Viper", function(_)
   vim.opt_local.bin = true

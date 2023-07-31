@@ -1,6 +1,8 @@
 " Preamble {{{1
 set nocompatible
 set encoding=utf-8
+set background=light
+if $TERM_BACKGROUND != '' | let background=$TERM_BACKGROUND | endif
 if has('win32') | language en | set ff=unix | endif
 if &term ==? 'win32' | set t_Co=256 | endif
 
@@ -69,6 +71,9 @@ command! -nargs=1 -complete=file Move saveas <args>
       \ | call delete(expand('#')) | exec 'bdelete #' | let @# = bufnr('%')
 command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile | silent file __viper__
 command! -nargs=* Bm call <SID>BookmarkLine(<q-args>)
+if s:has_fzf
+  command! -bang Zoxide call fzf#run(fzf#wrap('zoxide', {'source': 'zoxide query -l', 'sink': 'cd'}, <bang>0))
+endif
 
 " Config {{{1
 " sort /set (no)?/
@@ -76,13 +81,11 @@ set autoindent
 set autoread
 set autowrite
 set backspace=indent,eol,start
-set backupdir=$HOME/.vim/files/backup//,.
 set completeopt=menuone,noinsert
 set clipboard^=unnamedplus,unnamed
 set conceallevel=3
 set confirm
 set cursorline
-set directory=$HOME/.vim/files/swap//,.
 set display+=lastline
 set expandtab
 set nofoldenable
@@ -119,7 +122,6 @@ set tabpagemax=50
 set tabstop=2
 set timeoutlen=700
 set ttyfast
-set undodir=$HOME/.vim/files/undo//
 set undofile
 set undolevels=1000
 set updatetime=1800
@@ -131,6 +133,12 @@ set wildmode=longest:full,full
 set winminwidth=5
 set winwidth=78
 set nowrap
+
+if !has("nvim")
+  set backupdir=$HOME/.vim/files/backup//,.
+  set directory=$HOME/.vim/files/swap//,.
+  set undodir=$HOME/.vim/files/undo//
+endif
 
 if has('multi_byte') && &encoding ==# 'utf-8'
   let &listchars = 'tab:▸ ,trail:·,extends:»,precedes:«,nbsp:␣'
@@ -190,6 +198,7 @@ if s:has_fzf
   nnoremap <Leader>, <cmd>Buffers<cr>
   nnoremap <Leader>fh <cmd>Files %:h<cr>
   nnoremap <Leader>fs :Files <C-r>=g:vsnip_snippet_dir<cr><cr>
+  nnoremap <Leader>fj <cmd>Zoxide<cr>
   nnoremap <Leader>sm <cmd>Marks<cr>
 else
   nnoremap <Leader><Space> :e <C-z>
