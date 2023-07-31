@@ -48,7 +48,7 @@ return {
     keys = function(_, keys)
       return vim.list_extend(
         vim.tbl_filter(function(k)
-          return k[0] ~= "S"
+          return k[1] ~= "S"
         end, keys),
         {
           -- use z becasue s is used by surround
