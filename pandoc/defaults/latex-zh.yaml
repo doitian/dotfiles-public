@@ -3,4 +3,4 @@ defaults:
 variables:
   CJKmainfont: LXGW Bright GB
   CJKsansfont: LXGW Bright GB
-  CJKmonofont: LXGW WenKai Mono
+  CJKmonofont: LXGW WenKai

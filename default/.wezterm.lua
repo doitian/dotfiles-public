@@ -5,7 +5,7 @@ local config = {
 
   font = wezterm.font_with_fallback({
     "Cartograph CF",
-    "LXGW Bright GB",
+    "LXGW WenKai",
   }),
   font_size = 15,
 
