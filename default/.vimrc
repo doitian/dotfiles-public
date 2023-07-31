@@ -26,10 +26,18 @@ if has('win32')
   Plug 'PProvost/vim-ps1'
 endif
 
+let s:has_fzf = executable('fzf')
+if s:has_fzf
+  let s:fzf_opts = { 'on': ['FZF', 'Files', 'Buffers'] }
+  Plug 'junegunn/fzf'
+  Plug 'junegunn/fzf.vim'
+endif
+
 call plug#end()
 
 " Theme {{{1
 syntax on
+let g:PaperColor_Theme_Options = {'theme':{'default':{'transparent_background':1}}}
 silent! colorscheme PaperColor
 
 " Plugins Options {{{1
@@ -44,7 +52,7 @@ let g:mucomplete#chains = {
       \ 'vim'     : ['vsnip', 'path', 'cmd', 'keyn']
       \ }
 
-let g:vsnip_snippet_dir = expand("~/.dotfiles/repos/private/snippets/snippets")
+let g:vsnip_snippet_dir = expand('~/.dotfiles/repos/private/snippets/snippets')
 exec 'set rtp+='..fnamemodify(g:vsnip_snippet_dir, ':h')
 
 " Functions & Commands {{{1
@@ -58,7 +66,7 @@ command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
       \ | wincmd p | diffthis
 command! Delete call delete(expand('%')) | bdelete | let @# = bufnr('%')
 command! -nargs=1 -complete=file Move saveas <args>
-      \ | call delete(expand('#')) | exec "bdelete #" | let @# = bufnr('%')
+      \ | call delete(expand('#')) | exec 'bdelete #' | let @# = bufnr('%')
 command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile | silent file __viper__
 command! -nargs=* Bm call <SID>BookmarkLine(<q-args>)
 
@@ -166,21 +174,32 @@ xnoremap <Leader>y "+y
 xnoremap <Leader>Y "+Y
 
 " editor {{{2
+nnoremap <silent> <C-s> <cmd>up<cr>
 nnoremap <silent> ]<Space> :call append(line('.'), '')<cr>
 nnoremap <silent> [<Space> :call append(line('.')-1, '')<cr>
 
 " coding {{{2
 nnoremap <silent> g<cr> <cmd>make<cr>
-nnoremap f<cr> gg=G<C-o><C-o><cmd>w<cr>
+nnoremap f<cr> gg=G<C-o><C-o>
 
 " finder {{{2
-nnoremap <Leader><Space> :e <C-z>
-nnoremap <Leader>ff :e <C-z>
-nnoremap <Leader>fb <cmd>ls<cr>:b<Space>
-nnoremap <Leader>, <cmd>ls<cr>:b<Space>
-nnoremap <Leader>fh :e %:h<C-z><C-z>
-nnoremap <Leader>fs :e <C-r>=g:vsnip_snippet_dir<cr>/<C-z>
-nnoremap <Leader>sm <cmd>marks<cr>:norm '
+if s:has_fzf
+  nnoremap <Leader><Space> <cmd>Files<cr>
+  nnoremap <Leader>ff <cmd>Files<cr>
+  nnoremap <Leader>fb <cmd>Buffers<cr>
+  nnoremap <Leader>, <cmd>Buffers<cr>
+  nnoremap <Leader>fh <cmd>Files %:h<cr>
+  nnoremap <Leader>fs :Files <C-r>=g:vsnip_snippet_dir<cr><cr>
+  nnoremap <Leader>sm <cmd>Marks<cr>
+else
+  nnoremap <Leader><Space> :e <C-z>
+  nnoremap <Leader>ff :e <C-z>
+  nnoremap <Leader>fb <cmd>ls<cr>:b<Space>
+  nnoremap <Leader>, <cmd>ls<cr>:b<Space>
+  nnoremap <Leader>fh :e %:h<C-z><C-z>
+  nnoremap <Leader>fs :e <C-r>=g:vsnip_snippet_dir<cr>/<C-z>
+  nnoremap <Leader>sm <cmd>marks<cr>:norm '
+endif
 
 " buffer {{{2
 nnoremap <silent> <Leader>bd <cmd>bdelete<cr>

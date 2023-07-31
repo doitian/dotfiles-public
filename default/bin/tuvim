@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+if [[ $COLORTERM =~ ^(truecolor|24bit)$ ]]; then
+  exec nvim "$@"
+fi
+
+exec vim "$@"
