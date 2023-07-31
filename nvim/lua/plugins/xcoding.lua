@@ -45,20 +45,27 @@ return {
   -- compatible mappings with surround
   {
     "folke/flash.nvim",
-    keys = {
-      -- use z becasue s is used by surround
-      {
-        "z",
-        function()
-          require("flash").jump()
-        end,
-        mode = "o",
-        desc = "Flash",
-      },
-      { "ys", "gza", desc = "Add surrounding", remap = true },
-      { "S", "gza", desc = "Add surrounding", mode = "v", remap = true },
-      { "ds", "gzd", desc = "Delete surrounding", remap = true },
-      { "cs", "gzr", desc = "Replace surrounding", remap = true },
-    },
+    keys = function(_, keys)
+      return vim.list_extend(
+        vim.tbl_filter(function(k)
+          return k[0] ~= "S"
+        end, keys),
+        {
+          -- use z becasue s is used by surround
+          {
+            "z",
+            function()
+              require("flash").jump()
+            end,
+            mode = "o",
+            desc = "Flash",
+          },
+          { "ys", "gza", desc = "Add surrounding", remap = true },
+          { "S", "gza", desc = "Add surrounding", mode = "v", remap = true },
+          { "ds", "gzd", desc = "Delete surrounding", remap = true },
+          { "cs", "gzr", desc = "Replace surrounding", remap = true },
+        }
+      )
+    end,
   },
 }
