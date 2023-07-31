@@ -4,10 +4,8 @@ local config = {
   color_scheme = "Catppuccin Latte",
 
   font = wezterm.font_with_fallback({
-    "CartographCF Nerd Font",
-    "JetBrains Mono Nerd Font",
     "Cartograph CF",
-    "JetBrains Mono",
+    "LXGW Bright GB",
   }),
   font_size = 15,
 
