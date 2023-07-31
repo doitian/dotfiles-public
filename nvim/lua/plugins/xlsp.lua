@@ -1,6 +1,5 @@
 -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/lsp/init.lua
 return {
-  -- Global
   {
     "neovim/nvim-lspconfig",
     init = function()
@@ -11,6 +10,7 @@ return {
       keys[#keys + 1] = { "f<cr>", format, desc = "Format Document", has = "formatting" }
     end,
   },
+
   {
     "jose-elias-alvarez/null-ls.nvim",
     opts = function(_, opts)
@@ -20,4 +20,11 @@ return {
       })
     end,
   },
+
+  -- Extras
+  { import = "lazyvim.plugins.extras.formatting.prettier" },
+  { import = "lazyvim.plugins.extras.lang.go" },
+  { import = "lazyvim.plugins.extras.lang.java" },
+  { import = "lazyvim.plugins.extras.lang.python" },
+  { import = "lazyvim.plugins.extras.lang.rust" },
 }
