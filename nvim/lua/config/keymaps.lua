@@ -8,6 +8,7 @@ map("n", "<Leader>p", '"+p', { desc = "Paste from system clipboard" })
 map("n", "<Leader>P", '"+P', { desc = "which_key_ignore" })
 map({ "n", "x" }, "<Leader>y", '"+y', { desc = "Yank to system clipboard" })
 map({ "n", "x" }, "<Leader>Y", '"+Y', { desc = "which_key_ignore" })
+map("n", "<Leader>v", "`[v`]", { desc = "Select yanked/pasted" })
 
 map(
   "n",

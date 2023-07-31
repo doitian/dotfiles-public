@@ -180,6 +180,7 @@ nnoremap <Leader>y "+y
 nnoremap <Leader>Y "+Y
 xnoremap <Leader>y "+y
 xnoremap <Leader>Y "+Y
+nnoremap <Leader>v `[v`]
 
 " editor {{{2
 nnoremap <silent> <C-s> <cmd>up<cr>
