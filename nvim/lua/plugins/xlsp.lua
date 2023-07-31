@@ -2,6 +2,12 @@
 return {
   {
     "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        kotlin_language_server = {},
+        tsserver = {},
+      },
+    },
     init = function()
       local format = function()
         require("lazyvim.plugins.lsp.format").format({ force = true })
@@ -19,6 +25,11 @@ return {
         nls.builtins.formatting.ruff,
       })
     end,
+  },
+
+  {
+    "udalov/kotlin-vim",
+    ft = "kotlin",
   },
 
   -- Extras
