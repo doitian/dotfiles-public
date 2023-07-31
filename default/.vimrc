@@ -166,8 +166,6 @@ xnoremap <Leader>y "+y
 xnoremap <Leader>Y "+Y
 
 " editor {{{2
-nmap <silent> <expr> H v:count == 0 ? '<cmd>bprevious<cr>' : 'H'
-nmap <silent> <expr> L v:count == 0 ? '<cmd>bnext<cr>' : 'L'
 nnoremap <silent> ]<Space> :call append(line('.'), '')<cr>
 nnoremap <silent> [<Space> :call append(line('.')-1, '')<cr>
 
@@ -178,7 +176,8 @@ nnoremap f<cr> gg=G<C-o><C-o><cmd>w<cr>
 " finder {{{2
 nnoremap <Leader><Space> :e <C-z>
 nnoremap <Leader>ff :e <C-z>
-nnoremap <Leader>fb <cmd>ls<cr>:b <C-z>
+nnoremap <Leader>fb <cmd>ls<cr>:b<Space>
+nnoremap <Leader>, <cmd>ls<cr>:b<Space>
 nnoremap <Leader>fh :e %:h<C-z><C-z>
 nnoremap <Leader>fs :e <C-r>=g:vsnip_snippet_dir<cr>/<C-z>
 nnoremap <Leader>sm <cmd>marks<cr>:norm '
@@ -187,6 +186,10 @@ nnoremap <Leader>sm <cmd>marks<cr>:norm '
 nnoremap <silent> <Leader>bd <cmd>bdelete<cr>
 nnoremap <Leader>bb <cmd>e #<cr>
 nnoremap <Leader>` <cmd>e #<cr>
+nmap <silent> <expr> H v:count == 0 ? '<cmd>bprevious<cr>' : 'H'
+nmap <silent> <expr> L v:count == 0 ? '<cmd>bnext<cr>' : 'L'
+nnoremap <silent> ]b <cmd>bnext<cr>
+nnoremap <silent> [b <cmd>bprevious<cr>
 
 " window {{{2
 nnoremap <Leader>ww <C-w>p
