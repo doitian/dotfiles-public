@@ -54,10 +54,13 @@ if ! which _bpf_filters &> /dev/null; then
 fi
 
 function _gfw() {
-  local curcontext="$curcontext" expl state line
-  _arguments '*:: :{ _normal }'
+  local line state
+  _arguments -C '1: :->cmds' '*:: :{ _normal }' && return 0
+  _values "gfw command" on off
+  _precommand
 }
 compdef _gfw gfw
+compdef _precommand ts
 
 # Custom FZF Compleitions https://github.com/junegunn/fzf#custom-fuzzy-completion
 _fzf_complete_gopass() {
