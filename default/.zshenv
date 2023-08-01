@@ -22,17 +22,14 @@ export LESS='--RAW-CONTROL-CHARS --quiet --HILITE-UNREAD --ignore-case --long-pr
 export LANG=en_US.UTF-8
 export LC_CTYPE=$LANG
 export LC_ALL=$LANG
-if [ -x "/usr/bin/x-www-browser" ]; then
-  export BROWSER="/usr/bin/x-www-browser"
-fi
-export ALTERNATE_EDITOR="vim"
-if [ -f /usr/libexec/java_home ]; then
-  export JAVA_HOME=$(/usr/libexec/java_home)
-fi
 
 export EDITOR="vim"
 export FCEDIT="vim"
 export VISUAL="vim"
+export ALTERNATE_EDITOR="vim"
+if [ -x "/usr/bin/x-www-browser" ]; then
+  export BROWSER="/usr/bin/x-www-browser"
+fi
 
 # ruby perf
 export RUBY_GC_HEAP_INIT_SLOTS=1000000
@@ -50,21 +47,17 @@ export PERL5LIB="$HOME/.perl5/lib/perl5:$PERL5LIB";
 # R
 export R_LIBS="$HOME/.rlibs"
 
-# Android
-if [ -d "$HOME/Library/Android/sdk" ]; then
-  export ANDROID_HOME="$HOME/Library/Android/sdk"
-  export ANDROID_SWT="$ANDROID_HOME/tools/lib/x86_64"
-else
-  export ANDROID_HOME=/opt/android-sdk
-  export ANDROID_SWT=/usr/share/java
-fi
-
 # golang
 export GOPATH="$HOME/codebase/gopath"
 
 # rust
 if [ type rustc &> /dev/null ]; then
   export RUST_SRC_PATH=$(rustc --print sysroot)/lib/rustlib/src/rust/src/
+fi
+
+# java
+if [ -f /usr/libexec/java_home ]; then
+  export JAVA_HOME=$(/usr/libexec/java_home)
 fi
 
 # bat
@@ -84,11 +77,11 @@ $HOME/bin\
 :$HOME/.cargo/bin\
 :$HOME/.asdf/bin\
 :$HOME/.node-packages/bin\
+:$HOME/.local/share/nvim/mason/bin\
 :/PATH\
 :$PATH\
 :/usr/local/bin\
 :/usr/local/sbin\
-:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools\
 "
 fi
 
