@@ -1,5 +1,5 @@
-#!/bin/zsh
-
+# vim: fmr={{{{,}}}}:fdm=marker
+# preamble {{{{1
 if [[ "$-" != *i* ]]; then return 0; fi
 
 if [[ $COLORTERM =~ ^(truecolor|24bit)$ ]]; then

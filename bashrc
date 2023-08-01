@@ -1,3 +1,5 @@
+# vim: fmr={{{{,}}}}:fdm=marker
+# preamble {{{{1
 # If not running interactively, don't do anything
 case $- in
 *i*) ;;
