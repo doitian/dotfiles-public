@@ -53,8 +53,13 @@ if ! which _bpf_filters &> /dev/null; then
   }
 fi
 
-# Custom FZF Compleitions https://github.com/junegunn/fzf#custom-fuzzy-completion
+function _gfw() {
+  local curcontext="$curcontext" expl state line
+  _arguments '*:: :{ _normal }'
+}
+compdef _gfw gfw
 
+# Custom FZF Compleitions https://github.com/junegunn/fzf#custom-fuzzy-completion
 _fzf_complete_gopass() {
   _fzf_complete --prompt="gopass> " -- "$@" < <(
     gopass list -f 

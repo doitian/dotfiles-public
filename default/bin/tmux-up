@@ -18,7 +18,7 @@ if [ "$ARG1" = '-h' ] || [ "$ARG1" = '--help' ]; then
 
 		The FILE argument is used to bootstrap the new tmux session if it doesn't
 		already exist. It must contain tmux-compatible commands, which will be
-		passed to tmux. Defaults to: .tmux.conf
+		passed to tmux. Defaults to: .tmux-up.conf
 
 		  --help     display this help and exit
 		  --version  output version information and exit
@@ -42,12 +42,12 @@ COMMANDS=
 if [ -z "$ARG1" ]; then
   if [ "$PWD" = "$HOME" ]; then
     SESSION=chore
-  elif [ ! -f '.tmux.conf' ]; then
+  elif [ ! -f '.tmux-up.conf' ]; then
     SESSION=$(basename "$PWD" | sed 's/[^a-zA-Z0-9\-]//g')
     COMMANDS='send "vim" C-m
 neww -n shell'
   else
-    FILE=".tmux.conf"
+    FILE=".tmux-up.conf"
   fi
 else
   FILE='$ARG1'

@@ -14,7 +14,6 @@ COMPLETION_WAITING_DOTS=true
 GIT_PS1_SHOWUPSTREAM=auto
 MAGIC_ENTER_GIT_COMMAND='g st -u .'
 MAGIC_ENTER_OTHER_COMMAND='ls -lh .'
-SHELLPROXY_URL='http://127.0.0.1:7890'
 
 if [ -d "$HOME/.asdf" ]; then
   fpath=($HOME/.asdf/completions $fpath)

@@ -54,3 +54,18 @@ function top-commands() {
   local max_results="${1:-50}"
   history | \cat | awk '{$1=$1};1' | sed 's/^[0-9\* TAB]*//g' | awk '{CMD[$0]++;count++;}END { for (a in CMD)print CMD[a] " " CMD[a]/count*100 "%\t" a; }' | sort --numeric-sort --reverse | nl | head -n "$max_results"
 }
+
+function gfw() {
+  case "${1:-show}" in
+    show)
+      command gfw
+      ;;
+    enable|disable)
+      eval "$(command gfw $1)"
+      echo "proxy ${1}d"
+      ;;
+    *)
+      command gfw "$@"
+      ;;
+  esac
+}

@@ -44,6 +44,9 @@ alias di='dirs -v | head -n 10'
 ##################################################
 # System
 alias psg="ps auxw | grep -i"
+if command -v tsp &>/dev/null; then
+  alias ts="tsp"
+fi
 
 ##################################################
 # Utilities
@@ -64,8 +67,6 @@ fi
 if command -v prettyping &>/dev/null; then
   alias ping=prettyping
 fi
-
-alias ssh="TERM=xterm-256color ssh"
 
 alias mk=make
 

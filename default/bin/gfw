@@ -1,50 +1,99 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-export HOMEBREW_API_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles/api"
-export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
-export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git"
-export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git"
-export HOMEBREW_PIP_INDEX_URL="https://pypi.tuna.tsinghua.edu.cn/simple"
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
 
-PROXY_PROTOCOL="${PROXY_PROTOCOL:-http}"
-PROXY_HOST="${PROXY_HOST:-127.0.0.1}"
+if [ -z "${HTTP_PROXY:-}" ]; then
+  PROXY_PROTOCOL="${PROXY_PROTOCOL:-http}"
+  PROXY_HOST="${PROXY_HOST:-127.0.0.1}"
+  PROXY_PORT="${PROXY_PORT:-7890}"
 
-if nc -z "$PROXY_HOST" 7890 &>/dev/null; then
-  export https_proxy=$PROXY_PROTOCOL://${PROXY_HOST}:7890
-  export http_proxy=$PROXY_PROTOCOL://${PROXY_HOST}:7890
-  export all_proxy=$PROXY_PROTOCOL://${PROXY_HOST}:7890
-elif nc -z 192.168.2.6 7890 &>/dev/null; then
-  PROXY_HOST="192.168.2.6"
-  export https_proxy=$PROXY_PROTOCOL://${PROXY_HOST}:7890
-  export http_proxy=$PROXY_PROTOCOL://${PROXY_HOST}:7890
-  export all_proxy=$PROXY_PROTOCOL://${PROXY_HOST}:7890
-elif nc -z 192.168.2.5 7890 &>/dev/null; then
-  PROXY_HOST="192.168.2.5"
-  export https_proxy=$PROXY_PROTOCOL://${PROXY_HOST}:7890
-  export http_proxy=$PROXY_PROTOCOL://${PROXY_HOST}:7890
-  export all_proxy=$PROXY_PROTOCOL://${PROXY_HOST}:7890
-elif command -v powershell.exe &>/dev/null; then
-  IP="$(powershell.exe -NoProfile -Command "(Get-NetIPAddress -InterfaceAlias Wi-Fi -AddressFamily IPv4).IPAddress | Write-Host -NoNewLine")"
-  export https_proxy=$PROXY_PROTOCOL://$IP:7890
-  export http_proxy=$PROXY_PROTOCOL://$IP:7890
-  export all_proxy=$PROXY_PROTOCOL://$IP:7890
-elif [ -f "/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe" ]; then
-  PS="/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe"
-  IP="$($PS -NoProfile -Command "(Get-NetIPAddress -InterfaceAlias Wi-Fi -AddressFamily IPv4).IPAddress | Write-Host -NoNewLine")"
-  export https_proxy=$PROXY_PROTOCOL://$IP:7890
-  export http_proxy=$PROXY_PROTOCOL://$IP:7890
-  export all_proxy=$PROXY_PROTOCOL://$IP:7890
+  if nc -z "$PROXY_HOST" "$PROXY_PORT" &>/dev/null; then
+    :
+  elif nc -z 192.168.2.6 "$PROXY_PORT" &>/dev/null; then
+    PROXY_HOST="192.168.2.6"
+  elif nc -z 192.168.2.5 "$PROXY_PORT" &>/dev/null; then
+    PROXY_HOST="192.168.2.5"
+  elif command -v powershell.exe &>/dev/null; then
+    PROXY_HOST="$(powershell.exe -NoProfile -Command "(Get-NetIPAddress -InterfaceAlias Wi-Fi -AddressFamily IPv4).IPAddress | Write-Host -NoNewLine")"
+  elif [ -f "/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe" ]; then
+    PS="/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe"
+    PROXY_HOST="$($PS -NoProfile -Command "(Get-NetIPAddress -InterfaceAlias Wi-Fi -AddressFamily IPv4).IPAddress | Write-Host -NoNewLine")"
+  fi
+
+  export HTTP_PROXY="${PROXY_PROTOCOL}://${PROXY_HOST}:${PROXY_PORT}"
 fi
 
-if [ "$#" = 0 ]; then
-  echo "export HOMEBREW_BOTTLE_DOMAIN='$HOMEBREW_BOTTLE_DOMAIN'; "
-  echo "export http_proxy='$http_proxy'; "
-  echo "export https_proxy='$https_proxy'; "
-  echo "export all_proxy='$all_proxy'; "
-  echo '# eval $(gfw)'
-elif [ "${1:-}" = "sudo" ]; then
+export HTTPS_PROXY="$HTTP_PROXY"
+export ALL_PROXY="$HTTP_PROXY"
+export FTP_PROXY="$HTTP_PROXY"
+export RSYNC_PROXY="$HTTP_PROXY"
+export GIT_SSH_COMMAND="gfw ssh"
+
+PROXY_ENVS=({HTTPS,HTTP,ALL,FTP,RSYNC}_PROXY GIT_SSH_COMMAND)
+SSH_CMDS=(ssh sftp scp slogin ssh-copy-id)
+
+function cmd_enable() {
+  local v
+  echo -n export
+  for v in "${PROXY_ENVS[@]}"; do
+    echo -n " $v='${!v}'"
+  done
+  echo ";"
+  echo -n alias
+  for v in "${SSH_CMDS[@]}"; do
+    echo -n " $v='gfw $v'"
+  done
+  echo ";"
+  echo '# source <(gfw)'
+}
+
+function cmd_disable() {
+  local v
+  echo "unset ${PROXY_ENVS[*]};"
+  echo "unalias ${SSH_CMDS[*]};"
+  echo '# source <(gfw disable)'
+}
+
+GFW_CMD="${1:-enable}"
+case "$GFW_CMD" in
+enable)
+  cmd_enable
+  ;;
+disable)
+  cmd_disable
+  ;;
+sudo)
   shift
-  sudo --preserve-env=HOMEBREW_BOTTLE_DOMAIN,http_proxy,https_proxy,all_proxy "$@"
-else
+  IFS=,
+  exec sudo "${BASH_SOURCE[0]}" "$@"
+  ;;
+ssh-proxy-command)
+  PROXY_TYPE=
+  if [[ "$OSTYPE" == "linux"* ]]; then
+    case "$HTTP_PROXY" in
+    socks://* | socks5://*)
+      PROXY_TYPE="-X 5"
+      ;;
+    socks4://* | socks4a://*)
+      PROXY_TYPE="-X 4"
+      ;;
+    *)
+      PROXY_TYPE="-X connect"
+      ;;
+    esac
+  fi
+  PROXY_NETLOC="${HTTP_PROXY#*://}"
+
+  shift
+  exec nc $PROXY_TYPE -x "${HTTP_PROXY#*://}" "$@"
+  ;;
+ssh | sftp | scp | slogin | ssh-copy-id)
+  shift
+  exec "$GFW_CMD" -o ProxyCommand='gfw ssh-proxy-command %h %p' -o Compression=yes "$@"
+  ;;
+*)
   exec "$@"
-fi
+  ;;
+esac
