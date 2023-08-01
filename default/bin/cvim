@@ -7,9 +7,9 @@ set -u
 DIR="$(mktemp -d)"
 trap "rm -rf $DIR" exit
 
-VIM=vim
+VIM="${__VIM_PROGRAM__:-nvim}"
 if [ "${1:-}" = "-g" ]; then
-  if which gvim &>/dev/null; then
+  if type -f gvim &>/dev/null; then
     VIM=gvim
   fi
   shift
