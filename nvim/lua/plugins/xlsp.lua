@@ -2,6 +2,15 @@
 return {
   {
     "neovim/nvim-lspconfig",
+    optional = true,
+    dependencies = {
+      -- Extras
+      { import = "lazyvim.plugins.extras.formatting.prettier" },
+      { import = "lazyvim.plugins.extras.lang.go" },
+      { import = "lazyvim.plugins.extras.lang.java" },
+      { import = "lazyvim.plugins.extras.lang.python" },
+      { import = "lazyvim.plugins.extras.lang.rust" },
+    },
     opts = {
       servers = {
         tsserver = {},
@@ -18,6 +27,7 @@ return {
 
   {
     "jose-elias-alvarez/null-ls.nvim",
+    optional = true,
     opts = function(_, opts)
       local nls = require("null-ls")
       vim.list_extend(opts.sources, {
@@ -26,15 +36,5 @@ return {
     end,
   },
 
-  {
-    "udalov/kotlin-vim",
-    ft = "kotlin",
-  },
-
-  -- Extras
-  { import = "lazyvim.plugins.extras.formatting.prettier" },
-  { import = "lazyvim.plugins.extras.lang.go" },
-  { import = "lazyvim.plugins.extras.lang.java" },
-  { import = "lazyvim.plugins.extras.lang.python" },
-  { import = "lazyvim.plugins.extras.lang.rust" },
+  { "udalov/kotlin-vim", ft = "kotlin" },
 }

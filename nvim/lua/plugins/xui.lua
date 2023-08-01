@@ -1,3 +1,4 @@
+-- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/ui.lua
 return {
   {
     "folke/noice.nvim",
@@ -32,6 +33,17 @@ return {
           view = "mini",
         },
       }, opts.routes or {})
+    end,
+  },
+
+  {
+    "nvim-lualine/lualine.nvim",
+    optional = true,
+    opts = function(_, opts)
+      opts.sections.lualine_z = nil
+      table.insert(opts.sections.lualine_x, 2, {
+        "🛡️",
+      })
     end,
   },
 }

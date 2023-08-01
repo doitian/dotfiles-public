@@ -22,6 +22,7 @@ local edit_snippet_files_opts = {
 return {
   {
     "L3MON4D3/LuaSnip",
+    optional = true,
     opts = {
       store_selection_keys = "<Tab>",
     },
@@ -45,6 +46,7 @@ return {
   -- compatible mappings with surround
   {
     "folke/flash.nvim",
+    optional = true,
     keys = function(_, keys)
       return vim.list_extend(
         vim.tbl_filter(function(k)

@@ -5,6 +5,7 @@ return {
   -- { "folke/which-key.nvim", enabled = false },
   {
     "nvim-telescope/telescope.nvim",
+    optional = true,
     cmd = "Telescope",
     keys = {
       -- always use find_files instead of git_files
