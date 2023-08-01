@@ -44,7 +44,7 @@ if [ -z "$ARG1" ]; then
     SESSION=chore
   elif [ ! -f '.tmux-up.conf' ]; then
     SESSION=$(basename "$PWD" | sed 's/[^a-zA-Z0-9\-]//g')
-    COMMANDS='send "vim" C-m
+    COMMANDS='send "'"${EDITOR:-vim}"'" C-m
 neww -n shell'
   else
     FILE=".tmux-up.conf"

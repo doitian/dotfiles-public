@@ -1,13 +1,14 @@
 # -*- sh -*-
 ##################################################
 # Editor
-alias vi='vim'
-alias :e=vim
-function tv() {
-  tmux neww "vim $*"
-}
-alias view='vim -R'
-alias viper='vim +Viper'
+__VIM_PROGRAM__="${__VIM_PROGRAM__:-vim}"
+if [ "$__VIM_PROGRAM__" != vim ]; then
+  alias vim="$__VIM_PROGRAM__"
+fi
+alias vi="$__VIM_PROGRAM__"
+alias :e="$__VIM_PROGRAM__"
+alias view="$__VIM_PROGRAM__ -R"
+alias viper="$__VIM_PROGRAM__ +Viper"
 
 ##################################################
 # TMUX

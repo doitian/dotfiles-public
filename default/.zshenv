@@ -1,6 +1,8 @@
 #!/usr/bin/env zsh
-
-export TERM_BACKGROUND="${TERM_BACKGROUND:-light}"
+if [ -n "${SHELL_ENV_LOADED:-}" ]; then
+  return
+fi
+export SHELL_ENV_LOADED=1
 
 if [ -z "$HOME" ]; then
   HOME="$(cd ~ && pwd)"
@@ -13,20 +15,31 @@ if [ -n "$BASH_VERSION" ]; then
   fi
 fi
 
+# path
+export PATH="$PATH:$HOME/bin:$GOPATH/bin:$HOME/.cargo/bin:$HOME/.asdf/bin:$HOME/.node-packages/bin:$HOME/.local/share/nvim/mason/bin:/usr/local/bin"
+
+# ulimit
 if [ -f /usr/bin/mdfind ]; then
   ulimit -n 200000 &> /dev/null
   ulimit -u 2048 &> /dev/null
 fi
 
+# theme
+export TERM_BACKGROUND="${TERM_BACKGROUND:-light}"
 export LESS='--RAW-CONTROL-CHARS --quiet --HILITE-UNREAD --ignore-case --long-prompt --no-init'
 export LANG=en_US.UTF-8
 export LC_CTYPE=$LANG
 export LC_ALL=$LANG
 
-export EDITOR="vim"
-export FCEDIT="vim"
-export VISUAL="vim"
-export ALTERNATE_EDITOR="vim"
+# tools
+export __VIM_PROGRAM__=vim
+if type -f nvim &> /dev/null; then
+  export __VIM_PROGRAM__=nvim
+fi
+export EDITOR="$__VIM_PROGRAM__"
+export FCEDIT="$EDITOR"
+export VISUAL="$EDITOR"
+export ALTERNATE_EDITOR="$EDITOR"
 if [ -x "/usr/bin/x-www-browser" ]; then
   export BROWSER="/usr/bin/x-www-browser"
 fi
@@ -68,30 +81,3 @@ fi
 
 # homebrew
 export HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK=1
-
-# path
-if ! echo "$PATH" | grep -q ':/PATH:'; then
-  export PATH="\
-$HOME/bin\
-:$GOPATH/bin\
-:$HOME/.cargo/bin\
-:$HOME/.asdf/bin\
-:$HOME/.node-packages/bin\
-:$HOME/.local/share/nvim/mason/bin\
-:/PATH\
-:$PATH\
-:/usr/local/bin\
-:/usr/local/sbin\
-"
-fi
-
-# fzf
-unset FZF_DEFAULT_OPTS
-if [ "$TERM_BACKGROUND" = light ]; then
-  export FZF_DEFAULT_OPTS='--color light'
-fi
-if command -v fd &> /dev/null; then
-  export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude ".git"'
-  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-  export FZF_ALT_C_COMMAND='fd --type d --no-ignore --hidden --follow --exclude ".git"'
-fi
