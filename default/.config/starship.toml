@@ -22,12 +22,6 @@ up_to_date = '[≡](green bold)'
 [status]
 disabled = false
 
-[nodejs]
-symbol = '🤖 '
-
-[env_var.HTTP_PROXY]
-format = '🛡️'
-
 [battery]
 full_symbol = "🔋 "
 charging_symbol = "⚡️ "
@@ -40,3 +34,15 @@ style = "bold red"
 [[battery.display]]
 threshold = 30
 style = "bold yellow"
+
+[erlang]
+symbol = "ⓔ "
+
+[pulumi]
+symbol = "🧊 "
+
+[nodejs]
+symbol = '🤖 '
+
+[env_var.HTTP_PROXY]
+format = '🛡️'
