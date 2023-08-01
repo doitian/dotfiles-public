@@ -1,8 +1,3 @@
-zstyle ':completion:*' group-name ''
-zstyle ':completion:*:*:*:*:descriptions' format '%F{green}── %d ──%f'
-zstyle ':completion:*:messages' format '%F{purple}── %d ──%f'
-zstyle ':completion:*:warnings' format '%F{red}── no matches ──%f'
-
 _cache_policy() {
   local -a oldp
   oldp=( "$1"(Nm+7) )
