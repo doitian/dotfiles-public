@@ -173,17 +173,9 @@ let g:maplocalleader = '\\'
 set pastetoggle=<F2>
 set wildcharm=<C-z>
 
-" clipboard {{{2
-nnoremap <Leader>p "+p
-nnoremap <Leader>P "+P
-nnoremap <Leader>y "+y
-nnoremap <Leader>Y "+Y
-xnoremap <Leader>y "+y
-xnoremap <Leader>Y "+Y
-nnoremap <Leader>v `[v`]
-
 " editor {{{2
 nnoremap <silent> <C-s> <cmd>up<cr>
+nnoremap <Leader>v `[v`]
 nnoremap <silent> ]<Space> :call append(line('.'), '')<cr>
 nnoremap <silent> [<Space> :call append(line('.')-1, '')<cr>
 
