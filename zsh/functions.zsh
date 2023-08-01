@@ -60,9 +60,9 @@ function gfw() {
     show)
       command gfw
       ;;
-    enable|disable)
+    on|off)
       eval "$(command gfw $1)"
-      echo "proxy ${1}d"
+      echo "proxy is ${1}"
       ;;
     *)
       command gfw "$@"

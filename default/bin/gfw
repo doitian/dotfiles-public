@@ -34,7 +34,7 @@ export GIT_SSH_COMMAND="gfw ssh"
 PROXY_ENVS=({HTTPS,HTTP,ALL,FTP,RSYNC}_PROXY GIT_SSH_COMMAND)
 SSH_CMDS=(ssh sftp scp slogin ssh-copy-id)
 
-function cmd_enable() {
+function cmd_on() {
   local v
   echo -n export
   for v in "${PROXY_ENVS[@]}"; do
@@ -49,20 +49,20 @@ function cmd_enable() {
   echo '# source <(gfw)'
 }
 
-function cmd_disable() {
+function cmd_off() {
   local v
   echo "unset ${PROXY_ENVS[*]};"
   echo "unalias ${SSH_CMDS[*]};"
-  echo '# source <(gfw disable)'
+  echo '# source <(gfw off)'
 }
 
-GFW_CMD="${1:-enable}"
+GFW_CMD="${1:-on}"
 case "$GFW_CMD" in
-enable)
-  cmd_enable
+on)
+  cmd_on
   ;;
-disable)
-  cmd_disable
+off)
+  cmd_off
   ;;
 sudo)
   shift
