@@ -181,7 +181,8 @@ nnoremap <silent> [<Space> :call append(line('.')-1, '')<cr>
 
 " coding {{{2
 nnoremap <silent> g<cr> <cmd>make<cr>
-nnoremap f<cr> gg=G<C-o><C-o>
+nnoremap f<cr> m`gg=G``<cmd>up<cr>
+nnoremap <Leader>cf m`gg=G``
 
 " finder {{{2
 if s:has_fzf

@@ -19,6 +19,7 @@ return {
     init = function()
       local format = function()
         require("lazyvim.plugins.lsp.format").format({ force = true })
+        vim.cmd.update()
       end
       local keys = require("lazyvim.plugins.lsp.keymaps").get()
       keys[#keys + 1] = { "f<cr>", format, desc = "Format Document", has = "formatting" }
