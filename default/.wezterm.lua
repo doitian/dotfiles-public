@@ -45,6 +45,11 @@ local config = {
       mods = "CMD",
       action = wezterm.action.CloseCurrentPane({ confirm = true }),
     },
+    {
+      key = "Enter",
+      mods = "ALT",
+      action = wezterm.action.DisableDefaultAssignment,
+    },
   },
 }
 
