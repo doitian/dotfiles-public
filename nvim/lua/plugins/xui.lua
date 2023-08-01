@@ -42,7 +42,12 @@ return {
     opts = function(_, opts)
       opts.sections.lualine_z = nil
       table.insert(opts.sections.lualine_x, 2, {
-        "🛡️",
+        function()
+          return "🛡️"
+        end,
+        cond = function()
+          return vim.env.HTTP_PROXY ~= nil
+        end,
       })
     end,
   },
