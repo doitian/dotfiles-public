@@ -1,9 +1,6 @@
-*-vimbackup
-*.code-workspace
-*.marked
 *.pyc
 *.qf
-*.tags
+*~
 .*.sw?
 .DS_Store
 .Ulysses*
@@ -11,11 +8,8 @@
 .env
 .envrc
 .git
-.gitpod.yml
-.hugo_build.lock
-.ipynb_checkpoints
-.tmux-up.conf
-.tool-versions
+.index.md
+.tags.in
 .vim-spell-en.utf-8.add
 .vim-spell-en.utf-8.add.spl
 Session.vim
@@ -23,5 +17,3 @@ TAGS
 desktop.ini
 lmake.mk
 tags
-.tags.in
-.index.md

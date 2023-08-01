@@ -2,20 +2,6 @@
 
 export TERM_BACKGROUND="${TERM_BACKGROUND:-light}"
 
-# safe path
-SAFEBIN_SECRET=safebin
-if [ -f "$HOME/.safebin" ]; then
-  SAFEBIN_SECRET="safebin-$(cat "$HOME/.safebin")"
-fi
-function mksafebin() {
-  if [ -n "$SAFEBIN_SECRET" ] && [ -d .git ]; then
-    mkdir -p ".git/$SAFEBIN_SECRET"
-  else
-    echo "not available"
-    false
-  fi
-}
-
 if [ -z "$HOME" ]; then
   HOME="$(cd ~ && pwd)"
 fi
@@ -43,11 +29,7 @@ export ALTERNATE_EDITOR="vim"
 if [ -f /usr/libexec/java_home ]; then
   export JAVA_HOME=$(/usr/libexec/java_home)
 fi
-# export JAVA_OPTS="--add-modules=java.se.ee"
 
-if [ "$TERM" = "rxvt-unicode" ]; then
-  export TERM=rxvt-256color
-fi
 export EDITOR="vim"
 export FCEDIT="vim"
 export VISUAL="vim"
@@ -64,9 +46,6 @@ export PERL_LOCAL_LIB_ROOT="$PERL_LOCAL_LIB_ROOT:$HOME/.perl5";
 export PERL_MB_OPT="--install_base $HOME/.perl5";
 export PERL_MM_OPT="INSTALL_BASE=$HOME/.perl5";
 export PERL5LIB="$HOME/.perl5/lib/perl5:$PERL5LIB";
-
-# python
-export PIPENV_VERBOSITY=-1
 
 # R
 export R_LIBS="$HOME/.rlibs"
@@ -94,20 +73,13 @@ if [ "$TERM_BACKGROUND" = light ]; then
   export BAT_THEME='Coldark-Cold'
 fi
 
-# gpg
-if [[ -n "$SSH_CONNECTION" || -n "$GITPOD_HOST" ]]; then
-  export GPG_TTY="$(tty)"
-fi
-
 # homebrew
 export HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK=1
 
 # path
 if ! echo "$PATH" | grep -q ':/PATH:'; then
   export PATH="\
-.git/$SAFEBIN_SECRET/../../bin\
 :$HOME/bin\
-:$HOME/.local/bin\
 :$GOPATH/bin\
 :$HOME/.cargo/bin\
 :$HOME/.asdf/bin\
