@@ -2,6 +2,9 @@
 
 if [[ "$-" != *i* ]]; then return 0; fi
 
+if [[ $COLORTERM =~ ^(truecolor|24bit)$ ]]; then
+  export LAZY=1
+fi
 if [[ -n "$SSH_TTY" && -S "$SSH_AUTH_SOCK" ]]; then
   SSH_AGENT_FORWARD_AUTH_SOCK="$SSH_AUTH_SOCK"
 fi
