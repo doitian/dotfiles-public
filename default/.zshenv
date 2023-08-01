@@ -79,7 +79,7 @@ export HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK=1
 # path
 if ! echo "$PATH" | grep -q ':/PATH:'; then
   export PATH="\
-:$HOME/bin\
+$HOME/bin\
 :$GOPATH/bin\
 :$HOME/.cargo/bin\
 :$HOME/.asdf/bin\
