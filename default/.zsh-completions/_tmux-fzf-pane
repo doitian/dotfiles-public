@@ -1,0 +1,12 @@
+#compdef tmux-fzf-pane
+#description:fzf tmux select pane
+
+local expl
+local -a panes
+panes=( ${(f)"$(command tmux 2> /dev/null list-panes -F '#S\:#W.#P')"} )
+_arguments \
+  '-k[Kill selected panes]' \
+  '-p[Show preview window]' \
+  '-a[Show all panes in all sessions]' \
+  '-s[Show all panes in active session]' \
+  "::session:{_describe 'panes' panes}"

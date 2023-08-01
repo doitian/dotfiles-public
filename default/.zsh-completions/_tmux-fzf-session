@@ -1,0 +1,10 @@
+#compdef tmux-fzf-session
+#description:fzf tmux attach
+
+local expl
+local -a sessions
+sessions=( ${(f)"$(command tmux 2> /dev/null list-sessions -F '#S')"} )
+_arguments \
+  '-k[Kill selected sessions]' \
+  '-p[Show preview window]' \
+  "::session:{_describe 'sessions' sessions}"
