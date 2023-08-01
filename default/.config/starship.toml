@@ -25,6 +25,9 @@ disabled = false
 [nodejs]
 symbol = '🤖 '
 
+[env_var.HTTP_PROXY]
+format = '🛡️'
+
 [battery]
 full_symbol = "🔋 "
 charging_symbol = "⚡️ "
