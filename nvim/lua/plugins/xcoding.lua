@@ -28,7 +28,7 @@ return {
     },
     keys = {
       {
-        "<leader>fs",
+        "<leader>fS",
         function()
           require("luasnip.loaders").edit_snippet_files(edit_snippet_files_opts)
         end,

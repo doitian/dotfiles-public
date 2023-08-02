@@ -56,4 +56,18 @@ return {
       require("telescope").load_extension("zoxide")
     end,
   },
+
+  {
+    "benfowler/telescope-luasnip.nvim",
+    dependencies = {
+      { "nvim-telescope/telescope.nvim" },
+      { "L3MON4D3/LuaSnip" },
+    },
+    keys = {
+      { "<leader>fs", "<cmd>Telescope luasnip<cr>", desc = "Insert snippet" },
+    },
+    config = function()
+      require("telescope").load_extension("luasnip")
+    end,
+  },
 }
