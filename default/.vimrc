@@ -39,7 +39,7 @@ call plug#end()
 
 " Theme {{{1
 syntax on
-let g:PaperColor_Theme_Options = {'theme':{'default':{'transparent_background':1}}}
+let g:PaperColor_Theme_Options = { 'theme':{'default':{'transparent_background':1}} }
 silent! colorscheme PaperColor
 
 " Plugins Options {{{1
@@ -278,7 +278,7 @@ augroup vimrc_au
   autocmd SwapExists * let v:swapchoice = 'o'
 augroup END
 
-silent! source $HOME/.vimrc.local
+" Direnv {{{1
 if exists('$DIRENV_EXTRA_VIMRC')
   silent! source $DIRNEV_EXTRA_VIMRC
 fi
