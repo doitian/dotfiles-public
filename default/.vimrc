@@ -175,6 +175,7 @@ set wildcharm=<C-z>
 
 " editor {{{2
 nnoremap <silent> <C-s> <cmd>up<cr>
+inoremap <silent> <C-s> <cmd>up<cr><Esc>
 nnoremap <Leader>v `[v`]
 nnoremap <silent> ]<Space> :call append(line('.'), '')<cr>
 nnoremap <silent> [<Space> :call append(line('.')-1, '')<cr>
