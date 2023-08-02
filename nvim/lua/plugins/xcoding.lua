@@ -35,7 +35,26 @@ return {
         desc = "Edit Snippets",
       },
     },
+    config = function(_, opts)
+      local luasnip = require("luasnip")
+      luasnip.setup(opts)
+      luasnip.filetype_extend("typescript", { "tsdoc" })
+      luasnip.filetype_extend("javascript", { "jsdoc" })
+      luasnip.filetype_extend("lua", { "luadoc" })
+      luasnip.filetype_extend("python", { "python-docstring" })
+      luasnip.filetype_extend("rust", { "rustdoc" })
+      luasnip.filetype_extend("cs", { "csharpdoc" })
+      luasnip.filetype_extend("java", { "javadoc" })
+      luasnip.filetype_extend("sh", { "shelldoc" })
+      luasnip.filetype_extend("c", { "cdoc" })
+      luasnip.filetype_extend("cpp", { "cppdoc" })
+      luasnip.filetype_extend("php", { "phpdoc" })
+      luasnip.filetype_extend("kotlin", { "kdoc" })
+      luasnip.filetype_extend("ruby", { "rdoc" })
+      require("luasnip.loaders.from_vscode").lazy_load()
+    end,
   },
+
   {
     "doitian/x-snippets",
     event = "VeryLazy",
