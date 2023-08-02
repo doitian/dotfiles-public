@@ -88,7 +88,6 @@ set confirm
 set cursorline
 set display+=lastline
 set expandtab
-set nofoldenable
 set formatoptions=jcroqlnt
 set hidden
 set history=3000
