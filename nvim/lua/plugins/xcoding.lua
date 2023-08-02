@@ -48,26 +48,27 @@ return {
     "folke/flash.nvim",
     optional = true,
     keys = function(_, keys)
-      return vim.list_extend(
-        vim.tbl_filter(function(k)
-          return k[1] ~= "S"
-        end, keys),
+      for _, k in ipairs(keys) do
+        if k[1] == "S" then
+          k.mode = { "n", "o" }
+        end
+      end
+
+      return vim.list_extend(keys, {
+        -- use z becasue s is used by surround
         {
-          -- use z becasue s is used by surround
-          {
-            "z",
-            function()
-              require("flash").jump()
-            end,
-            mode = "o",
-            desc = "Flash",
-          },
-          { "ys", "gza", desc = "Add surrounding", remap = true },
-          { "S", "gza", desc = "Add surrounding", mode = "v", remap = true },
-          { "ds", "gzd", desc = "Delete surrounding", remap = true },
-          { "cs", "gzr", desc = "Replace surrounding", remap = true },
-        }
-      )
+          "z",
+          function()
+            require("flash").jump()
+          end,
+          mode = "o",
+          desc = "Flash",
+        },
+        { "ys", "gza", desc = "Add surrounding", remap = true },
+        { "S", "gza", desc = "Add surrounding", mode = "x", remap = true },
+        { "ds", "gzd", desc = "Delete surrounding", remap = true },
+        { "cs", "gzr", desc = "Replace surrounding", remap = true },
+      })
     end,
   },
 }
