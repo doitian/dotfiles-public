@@ -55,6 +55,21 @@ let g:mucomplete#chains = {
       \ }
 
 let g:vsnip_snippet_dir = expand('~/.dotfiles/repos/private/snippets/snippets')
+let g:vsnip_filetypes = {
+      \ 'typescript' : ['typescript', 'tsdoc'],
+      \ 'javascript' : ['javascript', 'jsdoc'],
+      \ 'lua' : ['lua', 'luadoc'],
+      \ 'python' : ['python', 'python#-docstring'],
+      \ 'rust' : ['rust', 'rustdoc'],
+      \ 'cs' : ['cs', 'csharpdoc'],
+      \ 'java' : ['java', 'javadoc'],
+      \ 'sh' : ['sh', 'shelldoc'],
+      \ 'c' : ['c', 'cdoc'],
+      \ 'cpp' : ['cpp', 'cppdoc'],
+      \ 'php' : ['php', 'phpdoc'],
+      \ 'kotlin' : ['kotlin', 'kdoc'],
+      \ 'ruby' : ['ruby', 'rdoc']
+      \ }
 exec 'set rtp+='..fnamemodify(g:vsnip_snippet_dir, ':h')
 
 " Functions & Commands {{{1
