@@ -42,7 +42,7 @@ require("lazy").setup({
     pattern = {},
     fallback = false,
   },
-  install = { colorscheme = { "catppuccin-latte", "tokyonight", "habamax" } },
+  install = { colorscheme = { "catppuccin-latte", "habamax" } },
   checker = { enabled = true }, -- automatically check for plugin updates
   performance = {
     rtp = {
