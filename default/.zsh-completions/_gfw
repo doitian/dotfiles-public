@@ -1,0 +1,6 @@
+#compdef gfw
+#description:shell proxy
+
+_arguments -C '1: :->cmds' '*:: :{ _normal }' && return 0
+_values "gfw command" on off
+_precommand
