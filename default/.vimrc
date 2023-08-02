@@ -73,6 +73,7 @@ command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile | silent
 command! -nargs=* Bm call <SID>BookmarkLine(<q-args>)
 if s:has_fzf
   command! -bang Zoxide call fzf#run(fzf#wrap('zoxide', {'source': 'zoxide query -l', 'sink': 'cd'}, <bang>0))
+  command! -bang Snippets call fzf#vsnip#complete(<bang>0)
 endif
 
 " Config {{{1
@@ -191,7 +192,8 @@ if s:has_fzf
   nnoremap <Leader>fb <cmd>Buffers<cr>
   nnoremap <Leader>, <cmd>Buffers<cr>
   nnoremap <Leader>fh <cmd>Files %:h<cr>
-  nnoremap <Leader>fs :Files <C-r>=g:vsnip_snippet_dir<cr><cr>
+  nnoremap <Leader>fS :Files <C-r>=g:vsnip_snippet_dir<cr><cr>
+  nnoremap <Leader>fs <cmd>Snippets<cr>
   nnoremap <Leader>fj <cmd>Zoxide<cr>
   nnoremap <Leader>sm <cmd>Marks<cr>
 else
@@ -200,7 +202,7 @@ else
   nnoremap <Leader>fb <cmd>ls<cr>:b<Space>
   nnoremap <Leader>, <cmd>ls<cr>:b<Space>
   nnoremap <Leader>fh :e %:h<C-z><C-z>
-  nnoremap <Leader>fs :e <C-r>=g:vsnip_snippet_dir<cr>/<C-z>
+  nnoremap <Leader>fS :e <C-r>=g:vsnip_snippet_dir<cr>/<C-z>
   nnoremap <Leader>sm <cmd>marks<cr>:norm '
 endif
 
