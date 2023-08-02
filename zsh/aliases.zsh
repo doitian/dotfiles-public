@@ -51,6 +51,8 @@ fi
 
 ##################################################
 # Utilities
+alias rg.="rg --hidden"
+alias fd.="fd --hidden"
 alias ping="ping -c 5"
 alias more="less"
 alias ltail="less +F -R"
