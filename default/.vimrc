@@ -281,4 +281,4 @@ augroup END
 " Direnv {{{1
 if exists('$DIRENV_EXTRA_VIMRC')
   silent! source $DIRNEV_EXTRA_VIMRC
-fi
+endif
