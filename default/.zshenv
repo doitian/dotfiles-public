@@ -1,18 +1,14 @@
 #!/usr/bin/env zsh
-if [ -n "${SHELL_ENV_LOADED:-}" ]; then
-  return
-fi
+[ -n "${SHELL_ENV_LOADED:-}" ] && return
 export SHELL_ENV_LOADED=1
 
-if [ -z "$HOME" ]; then
-  HOME="$(cd ~ && pwd)"
-fi
+[ -z "$HOME" ] && HOME="$(cd ~ && pwd)"
 
-if [ -n "$BASH_VERSION" ]; then
-  # include .bashrc if it exists
-  if [ -f "$HOME/.bashrc" ]; then
-    . "$HOME/.bashrc"
-  fi
+export LANG=en_US.UTF-8
+export LC_CTYPE=$LANG
+export LC_ALL=$LANG
+if [[ -n "$BASH_VERSION" && -f "$HOME/.bashrc" ]]; then
+  . "$HOME/.bashrc"
 fi
 
 # path
@@ -25,11 +21,13 @@ if [ -f /usr/bin/mdfind ]; then
 fi
 
 # theme
-export TERM_BACKGROUND="${TERM_BACKGROUND:-light}"
 export LESS='--RAW-CONTROL-CHARS --quiet --HILITE-UNREAD --ignore-case --long-prompt --no-init'
-export LANG=en_US.UTF-8
-export LC_CTYPE=$LANG
-export LC_ALL=$LANG
+export TERM_BACKGROUND="${TERM_BACKGROUND:-light}"
+unset BAT_THEME FZF_DEFAULT_OPTS
+if [ "$TERM_BACKGROUND" = light ]; then
+  export BAT_THEME='Coldark-Cold'
+  export FZF_DEFAULT_OPTS='--color light'
+fi
 
 # tools
 export __VIM_PROGRAM__=vim
@@ -71,12 +69,6 @@ fi
 # java
 if [ -f /usr/libexec/java_home ]; then
   export JAVA_HOME=$(/usr/libexec/java_home)
-fi
-
-# bat
-unset BAT_THEME
-if [ "$TERM_BACKGROUND" = light ]; then
-  export BAT_THEME='Coldark-Cold'
 fi
 
 # homebrew
