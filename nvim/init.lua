@@ -20,3 +20,7 @@ end, {})
 
 -- bootstrap lazy.nvim, LazyVim and your plugins
 require("config.lazy")
+
+if vim.env.DIRENV_EXTRA_VIMRC then
+  vim.cmd.source({ vim.env.DIRENV_EXTRA_VIMRC, mods = { emsg_silent = true } })
+end

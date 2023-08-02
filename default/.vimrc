@@ -279,3 +279,6 @@ augroup vimrc_au
 augroup END
 
 silent! source $HOME/.vimrc.local
+if exists('$DIRENV_EXTRA_VIMRC')
+  silent! source $DIRNEV_EXTRA_VIMRC
+fi
