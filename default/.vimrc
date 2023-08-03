@@ -92,13 +92,13 @@ if s:has_fzf
 endif
 
 " Config {{{1
-" sort /set (no)?/
+" :let @/ = "\\vset (no)?"
 set autoindent
 set autoread
 set autowrite
 set backspace=indent,eol,start
-set completeopt=menuone,noinsert
 set clipboard^=unnamedplus,unnamed
+set completeopt=menuone,noinsert
 set conceallevel=3
 set confirm
 set cursorline
@@ -121,8 +121,8 @@ set scrolloff=4
 set sessionoptions=buffers,curdir,tabpages,winsize,help,globals,skiprtp
 set shiftround
 set shiftwidth=2
-set shortmess-=S
 set shortmess+=WIc
+set shortmess-=S
 set sidescrolloff=8
 set smartcase
 set smartindent
