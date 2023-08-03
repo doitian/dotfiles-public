@@ -99,7 +99,3 @@ fi
 
 # disable the message that bash is not the default shell
 export BASH_SILENCE_DEPRECATION_WARNING=1
-
-if command -v starship &>/dev/null; then
-  eval "$(starship init bash)"
-fi
