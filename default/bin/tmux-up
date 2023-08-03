@@ -62,7 +62,7 @@ if [ -n "${FILE}" ]; then
   BASE=$(basename "$PWD" | sed 's/[^a-zA-Z0-9\-]//g')
   NAME=$(basename "$FILE" .conf)
 
-  if [ "$NAME" = 'tmux' ] || [ "$NAME" = '.tmux' ]; then
+  if [ "$NAME" = '.tmux-up' ]; then
     SESSION="$BASE"
   else
     SESSION="$BASE/$NAME"
