@@ -75,24 +75,39 @@ let g:vsnip_filetypes = {
       \ }
 exec 'set rtp+='..fnamemodify(g:vsnip_snippet_dir, ':h')
 
+let g:loaded_2html_plugin = 1
 let g:loaded_getscriptPlugin = 1
+let g:loaded_gzip = 1
+let g:loaded_logiPat = 1
+let g:loaded_tarPlugin = 1
+let g:loaded_vimballPlugin = 1
+let g:loaded_zipPlugin = 1
+let g:loaded_netrwPlugin = 1
 
 " Functions & Commands {{{1
 function! s:BookmarkLine(message)
-  let l:line = expand('%') . '|' . line('.') . ' col ' . col('.') . '| '
-        \ . (a:message ==# '' ? getline('.') : a:message)
+  let l:line = expand('%') . '|' . line('.') . ' col ' . col('.') . '| ' .
+        \ (a:message ==# '' ? getline('.') : a:message)
   call writefile([l:line], 'bookmarks.qf', 'a')
 endfunction
+function! s:LoadNetrw()
+  nunmap gx
+  xunmap gx
+  unlet g:loaded_netrwPlugin
+  runtime plugin/netrwPlugin.vim
+endfunction
 
-command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
-      \ | wincmd p | diffthis
+command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
+command! -nargs=+ -complete=shellcmd Man delc Man | runtime ftplugin/man.vim | Man <args>
 command! Delete call delete(expand('%')) | bdelete | let @# = bufnr('%')
-command! -nargs=1 -complete=file Move saveas <args>
-      \ | call delete(expand('#')) | exec 'bdelete #' | let @# = bufnr('%')
-command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile | silent file __viper__
+command! -nargs=1 -complete=file Move saveas <args> | call delete(expand('#')) |
+      \ exec 'bdelete #' | let @# = bufnr('%')
+command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile |
+      \ silent file __viper__
 command! -nargs=* Bm call <SID>BookmarkLine(<q-args>)
 if s:has_fzf
-  command! -bang Zoxide call fzf#run(fzf#wrap('zoxide', {'source': 'zoxide query -l', 'sink': 'cd'}, <bang>0))
+  command! -bang Zoxide call fzf#run(fzf#wrap('zoxide',
+        \ {'source': 'zoxide query -l', 'sink': 'cd'}, <bang>0))
   command! -bang Snippets call fzf#vsnip#complete(<bang>0)
 endif
 
@@ -200,6 +215,8 @@ nnoremap <Leader>v `[v`]
 nnoremap <silent> ]<Space> :call append(line('.'), '')<cr>
 nnoremap <silent> [<Space> :call append(line('.')-1, '')<cr>
 nnoremap Y y$
+nmap gx <cmd>call <SID>LoadNetrw()<cr>gx
+xmap gx <cmd>call <SID>LoadNetrw()<cr>gx
 
 " coding {{{2
 nnoremap <silent> g<cr> <cmd>Dispatch!<cr>
@@ -285,12 +302,16 @@ filetype indent plugin on
 augroup vimrc_au
   autocmd!
 
+  autocmd CmdUndefined Lexplore call s:LoadNetrw()
+
   autocmd FileType gitcommit,markdown setlocal spell
   autocmd FileType markdown setlocal suffixesadd=.md
   autocmd FileType vim,beancount,i3config setlocal foldmethod=marker
   " edit qf: set ma | ... | cgetb
   autocmd FileType qf
-        \ if &buftype ==# 'quickfix' | nnoremap <silent> <buffer> q <cmd>cclose<cr> | endif |
+        \ if &buftype ==# 'quickfix' |
+        \   nnoremap <silent> <buffer> q <cmd>cclose<cr> |
+        \ endif |
         \ setlocal errorformat=%f\|%l\ col\ %c\|%m
 
   autocmd BufNewFile,BufRead PULLREQ_EDITMSG setlocal filetype=gitcommit
@@ -299,7 +320,8 @@ augroup vimrc_au
   autocmd BufNewFile,BufRead *.wiki setlocal filetype=wiki.text
   autocmd BufNewFile,BufRead *.anki setlocal filetype=anki.html
   autocmd BufNewFile,BufRead *.qf setlocal filetype=qf
-  autocmd BufNewFile,BufRead */gopass-*/* setlocal filetype=gopass noswapfile nobackup noundofile
+  autocmd BufNewFile,BufRead */gopass-*/*
+        \ setlocal filetype=gopass noswapfile nobackup noundofile
 
   autocmd BufReadPost *
         \ if line("'\"") > 1 && line("'\"") <= line('$') && &filetype !=# 'gitcommit' |
