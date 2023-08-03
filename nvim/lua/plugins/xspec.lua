@@ -30,11 +30,16 @@ return {
 
   {
     "tpope/vim-dispatch",
-    cmd = { "FocusDispatch", "Dispatch", "Start", "Spawn" },
+    cmd = { "Make", "Dispatch", "Start", "FocusDispatch" },
     keys = {
-      { "g<cr>", "<cmd>Dispatch<cr>", desc = "Dispatch" },
-      { "m<cr>", "<cmd>Dispatch<cr>", desc = "Make" },
+      { "m<cr>", "<cmd>Make<cr>", desc = "Make" },
+      { "m!", "<cmd>Make!<cr>", desc = "Make!" },
+      { "`<cr>", "<cmd>Dispatch<cr>", desc = "Dispatch" },
+      { "`!", "<cmd>Dispatch!<cr>", desc = "Dispatch!" },
       { "'<cr>", "<cmd>Start<cr>", desc = "Start" },
+      { "'!", "<cmd>Start!<cr>", desc = "Start!" },
+
+      { "g<cr>", "<cmd>Dispatch!<cr>", desc = "Dispatch!" },
     },
     init = function()
       vim.g.dispatch_no_maps = 1

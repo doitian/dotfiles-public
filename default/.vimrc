@@ -15,14 +15,15 @@ Plug 'editorconfig/editorconfig-vim'
 Plug 'justinmk/vim-sneak'
 Plug 'thinca/vim-visualstar' " * # g* g#
 Plug 'tomtom/tcomment_vim' " gc
+Plug 'tpope/vim-dispatch', { 'on': ['Make', 'Dispatch', 'Start', 'FocusDispatch'] }
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround' " ys s
 
 Plug 'hrsh7th/vim-vsnip'
 Plug 'hrsh7th/vim-vsnip-integ'
-Plug 'rafamadriz/friendly-snippets'
 Plug 'lifepillar/vim-mucomplete'
+Plug 'rafamadriz/friendly-snippets'
 
 if has('win32')
   Plug 'PProvost/vim-ps1'
@@ -46,6 +47,8 @@ silent! colorscheme PaperColor
 let g:netrw_winsize = -40
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
+
+let g:dispatch_no_maps = 1
 
 let g:mucomplete#no_mappings = 1
 let g:mucomplete#enable_auto_at_startup = 1
@@ -197,7 +200,14 @@ nnoremap <silent> [<Space> :call append(line('.')-1, '')<cr>
 nnoremap Y y$
 
 " coding {{{2
-nnoremap <silent> g<cr> <cmd>make<cr>
+nnoremap <silent> g<cr> <cmd>Dispatch!<cr>
+nnoremap <silent> m<cr> <cmd>Make<cr>
+nnoremap <silent> m! <cmd>Make!<cr>
+nnoremap <silent> `<cr> <cmd>Dispatch<cr>
+nnoremap <silent> `! <cmd>Dispatch!<cr>
+nnoremap <silent> '<cr> <cmd>Start<cr>
+nnoremap <silent> '! <cmd>Start!<cr>
+
 nnoremap f<cr> m`gg=G``<cmd>up<cr>
 nnoremap <Leader>cf m`gg=G``
 
@@ -298,5 +308,5 @@ augroup END
 
 " Direnv {{{1
 if exists('$DIRENV_EXTRA_VIMRC')
-  silent! source $DIRNEV_EXTRA_VIMRC
+  silent! source $DIRENV_EXTRA_VIMRC
 endif
