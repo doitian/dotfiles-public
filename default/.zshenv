@@ -31,7 +31,7 @@ fi
 
 # tools
 export __VIM_PROGRAM__=vim
-if type -f nvim &> /dev/null; then
+if command -v nvim &> /dev/null; then
   export __VIM_PROGRAM__=nvim
 fi
 export EDITOR="$__VIM_PROGRAM__"

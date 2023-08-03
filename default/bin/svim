@@ -9,10 +9,10 @@ trap "rm -rf $DIR" exit
 
 VIM="${__VIM_PROGRAM__:-nvim}"
 if [ "${1:-}" = "-g" ]; then
-  if type -f wezterm-gui &>/dev/null; then
+  if command -v wezterm-gui &>/dev/null; then
     exec &>/dev/null
     VIM="wezterm-gui start --always-new-process -- $VIM"
-  elif type -f gvim &>/dev/null; then
+  elif command -v gvim &>/dev/null; then
     VIM=gvim
   fi
   shift
