@@ -1,0 +1,6 @@
+defaults:
+  - latex-cf
+variables:
+  CJKmainfont: Noto Sans CJK SC
+  CJKsansfont: Noto Sans CJK SC
+  CJKmonofont: Noto Sans CJK SC

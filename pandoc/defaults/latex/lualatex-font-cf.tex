@@ -1,0 +1,8 @@
+\directlua{
+  luaotfload.add_fallback("fallback-sans", { "LXGW Bright GB:mode=harf;", "Twitter Color Emoji:mode=harf;" })
+  luaotfload.add_fallback("fallback-serif", { "LXGW Bright GB:mode=harf;", "Twitter Color Emoji:mode=harf;" })
+  luaotfload.add_fallback("fallback-mono", { "LXGW Bright GB:mode=harf;", "Twitter Color Emoji:mode=harf;" })
+}
+\setmainfont{Greycliff CF}[RawFeature={fallback=noto-sans}]
+\setsansfont{Artifex Hand CF}[RawFeature={fallback=noto-sans}]
+\setmonofont{Cartograph CF}[RawFeature={fallback=noto-mono}]

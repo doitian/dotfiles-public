@@ -1,0 +1,8 @@
+\directlua{
+  luaotfload.add_fallback("noto-sans", { "Noto Sans CJK SC:mode=harf;", "JetBrains Mono:", "Twitter Color Emoji:mode=harf;" })
+  luaotfload.add_fallback("noto-serif", { "Noto Serif CJK SC:mode=harf;", "JetBrains Mono:", "Twitter Color Emoji:mode=harf;" })
+  luaotfload.add_fallback("noto-mono", { "Noto Sans CJK SC:mode=harf;", "JetBrains Mono:", "Twitter Color Emoji:mode=harf;" })
+}
+\setmainfont{Greycliff CF}[RawFeature={fallback=noto-sans}]
+\setsansfont{Artifex Hand CF}[RawFeature={fallback=noto-sans}]
+\setmonofont{Cartograph CF}[RawFeature={fallback=noto-mono}]
