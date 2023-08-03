@@ -150,9 +150,9 @@ set winwidth=78
 set nowrap
 
 if !has("nvim")
-  set backupdir=$HOME/.vim/files/backup//,.
-  set directory=$HOME/.vim/files/swap//,.
-  set undodir=$HOME/.vim/files/undo//
+  set backupdir=.,$HOME/.local/state/vim/backup//
+  set directory=.,$HOME/.local/state/vim/swap//
+  set undodir=$HOME/.local/state/vim/undo//
 endif
 
 if has('multi_byte') && &encoding ==# 'utf-8'
