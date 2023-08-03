@@ -7,7 +7,7 @@ local config = {
     "Cartograph CF",
     "LXGW Bright GB",
   }),
-  font_size = 15,
+  font_size = 16,
 
   hide_tab_bar_if_only_one_tab = true,
 
