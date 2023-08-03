@@ -2,6 +2,11 @@ local wezterm = require("wezterm")
 
 local config = {
   color_scheme = "Catppuccin Latte",
+  colors = {
+    tab_bar = {
+      inactive_tab_edge = "#6B5294",
+    },
+  },
 
   font = wezterm.font_with_fallback({
     "Cartograph CF",
@@ -9,13 +14,15 @@ local config = {
   }),
   font_size = 16,
 
-  hide_tab_bar_if_only_one_tab = true,
-
   initial_rows = 36,
   initial_cols = 90,
-
+  hide_tab_bar_if_only_one_tab = true,
   window_frame = {
-    font_size = 12,
+    font = wezterm.font_with_fallback({
+      "Artifex Hand CF",
+      "LXGW Bright GB",
+    }),
+    font_size = 15,
   },
   window_padding = {
     left = 0,
