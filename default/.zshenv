@@ -28,6 +28,7 @@ if [ "$TERM_BACKGROUND" = light ]; then
   export BAT_THEME='Coldark-Cold'
   export FZF_DEFAULT_OPTS='--color light'
 fi
+export DIRENV_LOG_FORMAT="$(printf "\033[1;30m.- %%s\033[0m")"
 
 # tools
 export __VIM_PROGRAM__=vim
