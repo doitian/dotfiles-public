@@ -10,3 +10,4 @@ opt.timeoutlen = 700
 opt.visualbell = true
 opt.wildignore = "*.swp,*.bak,*.pyc,*.class,*.beam"
 opt.winwidth = 78
+opt.grepprg = "rg --hidden -g '!.git' --vimgrep"

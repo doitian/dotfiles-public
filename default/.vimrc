@@ -165,7 +165,7 @@ endif
 
 if executable('rg')
   set grepformat=%f:%l:%c:%m
-  set grepprg=rg\ --hidden\ -g\ '!.git'\ --vimgrep\ $*
+  set grepprg=rg\ --hidden\ -g\ '!.git'\ --vimgrep
 endif
 
 if exists('$WSLENV')
