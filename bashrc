@@ -38,7 +38,7 @@ esac
 # uncomment for a colored prompt, if the terminal has the capability; turned
 # off by default to not distract the user: the focus in a terminal window
 # should be on the output of commands, not on the prompt
-#force_color_prompt=yes
+force_color_prompt=yes
 
 if [ -n "$force_color_prompt" ]; then
   if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
@@ -64,20 +64,25 @@ xterm* | rxvt*)
   PS1="\[\e]0;\u@\h: \w\a\]$PS1"
   ;;
 *) ;;
-
 esac
 
-# enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
-  test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-  alias ls='ls --color=auto'
-  #alias dir='dir --color=auto'
-  #alias vdir='vdir --color=auto'
+# Default coloring for BSD-based ls
+export LSCOLORS="Gxfxcxdxbxegedabagacad"
 
-  alias grep='grep --color=auto'
-  alias fgrep='fgrep --color=auto'
-  alias egrep='egrep --color=auto'
+# Default coloring for GNU-based ls
+if [[ -z "$LS_COLORS" ]]; then
+  # Define LS_COLORS via dircolors if available. Otherwise, set a default
+  # equivalent to LSCOLORS (generated via https://geoff.greer.fm/lscolors)
+  if command -v dircolors &>/dev/null; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+  else
+    export LS_COLORS="di=1;36:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43"
+  fi
 fi
+
+alias ls='ls --color=auto'
+ls -G -d / &>/dev/null && alias ls='ls -G' || true
+alias grep='grep --color=auto'
 
 alias ll='ls -l'
 
@@ -90,4 +95,11 @@ if ! shopt -oq posix; then
   elif [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
   fi
+fi
+
+# disable the message that bash is not the default shell
+export BASH_SILENCE_DEPRECATION_WARNING=1
+
+if command -v starship &>/dev/null; then
+  eval "$(starship init bash)"
 fi
