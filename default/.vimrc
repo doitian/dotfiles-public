@@ -75,6 +75,8 @@ let g:vsnip_filetypes = {
       \ }
 exec 'set rtp+='..fnamemodify(g:vsnip_snippet_dir, ':h')
 
+let g:loaded_getscriptPlugin = 1
+
 " Functions & Commands {{{1
 function! s:BookmarkLine(message)
   let l:line = expand('%') . '|' . line('.') . ' col ' . col('.') . '| '
