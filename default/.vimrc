@@ -194,6 +194,7 @@ inoremap <silent> <C-s> <cmd>up<cr><Esc>
 nnoremap <Leader>v `[v`]
 nnoremap <silent> ]<Space> :call append(line('.'), '')<cr>
 nnoremap <silent> [<Space> :call append(line('.')-1, '')<cr>
+nnoremap Y y$
 
 " coding {{{2
 nnoremap <silent> g<cr> <cmd>make<cr>
