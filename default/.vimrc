@@ -209,14 +209,14 @@ set pastetoggle=<F2>
 set wildcharm=<C-z>
 
 " editor {{{2
-nnoremap <silent> <C-s> <cmd>up<cr>
-inoremap <silent> <C-s> <cmd>up<cr><Esc>
+nnoremap <C-s> <cmd>up<cr>
+inoremap <C-s> <cmd>up<cr><Esc>
 nnoremap <Leader>v `[v`]
-nnoremap <silent> ]<Space> :call append(line('.'), '')<cr>
-nnoremap <silent> [<Space> :call append(line('.')-1, '')<cr>
 nnoremap Y y$
 nmap gx <cmd>call <SID>LoadNetrw()<cr>gx
 xmap gx <cmd>call <SID>LoadNetrw()<cr>gx
+nnoremap ]<Space> <cmd>call append(line('.'), repeat([''], v:count1))<cr>
+nnoremap [<Space> <cmd>call append(line('.')-1, repeat([''], v:count1))<cr>
 
 " coding {{{2
 nnoremap <silent> g<cr> <cmd>Dispatch!<cr>
@@ -237,18 +237,18 @@ if s:has_fzf
   nnoremap <Leader>fb <cmd>Buffers<cr>
   nnoremap <Leader>, <cmd>Buffers<cr>
   nnoremap <Leader>fh <cmd>Files %:h<cr>
-  nnoremap <Leader>fS :Files <C-r>=g:vsnip_snippet_dir<cr><cr>
+  nnoremap <Leader>fS <cmd>exe 'Files '.g:vsnip_snippet_dir<cr>
   nnoremap <Leader>fs <cmd>Snippets<cr>
   nnoremap <Leader>fj <cmd>Zoxide<cr>
   nnoremap <Leader>sm <cmd>Marks<cr>
 else
-  nnoremap <Leader><Space> :e <C-z>
-  nnoremap <Leader>ff :e <C-z>
-  nnoremap <Leader>fb <cmd>ls<cr>:b<Space>
-  nnoremap <Leader>, <cmd>ls<cr>:b<Space>
-  nnoremap <Leader>fh :e %:h<C-z><C-z>
-  nnoremap <Leader>fS :e <C-r>=g:vsnip_snippet_dir<cr>/<C-z>
-  nnoremap <Leader>sm <cmd>marks<cr>:norm '
+  nnoremap <Leader><Space> :<C-u>e <C-z>
+  nnoremap <Leader>ff :<C-u>e <C-z>
+  nnoremap <Leader>fb <cmd>ls<cr>:<C-u>b<Space>
+  nnoremap <Leader>, <cmd>ls<cr>:<C-u>b<Space>
+  nnoremap <Leader>fh :<C-u>e %:h<C-z><C-z>
+  nnoremap <Leader>fS :<C-u>e <C-r>=g:vsnip_snippet_dir<cr>/<C-z>
+  nnoremap <Leader>sm <cmd>marks<cr>:<C-u>norm '
 endif
 
 " buffer {{{2
