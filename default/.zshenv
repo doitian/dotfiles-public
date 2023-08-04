@@ -1,4 +1,3 @@
-#!/usr/bin/env zsh
 [ -n "${SHELL_ENV_LOADED:-}" ] && return
 export SHELL_ENV_LOADED=1
 
