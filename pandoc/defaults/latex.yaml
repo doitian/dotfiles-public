@@ -2,6 +2,6 @@ defaults:
   - latex-base
 pdf-engine: xelatex
 variables:
-  mainfont: IBM Plex Sans
+  mainfont: Noto Sans
   sansfont: Lato
   monofont: JetBrains Mono
