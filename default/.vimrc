@@ -39,7 +39,6 @@ endif
 call plug#end()
 
 " Theme {{{1
-syntax on
 let g:PaperColor_Theme_Options = { 'theme':{'default':{'transparent_background':1}} }
 silent! colorscheme PaperColor
 
@@ -297,8 +296,6 @@ imap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
 smap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
 
 " Filetype specific handling {{{1
-filetype indent plugin on
-
 augroup vimrc_au
   autocmd!
 
