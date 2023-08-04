@@ -9,7 +9,11 @@ if [[ -n "$BASH_VERSION" && -f "$HOME/.bashrc" ]]; then
 fi
 
 # path
-export PATH="$PATH:$HOME/bin:$GOPATH/bin:$HOME/.cargo/bin:$HOME/.asdf/bin:$HOME/.node-packages/bin:$HOME/.local/share/nvim/mason/bin:/usr/local/bin"
+export GOPATH="$HOME/codebase/gopath"
+export PATH="${PATH:-/bin:/usr/bin}:$HOME/bin:$GOPATH/bin:$HOME/.cargo/bin:$HOME/.asdf/bin:$HOME/.node-packages/bin:$HOME/.local/share/nvim/mason/bin:/usr/local/bin"
+if [ -n "$VSCODE_RESOLVING_ENVIRONMENT" ]; then
+  export PATH="$PATH:$HOME/.asdf/shims"
+fi
 
 # lang
 export LANG=en_US.UTF-8
@@ -60,9 +64,6 @@ export PERL5LIB="$HOME/.perl5/lib/perl5:$PERL5LIB";
 
 # R
 export R_LIBS="$HOME/.rlibs"
-
-# golang
-export GOPATH="$HOME/codebase/gopath"
 
 # rust
 if [ type rustc &> /dev/null ]; then
