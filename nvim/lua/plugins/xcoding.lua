@@ -35,9 +35,12 @@ return {
         desc = "Edit Snippets",
       },
     },
-    config = function(_, opts)
+  },
+  {
+    "rafamadriz/friendly-snippets",
+    optional = true,
+    config = function()
       local luasnip = require("luasnip")
-      luasnip.setup(opts)
       luasnip.filetype_extend("typescript", { "tsdoc" })
       luasnip.filetype_extend("javascript", { "jsdoc" })
       luasnip.filetype_extend("lua", { "luadoc" })
@@ -54,7 +57,6 @@ return {
       require("luasnip.loaders.from_vscode").lazy_load()
     end,
   },
-
   {
     "doitian/x-snippets",
     event = "VeryLazy",
