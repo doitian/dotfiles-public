@@ -4,15 +4,17 @@ export SHELL_ENV_LOADED=1
 
 [ -z "$HOME" ] && HOME="$(cd ~ && pwd)"
 
-export LANG=en_US.UTF-8
-export LC_CTYPE=$LANG
-export LC_ALL=$LANG
 if [[ -n "$BASH_VERSION" && -f "$HOME/.bashrc" ]]; then
   . "$HOME/.bashrc"
 fi
 
 # path
 export PATH="$PATH:$HOME/bin:$GOPATH/bin:$HOME/.cargo/bin:$HOME/.asdf/bin:$HOME/.node-packages/bin:$HOME/.local/share/nvim/mason/bin:/usr/local/bin"
+
+# lang
+export LANG=en_US.UTF-8
+export LC_CTYPE=$LANG
+export LC_ALL=$LANG
 
 # ulimit
 if [ -f /usr/bin/mdfind ]; then
