@@ -8,4 +8,12 @@ return {
   -- { import = "lazyvim.plugins.extras.ui.mini-animate" },
   { import = "lazyvim.plugins.extras.util.mini-hipatterns" },
   { import = "lazyvim.plugins.extras.util.project" },
+
+  {
+    "ahmedkhalf/project.nvim",
+    optional = true,
+    opts = {
+      patterns = { ".git", "!=.oh-my-zsh", "!=.asdf" },
+    },
+  },
 }
