@@ -49,6 +49,7 @@ return {
       luasnip.filetype_extend("cs", { "csharpdoc" })
       luasnip.filetype_extend("java", { "javadoc" })
       luasnip.filetype_extend("sh", { "shelldoc" })
+      luasnip.filetype_extend("zsh", { "shelldoc" })
       luasnip.filetype_extend("c", { "cdoc" })
       luasnip.filetype_extend("cpp", { "cppdoc" })
       luasnip.filetype_extend("php", { "phpdoc" })
