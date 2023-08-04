@@ -318,7 +318,7 @@ augroup vimrc_au
   autocmd BufNewFile,BufRead *.anki setlocal filetype=anki.html
   autocmd BufNewFile,BufRead *.qf setlocal filetype=qf
   autocmd BufNewFile,BufRead */gopass-*/*
-        \ setlocal filetype=gopass noswapfile nobackup noundofile
+        \ setlocal filetype=gopass.yaml noswapfile nobackup noundofile
 
   autocmd BufReadPost *
         \ if line("'\"") > 1 && line("'\"") <= line('$') && &filetype !=# 'gitcommit' |

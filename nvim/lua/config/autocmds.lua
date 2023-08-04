@@ -30,7 +30,7 @@ autocmd("FileType", { "qf" }, function()
 end)
 
 autocmd({ "BufNewFile", "BufRead" }, "*/gopass-*/*", function()
-  vim.opt_local.filetype = "gopass"
+  vim.opt_local.filetype = "gopass.yaml"
   vim.opt_local.swapfile = false
   vim.opt_local.backup = false
   vim.opt_local.undofile = false
