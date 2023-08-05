@@ -31,7 +31,6 @@ endif
 
 let s:has_fzf = executable('fzf')
 if s:has_fzf
-  let s:fzf_opts = { 'on': ['FZF', 'Files', 'Buffers'] }
   Plug 'junegunn/fzf'
   Plug 'junegunn/fzf.vim'
 endif
@@ -111,7 +110,6 @@ command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile |
 if s:has_fzf
   command! -bang Zoxide call fzf#run(fzf#wrap('zoxide',
         \ {'source': 'zoxide query -l', 'sink': 'cd'}, <bang>0))
-  command! -bang Snippets call fzf#vsnip#complete(<bang>0)
 endif
 
 " Config {{{1
