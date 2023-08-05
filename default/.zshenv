@@ -21,8 +21,8 @@ export LC_ALL=$LANG
 
 # ulimit
 if [ -f /usr/bin/mdfind ]; then
-  ulimit -n 200000 &> /dev/null
-  ulimit -u 2048 &> /dev/null
+  ulimit -n 200000 &>/dev/null
+  ulimit -u 2048 &>/dev/null
 fi
 
 # theme
@@ -76,3 +76,6 @@ fi
 
 # homebrew
 export HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK=1
+
+# zoxide
+export _ZO_EXCLUDE_DIRS="$HOME/Public"
