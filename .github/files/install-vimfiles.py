@@ -2,12 +2,19 @@ import shutil
 from pathlib import Path
 
 home = Path('..')
-dotvim = home / '.vim'
+(home / '.config').mkdir(parents=True, exist_ok=True)
 
-shutil.rmtree(dotvim, ignore_errors=True)
+dotvim = home / '.vim'
+dotnvim = home / '.config' / '.nvim'
 
 shutil.copyfile('vimrc', home / '.vimrc')
+
+shutil.rmtree(dotvim, ignore_errors=True)
 shutil.copytree('vim', dotvim)
 
+shutil.rmtree(dotnvim, ignore_errors=True)
+shutil.copytree('nvim', dotnvim)
+
+state_dir = home / '.local' / 'state' / 'vim'
 for dir in ['backup', 'swap', 'undo']:
-    (dotvim / 'files' / dir).mkdir(parents=True)
+    (state_dir / dir).mkdir(parents=True, exist_ok=True)

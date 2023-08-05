@@ -2,7 +2,7 @@ name: Package Vim files
 
 on:
   push:
-    paths: 'default/.vimrc'
+    paths: "default/.vimrc"
 
   workflow_dispatch:
 
@@ -18,11 +18,11 @@ jobs:
 
       - name: Setup vimrc
         run: |
-          cp default/.vimrc ~/.vimrc
-          mkdir -p ~/.vim/backup
-          mkdir -p ~/.vim/undo
-          mkdir -p ~/.vim/swap
+          mkdir -p ~/.config
+          ln -snf "${{ github.workspace }}/default/.vimrc" ~/.vimrc
+          ln -snf "${{ github.workspace }}/nvim" ~/.config/nvim
           mkdir -p ~/.vim/autoload
+          mkdir -p ~/.local/state/vim/{backup,swap,undo}
           curl -sSLo ~/.vim/autoload/plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
       - name: Install Vim packages
@@ -36,9 +36,9 @@ jobs:
 
           cp default/.vimrc vimfiles/vimrc
 
-          mkdir -p vimfiles/vim
-          mv default/.vim/scripts vimfiles/vim
-          mv ~/.vim/autoload vimfiles/vim
+          mkdir -p vimfiles/{vim,nvim}
+          mv ~/.vim/autoload vimfiles/vim/
+          mv nvim/{after,local,macros} vimfiles/nvim/
           rsync -avu --delete --progress -h --copy-links --exclude '.git' ~/.vim/plugged vimfiles/vim/
 
       - name: Upload Vim files
