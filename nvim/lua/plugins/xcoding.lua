@@ -1,21 +1,17 @@
 -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/coding.lua
 
-local snippets_dir = vim.fn.expand("~/.dotfiles/repos/private/snippets")
-local lazyroot_dir = vim.fn.stdpath("data") .. "/lazy"
-
+local snippets_dir = vim.fn.stdpath("config") .. "/local/iy-snippets.vim/snippets/"
 local edit_snippet_files_opts = {
   format = function(file)
-    return file:gsub(snippets_dir, "x-snippets:/"):gsub(lazyroot_dir, "$lazy:/")
+    return file:gsub(".*/(.+)/snippets/", "%1 -> ")
   end,
-  extend = function(ft, paths)
-    for _, path in ipairs(paths) do
-      if path:find(snippets_dir, 1, true) == 1 then
-        return {}
-      end
+  extend = function(ft)
+    local filename = ft .. ".json"
+    local path = snippets_dir .. filename
+    if vim.fn.filereadable(path) == 0 then
+      return { { "(CREATE) " .. filename, path } }
     end
-
-    local newpath = "/snippets/" .. ft .. ".json"
-    return { { "(CREATE) x-snippets:/" .. newpath, snippets_dir .. newpath } }
+    return {}
   end,
 }
 
