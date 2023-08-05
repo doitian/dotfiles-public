@@ -26,8 +26,8 @@ return {
   {
     "christoomey/vim-titlecase",
     keys = {
-      { "<Leader>gz", "<Plug>Titlecase", mode = { "n", "x" }, desc = "Titlecase" },
-      { "<Leader>gzz", "<Plug>TitlecaseLine", desc = "which_key_ignore" },
+      { "<leader>gz", "<Plug>Titlecase", mode = { "n", "x" }, desc = "Titlecase" },
+      { "<leader>gzz", "<Plug>TitlecaseLine", desc = "which_key_ignore" },
     },
   },
 
