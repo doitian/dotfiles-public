@@ -8,7 +8,7 @@ return {
   {
     "doitian/iy-nano-fs.vim",
     dev = true,
-    cmd = { "Delete", "Remove" },
+    cmd = { "Delete", "Move" },
   },
 
   {
