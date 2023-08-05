@@ -11,12 +11,6 @@ local function autocmd(event, pattern, callback)
   })
 end
 
-autocmd("FileType", "markdown", function()
-  -- set path+=**
-  vim.opt_local.suffixesadd = ".md"
-  vim.opt_local.includeexpr = [[substitute(v:fname, "^\\[\\([^|]*\\).*\\]$", "\\1", "")]]
-end)
-
 autocmd("FileType", { "vim", "beancount", "i3config" }, function()
   vim.opt_local.foldmethod = "marker"
 end)

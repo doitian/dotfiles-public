@@ -305,8 +305,7 @@ augroup vimrc_au
 
   autocmd CmdUndefined Lexplore call s:LoadNetrw()
 
-  autocmd FileType gitcommit,markdown setlocal spell
-  autocmd FileType markdown setlocal suffixesadd=.md
+  autocmd FileType gitcommit,markdown setlocal spell wrap
   autocmd FileType vim,beancount,i3config setlocal foldmethod=marker
 
   " edit qf: set ma | ... | cgetb
