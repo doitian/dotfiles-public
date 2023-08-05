@@ -1,2 +1,3 @@
 setlocal suffixesadd=.md
-setlocal includeexpr=substitute(v:fname, "^\\[\\([^|]*\\).*\\]$", "\\1", "")
+setlocal isfname+=32
+let &l:includeexpr = 'substitute(v:fname,"^\\[*\\([^\\]|]*\\).*","\\1","")'
