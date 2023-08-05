@@ -244,8 +244,8 @@ if s:has_fzf
   nnoremap <Leader>sm <cmd>Marks<cr>
   nnoremap <Leader>sb <cmd>BLines<cr>
   nnoremap <Leader>sB <cmd>Lines<cr>
-  nnoremap <Leader>ss <cmd>BTags<cr>
-  nnoremap <Leader>sS <cmd>Tags<cr>
+  nnoremap <Leader>si <cmd>BTags<cr>
+  nnoremap <Leader>sI <cmd>Tags<cr>
   nnoremap <Leader>sg <cmd>Rg<cr>
 else
   nnoremap <Leader><Space> :<C-u>e <C-z>

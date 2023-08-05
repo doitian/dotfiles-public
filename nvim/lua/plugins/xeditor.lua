@@ -14,6 +14,12 @@ return {
       { "<leader>fF", Util.telescope("find_files", { cwd = false }), desc = "Find Files (cwd)" },
       { "<leader>fh", Util.telescope("find_files", { cwd = "%:h" }), desc = "Find Files Here" },
       { "<leader>sB", "<cmd>Telescope live_grep grep_open_files=true<cr>", desc = "All Buffers" },
+      {
+        "<leader>si",
+        "<cmd>Telescope current_buffer_ctags auto<cr>",
+        desc = "BTags",
+      },
+      { "<leader>sI", "<cmd>Telescope tags<cr>", desc = "Tags" },
     },
     opts = {
       defaults = {
@@ -36,5 +42,8 @@ return {
         },
       },
     },
+    config = function()
+      require("telescope").load_extension("current_buffer_ctags")
+    end,
   },
 }

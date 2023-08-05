@@ -1,4 +1,3 @@
---recurse=yes
 --tag-relative=yes
 --exclude=.git
 --exclude=tmp
@@ -19,6 +18,6 @@
 --regex-JavaScript=/^export[ \t]+(default[ \t]+)?class[ \t]+([A-Za-z0-9_$]+)/\2/c,classes/
 --langdef=Markdown
 --langmap=Markdown:.md
---regex-Markdown=/^#[ \t]*(.*)/\1/c,chapters/
---regex-Markdown=/^##[ \t]*(.*)/\1/s,sections/
---regex-Markdown=/^###+[ \t]*(.*)/\1/u,subsections/
+--regex-Markdown=/^#[ \t]+(.*)/\1/c,chapters/
+--regex-Markdown=/^##[ \t]+(.*)/\1/s,sections/
+--regex-Markdown=/^###+[ \t]+(.*)/\1/u,subsections/
