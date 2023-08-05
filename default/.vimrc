@@ -336,5 +336,5 @@ augroup END
 
 " Direnv {{{1
 if exists('$DIRENV_EXTRA_VIMRC')
-  silent! source $DIRENV_EXTRA_VIMRC
+  source $DIRENV_EXTRA_VIMRC
 endif
