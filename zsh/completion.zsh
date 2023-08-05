@@ -12,4 +12,4 @@ fi
 
 compdef _precommand ts
 
-autoload -Uz _fzf_complete_gopass
+autoload -Uz _fzf_complete_gopass _fzf_complete_j
