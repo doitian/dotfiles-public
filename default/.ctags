@@ -17,3 +17,8 @@
 --regex-Rust=/^[ \t]*macro_rules![ \t]+([a-zA-Z0-9_]+)/\1/d,macros,macro definitions/
 --regex-JavaScript=/^export[ \t]+(default[ \t]+)?(async[ \t]+)?function\*?[ \t]+([A-Za-z0-9_$]+)[ \t]*\([^)]*\)/\3/f,functions/
 --regex-JavaScript=/^export[ \t]+(default[ \t]+)?class[ \t]+([A-Za-z0-9_$]+)/\2/c,classes/
+--langdef=Markdown
+--langmap=Markdown:.md
+--regex-Markdown=/^#[ \t]*(.*)/\1/c,chapters/
+--regex-Markdown=/^##[ \t]*(.*)/\1/s,sections/
+--regex-Markdown=/^###+[ \t]*(.*)/\1/u,subsections/
