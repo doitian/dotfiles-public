@@ -1,0 +1,38 @@
+{
+  "name": "iy-snippets",
+  "engines": {
+    "vscode": "^1.11.0"
+  },
+  "contributes": {
+    "snippets": [
+      {
+        "language": [
+          "plaintext",
+          "markdown",
+          "tex",
+          "html",
+          "global",
+          "all"
+        ],
+        "path": "./snippets/global.code-snippets"
+      },
+      {
+        "language": "markdown",
+        "path": "./snippets/markdown.json"
+      },
+      {
+        "language": [
+          "shellscript",
+          "shell",
+          "sh",
+          "zsh"
+        ],
+        "path": "./snippets/shell.json"
+      },
+      {
+        "language": "tmux",
+        "path": "./snippets/tmux.json"
+      }
+    ]
+  }
+}

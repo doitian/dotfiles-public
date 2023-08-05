@@ -36,6 +36,21 @@ if s:has_fzf
   Plug 'junegunn/fzf.vim'
 endif
 
+let s:nvim = $HOME.'/.config/nvim'
+if isdirectory(s:nvim)
+  if !has("nvim")
+    call plug#(s:nvim)
+  endif
+  let g:vsnip_snippet_dir = s:nvim.'/local/iy-snippets.vim/snippets'
+  call plug#(fnamemodify(g:vsnip_snippet_dir, ':h'))
+  call plug#(s:nvim.'/local/iy-bm.vim', { 'on': ['Bm'] })
+  call plug#(s:nvim.'/local/iy-diff-orig.vim', { 'on': ['DiffOrig'] })
+  call plug#(s:nvim.'/local/iy-nano-fs.vim', { 'on': ['Delete', 'Move'] })
+  if s:has_fzf
+    call plug#(s:nvim.'/local/fzf-vsnip', { 'on': ['Snippets'] })
+  endif
+endif
+
 call plug#end()
 
 " Theme {{{1
@@ -56,7 +71,6 @@ let g:mucomplete#chains = {
       \ 'vim'     : ['vsnip', 'path', 'cmd', 'keyn']
       \ }
 
-let g:vsnip_snippet_dir = expand('~/.dotfiles/repos/private/snippets/snippets')
 let g:vsnip_filetypes = {
       \ 'typescript' : ['typescript', 'tsdoc'],
       \ 'javascript' : ['javascript', 'jsdoc'],
@@ -73,7 +87,6 @@ let g:vsnip_filetypes = {
       \ 'kotlin' : ['kotlin', 'kdoc'],
       \ 'ruby' : ['ruby', 'rdoc']
       \ }
-exec 'set rtp+='..fnamemodify(g:vsnip_snippet_dir, ':h')
 
 let g:loaded_2html_plugin = 1
 let g:loaded_getscriptPlugin = 1
@@ -85,11 +98,6 @@ let g:loaded_zipPlugin = 1
 let g:loaded_netrwPlugin = 1
 
 " Functions & Commands {{{1
-function! s:BookmarkLine(message)
-  let l:line = expand('%') . '|' . line('.') . ' col ' . col('.') . '| ' .
-        \ (a:message ==# '' ? getline('.') : a:message)
-  call writefile([l:line], 'bookmarks.qf', 'a')
-endfunction
 function! s:LoadNetrw()
   nunmap gx
   xunmap gx
@@ -97,14 +105,9 @@ function! s:LoadNetrw()
   runtime plugin/netrwPlugin.vim
 endfunction
 
-command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
 command! -nargs=+ -complete=shellcmd Man delc Man | runtime ftplugin/man.vim | Man <args>
-command! Delete call delete(expand('%')) | bdelete | let @# = bufnr('%')
-command! -nargs=1 -complete=file Move saveas <args> | call delete(expand('#')) |
-      \ exec 'bdelete #' | let @# = bufnr('%')
 command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile |
       \ silent file __viper__
-command! -nargs=* Bm call <SID>BookmarkLine(<q-args>)
 if s:has_fzf
   command! -bang Zoxide call fzf#run(fzf#wrap('zoxide',
         \ {'source': 'zoxide query -l', 'sink': 'cd'}, <bang>0))
@@ -305,6 +308,7 @@ augroup vimrc_au
   autocmd FileType gitcommit,markdown setlocal spell
   autocmd FileType markdown setlocal suffixesadd=.md
   autocmd FileType vim,beancount,i3config setlocal foldmethod=marker
+
   " edit qf: set ma | ... | cgetb
   autocmd FileType qf
         \ if &buftype ==# 'quickfix' |

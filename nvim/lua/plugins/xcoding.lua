@@ -58,12 +58,6 @@ return {
       require("luasnip.loaders.from_vscode").lazy_load()
     end,
   },
-  {
-    "doitian/x-snippets",
-    event = "VeryLazy",
-    name = "x-snippets",
-    dir = snippets_dir,
-  },
 
   -- compatible mappings with surround
   {

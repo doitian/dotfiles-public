@@ -1,0 +1,9 @@
+{
+  "Zettel Prefix": {
+    "prefix": "zzettel",
+    "body": [
+      "${CURRENT_YEAR}${CURRENT_MONTH}${CURRENT_DATE}${CURRENT_HOUR}${CURRENT_MINUTE}"
+    ],
+    "description": "Use timestamp as prefix for zettelkasten note"
+  }
+}

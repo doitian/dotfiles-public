@@ -31,7 +31,7 @@ require("lazy").setup({
   },
   ---@diagnostic disable-next-line: assign-type-mismatch
   dev = {
-    path = vim.fn.stdpath("config") .. "/x",
+    path = vim.fn.stdpath("config") .. "/local",
     pattern = {},
     fallback = false,
   },

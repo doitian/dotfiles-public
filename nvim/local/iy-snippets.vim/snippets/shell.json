@@ -1,0 +1,16 @@
+{
+  "Shell ➤ Shebang": {
+    "prefix": "sb",
+    "body": ["#!/usr/bin/env ${1:bash}"]
+  },
+  "Shell ➤ Shebang with Debug": {
+    "prefix": "sbb",
+    "body": [
+      "#!/usr/bin/env ${1:bash}",
+      "",
+      "set -e",
+      "set -u",
+      "[ -n \"\\${DEBUG:-}\" ] && set -x || true"
+    ]
+  }
+}

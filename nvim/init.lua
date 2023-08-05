@@ -2,7 +2,6 @@
 local lazy = vim.env.LAZY or vim.tbl_contains({ "truecolor", "24bit" }, vim.env.COLORTERM)
 if not lazy or lazy == "0" then
   vim.opt.rtp:prepend("~/.vim")
-  vim.opt.rtp:append("~/.vim/after")
   vim.opt.packpath = vim.opt.rtp:get()
   vim.cmd.source("~/.vimrc")
   return

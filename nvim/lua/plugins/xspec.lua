@@ -1,23 +1,26 @@
 return {
   {
-    "doitian/x-diff-orig.nvim",
+    "doitian/iy-diff-orig.vim",
     dev = true,
     cmd = "DiffOrig",
-    config = true,
   },
 
   {
-    "doitian/x-nanofs.nvim",
+    "doitian/iy-nano-fs.vim",
     dev = true,
     cmd = { "Delete", "Remove" },
-    config = true,
   },
 
   {
-    "doitian/x-bm.nvim",
+    "doitian/iy-bm.vim",
     dev = true,
     cmd = { "Bm" },
-    config = true,
+  },
+
+  {
+    "doitian/iy-snippets.vim",
+    dev = true,
+    event = "VeryLazy",
   },
 
   {

@@ -1,0 +1,16 @@
+{
+  "Obsidian ➤ Docklet": {
+    "prefix": "docklet",
+    "body": [
+      "# $TM_FILENAME_BASE",
+      "",
+      "## Metadata",
+      "",
+      "**Status**:: #i",
+      "**Zettel**:: #zettel/fleeting",
+      "**Created**:: [[$CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE]]",
+      "",
+      "## Synopsis"
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "Tmux ➤ tmux-up": {
+    "prefix": "tu",
+    "body": [
+      "send \"vim\" C-m",
+      "neww -n shell"
+    ]
+  },
+
+  "Tmux ➤ send": {
+    "prefix": "send",
+    "body": ["send \"$1\" C-m"]
+  },
+
+  "Tmux ➤ New Window": {
+    "prefix": "neww",
+    "body": ["neww -n ${1:shell}", "send \"$2\" C-m"]
+  }
+}
