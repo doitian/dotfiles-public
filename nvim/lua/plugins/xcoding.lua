@@ -73,7 +73,7 @@ return {
           function()
             require("flash").jump()
           end,
-          mode = { "x", "o" },
+          mode = { "o" },
           desc = "Flash",
         },
         { "ys", "gza", desc = "Add surrounding", remap = true },
