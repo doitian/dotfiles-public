@@ -244,6 +244,10 @@ if s:has_fzf
   nnoremap <Leader>fs <cmd>Snippets<cr>
   nnoremap <Leader>fj <cmd>Zoxide<cr>
   nnoremap <Leader>sm <cmd>Marks<cr>
+  nnoremap <Leader>sb <cmd>BLines<cr>
+  nnoremap <Leader>ss <cmd>BTags<cr>
+  nnoremap <Leader>sS <cmd>Tags<cr>
+  nnoremap <Leader>sg <cmd>Rg<cr>
 else
   nnoremap <Leader><Space> :<C-u>e <C-z>
   nnoremap <Leader>ff :<C-u>e <C-z>
@@ -251,7 +255,6 @@ else
   nnoremap <Leader>, <cmd>ls<cr>:<C-u>b<Space>
   nnoremap <Leader>fh :<C-u>e %:h<C-z><C-z>
   nnoremap <Leader>fS :<C-u>e <C-r>=g:vsnip_snippet_dir<cr>/<C-z>
-  nnoremap <Leader>sm <cmd>marks<cr>:<C-u>norm '
 endif
 
 " buffer {{{2
