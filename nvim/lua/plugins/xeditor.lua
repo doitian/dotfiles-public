@@ -13,6 +13,7 @@ return {
       { "<leader>ff", Util.telescope("find_files"), desc = "Find Files (root dir)" },
       { "<leader>fF", Util.telescope("find_files", { cwd = false }), desc = "Find Files (cwd)" },
       { "<leader>fh", Util.telescope("find_files", { cwd = "%:h" }), desc = "Find Files Here" },
+      { "<leader>sB", "<cmd>Telescope live_grep grep_open_files=true<cr>", desc = "All Buffers" },
     },
     opts = {
       defaults = {
