@@ -216,6 +216,7 @@ nnoremap <C-s> <cmd>up<cr>
 inoremap <C-s> <cmd>up<cr><Esc>
 nnoremap <Leader>v `[v`]
 nnoremap Y y$
+xmap z <Plug>Sneak_s
 nmap gx <cmd>call <SID>LoadNetrw()<cr>gx
 xmap gx <cmd>call <SID>LoadNetrw()<cr>gx
 nnoremap ]<Space> <cmd>call append(line('.'), repeat([''], v:count1))<cr>
