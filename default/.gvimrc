@@ -4,8 +4,7 @@ set guicursor+=a:blinkwait2000-blinkon1500 " blink slowly
 set mousehide " Hide the mouse when typing text
 
 if has("mac")
-  set guifont=CartographCFNF-Regular:h16
-
+  set guifont=CartographCF-Regular:h16
   set macligatures
 
   func! s:ChangeBackground()
@@ -23,5 +22,5 @@ if has("mac")
     autocmd OSAppearanceChanged * call s:ChangeBackground()
   augroup END
 else
-  set guifont=CartographCF\ Nerd\ Font\ 12
+  set guifont=CartographCF\ 12
 endif
