@@ -20,6 +20,9 @@ alias tl='tmux ls'
 alias tns='tmux new -s'
 alias tnw='tmux neww'
 alias tu=' tmux-up'
+function twn() {
+  tmux rename-window "${1:-"${PWD##*/}"}"
+}
 
 ##################################################
 # Git
