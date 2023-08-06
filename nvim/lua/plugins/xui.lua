@@ -19,16 +19,20 @@ return {
         {
           filter = {
             event = "msg_show",
-            kind = { "" },
-            find = "^nvim%-dap is not available$",
+            kind = "",
+            find = "nvim%-dap",
           },
           opts = { skip = true },
         },
         {
           filter = {
             event = "msg_show",
-            kind = { "" },
-            find = "lines indented $",
+            kind = "",
+            any = {
+              { find = "%d+ lines" },
+              { find = "fewer lines" },
+              { find = "more lines" },
+            },
           },
           view = "mini",
         },
