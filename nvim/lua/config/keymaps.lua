@@ -5,6 +5,8 @@
 local map = vim.keymap.set
 
 map("n", "<Leader>v", "`[v`]", { desc = "Select yanked/pasted" })
+map({ "n", "x" }, "<Leader>d", [["_d]], { desc = "Delete without yanking" })
+map("x", "<Leader>p", [["0p]], { desc = "Paste from yanking/deleting" })
 
 map(
   "n",
