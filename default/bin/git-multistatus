@@ -1,55 +1,22 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 set -e
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
-: "${ZSH:="$HOME/.oh-my-zsh"}"
-source "$ZSH/lib/git.zsh"
-source "$ZSH/plugins/gitfast/git-prompt.sh"
-
-main() {
-  local arg i repo branch repo_path
-  local -a repos branches
-  local max_length=0
-  local savepwd="$(pwd)"
-
+function main() {
   unset GIT_DIR
-  local GIT_PS1_SHOWUPSTREAM="auto"
-  local reset_color
-  local ZSH_THEME_GIT_PROMPT_DIRTY="D"
-  local ZSH_THEME_GIT_PROMPT_CLEAN="C"
-  if [ -t 1 ]; then
-    ZSH_THEME_GIT_PROMPT_DIRTY="\e[31mD"
-    ZSH_THEME_GIT_PROMPT_CLEAN="\e[32mC"
-    reset_color="\e[0m"
-  fi
 
   for arg; do
     if ! [ -d "$arg" ]; then
       continue
     fi
 
-    repo_path="$(realpath "$arg")"
-    cd "$arg"
-    branch="$(__git_ps1 '%s' || true)"
-    if [ -n "$branch" ]; then
-      repo="$(printf "%b %%s${reset_color}    %s" "$(parse_git_dirty)" "$repo_path")"
-    else
-      branch="∅"
-      repo="$(printf "%b %%s${reset_color}    %s" "$ZSH_THEME_GIT_PROMPT_DIRTY" "$repo_path")"
-    fi
-    cd "$savepwd"
-    repos+=("$repo")
-    branches+=("$branch")
-    if [[ ${#branch} -gt $max_length ]]; then
-      max_length=${#branch}
-    fi
-  done
+    local directory="$(starship module -P "$arg" -p ~ directory)"
+    local git_branch="$(starship module -p "$arg" git_branch)"
+    local git_status="$(starship module -p "$arg" git_status)"
 
-  for ((i=1; i<=${#repos}; i++)); do
-    repo="${repos[$i]/\%s/%-"$max_length"s}\n"
-    printf "$repo" "${branches[$i]}"
+    echo $'\001\e[30m\002'".- $directory$git_branch$git_status"
   done
 }
 

@@ -36,7 +36,7 @@ if [ "$TERM_BACKGROUND" = light ]; then
   export BAT_THEME='Coldark-Cold'
   export FZF_DEFAULT_OPTS='--color light'
 fi
-export DIRENV_LOG_FORMAT="$(printf "\033[1;30m.- %%s\033[0m")"
+export DIRENV_LOG_FORMAT=$'\001\e[30m\002.- %s\001\e[0m\002'
 if [[ $COLORTERM =~ ^(truecolor|24bit)$ ]]; then
   export LAZY=1
 fi
