@@ -1,10 +1,7 @@
-# -*- sh -*-
 ##################################################
 # Editor
-__VIM_PROGRAM__="${__VIM_PROGRAM__:-vim}"
-if [ "$__VIM_PROGRAM__" != vim ]; then
-  alias vim="$__VIM_PROGRAM__"
-fi
+: "${__VIM_PROGRAM__:=vim}"
+alias vim="$__VIM_PROGRAM__"
 alias :e="$__VIM_PROGRAM__"
 alias vi="$__VIM_PROGRAM__"
 alias view="$__VIM_PROGRAM__ -R"
@@ -37,6 +34,46 @@ alias lg='lazygit'
 alias lgg='lazygit -g "$(git rev-parse --git-dir)"'
 
 ##################################################
+# Directories
+if [ -n "$ZSH_VERSION" ]; then
+  alias -g ...='../..'
+  alias -g ....='../../..'
+  alias -g .....='../../../..'
+  alias -g ......='../../../../..'
+else
+  alias ..='cd ..'
+  alias ...='cd ../..'
+  alias ....='cd ../../..'
+  alias .....='cd ../../../..'
+  alias ......='cd ../../../../..'
+fi
+
+alias -- -='cd -'
+alias 1='cd -1'
+alias 2='cd -2'
+alias 3='cd -3'
+alias 4='cd -4'
+alias 5='cd -5'
+alias 6='cd -6'
+alias 7='cd -7'
+alias 8='cd -8'
+alias 9='cd -9'
+
+alias md='mkdir -p'
+alias rd=rmdir
+
+function d() {
+  if [[ -n $1 ]]; then
+    dirs "$@"
+  else
+    dirs -v | head -n 10
+  fi
+}
+
+alias ll='ls -lh'
+alias la='ls -lah'
+
+##################################################
 # File
 alias cp='cp -i'
 alias cpv='rsync -poghb --backup-dir=/tmp/rsync -e /dev/null --progress --'
@@ -53,12 +90,16 @@ alias rsync-update='rsync -avu --progress -h'
 
 ##################################################
 # Utilities
-alias lr='less -R'
 alias ltail='less +F -R'
 alias mk=make
 alias more='less'
 alias ping='ping -c 5'
-alias psg='ps auxw | grep -i'
+# ps tty
+alias pst="ps -o pid,time,%cpu,%mem,args -w -w"
+# ps my processes
+alias psu="ps -u $UID -o pid,tt,time,%cpu,%mem,args -w -w"
+# ps all users
+alias psa="ps -A -o pid,user,time,%cpu,%mem,args -w -w"
 
 ##################################################
 # Skip History

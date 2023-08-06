@@ -1,8 +1,6 @@
 [ -n "${SHELL_ENV_LOADED:-}" ] && return
 export SHELL_ENV_LOADED=1
-
 [ -z "$HOME" ] && HOME="$(cd ~ && pwd)"
-
 if [[ -n "$BASH_VERSION" && -f "$HOME/.bashrc" ]]; then
   . "$HOME/.bashrc"
 fi
@@ -12,6 +10,11 @@ export GOPATH="$HOME/codebase/gopath"
 export PATH="${PATH:-/bin:/usr/bin}:$HOME/bin:$GOPATH/bin:$HOME/.cargo/bin:$HOME/.asdf/bin:$HOME/.node-packages/bin:$HOME/.local/share/nvim/mason/bin:/usr/local/bin"
 if [ -n "$VSCODE_RESOLVING_ENVIRONMENT" ]; then
   export PATH="$PATH:$HOME/.asdf/shims"
+fi
+
+# use gpg as ssh-agent
+if ! [[ -n "$SSH_TTY" && -S "$SSH_AUTH_SOCK" ]]; then
+  export SSH_AUTH_SOCK="$HOME/.gnupg/S.gpg-agent.ssh"
 fi
 
 # lang
@@ -34,45 +37,17 @@ if [ "$TERM_BACKGROUND" = light ]; then
   export FZF_DEFAULT_OPTS='--color light'
 fi
 export DIRENV_LOG_FORMAT="$(printf "\033[1;30m.- %%s\033[0m")"
+if [[ $COLORTERM =~ ^(truecolor|24bit)$ ]]; then
+  export LAZY=1
+fi
 
 # tools
-export __VIM_PROGRAM__=vim
-if command -v nvim &> /dev/null; then
-  export __VIM_PROGRAM__=nvim
-fi
-export EDITOR="$__VIM_PROGRAM__"
+export __VIM_PROGRAM__="$HOME/bin/vim"
+export EDITOR="$HOME/bin/vim"
 export FCEDIT="$EDITOR"
 export VISUAL="$EDITOR"
 export ALTERNATE_EDITOR="$EDITOR"
-if [ -x "/usr/bin/x-www-browser" ]; then
-  export BROWSER="/usr/bin/x-www-browser"
-fi
-
-# ruby perf
-export RUBY_GC_HEAP_INIT_SLOTS=1000000
-export RUBY_HEAP_SLOTS_INCREMENT=1000000
-export RUBY_HEAP_SLOTS_GROWTH_FACTOR=1
-export RUBY_GC_MALLOC_LIMIT=1000000000
-export RUBY_HEAP_FREE_MIN=500000
-
-# perl
-export PERL_LOCAL_LIB_ROOT="$PERL_LOCAL_LIB_ROOT:$HOME/.perl5";
-export PERL_MB_OPT="--install_base $HOME/.perl5";
-export PERL_MM_OPT="INSTALL_BASE=$HOME/.perl5";
-export PERL5LIB="$HOME/.perl5/lib/perl5:$PERL5LIB";
-
-# R
-export R_LIBS="$HOME/.rlibs"
-
-# rust
-if [ type rustc &> /dev/null ]; then
-  export RUST_SRC_PATH=$(rustc --print sysroot)/lib/rustlib/src/rust/src/
-fi
-
-# java
-if [ -f /usr/libexec/java_home ]; then
-  export JAVA_HOME=$(/usr/libexec/java_home)
-fi
+export PAGER="${PAGER:=less}"
 
 # homebrew
 export HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK=1

@@ -1,0 +1,5 @@
+#compdef bd
+local -a components=("/" ${(ps:/:)${PWD%/*}})
+components=(${(Oa)components})
+
+_describe -V "bd" components

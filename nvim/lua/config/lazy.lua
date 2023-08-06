@@ -17,6 +17,21 @@ require("lazy").setup({
         colorscheme = "catppuccin-latte",
       },
     },
+    {
+      "catppuccin/nvim",
+      lazy = false,
+      name = "catppuccin",
+      optional = true,
+      opts = {
+        highlight_overrides = {
+          latte = function(latte)
+            return {
+              NeoTreeCursorLine = { bg = latte.base },
+            }
+          end,
+        },
+      },
+    },
     -- import/override with your plugins
     { import = "plugins" },
   },

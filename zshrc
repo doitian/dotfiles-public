@@ -1,30 +1,15 @@
-# vim: fmr={{{{,}}}}:fdm=marker
-# preamble {{{{1
 if [[ "$-" != *i* ]]; then return 0; fi
 
-if [[ $COLORTERM =~ ^(truecolor|24bit)$ ]]; then
-  export LAZY=1
-fi
 if ! [[ -n "$SSH_TTY" && -S "$SSH_AUTH_SOCK" ]]; then
   export SSH_AUTH_SOCK="$HOME/.gnupg/S.gpg-agent.ssh"
 fi
-ZSH="$HOME/.oh-my-zsh"
 ZSH_CACHE_DIR="$HOME/.zcompcache"
-COMPLETION_WAITING_DOTS=true
-MAGIC_ENTER_GIT_COMMAND='g st -u .'
-MAGIC_ENTER_OTHER_COMMAND='ls -lh .'
-
-if [ -d "$HOME/.asdf" ]; then
-  fpath=($HOME/.asdf/completions $fpath)
-fi
+MAGIC_ENTER_GIT_COMMAND=" g st -u ."
+MAGIC_ENTER_OTHER_COMMAND=" ls -lh"
 
 fpath=(
   "$ZSH_CACHE_DIR/completions"
-  "$HOME/.zsh-completions"
-  "$ZSH/plugins/brew"
-  "$ZSH/plugins/docker"
-  "$ZSH/plugins/gitfast"
-  "$ZSH/plugins/cargo"
+  "$HOME/.dotfiles/repos/public/zsh/completions"
   $fpath
 )
 
@@ -37,14 +22,11 @@ else
 fi
 ZSH_COMPDUMP="$HOME/.zcompdump-${SHORT_HOST}-${ZSH_VERSION}"
 
-# Load and run compinit
 autoload -U compaudit compinit
-() {
-  setopt extendedglob local_options
-  if [[ -f "$ZSH_COMPDUMP"(#qN.m+1) ]]; then
-    compinit -i -d "${ZSH_COMPDUMP}"
-    touch "${ZSH_COMPDUMP}"
-  else
-    compinit -C -i -d "${ZSH_COMPDUMP}"
-  fi
-}
+if [[ -f "$ZSH_COMPDUMP"(Nm+1) ]]; then
+  # force rebuilding daily
+  compinit -i -d "${ZSH_COMPDUMP}"
+  touch "${ZSH_COMPDUMP}"
+else
+  compinit -C -i -d "${ZSH_COMPDUMP}"
+fi
