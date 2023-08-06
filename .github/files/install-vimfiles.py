@@ -5,7 +5,7 @@ home = Path('..')
 (home / '.config').mkdir(parents=True, exist_ok=True)
 
 dotvim = home / '.vim'
-dotnvim = home / '.config' / '.nvim'
+dotnvim = home / '.config' / 'nvim'
 
 shutil.copyfile('vimrc', home / '.vimrc')
 
