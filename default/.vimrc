@@ -53,7 +53,7 @@ endif
 call plug#end()
 
 " Theme {{{1
-let g:PaperColor_Theme_Options = { 'theme':{'default':{'transparent_background':1}} }
+let g:PaperColor_Theme_Options = { 'theme':{'default':{'transparent_background':!has('ios)}} }
 silent! colorscheme PaperColor
 
 " Plugins Options {{{1
