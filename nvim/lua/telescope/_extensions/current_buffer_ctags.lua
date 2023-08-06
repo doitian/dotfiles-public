@@ -22,18 +22,8 @@ local current_buffer_ctags = function(opts)
   return require("telescope.builtin").current_buffer_tags(opts)
 end
 
--- call current_buffer_tags when when there are tagfiles present.
-local auto = function(opts)
-  if vim.tbl_isempty(vim.fn.tagfiles()) then
-    return require("telescope.builtin").current_buffer_tags(opts or {})
-  end
-
-  return current_buffer_ctags(opts)
-end
-
 return telescope.register_extension({
   exports = {
     current_buffer_ctags = current_buffer_ctags,
-    auto = auto,
   },
 })
