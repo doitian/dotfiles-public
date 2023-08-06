@@ -31,7 +31,11 @@ autocmd({ "BufNewFile", "BufRead" }, "*/gopass-*/*", function()
 end)
 
 autocmd("SwapExists", "*", function()
-  vim.v.swapchoice = "o"
+  ---@diagnostic disable-next-line: undefined-field
+  vim.v.swapchoice = vim.F.if_nil(vim.b.swapchoice, "o")
+  if vim.v.swapchoice ~= "" then
+    require("notify")("auto select: " .. vim.v.swapchoice, "warn", { title = "SwapExists" })
+  end
 end)
 
 local ft_maps = {

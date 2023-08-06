@@ -330,7 +330,7 @@ augroup vimrc_au
         \ if line("'\"") > 1 && line("'\"") <= line('$') && &filetype !=# 'gitcommit' |
         \   exe 'normal! g`"' |
         \ endif
-  autocmd SwapExists * let v:swapchoice = 'o'
+  autocmd SwapExists * echow "swap exists" | let v:swapchoice=exists('b:swapchoice')?b:swapchoice:'o'
 augroup END
 
 " Direnv {{{1
