@@ -4,8 +4,8 @@ if ! [[ -n "$SSH_TTY" && -S "$SSH_AUTH_SOCK" ]]; then
   export SSH_AUTH_SOCK="$HOME/.gnupg/S.gpg-agent.ssh"
 fi
 ZSH_CACHE_DIR="$HOME/.zcompcache"
-MAGIC_ENTER_GIT_COMMAND=" g st -u ."
-MAGIC_ENTER_OTHER_COMMAND=" ls -lh"
+MAGIC_ENTER_GIT_COMMAND=" g st"
+MAGIC_ENTER_OTHER_COMMAND=" ll"
 
 fpath=(
   "$ZSH_CACHE_DIR/completions"
