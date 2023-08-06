@@ -4,6 +4,7 @@ add_newline = false
 truncation_length = 5
 truncation_symbol = "…/"
 repo_root_style = "cyan bold italic"
+repo_root_format = '[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) ' # before_repo_root_style = "bright-white"
 
 [git_branch]
 symbol = "±"
