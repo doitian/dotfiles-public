@@ -9,12 +9,12 @@ zstyle ':completion:all-matches::::' completer _all_matches
 
 # useful to drill into a directory
 bindkey -M menuselect '^O' accept-and-infer-next-history
+
+# copy command entered so far
 copybuffer () {
   printf "%s" "$BUFFER" | ctrlc
 }
-
 zle -N copybuffer
-
 bindkey -M emacs "^O" copybuffer
 bindkey -M viins "^O" copybuffer
 bindkey -M vicmd "^O" copybuffer
@@ -31,6 +31,47 @@ fancy-ctrl-z () {
 }
 zle -N fancy-ctrl-z
 bindkey '^Z' fancy-ctrl-z
+
+__gfw-replace-buffer() {
+  local old=$1 new=$2 space=${2:+ }
+
+  # if the cursor is positioned in the $old part of the text, make
+  # the substitution and leave the cursor after the $new text
+  if [[ $CURSOR -le ${#old} ]]; then
+    BUFFER="${new}${space}${BUFFER#$old }"
+    CURSOR=${#new}
+  else
+    # otherwise just replace $old with $new in the text before the cursor
+    LBUFFER="${new}${space}${LBUFFER#$old }"
+  fi
+}
+
+gfw-command-line() {
+  # If line is empty, get the last run command from history
+  [[ -z $BUFFER ]] && LBUFFER="$(fc -ln -1)"
+
+  # Save beginning space
+  local WHITESPACE=""
+  if [[ ${LBUFFER:0:1} = " " ]]; then
+    WHITESPACE=" "
+    LBUFFER="${LBUFFER:1}"
+  fi
+
+  case "$BUFFER" in
+    gfw\ *) __gfw-replace-buffer "gfw" "" ;;
+    *) LBUFFER="gfw $LBUFFER" ;;
+  esac
+
+  LBUFFER="${WHITESPACE}${LBUFFER}"
+  zle && zle redisplay
+}
+
+zle -N gfw-command-line
+
+# Defined shortcut keys: [Esc] [Esc]
+bindkey -M emacs '\e\e' gfw-command-line
+bindkey -M vicmd '\e\e' gfw-command-line
+bindkey -M viins '\e\e' gfw-command-line
 
 # Make sure that the terminal is in application mode when zle is active, since
 # only then values from $terminfo are valid
