@@ -42,8 +42,10 @@ return {
         },
       },
     },
-    config = function()
-      require("telescope").load_extension("current_buffer_ctags")
+    config = function(_, opts)
+      local telescope = require("telescope")
+      telescope.setup(opts)
+      telescope.load_extension("current_buffer_ctags")
     end,
   },
 }
