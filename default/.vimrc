@@ -12,13 +12,13 @@ silent! call plug#begin($HOME.'/.vim/plugged')
 Plug 'NLKNguyen/papercolor-theme'
 
 Plug 'editorconfig/editorconfig-vim'
-Plug 'justinmk/vim-sneak'
+Plug 'justinmk/vim-sneak' " s (o)z
 Plug 'thinca/vim-visualstar' " * # g* g#
 Plug 'tomtom/tcomment_vim' " gc
 Plug 'tpope/vim-dispatch', { 'on': ['Make', 'Dispatch', 'Start', 'FocusDispatch'] }
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-sleuth'
-Plug 'tpope/vim-surround' " ys s
+Plug 'tpope/vim-surround' " ys ds cs (v)S
 
 Plug 'hrsh7th/vim-vsnip'
 Plug 'hrsh7th/vim-vsnip-integ'
