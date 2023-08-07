@@ -9,14 +9,14 @@ return {
     cmd = "Telescope",
     keys = {
       -- always use find_files instead of git_files
-      { "<leader><space>", Util.telescope("find_files"), desc = "Find Files (root dir)" },
-      { "<leader>ff", Util.telescope("find_files"), desc = "Find Files (root dir)" },
-      { "<leader>fF", Util.telescope("find_files", { cwd = false }), desc = "Find Files (cwd)" },
-      { "<leader>fh", Util.telescope("find_files", { cwd = "%:h" }), desc = "Find Files Here" },
-      { "<leader>sB", "<cmd>Telescope live_grep grep_open_files=true<cr>", desc = "All Buffers" },
-      { "<leader>si", "<cmd>Telescope current_buffer_ctags<cr>", desc = "BTags" },
-      { "<leader>s<C-i>", "<cmd>Telescope current_buffer_tags<cr>", desc = "Tags (Buffer)" },
-      { "<leader>sI", "<cmd>Telescope tags<cr>", desc = "Tags" },
+      { "<Leader><Space>", Util.telescope("find_files"), desc = "Find Files (root dir)" },
+      { "<Leader>ff", Util.telescope("find_files"), desc = "Find Files (root dir)" },
+      { "<Leader>fF", Util.telescope("find_files", { cwd = false }), desc = "Find Files (cwd)" },
+      { "<Leader>fh", Util.telescope("find_files", { cwd = "%:h" }), desc = "Find Files Here" },
+      { "<Leader>sB", "<cmd>Telescope live_grep grep_open_files=true<cr>", desc = "All Buffers" },
+      { "<Leader>si", "<cmd>Telescope current_buffer_ctags<cr>", desc = "BTags" },
+      { "<Leader>s<C-I>", "<cmd>Telescope current_buffer_tags<cr>", desc = "Tags (Buffer)" },
+      { "<Leader>sI", "<cmd>Telescope tags<cr>", desc = "Tags" },
     },
     opts = {
       defaults = {

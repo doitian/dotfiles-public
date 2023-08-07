@@ -9,7 +9,7 @@ return {
     },
     keys = {
       {
-        "<leader>fS",
+        "<Leader>fS",
         function()
           require("functions.edit_snippet_files")()
         end,
@@ -22,20 +22,20 @@ return {
     optional = true,
     config = function()
       local luasnip = require("luasnip")
-      luasnip.filetype_extend("typescript", { "tsdoc" })
-      luasnip.filetype_extend("javascript", { "jsdoc" })
-      luasnip.filetype_extend("lua", { "luadoc" })
-      luasnip.filetype_extend("python", { "python-docstring" })
-      luasnip.filetype_extend("rust", { "rustdoc" })
-      luasnip.filetype_extend("cs", { "csharpdoc" })
-      luasnip.filetype_extend("java", { "javadoc" })
-      luasnip.filetype_extend("sh", { "shelldoc" })
-      luasnip.filetype_extend("zsh", { "shelldoc" })
-      luasnip.filetype_extend("c", { "cdoc" })
-      luasnip.filetype_extend("cpp", { "cppdoc" })
-      luasnip.filetype_extend("php", { "phpdoc" })
-      luasnip.filetype_extend("kotlin", { "kdoc" })
-      luasnip.filetype_extend("ruby", { "rdoc" })
+      luasnip.filetype_extend("typescript", { "typescript", "tsdoc" })
+      luasnip.filetype_extend("javascript", { "javascript", "jsdoc" })
+      luasnip.filetype_extend("lua", { "lua", "luadoc" })
+      luasnip.filetype_extend("python", { "python", "python-docstring" })
+      luasnip.filetype_extend("rust", { "rust", "rustdoc" })
+      luasnip.filetype_extend("cs", { "cs", "csharpdoc" })
+      luasnip.filetype_extend("java", { "java", "javadoc" })
+      luasnip.filetype_extend("sh", { "sh", "shelldoc" })
+      luasnip.filetype_extend("zsh", { "zsh", "zsh", "shelldoc" })
+      luasnip.filetype_extend("c", { "c", "cdoc" })
+      luasnip.filetype_extend("cpp", { "cpp", "cppdoc" })
+      luasnip.filetype_extend("php", { "php", "phpdoc" })
+      luasnip.filetype_extend("kotlin", { "kotlin", "kdoc" })
+      luasnip.filetype_extend("ruby", { "ruby", "rdoc" })
       require("luasnip.loaders.from_vscode").lazy_load()
     end,
   },

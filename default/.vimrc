@@ -97,13 +97,6 @@ let g:loaded_zipPlugin = 1
 let g:loaded_netrwPlugin = 1
 
 " Functions & Commands {{{1
-function! s:LoadNetrw()
-  nunmap gx
-  xunmap gx
-  unlet g:loaded_netrwPlugin
-  runtime plugin/netrwPlugin.vim
-endfunction
-
 command! -nargs=+ -complete=shellcmd Man delc Man | runtime ftplugin/man.vim | Man <args>
 command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile |
       \ silent file __viper__
@@ -189,10 +182,6 @@ if executable('rg')
   set grepprg=rg\ --hidden\ -g\ '!.git'\ --vimgrep
 endif
 
-if exists('$WSLENV')
-  let g:netrw_browsex_viewer= 'wsl-open'
-endif
-
 runtime! macros/matchit.vim
 
 " Keymap {{{1
@@ -202,96 +191,93 @@ let g:mapleader = ' '
 let maplocalleader = '\\'
 let g:maplocalleader = '\\'
 set pastetoggle=<F2>
-set wildcharm=<C-z>
+set wildcharm=<C-Z>
 
 " editor {{{2
-nnoremap <C-s> <cmd>up<cr>
-inoremap <C-s> <cmd>up<cr><Esc>
+nnoremap <C-S> <Cmd>up<CR>
+inoremap <C-S> <Cmd>up<CR>
 nnoremap <Leader>v `[v`]
 nnoremap Y y$
 nnoremap <Leader>d "_d
 xnoremap <Leader>d "_d
 xnoremap <Leader>p "0d
-nmap gx <cmd>call <SID>LoadNetrw()<cr>gx
-xmap gx <cmd>call <SID>LoadNetrw()<cr>gx
-nnoremap ]<Space> <cmd>call append(line('.'), repeat([''], v:count1))<cr>
-nnoremap [<Space> <cmd>call append(line('.')-1, repeat([''], v:count1))<cr>
+nnoremap gx <Cmd>call job_start(['open',expand('<cfile>')])<CR>
+xnoremap gx y<Cmd>call job_start(['open',@*])<CR>
+nnoremap ]<Space> <Cmd>call append(line('.'), repeat([''], v:count1))<CR>
+nnoremap [<Space> <Cmd>call append(line('.')-1, repeat([''], v:count1))<CR>
+
+" ui {{{2
+nnoremap <Leader>ur <Cmd>noh<Bar>diffupdate<Bar>normal! <C-L><CR>
+nnoremap <silent> <Leader>e <Cmd>Lexplore<CR>
+
+nnoremap <Leader>xq <Cmd>copen<CR>
+nnoremap <Leader>xl <Cmd>lopen<CR>
+nnoremap <silent> ]q <Cmd>cnext<CR>
+nnoremap <silent> [q <Cmd>cprevious<CR>
 
 " coding {{{2
-nnoremap <silent> g<cr> <cmd>Dispatch!<cr>
-nnoremap <silent> m<cr> <cmd>Make<cr>
-nnoremap <silent> m! <cmd>Make!<cr>
-nnoremap <silent> `<cr> <cmd>Dispatch<cr>
-nnoremap <silent> `! <cmd>Dispatch!<cr>
-nnoremap <silent> '<cr> <cmd>Start<cr>
-nnoremap <silent> '! <cmd>Start!<cr>
+nnoremap <silent> g<CR> <Cmd>Dispatch!<CR>
+nnoremap <silent> m<CR> <Cmd>Make<CR>
+nnoremap <silent> m! <Cmd>Make!<CR>
+nnoremap <silent> `<CR> <Cmd>Dispatch<CR>
+nnoremap <silent> `! <Cmd>Dispatch!<CR>
+nnoremap <silent> '<CR> <Cmd>Start<CR>
+nnoremap <silent> '! <Cmd>Start!<CR>
 
-nnoremap f<cr> m`gg=G``<cmd>up<cr>
+nnoremap f<CR> m`gg=G``<Cmd>up<CR>
 nnoremap <Leader>cf m`gg=G``
 
 " finder {{{2
 if s:has_fzf
-  nnoremap <Leader><Space> <cmd>Files<cr>
-  nnoremap <Leader>ff <cmd>Files<cr>
-  nnoremap <Leader>fb <cmd>Buffers<cr>
-  nnoremap <Leader>, <cmd>Buffers<cr>
-  nnoremap <Leader>fh <cmd>Files %:h<cr>
-  nnoremap <Leader>fS <cmd>exe 'Files '.g:vsnip_snippet_dir<cr>
-  nnoremap <Leader>fs <cmd>Snippets<cr>
-  nnoremap <Leader>fj <cmd>Zoxide<cr>
-  nnoremap <Leader>sm <cmd>Marks<cr>
-  nnoremap <Leader>sb <cmd>BLines<cr>
-  nnoremap <Leader>sB <cmd>Lines<cr>
-  nnoremap <Leader>si <cmd>BTags<cr>
-  nnoremap <Leader>sI <cmd>Tags<cr>
-  nnoremap <Leader>sg <cmd>Rg<cr>
+  nnoremap <Leader><Space> <Cmd>Files<CR>
+  nnoremap <Leader>ff <Cmd>Files<CR>
+  nnoremap <Leader>fb <Cmd>Buffers<CR>
+  nnoremap <Leader>, <Cmd>Buffers<CR>
+  nnoremap <Leader>fh <Cmd>Files %:h<CR>
+  nnoremap <Leader>fS <Cmd>exe 'Files '.g:vsnip_snippet_dir<CR>
+  nnoremap <Leader>fs <Cmd>Snippets<CR>
+  nnoremap <Leader>fj <Cmd>Zoxide<CR>
+  nnoremap <Leader>sm <Cmd>Marks<CR>
+  nnoremap <Leader>sb <Cmd>BLines<CR>
+  nnoremap <Leader>sB <Cmd>Lines<CR>
+  nnoremap <Leader>si <Cmd>BTags<CR>
+  nnoremap <Leader>sI <Cmd>Tags<CR>
+  nnoremap <Leader>sg <Cmd>Rg<CR>
 else
   nnoremap <Leader><Space> :<C-u>e <C-z>
   nnoremap <Leader>ff :<C-u>e <C-z>
-  nnoremap <Leader>fb <cmd>ls<cr>:<C-u>b<Space>
-  nnoremap <Leader>, <cmd>ls<cr>:<C-u>b<Space>
+  nnoremap <Leader>fb <Cmd>ls<CR>:<C-u>b<Space>
+  nnoremap <Leader>, <Cmd>ls<CR>:<C-u>b<Space>
   nnoremap <Leader>fh :<C-u>e %:h<C-z><C-z>
-  nnoremap <Leader>fS :<C-u>e <C-r>=g:vsnip_snippet_dir<cr>/<C-z>
+  nnoremap <Leader>fS :<C-u>e <C-r>=g:vsnip_snippet_dir<CR>/<C-z>
 endif
 
-" buffer {{{2
-nnoremap <silent> <Leader>bd <cmd>bdelete<cr>
-nnoremap <Leader>bb <cmd>e #<cr>
-nnoremap <Leader>` <cmd>e #<cr>
-nmap <silent> <expr> H v:count == 0 ? '<cmd>bprevious<cr>' : 'H'
-nmap <silent> <expr> L v:count == 0 ? '<cmd>bnext<cr>' : 'L'
-nnoremap <silent> ]b <cmd>bnext<cr>
-nnoremap <silent> [b <cmd>bprevious<cr>
+" navigation {{{2
+nnoremap <silent> <Leader>bd <Cmd>bdelete<CR>
+nnoremap <Leader>bb <Cmd>e #<CR>
+nnoremap <Leader>` <Cmd>e #<CR>
+nmap <silent> <expr> H v:count == 0 ? '<Cmd>bprevious<CR>' : 'H'
+nmap <silent> <expr> L v:count == 0 ? '<Cmd>bnext<CR>' : 'L'
+nnoremap <silent> ]b <Cmd>bnext<CR>
+nnoremap <silent> [b <Cmd>bprevious<CR>
 
-" window {{{2
 nnoremap <Leader>ww <C-w>p
 nnoremap <Leader>wd <C-w>c
 nnoremap <Leader>w- <C-w>s
-nnoremap <Leader>w<bar> <C-w>v
+nnoremap <Leader>w<Bar> <C-w>v
 nnoremap <Leader>- <C-w>s
-nnoremap <Leader><bar> <C-w>v
-nnoremap <C-h> <C-w>h
-nnoremap <C-l> <C-w>l
-nnoremap <C-k> <C-w>k
-nnoremap <C-j> <C-w>j
+nnoremap <Leader><Bar> <C-w>v
+nnoremap <C-H> <C-W>h
+nnoremap <C-L> <C-W>l
+nnoremap <C-K> <C-W>k
+nnoremap <C-J> <C-W>j
 
-" tab {{{2
-nnoremap <Leader><Tab><Tab> <cmd>tabnew<cr>
-nnoremap <Leader><Tab>d <cmd>tabclose<cr>
-nnoremap <Leader><Tab>l <cmd>tablast<cr>
-nnoremap <Leader><Tab>f <cmd>tabclose<cr>
+nnoremap <Leader><Tab><Tab> <Cmd>tabnew<CR>
+nnoremap <Leader><Tab>d <Cmd>tabclose<CR>
+nnoremap <Leader><Tab>l <Cmd>tablast<CR>
+nnoremap <Leader><Tab>f <Cmd>tabclose<CR>
 nnoremap <Leader><Tab>] gt
 nnoremap <Leader><Tab>[ gT
-
-" ui {{{2
-nnoremap <Leader>ur <cmd>noh<bar>diffupdate<bar>normal! <C-L><cr>
-nnoremap <silent> <Leader>e <cmd>Lexplore<cr>
-
-" qf {{{2
-nnoremap <Leader>xq <cmd>copen<cr>
-nnoremap <Leader>xl <cmd>lopen<cr>
-nnoremap <silent> ]q <cmd>cnext<cr>
-nnoremap <silent> [q <cmd>cprevious<cr>
 
 " complete {{{2
 imap <expr> <Tab>   vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<Tab>'
@@ -303,7 +289,7 @@ smap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
 augroup vimrc_au
   autocmd!
 
-  autocmd CmdUndefined Lexplore call s:LoadNetrw()
+  autocmd CmdUndefined Lexplore unlet g:loaded_netrwPlugin | runtime plugin/netrwPlugin.vim
 
   autocmd FileType gitcommit,markdown setlocal spell wrap
   autocmd FileType vim,beancount,i3config setlocal foldmethod=marker
@@ -311,7 +297,7 @@ augroup vimrc_au
   " edit qf: set ma | ... | cgetb
   autocmd FileType qf
         \ if &buftype ==# 'quickfix' |
-        \   nnoremap <silent> <buffer> q <cmd>cclose<cr> |
+        \   nnoremap <silent> <buffer> q <Cmd>cclose<CR> |
         \ endif |
         \ setlocal errorformat=%f\|%l\ col\ %c\|%m
 

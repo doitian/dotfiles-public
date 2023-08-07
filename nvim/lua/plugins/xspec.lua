@@ -26,8 +26,8 @@ return {
   {
     "christoomey/vim-titlecase",
     keys = {
-      { "<leader>gz", "<Plug>Titlecase", mode = { "n", "x" }, desc = "Titlecase" },
-      { "<leader>gzz", "<Plug>TitlecaseLine", desc = "which_key_ignore" },
+      { "<Leader>gz", "<Plug>Titlecase", mode = { "n", "x" }, desc = "Titlecase" },
+      { "<Leader>gzz", "<Plug>TitlecaseLine", desc = "which_key_ignore" },
     },
   },
 
@@ -35,14 +35,14 @@ return {
     "tpope/vim-dispatch",
     cmd = { "Make", "Dispatch", "Start", "FocusDispatch" },
     keys = {
-      { "m<cr>", "<cmd>Make<cr>", desc = "Make" },
-      { "m!", "<cmd>Make!<cr>", desc = "Make!" },
-      { "`<cr>", "<cmd>Dispatch<cr>", desc = "Dispatch" },
-      { "`!", "<cmd>Dispatch!<cr>", desc = "Dispatch!" },
-      { "'<cr>", "<cmd>Start<cr>", desc = "Start" },
-      { "'!", "<cmd>Start!<cr>", desc = "Start!" },
+      { "m<CR>", "<Cmd>Make<CR>", desc = "Make" },
+      { "m!", "<Cmd>Make!<CR>", desc = "Make!" },
+      { "`<CR>", "<Cmd>Dispatch<CR>", desc = "Dispatch" },
+      { "`!", "<Cmd>Dispatch!<CR>", desc = "Dispatch!" },
+      { "'<CR>", "<Cmd>Start<CR>", desc = "Start" },
+      { "'!", "<Cmd>Start!<CR>", desc = "Start!" },
 
-      { "g<cr>", "<cmd>Dispatch!<cr>", desc = "Dispatch!" },
+      { "g<CR>", "<Cmd>Dispatch!<CR>", desc = "Dispatch!" },
     },
     init = function()
       vim.g.dispatch_no_maps = 1
@@ -58,7 +58,7 @@ return {
       return vim.fn.executable("zoxide") == 1
     end,
     keys = {
-      { "<leader>fj", "<cmd>Telescope zoxide list<cr>", desc = "Zoxide" },
+      { "<Leader>fj", "<Cmd>Telescope zoxide list<CR>", desc = "Zoxide" },
     },
     config = function()
       require("telescope").load_extension("zoxide")
@@ -72,7 +72,7 @@ return {
       { "L3MON4D3/LuaSnip" },
     },
     keys = {
-      { "<leader>fs", "<cmd>Telescope luasnip<cr>", desc = "Insert snippet" },
+      { "<Leader>fs", "<Cmd>Telescope luasnip<CR>", desc = "Insert snippet" },
     },
     config = function()
       require("telescope").load_extension("luasnip")

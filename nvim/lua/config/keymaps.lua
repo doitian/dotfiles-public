@@ -10,28 +10,19 @@ map("x", "<Leader>p", [["0p]], { desc = "Paste from yanking/deleting" })
 
 map(
   "n",
-  "<S-h>",
-  "v:count == 0 ? '<cmd>BufferLineCyclePrev<cr>' : '<S-h>'",
+  "<S-H>",
+  "v:count == 0 ? '<Cmd>BufferLineCyclePrev<CR>' : '<S-H>'",
   { expr = true, replace_keycodes = false, silent = true, desc = "Next Tab" }
 )
 map(
   "n",
-  "<S-l>",
-  "v:count == 0 ? '<cmd>BufferLineCycleNext<cr>' : '<S-l>'",
+  "<S-L>",
+  "v:count == 0 ? '<Cmd>BufferLineCycleNext<CR>' : '<S-L>'",
   { expr = true, replace_keycodes = false, silent = true, desc = "Prev Tab" }
 )
 
-map("n", "]<Space>", "<cmd>call append(line('.'), repeat([''], v:count1))<cr>", { desc = "Insert lines below" })
-map("n", "[<Space>", "<cmd>call append(line('.')-1, repeat([''], v:count1))<cr>", { desc = "Insert lines above" })
+map("n", "]<Space>", "<Cmd>call append(line('.'), repeat([''], v:count1))<CR>", { desc = "Insert lines below" })
+map("n", "[<Space>", "<Cmd>call append(line('.')-1, repeat([''], v:count1))<CR>", { desc = "Insert lines above" })
 
-local function netrw_gx(cmd)
-  return function()
-    vim.keymap.del({ "n", "x" }, "gx")
-    require("lazy.core.loader").disabled_rtp_plugins.netrwPlugin = nil
-    vim.cmd.runtime("plugin/netrwPlugin.vim")
-    return cmd
-  end
-end
-
-map("n", "gx", netrw_gx("<Plug>NetrwBrowseX"), { expr = true })
-map("x", "gx", netrw_gx("<Plug>NetrwBrowseXVis"), { expr = true })
+map("n", "gx", "<Cmd>call jobstart(['open',expand('<cfile>')])<CR>", { desc = "Open file under cursor", silent = true })
+map("x", "gx", "y<Cmd>call jobstart(['open',@*])<CR>", { desc = "Open selected file", silent = true })

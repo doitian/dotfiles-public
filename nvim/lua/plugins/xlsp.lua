@@ -22,7 +22,7 @@ return {
         vim.cmd.update()
       end
       local keys = require("lazyvim.plugins.lsp.keymaps").get()
-      keys[#keys + 1] = { "f<cr>", format, desc = "Format Document", has = "formatting" }
+      keys[#keys + 1] = { "f<CR>", format, desc = "Format Document", has = "formatting" }
     end,
   },
 
