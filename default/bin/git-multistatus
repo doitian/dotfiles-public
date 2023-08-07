@@ -5,7 +5,9 @@ set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
 unset GIT_DIR
-OUTPUT_FORMAT=$'\001\e[30m\002'".- %s"
+if [ -z "${GIT_MULTISTATUS_OUTPUT_FORMAT:-}" ]; then
+  GIT_MULTISTATUS_OUTPUT_FORMAT=$'\001\e[30m\002'".- %s"
+fi
 
 function main() {
   for arg; do
@@ -17,14 +19,15 @@ function main() {
     local git_branch="$(starship module -p "$arg" git_branch)"
     local git_status="$(starship module -p "$arg" git_status)"
 
-    printf "$OUTPUT_FORMAT\n" "$directory$git_branch$git_status"
+    printf "$GIT_MULTISTATUS_OUTPUT_FORMAT\n" "$directory$git_branch$git_status"
   done
 }
 
 if [ -t 1 ]; then
-  OUTPUT_FORMAT="%s"
+  export GIT_MULTISTATUS_OUTPUT_FORMAT="%s"
   PREVIEW_COMMAND="bash -c 'git -c color.ui=always -C {1} status --short --branch -u {1}'"
-  KEYMAPS="ctrl-g:execute(bash -c 'cd {1} && lazygit')"
+  RELOAD_COMMAND="git-multistatus$(printf ' %q' "$@")"
+  KEYMAPS="ctrl-g:execute(bash -c 'cd {1} && lazygit')+reload($RELOAD_COMMAND)"
   main "$@" | fzf --ansi -d ' on ' --preview="$PREVIEW_COMMAND" --bind="$KEYMAPS"
 else
   main "$@"
