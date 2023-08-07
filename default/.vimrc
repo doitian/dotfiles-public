@@ -53,7 +53,7 @@ endif
 call plug#end()
 
 " Theme {{{1
-let g:PaperColor_Theme_Options = { 'theme':{'default':{'transparent_background':!has('ios)}} }
+let g:PaperColor_Theme_Options = { 'theme':{'default':{'transparent_background':!has('ios')}} }
 silent! colorscheme PaperColor
 
 " Plugins Options {{{1
@@ -191,11 +191,6 @@ endif
 
 if exists('$WSLENV')
   let g:netrw_browsex_viewer= 'wsl-open'
-endif
-
-if has('ios')
-  set backupcopy=yes
-  set noundofile
 endif
 
 runtime! macros/matchit.vim
