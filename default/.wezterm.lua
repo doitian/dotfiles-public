@@ -10,7 +10,7 @@ local config = {
 
   window_background_gradient = {
     colors = { "#F1E7FD", "#EFF1F5" },
-    orientation = { Radial = { cx = 1.25, cy = 1.8, radius = 1.75 } },
+    orientation = { Radial = { cx = 1.5, cy = 2, radius = 1.75 } },
   },
 
   font = wezterm.font_with_fallback({
