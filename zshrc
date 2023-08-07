@@ -4,13 +4,14 @@ if ! [[ -n "$SSH_TTY" && -S "$SSH_AUTH_SOCK" ]]; then
   export SSH_AUTH_SOCK="$HOME/.gnupg/S.gpg-agent.ssh"
 fi
 ZSH_CACHE_DIR="$HOME/.zcompcache"
+ZSH="$HOME/.dotfiles/repos/public/zsh"
 MAGIC_ENTER_GIT_COMMAND=" g st"
 MAGIC_ENTER_OTHER_COMMAND=" ll"
 
 fpath=(
-  "$ZSH_CACHE_DIR/completions"
-  "$HOME/.dotfiles/repos/public/zsh/completions"
+  "$ZSH/functions"
   $fpath
+  "$ZSH_CACHE_DIR/completions"
 )
 
 # Figure out the SHORT hostname
