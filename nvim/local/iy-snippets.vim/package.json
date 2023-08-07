@@ -32,6 +32,16 @@
       {
         "language": "tmux",
         "path": "./snippets/tmux.json"
+      },
+      {
+        "language": [
+          "css",
+          "scss",
+          "sass",
+          "less",
+          "stylus"
+        ],
+        "path": "./snippets/css.json"
       }
     ]
   }

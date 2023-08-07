@@ -1,0 +1,24 @@
+{
+  "CSS ➤ User Styles Global Settings": {
+    "prefix": "userstylesglobal",
+    "body": [
+      "@media all {",
+      "  :root {",
+      "    --iy-sans-font: \"Greycliff CF\", \"LXGW WenKai\", system-ui, \"Noto Sans\",",
+      "      \"Noto Sans CJK SC\", sans-serif, \"Symbols Nerd Font\";",
+      "    --iy-mono-font: \"Cartograph CF\", monospace, \"LXGW WenKai\",",
+      "      \"Noto Sans CJK SC\", \"Symbols Nerd Font\";",
+      "    --iy-serif-font: \"Artifex CF\", \"FZQingKeBenYueSongS-R-GB\", \"LXGW WenKai\",",
+      "      \"Noto Serif\", \"Noto Serif CJK SC\", serif, \"Symbols Nerd Font\";",
+      "    --iy-alt-font: \"Artifex Hand CF\", \"LXGW WenKai\", system-ui, Lato,",
+      "      \"Noto Sans CJK SC\", sans-serif, \"Symbols Nerd Font\";",
+      "  }",
+      "",
+      "  pre,",
+      "  code {",
+      "    font-family: var(--iy-mono-font);",
+      "  }",
+      "}"
+    ]
+  }
+}
