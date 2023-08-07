@@ -1,3 +1,5 @@
+os:
+  editPreset: "nvim"
 gui:
   scrollHeight: 20
   theme:
@@ -18,4 +20,4 @@ gui:
     cherryPickedCommitFgColor:
       - "#1e66f5" # Blue
     unstagedChangesColor:
-      - red       # Red
+      - red # Red
