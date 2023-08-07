@@ -8,7 +8,7 @@ if !exists('g:iy_snippets_private_dir')
 endif
 if isdirectory(g:iy_snippets_private_dir)
   exec 'set rtp+='.g:iy_snippets_private_dir
-  runtime! plugin/private-snippets.vim
+  runtime plugin/private-snippets.vim
 endif
 
 " Files {{{1

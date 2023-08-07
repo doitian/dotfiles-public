@@ -182,7 +182,7 @@ if executable('rg')
   set grepprg=rg\ --hidden\ -g\ '!.git'\ --vimgrep
 endif
 
-runtime! macros/matchit.vim
+runtime macros/matchit.vim
 
 " Keymap {{{1
 " leader {{{2
