@@ -42,8 +42,8 @@ if [[ $COLORTERM =~ ^(truecolor|24bit)$ ]]; then
 fi
 
 # tools
-export __VIM_PROGRAM__="$HOME/bin/vim"
-export EDITOR="$HOME/bin/vim"
+export __VIM_PROGRAM__="$HOME/bin/nvim"
+export EDITOR="$__VIM_PROGRAM__"
 export FCEDIT="$EDITOR"
 export VISUAL="$EDITOR"
 export ALTERNATE_EDITOR="$EDITOR"
