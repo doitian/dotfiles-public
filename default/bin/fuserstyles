@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+: "${JSON_FILE:="$HOME/Dropbox/Backups/Browser/stylebot_backup.json"}"
+
+function show_file() {
+  local key="$1"
+  shift
+  jq -j --arg key "$key" '.[$key].css // ""' <"$JSON_FILE" |
+    bat --language=css --file-name="$key.css" "$@"
+}
+
+function list_keys() {
+  jq -r 'keys|.[]' <"$JSON_FILE"
+}
+
+if [ -z "${1:-}" ]; then
+  SITE="$(list_keys | fzf --prompt "userstyle> " --preview "fuserstyles {} --color=always")"
+  if [ -n "$SITE" ]; then
+    show_file "$SITE"
+  fi
+else
+  show_file "$@"
+fi
