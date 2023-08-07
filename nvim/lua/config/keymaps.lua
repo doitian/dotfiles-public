@@ -3,6 +3,7 @@
 -- Add any additional keymaps here
 
 local map = vim.keymap.set
+local unmap = vim.keymap.del
 
 map("n", "<Leader>v", "`[v`]", { desc = "Select yanked/pasted" })
 map({ "n", "x" }, "<Leader>d", [["_d]], { desc = "Delete without yanking" })
@@ -26,3 +27,10 @@ map("n", "[<Space>", "<Cmd>call append(line('.')-1, repeat([''], v:count1))<CR>"
 
 map("n", "gx", "<Cmd>call jobstart(['open',expand('<cfile>')])<CR>", { desc = "Open file under cursor", silent = true })
 map("x", "gx", "y<Cmd>call jobstart(['open',@*])<CR>", { desc = "Open selected file", silent = true })
+
+unmap({ "s" }, ">")
+unmap({ "s" }, "<")
+
+-- map nN does not work with folding
+map("n", "n", "'Nn'[v:searchforward].'zv'", { expr = true, desc = "Next search result" })
+map("n", "N", "'nN'[v:searchforward].'zv'", { expr = true, desc = "Prev search result" })

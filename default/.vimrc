@@ -195,12 +195,28 @@ set wildcharm=<C-Z>
 
 " editor {{{2
 nnoremap <C-S> <Cmd>up<CR>
-inoremap <C-S> <Cmd>up<CR>
+inoremap <C-S> <Cmd>up<CR><Esc>
+vnoremap <C-S> <Cmd>up<CR><Esc>
+snoremap <C-S> <Cmd>up<CR><Esc>
 nnoremap <Leader>v `[v`]
 nnoremap Y y$
 nnoremap <Leader>d "_d
 xnoremap <Leader>d "_d
-xnoremap <Leader>p "0d
+nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
+xnoremap <expr> j v:count == 0 ? 'gj' : 'j'
+nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
+xnoremap <expr> k v:count == 0 ? 'gk' : 'k'
+nnoremap <expr> n 'Nn'[v:searchforward].'zv'
+xnoremap <expr> n 'Nn'[v:searchforward]
+onoremap <expr> n 'Nn'[v:searchforward]
+nnoremap <expr> N 'nN'[v:searchforward].'zv'
+xnoremap <expr> N 'nN'[v:searchforward]
+onoremap <expr> N 'nN'[v:searchforward]
+inoremap , ,<C-G>u
+inoremap . .<C-G>u
+inoremap ; ;<C-G>u
+xnoremap < <gv
+xnoremap > >gv
 nnoremap gx <Cmd>call job_start(['open',expand('<cfile>')])<CR>
 xnoremap gx y<Cmd>call job_start(['open',@*])<CR>
 nnoremap ]<Space> <Cmd>call append(line('.'), repeat([''], v:count1))<CR>
