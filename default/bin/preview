@@ -1,4 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
 EXA_TREE="${FZF_PREVIEW_EXA_TREE:-1}"
 COLS="${FZF_PREVIEW_COLUMNS:-$(tput cols)}"
 LINES="${FZF_PREVIEW_LINES:-$(tput lines)}"
