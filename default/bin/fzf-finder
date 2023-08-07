@@ -5,28 +5,42 @@ set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
 POSITIONAL_ARGS=()
-OPT_PREVIEW="${OPT_PREVIEW:-yes}"
+OPT_PREVIEW="${OPT_PREVIEW:-true}"
 OPT_DIRECTORY="."
+OPT_RECURSIVE=
+
+usage() {
+  echo "Usage: fzf-finder [-R|--recursive] [-d|--directory DIRECTORY] [--no-preview]" >&2
+}
 
 while [[ $# -gt 0 ]]; do
   case $1 in
-    --no-preview)
-      OPT_PREVIEW=
-      shift # past argument
-      ;;
-    -d | --directory)
-      OPT_DIRECTORY="$2"
-      shift # past argument
-      shift # past value
-      ;;
-    -* | --*)
-      echo "Unknown option $1"
-      exit 1
-      ;;
-    *)
-      POSITIONAL_ARGS+=("$1") # save positional arg
-      shift                   # past argument
-      ;;
+  --no-preview)
+    OPT_PREVIEW=
+    shift # past argument
+    ;;
+  -d | --directory)
+    OPT_DIRECTORY="$2"
+    shift # past argument
+    shift # past value
+    ;;
+  -R | --recursive)
+    OPT_RECURSIVE=true
+    shift
+    ;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  -* | --*)
+    echo "Unknown option $1"
+    usage
+    exit 1
+    ;;
+  *)
+    POSITIONAL_ARGS+=("$1") # save positional arg
+    shift                   # past argument
+    ;;
   esac
 done
 
@@ -37,33 +51,39 @@ if [[ $# -gt 1 ]]; then
   echo "Unknown args $*"
   exit 1
 fi
+
 if [[ $# -gt 0 ]]; then
   OPT_DIRECTORY="$1"
 fi
-
 cd "$OPT_DIRECTORY"
 
 export OPT_PREVIEW
 export FZF_PREVIEW_EXA_TREE=1
-FZF_ARGS=(--header "$(pwd)/" --ansi --multi --bind "ctrl-f:accept" --bind "ctrl-l:become(echo :cd {})" --bind "ctrl-h:become(echo :cd ..)")
+
+FZF_ARGS=(--header "$(pwd)/" --ansi --multi)
 if [ -n "$OPT_PREVIEW" ]; then
   FZF_ARGS+=(--preview 'preview {}')
 fi
 
+if [[ "$OPT_RECURSIVE" == "true" ]]; then
+  exec fzf "${FZF_ARGS[@]}"
+fi
+
+FZF_ARGS+=(--bind "ctrl-f:accept" --bind "ctrl-l:become(echo :cd {})" --bind "ctrl-h:become(echo :cd ..)")
 ACCEPTED_LINES="$(exa --color=always | fzf "${FZF_ARGS[@]}")"
 
 while read line; do
   case "$line" in
-    ":cd "*)
-      NEW_OPT_DIRECTORY="${line#:cd }"
-      if [ -d "$NEW_OPT_DIRECTORY" ]; then
-        exec fzf-finder "$NEW_OPT_DIRECTORY"
-      else
-        exec fzf-finder
-      fi
-      ;;
-    *)
-      echo "$(pwd)/$line"
-      ;;
+  ":cd "*)
+    NEW_OPT_DIRECTORY="${line#:cd }"
+    if [ -d "$NEW_OPT_DIRECTORY" ]; then
+      exec fzf-finder "$NEW_OPT_DIRECTORY"
+    else
+      exec fzf-finder
+    fi
+    ;;
+  *)
+    echo "$(pwd)/$line"
+    ;;
   esac
 done <<<"$ACCEPTED_LINES"
