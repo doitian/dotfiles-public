@@ -28,7 +28,7 @@ if [ -t 1 ]; then
   PREVIEW_COMMAND="bash -c 'git -c color.ui=always -C {1} status --short --branch -u {1}'"
   RELOAD_COMMAND="git-multistatus$(printf ' %q' "$@")"
   KEYMAPS="ctrl-g:execute(bash -c 'cd {1} && lazygit -g \"\$(git rev-parse --git-dir)\"')+reload($RELOAD_COMMAND)"
-  main "$@" | fzf --ansi -d ' on ' --preview="$PREVIEW_COMMAND" --bind="$KEYMAPS"
+  main "$@" | fzf --ansi --multi -d ' on ' --preview="$PREVIEW_COMMAND" --bind="$KEYMAPS"
 else
   main "$@"
 fi
