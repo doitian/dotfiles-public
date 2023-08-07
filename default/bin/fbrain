@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+: "${EDITOR:=nvim}"
+: "${FZF_DEFAULT_COMMAND:=fd --type f --hidden --exclude .git}"
+: "${BRAIN_DIR="$HOME/Dropbox/Brain"}"
+
+if [[ ! -d "$BRAIN_DIR" ]]; then
+  BRAIN_DIR="$HOME/Brain"
+fi
+
+export FZF_DEFAULT_COMMAND="$FZF_DEFAULT_COMMAND$(printf ' %q' "$@")"
+
+cd "$BRAIN_DIR"
+SELECTED="$(fzf --prompt="brain> " --preview="preview {}")"
+if [ -f "$SELECTED" ]; then
+  exec "$EDITOR" "$SELECTED"
+fi
