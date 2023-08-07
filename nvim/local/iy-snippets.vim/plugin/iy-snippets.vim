@@ -12,18 +12,22 @@ if isdirectory(g:iy_snippets_private_dir)
 endif
 
 " Files {{{1
-noreabbrev ttitle <C-R>=expand('%:t:r')<CR>
-noreabbrev ffname <C-R>=expand('%:t')<CR>
-noreabbrev ffpath <C-R>=expand('%')<CR>
-noreabbrev fffpath <C-R>=expand('%:p')<CR>
+noreabbrev eefile <C-R>=expand('%')<CR>
+noreabbrev eefileh <C-R>=expand('%:h')<CR>
+noreabbrev eefilep <C-R>=expand('%:p')<CR>
+noreabbrev eefileph <C-R>=expand('%:p:h')<CR>
+noreabbrev eefilepr <C-R>=expand('%:p:r')<CR>
+noreabbrev eefiler <C-R>=expand('%:r')<CR>
+noreabbrev eefilet <C-R>=expand('%:t')<CR>
+noreabbrev eefiletr <C-R>=expand('%:t:r')<CR>
 
 " Date Time {{{1
-noreabbrev ttime <C-R>=strftime('%H:%M:%S')<CR>
-noreabbrev tttime <C-R>=strftime('%I:%M %p')<CR>
 noreabbrev ddate <C-R>=strftime('%Y-%m-%d')<CR>
 noreabbrev dddate <C-R>=substitute(strftime('%b %d, %Y'), ' 0', ' ', '')<CR>
-noreabbrev ddtime <C-R>=strftime('%Y-%m-%d %H:%M:%S')<CR>
 noreabbrev dddtime <C-R>=substitute(strftime('%b %d, %Y %I:%M %p'), ' 0', ' ', '')<CR>
+noreabbrev ddtime <C-R>=strftime('%Y-%m-%d %H:%M:%S')<CR>
+noreabbrev ttime <C-R>=strftime('%H:%M:%S')<CR>
+noreabbrev tttime <C-R>=strftime('%I:%M %p')<CR>
 noreabbrev zzettel <C-R>=strftime('%Y%m%d%H%M')<CR>
 
 " Symbols {{{1
@@ -56,12 +60,10 @@ function! s:ExpandAlias(cmdtype, trigger, content)
   return getcmdtype() is# a:cmdtype && getcmdline() is# a:trigger ? a:content : a:trigger
 endfunction
 
+cnoreabbrev <expr> e/ <SID>ExpandAlias(":", "e/", "e <C-R>=expand('%:h')<CR>") " :e//
 cnoreabbrev <expr> mapcr <SID>ExpandAlias(":", "mapcr", "nnoremap <buffer> <lt>CR> :up<lt>Bar>!<lt>CR><Left><Left><Left><Left>")
 cnoreabbrev <expr> ycd <SID>ExpandAlias(":", "ycd", "let @* = 'cd ' . shellescape(getcwd())")
-cnoreabbrev <expr> yf <SID>ExpandAlias(":", "yf", "let @* = expand('%')")
-cnoreabbrev <expr> yp <SID>ExpandAlias(":", "yp", "let @* = expand('%:p')")
-cnoreabbrev <expr> yh <SID>ExpandAlias(":", "yh", "let @* = expand('%:p:h')")
-cnoreabbrev <expr> e/ <SID>ExpandAlias(":", "e/", "e <C-R>=expand('%:h')<CR>")
+cnoreabbrev <expr> y' <SID>ExpandAlias(":", "y'", "let @* = '<Left>") " :y''
 
 if has('win32')
   cnoreabbrev <expr> cmd <SID>ExpandAlias(":", "cmd", "set shell=cmd.exe shellcmdflag=/c noshellslash guioptions-=!")
