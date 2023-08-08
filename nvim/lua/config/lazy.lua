@@ -2,8 +2,7 @@ local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
   -- bootstrap lazy.nvim
   -- stylua: ignore
-  vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable",
-    lazypath })
+  vim.fn.system({ "git", "clone", "--filter=tree:0", "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath })
 end
 vim.opt.rtp:prepend(lazypath)
 vim.opt.rtp:append(vim.env.HOME .. ".dotfiles/repos/private/nvim")
@@ -25,11 +24,8 @@ require("lazy").setup({
       optional = true,
       opts = {
         highlight_overrides = {
-          latte = function(latte)
-            return {
-              NeoTreeCursorLine = { bg = latte.base },
-            }
-          end,
+          -- stylua: ignore
+          latte = function(latte) return { NeoTreeCursorLine = { bg = latte.base } } end,
         },
       },
     },
