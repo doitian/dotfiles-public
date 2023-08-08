@@ -11,3 +11,7 @@ opt.visualbell = true
 opt.wildignore = "*.swp,*.bak,*.pyc,*.class,*.beam"
 opt.winwidth = 78
 opt.grepprg = "rg --hidden -g '!.git' --vimgrep"
+
+vim.g.netrw_winsize = -40
+vim.g.netrw_banner = 0
+vim.g.netrw_liststyle = 3

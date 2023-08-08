@@ -14,6 +14,7 @@ if !has('nvim')
 endif
 
 let s:has_fzf = executable('fzf')
+let g:vsnip_snippet_dir = $HOME.'/.config/nvim/snippets'
 
 function! s:PackInit() abort
   exec 'packadd minpac'.has('ios')?'-ios':''
@@ -50,6 +51,8 @@ endfunction
 " Theme {{{1
 let g:PaperColor_Theme_Options = { 'theme':{'default':{'transparent_background':!has('ios')}} }
 silent! colorscheme PaperColor
+filetype plugin indent on
+syntax enable
 
 " Plugins Options {{{1
 let g:netrw_winsize = -40
@@ -264,7 +267,7 @@ else
   nnoremap <Leader>fb <Cmd>ls<CR>:<C-u>b<Space>
   nnoremap <Leader>, <Cmd>ls<CR>:<C-u>b<Space>
   nnoremap <Leader>fh :<C-u>e %:h<C-z><C-z>
-  nnoremap <Leader>fS :<C-u>e <C-r>=g:vsnip_snippet_dir<CR>/<C-z>
+  nnoremap <Leader>fS <Cmd>VsnipOpen<CR>
 endif
 
 " navigation {{{2
@@ -304,7 +307,6 @@ smap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
 augroup vimrc_au
   autocmd!
 
-  autocmd CmdUndefined Lexplore unlet g:loaded_netrwPlugin | runtime plugin/netrwPlugin.vim
   autocmd CmdUndefined Make,Dispatch,Start,FocusDispatch packadd vim-dispatch
 
   autocmd FileType gitcommit,markdown setlocal spell wrap
