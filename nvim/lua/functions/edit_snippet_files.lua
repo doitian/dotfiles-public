@@ -1,8 +1,8 @@
-local snippets_dir = vim.fn.stdpath("config") .. "/local/iy-snippets.vim/snippets/"
+local snippets_dir = vim.fn.stdpath("config") .. "/snippets/"
 
 local opts = {
   format = function(file)
-    return file:gsub(".*/(.+)/snippets/", "%1 -> ")
+    return file:gsub(".*/(.+/.+)/snippets/", "%1 -> ")
   end,
   extend = function(ft)
     local filename = ft .. ".json"

@@ -2,56 +2,26 @@
 
 set -e
 
-function vimrc_full() {
-  cat ~/.vimrc | grep -v '"NOREMOTE' | sed -e 's/^"REMOTE //'
-}
-
 function vimrc_simple() {
   cat <<"VIMRC"
 call plug#begin('~/.vim/plugged')
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-eunuch'
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'editorconfig/editorconfig-vim'
 call plug#end()
 
-let mapleader = ","
-let g:mapleader = ","
-let g:ctrlp_map = '<leader>,'
-let g:ctrlp_root_markers = []
-let g:ctrlp_working_path_mode = 'a'
-set autoread
-set hidden
-
-function! HasPaste()
-    if &paste
-        return '[P]'
-    en
-    return ''
-endfunction
-
-set statusline=%<%f\ %m%r%{HasPaste()}%=%l\ %P
+let mapleader = ' '
+let g:mapleader = ' '
 VIMRC
 }
 
-testcommand='test -f ~/.vimrc'
-if [ "$1" = "-f" ]; then
-  vimrc="$(vimrc_full)"
-  shift
-elif [ "$1" = "-ff" ]; then
-  vimrc="$(vimrc_full)"
-  testcommand=false
-  shift
-else
-  vimrc="$(vimrc_simple)"
-fi
+vimrc="$(vimrc_simple)"
 
 [ -n "$1" ] || (
   echo "require host"
   exit 1
 )
 
-plugvim="$(cat ~/.vim/autoload/plug.vim)"
+plugvim="$(curl -fLs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim)"
 
 ssh "$@" "
   mkdir -p ~/.vim/backup
@@ -61,7 +31,7 @@ ssh "$@" "
   test -f ~/.vim/autoload/plug.vim || cat <<\"PLUG\" > ~/.vim/autoload/plug.vim
 $plugvim
 PLUG
-  $testcommand || cat <<\"VIMRC\" > ~/.vimrc
+  test -f ~/.vimrc || cat <<\"VIMRC\" > ~/.vimrc
 $vimrc
 VIMRC
 "

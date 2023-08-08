@@ -38,13 +38,6 @@ autocmd("SwapExists", "*", function()
   end
 end)
 
-autocmd("CmdUndefined", "FZF", function()
-  local plugged = vim.fn.expand("~/.vim/plugged/")
-  vim.opt.rtp:append(plugged .. "fzf")
-  vim.opt.rtp:append(plugged .. "fzf.vim")
-  vim.cmd.runtime({ "plugin/fzf.vim", bang = true })
-end)
-
 local ft_maps = {
   PULLREQ_EDITMSG = "gitcommit",
   ["*.qf"] = "qf",

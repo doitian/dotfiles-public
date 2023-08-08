@@ -6,6 +6,7 @@ if not vim.loop.fs_stat(lazypath) then
     lazypath })
 end
 vim.opt.rtp:prepend(lazypath)
+vim.opt.rtp:append(vim.env.HOME .. ".dotfiles/repos/private/nvim")
 
 require("lazy").setup({
   spec = {
@@ -44,12 +45,6 @@ require("lazy").setup({
     version = false, -- always use the latest git commit
     -- version = "*", -- try installing the latest stable version for plugins that support semver
   },
-  ---@diagnostic disable-next-line: assign-type-mismatch
-  dev = {
-    path = vim.fn.stdpath("config") .. "/local",
-    pattern = {},
-    fallback = false,
-  },
   install = { colorscheme = { "catppuccin-latte", "habamax" } },
   checker = { enabled = true }, -- automatically check for plugin updates
   performance = {
@@ -69,3 +64,6 @@ require("lazy").setup({
     },
   },
 })
+
+-- lazy setup will reset pp
+vim.opt.pp:prepend(vim.fn.stdpath("config"))

@@ -1,6 +1,8 @@
 local wezterm = require("wezterm")
 
 local config = {
+  quit_when_all_windows_are_closed = false,
+
   color_scheme = "Catppuccin Latte",
   colors = {
     tab_bar = {
@@ -34,6 +36,33 @@ local config = {
     right = 0,
     top = 0,
     bottom = 0,
+  },
+
+  set_environment_variables = {
+    LAZY = "1",
+    PATH = os.getenv("PATH") .. ":" .. wezterm.home_dir .. "/bin:/usr/local/bin",
+  },
+  skip_close_confirmation_for_processes_named = {
+    "bash",
+    "sh",
+    "zsh",
+    "cmd.exe",
+    "pwsh.exe",
+    "powershell.exe",
+    "tmux",
+    "btop",
+    "man",
+  },
+  launch_menu = {
+    {
+      args = { "btop" },
+    },
+    {
+      args = { "bash", "-l" },
+    },
+    {
+      args = { "tmux-launcher" },
+    },
   },
 
   keys = {

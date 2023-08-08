@@ -1,6 +1,9 @@
 # Use emacs key bindings
 bindkey -e
 
+# only alphanumeric characters are considered as word
+WORDCHARS=
+
 # ^Xa to insert all matches
 zle -C all-matches complete-word _generic
 bindkey '^Xa' all-matches

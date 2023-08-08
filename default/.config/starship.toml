@@ -23,6 +23,12 @@ up_to_date = '[≡](green bold)'
 [status]
 disabled = false
 
+[shell]
+disabled = false
+zsh_indicator = ''
+unknown_indicator = 'sh?'
+format = '[$indicator]($style)'
+
 [battery]
 full_symbol = "🔋 "
 charging_symbol = "⚡️ "

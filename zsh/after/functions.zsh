@@ -44,3 +44,8 @@ function gfw() {
       ;;
   esac
 }
+
+function vman() {
+  [[ -z "${1:-}" ]] && return 1
+  man "$@" | nvim '+Man!' -
+}

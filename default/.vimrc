@@ -7,50 +7,45 @@ if has('win32') | language en | set ff=unix | endif
 if &term ==? 'win32' | set t_Co=256 | endif
 
 " Plug {{{1
-silent! call plug#begin($HOME.'/.vim/plugged')
-
-Plug 'NLKNguyen/papercolor-theme'
-
-Plug 'editorconfig/editorconfig-vim'
-Plug 'justinmk/vim-sneak' " s (o)z
-Plug 'thinca/vim-visualstar' " * # g* g#
-Plug 'tomtom/tcomment_vim' " gc
-Plug 'tpope/vim-dispatch', { 'on': ['Make', 'Dispatch', 'Start', 'FocusDispatch'] }
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-sleuth'
-Plug 'tpope/vim-surround' " ys ds cs (v)S
-
-Plug 'hrsh7th/vim-vsnip'
-Plug 'hrsh7th/vim-vsnip-integ'
-Plug 'lifepillar/vim-mucomplete'
-Plug 'rafamadriz/friendly-snippets'
-
-if has('win32')
-  Plug 'PProvost/vim-ps1'
+set rtp+=$HOME/.dotfiles/repos/private/nvim
+set pp=$HOME/.vim,$HOME/.config/nvim,$VIMRUNTIME
+if !has('nvim')
+  set rtp^=$HOME/.config/nvim
 endif
 
 let s:has_fzf = executable('fzf')
-if s:has_fzf
-  Plug 'junegunn/fzf'
-  Plug 'junegunn/fzf.vim'
-endif
 
-let s:nvim = $HOME.'/.config/nvim'
-if isdirectory(s:nvim)
-  if !has("nvim")
-    call plug#(s:nvim)
+function! s:PackInit() abort
+  exec 'packadd minpac'.has('ios')?'-ios':''
+
+  call minpac#init()
+
+  call minpac#add('editorconfig/editorconfig-vim')
+  call minpac#add('justinmk/vim-sneak') " s (o)z
+  call minpac#add('thinca/vim-visualstar') " * # g* g#
+  call minpac#add('tomtom/tcomment_vim') " gc
+  call minpac#add('tpope/vim-repeat')
+  call minpac#add('tpope/vim-sleuth')
+  call minpac#add('tpope/vim-surround') " ys ds cs (v)S
+
+  call minpac#add('hrsh7th/vim-vsnip')
+  call minpac#add('hrsh7th/vim-vsnip-integ')
+  call minpac#add('lifepillar/vim-mucomplete')
+  call minpac#add('rafamadriz/friendly-snippets')
+
+  call minpac#add('NLKNguyen/papercolor-theme', {'type': 'opt'})
+  call minpac#add('tpope/vim-dispatch', {'type': 'opt'})
+
+  if has('win32')
+    call minpac#add('PProvost/vim-ps1')
   endif
-  let g:vsnip_snippet_dir = s:nvim.'/local/iy-snippets.vim/snippets'
-  call plug#(fnamemodify(g:vsnip_snippet_dir, ':h'))
-  call plug#(s:nvim.'/local/iy-bm.vim', { 'on': ['Bm'] })
-  call plug#(s:nvim.'/local/iy-diff-orig.vim', { 'on': ['DiffOrig'] })
-  call plug#(s:nvim.'/local/iy-nano-fs.vim', { 'on': ['Delete', 'Move'] })
+
   if s:has_fzf
-    call plug#(s:nvim.'/local/fzf-vsnip', { 'on': ['Snippets'] })
+    call minpac#add('junegunn/fzf')
+    call minpac#add('junegunn/fzf.vim')
+    silent! packadd! fzf-vsnip
   endif
-endif
-
-call plug#end()
+endfunction
 
 " Theme {{{1
 let g:PaperColor_Theme_Options = { 'theme':{'default':{'transparent_background':!has('ios')}} }
@@ -104,6 +99,10 @@ if s:has_fzf
   command! -bang Zoxide call fzf#run(fzf#wrap('zoxide',
         \ {'source': 'zoxide query -l', 'sink': 'cd'}, <bang>0))
 endif
+
+command! PackUpdate call <SID>PackInit() | call minpac#update()
+command! PackClean  call <SID>PackInit() | call minpac#clean()
+command! PackStatus packadd minpac | call minpac#status()
 
 " Config {{{1
 " :let @/ = "\\vset (no)?"
@@ -306,6 +305,7 @@ augroup vimrc_au
   autocmd!
 
   autocmd CmdUndefined Lexplore unlet g:loaded_netrwPlugin | runtime plugin/netrwPlugin.vim
+  autocmd CmdUndefined Make,Dispatch,Start,FocusDispatch packadd vim-dispatch
 
   autocmd FileType gitcommit,markdown setlocal spell wrap
   autocmd FileType vim,beancount,i3config setlocal foldmethod=marker

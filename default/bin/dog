@@ -4,16 +4,6 @@ set -e
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
-EXA_TREE="${FZF_PREVIEW_EXA_TREE:-1}"
-COLS="${FZF_PREVIEW_COLUMNS:-$(tput cols)}"
-LINES="${FZF_PREVIEW_LINES:-$(tput lines)}"
-if [ -z "${FZF_PREVIEW_LINES:-}" ]; then
-  LINES=$((LINES - 3))
-fi
-if [ -n "${TMUX:-}" ]; then
-  LINES=$((LINES - 1))
-fi
-
 if [ "${1:-}" = "--fzf-enable" ]; then
   echo ': "${FZF_ORIG_OPTS:="$FZF_DEFAULT_OPTS"}"'
   echo 'export FZF_DEFAULT_OPTS="$FZF_ORIG_OPTS --preview='\''preview {}'\''"'
@@ -21,22 +11,20 @@ if [ "${1:-}" = "--fzf-enable" ]; then
   exit 0
 elif [ "${1:-}" = "--fzf-disable" ]; then
   echo 'export FZF_DEFAULT_OPTS="$FZF_ORIG_OPTS"'
+  echo 'unset FZF_ORIG_OPTS'
   echo '# eval "$(preview --fzf-disable)"'
   exit 0
 fi
 
-BAT_STYLE=
+BAT_OPTS="--color=always --line-range :5000"
 if [ -n "${FZF_PREVIEW_LINES:-}" ]; then
-  BAT_STYLE="--style=numbers"
-else
-  LINES=$((LINES - 4))
+  BAT_OPTS="$BAT_OPTS --style=numbers"
 fi
-BAT_OPTS="--color=always --line-range=:$LINES --terminal-width=$COLS --wrap=never --paging=never $BAT_STYLE"
 
 function preview() {
   local arg="$1"
   if [ -d "$arg" ]; then
-    exa --color always -T -L "$EXA_TREE" "$arg" | head -n "$LINES"
+    exa -1 --color always --icons "$arg"
   else
     if [ -e "$arg" ]; then
       bat $BAT_OPTS "$arg"

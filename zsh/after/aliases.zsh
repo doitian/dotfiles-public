@@ -1,6 +1,6 @@
 ##################################################
 # Editor
-: "${__VIM_PROGRAM__:=vim}"
+: "${__VIM_PROGRAM__:="$HOME/bin/nvim"}"
 alias vim="$__VIM_PROGRAM__"
 alias :e="$__VIM_PROGRAM__"
 alias vi="$__VIM_PROGRAM__"

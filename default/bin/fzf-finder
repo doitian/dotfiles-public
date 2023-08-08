@@ -58,11 +58,10 @@ fi
 cd "$OPT_DIRECTORY"
 
 export OPT_PREVIEW
-export FZF_PREVIEW_EXA_TREE=1
 
 FZF_ARGS=(--header "$(pwd)/" --ansi --multi)
 if [ -n "$OPT_PREVIEW" ]; then
-  FZF_ARGS+=(--preview 'preview {}')
+  FZF_ARGS+=(--preview 'dog {}')
 fi
 
 if [[ "$OPT_RECURSIVE" == "true" ]]; then

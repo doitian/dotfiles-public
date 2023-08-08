@@ -1,89 +1,50 @@
 #!/usr/bin/env bash
 
-# https://github.com/jamesottaway/tmux-up/blob/master/tmux-up
-
 set -e
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
-TMUX_UP=tmux-up
-VERSION=0.5.1-fork
-TMUX_COMM="${TMUX_COMM:-tmux}"
-ARG1="${1:-}"
-
-if [ "$ARG1" = '-h' ] || [ "$ARG1" = '--help' ]; then
-  cat <<-USAGE
-		Usage: $0 [FILE]
-		Attach to a newly bootstrapped or existing tmux session.
-
-		The FILE argument is used to bootstrap the new tmux session if it doesn't
-		already exist. It must contain tmux-compatible commands, which will be
-		passed to tmux. Defaults to: .tmux-up.conf
-
-		  --help     display this help and exit
-		  --version  output version information and exit
-	USAGE
-  exit 0
-fi
-
-if [ "$ARG1" = '-v' ] || [ "$ARG1" = '--version' ]; then
-  cat <<-EOF
-		$TMUX_UP $VERSION
-		Copyright (C) 2015 James Ottaway
-		License MIT: <http://opensource.org/licenses/MIT>.
-		This is free software: you are free to change and redistribute it.
-		There is NO WARRANTY, to the extent permitted by law.
-	EOF
-  exit 0
-fi
-
-FILE=
-COMMANDS=
-if [ -z "$ARG1" ]; then
-  if [ "$PWD" = "$HOME" ]; then
-    SESSION=chore
-  elif [ ! -f '.tmux-up.conf' ]; then
-    SESSION=$(basename "$PWD" | sed 's/[^a-zA-Z0-9\-]//g')
-    COMMANDS='send "'"${EDITOR:-vim}"'" C-m
-neww -n shell'
+cat_config_file() {
+  if [ -f "$1" ]; then
+    cat "$1"
   else
-    FILE=".tmux-up.conf"
+    echo "send '${EDITOR:-vim}' C-m"
+    echo "neww"
+    echo "selectw -t 1"
   fi
+  echo "detach"
+}
+
+ROOT_DIR="${1:-${PWD}}"
+if [ -d "$ROOT_DIR" ]; then
+  CONFIG_FILE="$ROOT_DIR/.tmux-up.conf"
+elif [ -f "$ROOT_DIR" ]; then
+  CONFIG_FILE="$ROOT_DIR"
+  ROOT_DIR="$(dirname "$CONFIG_FILE")"
 else
-  FILE='$ARG1'
+  echo "$ROOT_DIR does not exist!" >&2
+  exit 1
 fi
 
-if [ -n "${FILE}" ]; then
-  if ! [ -f "${FILE}" ]; then
-    echo "File ${FILE} does not exist!" >&2
-    exit 1
-  fi
+ROOT_DIR="$(cd "$ROOT_DIR" && pwd)"
+CONFIG_FILE="$(basename "$CONFIG_FILE")"
 
-  BASE=$(basename "$PWD" | sed 's/[^a-zA-Z0-9\-]//g')
-  NAME=$(basename "$FILE" .conf)
-
-  if [ "$NAME" = '.tmux-up' ]; then
-    SESSION="$BASE"
-  else
-    SESSION="$BASE/$NAME"
-  fi
+SESSION="$(basename "$ROOT_DIR")"
+SESSION="${SESSION#.}"
+if [ "$CONFIG_FILE" != '.tmux-up.conf' ]; then
+  SESSION="$SESSION/${CONFIG_FILE#.tmux-}"
+  SESSION="${SESSION%.conf}"
 fi
+SESSION="${SESSION//[.:]/_}"
 
 if ! tmux has-session -t "=$SESSION" >/dev/null 2>&1; then
-  TMUX='' tmux new-session -d -s "$SESSION"
-  if [ -n "$COMMANDS" ]; then
-    echo "Use default commands:"
-    echo
-    echo "$COMMANDS"
-    echo "$COMMANDS" | xargs -L1 tmux
-  elif [ -n "$FILE" ]; then
-    tmux source "$FILE"
-  fi
-  tmux select-window -t 1
+  tmux new -d -c "$ROOT_DIR" -s "$SESSION"
+  cat_config_file "$ROOT_DIR/$CONFIG_FILE" |
+    TMUX='' tmux -C attach -t "=$SESSION" -f no-output >/dev/null
 fi
 
-if [ -z "${TMUX:-}" ]; then
-  $TMUX_COMM attach -t "=$SESSION"
+if [ -n "${TMUX:-}" ]; then
+  tmux switchc -t "=$SESSION"
 else
-  tmux switch-client -t "=$SESSION"
+  tmux attach -t "=$SESSION"
 fi

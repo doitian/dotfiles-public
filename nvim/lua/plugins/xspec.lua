@@ -1,29 +1,5 @@
 return {
   {
-    "doitian/iy-diff-orig.vim",
-    dev = true,
-    cmd = "DiffOrig",
-  },
-
-  {
-    "doitian/iy-nano-fs.vim",
-    dev = true,
-    cmd = { "Delete", "Move" },
-  },
-
-  {
-    "doitian/iy-bm.vim",
-    dev = true,
-    cmd = { "Bm" },
-  },
-
-  {
-    "doitian/iy-snippets.vim",
-    dev = true,
-    event = "VeryLazy",
-  },
-
-  {
     "christoomey/vim-titlecase",
     keys = {
       { "<Leader>gz", "<Plug>Titlecase", mode = { "n", "x" }, desc = "Titlecase" },

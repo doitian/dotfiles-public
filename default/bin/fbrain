@@ -15,7 +15,7 @@ fi
 export FZF_DEFAULT_COMMAND="$FZF_DEFAULT_COMMAND$(printf ' %q' "$@")"
 
 cd "$BRAIN_DIR"
-SELECTED="$(fzf --prompt="brain> " --preview="preview {}")"
+SELECTED="$(fzf --prompt="brain> " --preview="dog {}")"
 if [ -f "$SELECTED" ]; then
   exec "$EDITOR" "$SELECTED"
 fi
