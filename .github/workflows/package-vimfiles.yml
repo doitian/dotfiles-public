@@ -13,33 +13,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install Vim
-        run: sudo apt-get install -y vim
-
-      - name: Setup vimrc
-        run: |
-          mkdir -p ~/.config
-          ln -snf "${{ github.workspace }}/default/.vimrc" ~/.vimrc
-          ln -snf "${{ github.workspace }}/nvim" ~/.config/nvim
-          mkdir -p ~/.vim/autoload
-          mkdir -p ~/.local/state/vim/{backup,swap,undo}
-          curl -sSLo ~/.vim/autoload/plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
-      - name: Install Vim packages
-        run: vim +PlugInstall +qall
-
       - name: Package Vim files
         run: |
           mkdir -p vimfiles
 
-          cp .github/files/install-vimfiles.py vimfiles/install.py
+          mv default/.vimrc vimfiles/vimrc
 
-          cp default/.vimrc vimfiles/vimrc
+          mkdir -p vimfiles/nvim
+          mv nvim/{after,macros,pack,package.json,plugin,snippets} vimfiles/nvim/
 
-          mkdir -p vimfiles/{vim,nvim}
-          mv ~/.vim/autoload vimfiles/vim/
-          mv nvim/{after,local,macros} vimfiles/nvim/
-          rsync -avu --delete --progress -h --copy-links --exclude '.git' ~/.vim/plugged vimfiles/vim/
+          mv .github/files/install-vimfiles.py vimfiles/install.py
 
       - name: Upload Vim files
         uses: actions/upload-artifact@v1
