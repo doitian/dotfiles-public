@@ -17,7 +17,17 @@ let s:has_fzf = executable('fzf')
 let g:vsnip_snippet_dir = $HOME.'/.config/nvim/snippets'
 
 function! s:PackInit() abort
-  exec 'packadd minpac'.has('ios')?'-ios':''
+  if exists('g:loaded_minpac') | return | endif
+
+  if has('ios')
+    packadd minpac-ios
+  else
+    let minpacpath = $HOME.'/.vim/pack/minpac/opt/minpac'
+    if !isdirectory(minpacpath)
+      call system('git clone --filter=tree:0 https://github.com/k-takata/minpac.git ' . shellescape(minpacpath))
+    endif
+    packadd minpac
+  endif
 
   call minpac#init()
 
@@ -35,6 +45,7 @@ function! s:PackInit() abort
   call minpac#add('rafamadriz/friendly-snippets')
 
   call minpac#add('NLKNguyen/papercolor-theme', {'type': 'opt'})
+  call minpac#add('k-takata/minpac', {'type': 'opt'})
   call minpac#add('tpope/vim-dispatch', {'type': 'opt'})
 
   if has('win32')
@@ -105,7 +116,7 @@ endif
 
 command! PackUpdate call <SID>PackInit() | call minpac#update()
 command! PackClean  call <SID>PackInit() | call minpac#clean()
-command! PackStatus packadd minpac | call minpac#status()
+command! PackStatus call <SID>PackInit() | call minpac#status()
 
 " Config {{{1
 " :let @/ = "\\vset (no)?"
