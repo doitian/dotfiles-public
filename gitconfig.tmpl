@@ -12,6 +12,11 @@
 
 	cp = cherry-pick
 
+  # https://github.blog/2020-12-21-get-up-to-speed-with-partial-clone-and-shallow-clone/
+  clone-blobless = clone --filter=blob:none
+  clone-treeless = clone --filter=tree:0
+  clone-shallow = clone --depth=1
+
 	di = diff -p --stat # show difference between working tree and the index
 	dc = diff --cached -p --stat # what would be committed with "git commit"
 	da = diff -p --stat HEAD # what would be committed with "git commit -a"
