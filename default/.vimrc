@@ -234,6 +234,8 @@ nnoremap gx <Cmd>call job_start(['open',expand('<cfile>')])<CR>
 xnoremap gx y<Cmd>call job_start(['open',@*])<CR>
 nnoremap ]<Space> <Cmd>call append(line('.'), repeat([''], v:count1))<CR>
 nnoremap [<Space> <Cmd>call append(line('.')-1, repeat([''], v:count1))<CR>
+nnoremap ]a <Cmd>exec v:count1.'next'<CR>
+nnoremap [a <Cmd>exec v:count1.'previous'<CR>
 
 " ui {{{2
 nnoremap <Leader>ur <Cmd>noh<Bar>diffupdate<Bar>normal! <C-L><CR>
