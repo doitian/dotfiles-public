@@ -11,7 +11,7 @@
 
 	co = checkout
 	cb = checkout -b
-	rs = rebase --skip
+	rs = restore --staged
 
 	cp = cherry-pick
 
@@ -22,22 +22,25 @@
 	clone-shallow = clone --depth=1
 
 	# show difference between working tree and the index
-	di = diff -p --stat
+	di = diff --stat -p
 	# what would be committed with "git commit"
-	dc = diff --cached -p --stat
+	dc = diff --stat -p --cached
 	# what would be committed with "git commit -a"
-	da = diff -p --stat HEAD
-	# show different files between working tree and the index
-	ds = diff --stat
+	da = diff --stat -p HEAD
+	# show difference between working tree and the index
+	dis = diff --stat
+	# what would be committed with "git commit"
+	dcs = diff --stat --cached
+	# what would be committed with "git commit -a"
+	das = diff --stat HEAD
 	dt = difftool
-	diff-last = diff HEAD^
 
 	fp = format-patch -s
 
 	# log list
-	l = log --pretty=tformat:'%C(auto)%h %s <%aN %ad>' --date=relative
+	l = log --pretty=tformat:'%C(auto)%h %s %C(blue dim)<%aN %ad>%C(auto)%d' --date=relative
 	# log list with graph
-	lg = log --pretty=tformat:'%C(auto)%h %s <%aN %ad>%d' --date=relative --decorate --graph
+	lg = l --graph
 	# the last log
 	l1 = !git --no-pager log -1 --decorate --date=relative
 	lp = log -p
@@ -46,10 +49,11 @@
 	mt = mergetool
 
 	rb = rebase
-	rc = rebase --continue
-	ra = rebase --abort
+	rbc = rebase --continue
+	rba = rebase --abort
+	rbs = rebase --skip
 
-	st = status --short --branch -u .
+	st = status --short --branch -u
 	dotfiles = "!git multistatus ~/.dotfiles ~/.dotfiles/repos/public ~/.dotfiles/repos/private ~/Dropbox/Brain"
 	all = "!f() { fd -t d -I -H -g --prune \"$@\" .git -X git multistatus \"{//}\"; }; f"
 	ms = multistatus
@@ -78,12 +82,17 @@
 
 	me = "!f() { git config user.email __EMAIL__; git config user.signingkey FD7051CE32E62CE7; git config commit.gpgSign true; }; f"
 
-	rs = restore --staged
+	# stage files via fzf
 	fa = "!f() { git diff --name-only | fzf -m --print0 --preview 'git diff --color -- {}' | xargs -0 git add \"$@\"; }; f"
+	# add untracked files via fzf
 	ft = "!f() { git ls-files --other --exclude-standard | fzf -m --print0 --preview 'dog {}' | xargs -0 git add \"$@\"; }; f"
+	# unstage files via fzf
 	frs = "!f() { git diff --name-only --cached | fzf -m --print0 --preview 'git diff --color --cached -- {}' | xargs -0 git restore --staged \"$@\"; }; f"
+	# show difference between working tree and the index via fzf
 	fdi = "!f() { git diff --name-only | fzf -m --print0 --preview 'git diff --color -- {}' | xargs -0 git diff -p --stat; }; f"
+	# show what would be committed with "git commit" via fzf
 	fdc = "!f() { git diff --name-only --cached | fzf -m --print0 --preview 'git diff --color --cached -- {}' | xargs -0 git diff --cached -p --stat; }; f"
+	# show what would be committed with "git commit -a" via fzf
 	fda = "!f() { git diff --name-only HEAD | fzf -m --print0 --preview 'git diff --color HEAD -- {}' | xargs -0 git diff -p --stat HEAD; }; f"
 
 [core]

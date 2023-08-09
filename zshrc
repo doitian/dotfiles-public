@@ -5,7 +5,7 @@ if ! [[ -n "$SSH_TTY" && -S "$SSH_AUTH_SOCK" ]]; then
 fi
 ZSH_CACHE_DIR="$HOME/.zcompcache"
 ZSH="$HOME/.dotfiles/repos/public/zsh"
-MAGIC_ENTER_GIT_COMMAND=" g st"
+MAGIC_ENTER_GIT_COMMAND=" g st ."
 MAGIC_ENTER_OTHER_COMMAND=" ll"
 
 fpath=("$ZSH/functions" $fpath)
