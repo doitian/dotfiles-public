@@ -8,11 +8,7 @@ ZSH="$HOME/.dotfiles/repos/public/zsh"
 MAGIC_ENTER_GIT_COMMAND=" g st"
 MAGIC_ENTER_OTHER_COMMAND=" ll"
 
-fpath=(
-  "$ZSH/functions"
-  $fpath
-  "$ZSH_CACHE_DIR/completions"
-)
+fpath=("$ZSH/functions" $fpath)
 
 # Figure out the SHORT hostname
 if [[ "$OSTYPE" = darwin* ]]; then
