@@ -1,5 +1,5 @@
 " Preamble {{{1
-set nocompatible
+if &compatible | set nocompatible | endif
 set encoding=utf-8
 set background=light
 if exists("$TERM_BACKGROUND") | let &background=$TERM_BACKGROUND | endif
