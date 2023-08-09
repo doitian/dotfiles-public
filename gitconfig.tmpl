@@ -48,6 +48,7 @@
 	st = status --short --branch -u .
 	dotfiles = "!git multistatus ~/.dotfiles ~/.dotfiles/repos/public ~/.dotfiles/repos/private ~/Dropbox/Brain"
 	all = "!f() { fd -t d -I -H -g --prune \"$@\" .git -X git multistatus \"{//}\"; }; f"
+  ms = multistatus
 
 	ls = ls-files
 	grep = grep -Ii
