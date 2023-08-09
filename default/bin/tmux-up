@@ -9,7 +9,7 @@ cat_config_file() {
     cat "$1" | grep "."
   else
     echo "send '${EDITOR:-vim}' C-m"
-    echo "neww"
+    echo "neww -n shell"
     echo "selectw -t 1"
   fi
   echo ""
