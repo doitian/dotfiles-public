@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  vimfiles:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,10 +22,30 @@ jobs:
           mkdir -p vimfiles/nvim
           mv nvim/{after,macros,pack,package.json,plugin,snippets} vimfiles/nvim/
 
+          echo 'vimrc -> ~/.vimrc' > vimfiles/README.md
+          echo 'vim -> ~/.vim' >> vimfiles/README.md
+          echo 'nvim -> ~/.config/nvim' >> vimfiles/README.md
+
           mv .github/files/install-vimfiles.py vimfiles/install.py
 
       - name: Upload Vim files
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: vimfiles
           path: vimfiles
+
+  vimfiles-packed:
+    runs-on: ubuntu-latest
+    needs: vimfiles
+
+    steps:
+      - name: Install Vim
+        run: sudo apt-get install -y vim
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: vimfiles
+
+      - name: Setup vimrc
+        run: |
+          ls

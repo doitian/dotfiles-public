@@ -4,9 +4,14 @@ from pathlib import Path
 home = Path('..')
 (home / '.config').mkdir(parents=True, exist_ok=True)
 
+dotvim = home / '.vim'
 dotnvim = home / '.config' / 'nvim'
 
 shutil.copyfile('vimrc', home / '.vimrc')
+
+if Path('vim').exists():
+    shutil.rmtree(dotvim, ignore_errors=True)
+    shutil.copytree('vim', dotvim)
 
 shutil.rmtree(dotnvim, ignore_errors=True)
 shutil.copytree('nvim', dotnvim)
