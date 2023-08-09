@@ -31,7 +31,7 @@ fi
 # theme
 export LESS='--RAW-CONTROL-CHARS --quiet --HILITE-UNREAD --ignore-case --long-prompt --no-init'
 export TERM_BACKGROUND="${TERM_BACKGROUND:-light}"
-export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --color light"
+export FZF_DEFAULT_OPTS="--prompt='❯ ' --color light"
 export BAT_THEME='Coldark-Cold'
 if [ "$TERM_BACKGROUND" = dark ]; then
   export FZF_DEFAULT_OPTS="--prompt='❯ '"
