@@ -30,6 +30,8 @@ fi
 
 # theme
 export LESS='--RAW-CONTROL-CHARS --quiet --HILITE-UNREAD --ignore-case --long-prompt --no-init'
+
+# also edit tmux.*.conf set-background
 export TERM_BACKGROUND="${TERM_BACKGROUND:-light}"
 export FZF_DEFAULT_OPTS="--prompt='❯ ' --color light"
 export BAT_THEME='Coldark-Cold'
@@ -37,7 +39,9 @@ if [ "$TERM_BACKGROUND" = dark ]; then
   export FZF_DEFAULT_OPTS="--prompt='❯ '"
   export DELTA_FEATURES='line-numbers decorations'
   unset BAT_THEME
+  export LG_CONFIG_FILE="$HOME/.config/lazygit/config.yml,$HOME/.config/lazygit/config-dark.yml"
 fi
+
 export DIRENV_LOG_FORMAT=$'\001\e[30m\002.- %s\001\e[0m\002'
 if [[ "$COLORTERM" =~ ^(truecolor|24bit)$ ]]; then
   export LAZY=1

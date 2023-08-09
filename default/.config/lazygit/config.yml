@@ -1,9 +1,9 @@
+# yaml-language-server: $schema=https://json.schemastore.org/lazygit.json
 os:
   editPreset: "nvim"
 gui:
   scrollHeight: 20
   theme:
-    lightTheme: false
     activeBorderColor:
       - "#40a02b" # Green
       - bold
