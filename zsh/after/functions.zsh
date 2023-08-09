@@ -23,13 +23,6 @@ function marked() {
   fi
 }
 
-function femoji() {
-  if [ "$#emoji" = 0 ]; then
-    source "$HOME/.oh-my-zsh/plugins/emoji/emoji.plugin.zsh"
-  fi
-  printf ":%s: %s\n" "${(kv)emoji[@]}" | fzf "$@"
-}
-
 function gfw() {
   case "${1:-show}" in
     show)
