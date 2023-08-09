@@ -1,6 +1,17 @@
 local wezterm = require("wezterm")
 
-local config = {
+local function dynamic(config)
+  local appearance = wezterm.gui and wezterm.gui.get_appearance() or "Light"
+  if appearance:find("Dark") then
+    config.color_scheme = "Catppuccin Mocha"
+    config.window_background_gradient = nil
+    config.set_environment_variables.TERM_BACKGROUND = "dark"
+  end
+
+  return config
+end
+
+return dynamic({
   -- required by vim clipboard editor
   quit_when_all_windows_are_closed = true,
   send_composed_key_when_right_alt_is_pressed = true,
@@ -42,6 +53,7 @@ local config = {
 
   set_environment_variables = {
     LAZY = "1",
+    TERM_BACKGROUND = "light",
     PATH = table
       .concat({
         os.getenv("PATH"),
@@ -55,6 +67,7 @@ local config = {
       }, ":")
       :gsub("%~", wezterm.home_dir),
   },
+
   skip_close_confirmation_for_processes_named = {
     "bash",
     "sh",
@@ -140,6 +153,4 @@ local config = {
       action = wezterm.action.SendString("•"),
     },
   },
-}
-
-return config
+})
