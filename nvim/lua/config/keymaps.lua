@@ -2,8 +2,6 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
-local Util = require("lazyvim.util")
-
 local map = vim.keymap.set
 local unmap = vim.keymap.del
 
@@ -12,6 +10,8 @@ map("n", "<Leader>v", "`[v`]", { desc = "Select yanked/pasted" })
 map({ "n", "x" }, "<Leader>d", [["_d]], { desc = "Delete without yanking" })
 map({ "n", "x" }, "<Leader>p", [["0p]], { desc = "Paste from yanked" })
 map({ "n", "x" }, "<Leader>P", [["0P]], { desc = "Paste from yanked above" })
+map({ "n", "x" }, ">p", "<Cmd>exec 'put '.v:register<CR>", { desc = "Paste and indnet" })
+map({ "n", "x" }, "<p", "<Cmd>exec 'put! '.v:register<CR>", { desc = "Paste and indnet" })
 map("n", "]<Space>", "<Cmd>call append(line('.'), repeat([''], v:count1))<CR>", { desc = "Insert lines below" })
 map("n", "[<Space>", "<Cmd>call append(line('.')-1, repeat([''], v:count1))<CR>", { desc = "Insert lines above" })
 map("n", "gx", "<Cmd>call jobstart(['open',expand('<cfile>')])<CR>", { desc = "Open file under cursor", silent = true })
@@ -35,10 +35,8 @@ map(
   "v:count == 0 ? '<Cmd>BufferLineCycleNext<CR>' : '<S-L>'",
   { expr = true, replace_keycodes = false, silent = true, desc = "Prev Tab" }
 )
-map("n", "]b", function()
-  require("bufferline").cycle(vim.v.count1)
-end, { desc = "Next Tab" })
-map("n", "[b", function()
-  require("bufferline").cycle(-vim.v.count1)
-end, { desc = "Next Tab" })
+-- stylua: ignore
+map("n", "]b", function() require("bufferline").cycle(vim.v.count1) end, { desc = "Next Tab" })
+-- stylua: ignore
+map("n", "[b", function() require("bufferline").cycle(-vim.v.count1) end, { desc = "Next Tab" })
 map("n", "<Leader>bs", "<Cmd>BufferLinePick<CR>", { desc = "Pick Tab" })
