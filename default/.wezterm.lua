@@ -3,6 +3,7 @@ local wezterm = require("wezterm")
 local config = {
   -- required by vim clipboard editor
   quit_when_all_windows_are_closed = true,
+  send_composed_key_when_right_alt_is_pressed = true,
 
   color_scheme = "Catppuccin Latte",
   colors = {
@@ -102,6 +103,41 @@ local config = {
       key = "Enter",
       mods = "ALT",
       action = wezterm.action.DisableDefaultAssignment,
+    },
+    {
+      key = "-",
+      mods = "ALT",
+      action = wezterm.action.SendString("–"),
+    },
+    {
+      key = "_",
+      mods = "ALT|SHIFT",
+      action = wezterm.action.SendString("—"),
+    },
+    {
+      key = "[",
+      mods = "ALT",
+      action = wezterm.action.SendString("“"),
+    },
+    {
+      key = "{",
+      mods = "ALT|SHIFT",
+      action = wezterm.action.SendString("”"),
+    },
+    {
+      key = "]",
+      mods = "ALT",
+      action = wezterm.action.SendString("‘"),
+    },
+    {
+      key = "}",
+      mods = "ALT|SHIFT",
+      action = wezterm.action.SendString("’"),
+    },
+    {
+      key = "8",
+      mods = "ALT",
+      action = wezterm.action.SendString("•"),
     },
   },
 }
