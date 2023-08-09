@@ -59,7 +59,7 @@ jobs:
       - name: Setup vimrc
         run: |
           ln -snf ${{ github.workspace }}/vimfiles/vimrc ~/.vimrc
-          mkdir ~/.config
+          mkdir -p ~/.config
           rm -rf ~/.config/nvim
           ln -snf ${{ github.workspace }}/vimfiles/nvim ~/.config/nvim
           ln -snf {{ github.workspace }}/vimrc ~/.vimrc
