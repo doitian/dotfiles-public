@@ -1,16 +1,18 @@
-local snippets_dir = vim.fn.stdpath("config") .. "/snippets/"
+local snippets_dir = vim.fn.resolve(vim.fn.stdpath("config")) .. "/snippets/"
 
 local opts = {
-  format = function(file)
-    return file:gsub(".*/(.+/.+)/snippets/", "%1 -> ")
+  format = function(path)
+    return path:gsub(".*/(.+/.+)/snippets/", "%1 -> ")
   end,
-  extend = function(ft)
-    local filename = ft .. ".json"
-    local path = snippets_dir .. filename
-    if vim.fn.filereadable(path) == 0 then
-      return { { "(CREATE) " .. filename, path } }
+  extend = function(ft, paths)
+    for _, path in ipairs(paths) do
+      if path:find(snippets_dir) == 1 then
+        return {}
+      end
     end
-    return {}
+
+    local filename = ft .. ".json"
+    return { { "(CREATE) " .. filename, snippets_dir .. filename } }
   end,
 }
 
