@@ -3,7 +3,7 @@
 case "${1:-}" in
 light)
   echo "export TERM_BACKGROUND=light"
-  echo "export FZF_DEFAULT_OPTS='--color light'"
+  echo "export FZF_DEFAULT_OPTS='--prompt='❯ ' --color light'"
   echo "export BAT_THEME=Coldark-Cold"
   echo "unset DELTA_FEATURES"
   if [ -n "${TMUX:-}" ]; then
@@ -15,7 +15,8 @@ light)
 dark)
   echo "export TERM_BACKGROUND=dark"
   echo "export DELTA_FEATURES='line-numbers decorations'"
-  echo "unset FZF_DEFAULT_OPTS BAT_THEME"
+  echo "export FZF_DEFAULT_OPTS=\"--prompt='❯ '\""
+  echo "unset BAT_THEME"
   if [ -n "${TMUX:-}" ]; then
     echo "tmux source ~/.tmux.dark.conf"
   fi
