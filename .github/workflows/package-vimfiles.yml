@@ -2,7 +2,16 @@ name: Package Vim files
 
 on:
   push:
-    paths: "default/.vimrc"
+    paths:
+      - default/.vimrc
+      - nvim/after
+      - nvim/macros
+      - nvim/pack
+      - nvim/package.json
+      - nvim/plugin
+      - nvim/snippets
+      - .github/workflows/package-vimfiles.yml
+      - .github/files/install-vimfiles.py
 
   workflow_dispatch:
 
@@ -42,10 +51,34 @@ jobs:
       - name: Install Vim
         run: sudo apt-get install -y vim
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: vimfiles
+          path: vimfiles
 
       - name: Setup vimrc
         run: |
-          ls
+          ln -snf ${{ github.workspace }}/vimfiles/vimrc ~/.vimrc
+          mkdir ~/.config
+          rm -rf ~/.config/nvim
+          ln -snf ${{ github.workspace }}/vimfiles/nvim ~/.config/nvim
+          ln -snf {{ github.workspace }}/vimrc ~/.vimrc
+          mkdir -p .config
+          ln -snf {{ github.workspace }}/nvim ~/.config/
+
+      - name: Install Vim packs
+        run: vim +PackUpdate +qall
+
+      - name: Package Vim files
+        run: |
+          mkdir -p vimfiles/vim
+          mv ~/.vim/pack vimfiles/vim
+          rm -rf vimfiles/vim/pack/minpac/*/*/.git
+
+          mv vimfiles vimfiles-packed
+
+      - name: Upload Vim files
+        uses: actions/upload-artifact@v3
+        with:
+          name: vimfiles-packed
+          path: vimfiles-packed
