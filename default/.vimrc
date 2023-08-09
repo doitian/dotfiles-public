@@ -242,8 +242,8 @@ nnoremap <silent> <Leader>e <Cmd>Lexplore<CR>
 
 nnoremap <Leader>xq <Cmd>copen<CR>
 nnoremap <Leader>xl <Cmd>lopen<CR>
-nnoremap <silent> ]q <Cmd>cnext<CR>
-nnoremap <silent> [q <Cmd>cprevious<CR>
+nnoremap <silent> ]q <Cmd>exe v:count1.'cnext'<CR>zv
+nnoremap <silent> [q <Cmd>exe v:count1.'cprevious'<CR>zv
 
 " coding {{{2
 nnoremap <silent> g<CR> <Cmd>Dispatch!<CR>
@@ -288,8 +288,8 @@ nnoremap <Leader>bb <Cmd>e #<CR>
 nnoremap <Leader>` <Cmd>e #<CR>
 nmap <silent> <expr> H v:count == 0 ? '<Cmd>bprevious<CR>' : 'H'
 nmap <silent> <expr> L v:count == 0 ? '<Cmd>bnext<CR>' : 'L'
-nnoremap <silent> ]b <Cmd>bnext<CR>
-nnoremap <silent> [b <Cmd>bprevious<CR>
+nnoremap <silent> ]b <Cmd>exec v:count1.'bnext'<CR>
+nnoremap <silent> [b <Cmd>exec v:count1.'bprevious'<CR>
 
 nnoremap <Leader>ww <C-w>p
 nnoremap <Leader>wd <C-w>c
@@ -342,7 +342,7 @@ augroup vimrc_au
 
   autocmd BufReadPost *
         \ if line("'\"") > 1 && line("'\"") <= line('$') && &filetype !=# 'gitcommit' |
-        \   exe 'normal! g`"' |
+        \   exe 'normal! g`"zv' |
         \ endif
   autocmd SwapExists * echow "swap exists" | let v:swapchoice=exists('b:swapchoice')?b:swapchoice:'o'
 augroup END
