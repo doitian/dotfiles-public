@@ -1,4 +1,5 @@
 # yaml-language-server: $schema=https://json.schemastore.org/lazygit.json
+promptToReturnFromSubprocess: false
 os:
   editPreset: "nvim"
 gui:
@@ -21,3 +22,28 @@ gui:
       - "#1e66f5" # Blue
     unstagedChangesColor:
       - red # Red
+
+customCommands:
+  - key: G
+    command: "gh repo view --web"
+    context: files
+    description: "Open repo in GitHub"
+  - key: G
+    command: "gh pr view --web"
+    context: localBranches
+    description: "Open pull request in GitHub"
+  - key: E
+    context: commitFiles
+    subprocess: true
+    # - When a file is selected, open the file before the commit
+    # - When a directory is selected, open the commit changes limited to that directory
+    command: |
+      {{if .SelectedCommitFile}}
+      git show '{{.SelectedLocalCommit.Sha}}^:{{.SelectedCommitFile.Name}}' |\
+      vim -Rm - +"let b:fname = 'file git://{{.SelectedLocalCommit.Sha}}^/{{.SelectedCommitFile.Name}}'" \
+      {{else}}
+      git show '{{.SelectedLocalCommit.Sha}}' -- git show {{.SelectedCommitFilePath}} |\
+      vim -Rm - +"let b:fname = 'file git://{{.SelectedLocalCommit.Sha}}/{{.SelectedCommitFilePath}}.patch'" \
+      {{end}}--cmd 'set mls=0' \
+             +'nnoremap <buffer> q <Cmd>quit<CR>' \
+             +"exec 'file '.fnameescape(b:fname) | unlet b:fname | set mls=5 | silent! filetype detect"
