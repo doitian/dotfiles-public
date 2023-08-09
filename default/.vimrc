@@ -24,7 +24,7 @@ function! s:PackInit() abort
   else
     let minpacpath = $HOME.'/.vim/pack/minpac/opt/minpac'
     if !isdirectory(minpacpath)
-      call system('git clone --filter=tree:0 https://github.com/k-takata/minpac.git ' . shellescape(minpacpath))
+      call system('git clone --filter=blob:none https://github.com/k-takata/minpac.git ' . shellescape(minpacpath))
     endif
     packadd minpac
   endif
