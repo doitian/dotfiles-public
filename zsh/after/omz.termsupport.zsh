@@ -108,3 +108,91 @@ if [[ -z "$INSIDE_EMACS" || "$INSIDE_EMACS" = vterm ]]; then
   add-zsh-hook precmd omz_termsupport_precmd
   add-zsh-hook preexec omz_termsupport_preexec
 fi
+
+function omz_urlencode() {
+  emulate -L zsh
+  local -a opts
+  zparseopts -D -E -a opts r m P
+
+  local in_str="$@"
+  local url_str=""
+  local spaces_as_plus
+  if [[ -z $opts[(r)-P] ]]; then spaces_as_plus=1; fi
+  local str="$in_str"
+
+  # Use LC_CTYPE=C to process text byte-by-byte
+  local i byte ord LC_ALL=C
+  export LC_ALL
+  local reserved=';/?:@&=+$,'
+  local mark='_.!~*''()-'
+  local dont_escape="[A-Za-z0-9"
+  if [[ -z $opts[(r)-r] ]]; then
+    dont_escape+=$reserved
+  fi
+  # $mark must be last because of the "-"
+  if [[ -z $opts[(r)-m] ]]; then
+    dont_escape+=$mark
+  fi
+  dont_escape+="]"
+
+  # Implemented to use a single printf call and avoid subshells in the loop,
+  # for performance (primarily on Windows).
+  local url_str=""
+  for (( i = 1; i <= ${#str}; ++i )); do
+    byte="$str[i]"
+    if [[ "$byte" =~ "$dont_escape" ]]; then
+      url_str+="$byte"
+    else
+      if [[ "$byte" == " " && -n $spaces_as_plus ]]; then
+        url_str+="+"
+      else
+        ord=$(( [##16] #byte ))
+        url_str+="%$ord"
+      fi
+    fi
+  done
+  echo -E "$url_str"
+}
+
+() {
+  # Don't define the function if we're inside Emacs or in an SSH session (#11696)
+  if [[ -n "$INSIDE_EMACS" || -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then
+    return
+  fi
+
+  # Don't define the function if we're in an unsupported terminal
+  case "$TERM" in
+    # all of these either process OSC 7 correctly or ignore entirely
+    xterm*|putty*|rxvt*|konsole*|mlterm*|alacritty|screen*|tmux*) ;;
+    contour*|foot*) ;;
+    *)
+      # Terminal.app and iTerm2 process OSC 7 correctly
+      case "$TERM_PROGRAM" in
+        Apple_Terminal|iTerm.app) ;;
+        *) return ;;
+      esac ;;
+  esac
+
+  # Emits the control sequence to notify many terminal emulators
+  # of the cwd
+  #
+  # Identifies the directory using a file: URI scheme, including
+  # the host name to disambiguate local vs. remote paths.
+  function omz_termsupport_cwd {
+    # Percent-encode the host and path names.
+    local URL_HOST URL_PATH
+    URL_HOST="$(omz_urlencode -P $HOST)" || return 1
+    URL_PATH="$(omz_urlencode -P $PWD)" || return 1
+
+    # Konsole errors if the HOST is provided
+    [[ -z "$KONSOLE_VERSION" ]] || URL_HOST=""
+
+    # common control sequence (OSC 7) to set current host and path
+    printf "\e]7;file://%s%s\e\\" "${URL_HOST}" "${URL_PATH}"
+  }
+
+  # Use a precmd hook instead of a chpwd hook to avoid contaminating output
+  # i.e. when a script or function changes directory without `cd -q`, chpwd
+  # will be called the output may be swallowed by the script or function.
+  add-zsh-hook precmd omz_termsupport_cwd
+}
