@@ -48,13 +48,13 @@ function show_status() {
     local git_branch="$(starship module -p "$arg" git_branch)"
     local git_status="$(starship module -p "$arg" git_status)"
 
-    echo "$directory$git_branch$git_status"
+    echo "$directory:$git_branch$git_status"
   done
 }
 
 if [ -t 1 ]; then
   RELOAD_COMMAND="git-multistatus$(printf ' %q' "$@")"
-  show_status "$@" | fzf --ansi --multi -q todo -d ' ±' \
+  show_status "$@" | fzf --ansi --multi -q todo -d ':' \
     --prompt '(g:lazygit)❯ ' \
     --preview="bash -c 'git -c color.ui=always -C {1} status --short --branch -u {1}'" \
     --bind="ctrl-g:execute(bash -c 'cd {1} && lazygit -g \"\$(git rev-parse --git-dir)\"')+reload($RELOAD_COMMAND)" \
