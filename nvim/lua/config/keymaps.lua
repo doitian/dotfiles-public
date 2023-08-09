@@ -10,7 +10,8 @@ local unmap = vim.keymap.del
 -- editor
 map("n", "<Leader>v", "`[v`]", { desc = "Select yanked/pasted" })
 map({ "n", "x" }, "<Leader>d", [["_d]], { desc = "Delete without yanking" })
-map("x", "<Leader>p", [["0p]], { desc = "Paste from yanking/deleting" })
+map({ "n", "x" }, "<Leader>p", [["0p]], { desc = "Paste from yanked" })
+map({ "n", "x" }, "<Leader>P", [["0P]], { desc = "Paste from yanked above" })
 map("n", "]<Space>", "<Cmd>call append(line('.'), repeat([''], v:count1))<CR>", { desc = "Insert lines below" })
 map("n", "[<Space>", "<Cmd>call append(line('.')-1, repeat([''], v:count1))<CR>", { desc = "Insert lines above" })
 map("n", "gx", "<Cmd>call jobstart(['open',expand('<cfile>')])<CR>", { desc = "Open file under cursor", silent = true })

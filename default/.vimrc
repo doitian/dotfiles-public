@@ -214,6 +214,10 @@ nnoremap <Leader>v `[v`]
 nnoremap Y y$
 nnoremap <Leader>d "_d
 xnoremap <Leader>d "_d
+nnoremap <Leader>p "0p
+xnoremap <Leader>p "0p
+nnoremap <Leader>P "0P
+xnoremap <Leader>P "0P
 nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
 xnoremap <expr> j v:count == 0 ? 'gj' : 'j'
 nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
