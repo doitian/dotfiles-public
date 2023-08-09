@@ -2,13 +2,15 @@
 # Custom FZF Compleitions https://github.com/junegunn/fzf#custom-fuzzy-completion
 
 _fzf_complete_git() {
-  _fzf_complete --prompt="aliases❯ " -- "$@" < <(
-    git config -l | sed -n 's/^alias\.//p'
+  local PREVIEW='echo {} | sed "s/ # /\n# /" | bat --style numbers --color always --terminal-width $FZF_PREVIEW_COLUMNS --language=toml'
+  _fzf_complete --prompt="aliases❯ " --preview="$PREVIEW" -- "$@" < <(
+    sed -n -e '1,/^\[alias\]/d' -e '/^\[/,$d' -e 's/^[[:space:]]*//' \
+      -e '/^#/{h;d;}' -e '/^$/h' -e '/./{G;s/\n/ /;p;d;h;}' ~/.gitconfig
   )
 }
 
 _fzf_complete_git_post() {
-  awk -F '=' '{print $1}'
+  awk -F ' =' '{print $1}'
 }
 
 _fzf_complete_git

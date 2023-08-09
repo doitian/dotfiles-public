@@ -1,57 +1,60 @@
-# vim: ft=gitconfig
+# vim: ft=gitconfig noexpandtab
 [alias]
 	snapshot = "!f() { git stash push -u -m \"snapshot-$(date '+%Y%m%d%H%M%S')\" && git stash apply \"stash@{0}\"; }; f"
 	pushsnap = "!f() { git push origin \"stash@{0}:refs/stashes/$(git stash list --pretty='%s' | sed -e 's/^On //' -e 's/: /\\//' -e 's/[^\\/a-zA-Z0-9_-]/-/')\"; }; f"
 
 	br = branch
-	whereami = rev-parse --abbrev-ref HEAD
+	current-branch = symbolic-ref --quiet HEAD
 
 	cm = commit
 	ca = commit --amend
+
 	co = checkout
 	cb = checkout -b
+	rs = rebase --skip
 
 	cp = cherry-pick
 
-  # https://github.blog/2020-12-21-get-up-to-speed-with-partial-clone-and-shallow-clone/
-  clone-blobless = clone --filter=blob:none
-  clone-treeless = clone --filter=tree:0
-  clone-shallow = clone --depth=1
+	# https://github.blog/2020-12-21-get-up-to-speed-with-partial-clone-and-shallow-clone/
 
-	di = diff -p --stat # show difference between working tree and the index
-	dc = diff --cached -p --stat # what would be committed with "git commit"
-	da = diff -p --stat HEAD # what would be committed with "git commit -a"
-	ds = diff --stat # show different files between working tree and the index
+	clone-blobless = clone --filter=blob:none
+	clone-treeless = clone --filter=tree:0
+	clone-shallow = clone --depth=1
+
+	# show difference between working tree and the index
+	di = diff -p --stat
+	# what would be committed with "git commit"
+	dc = diff --cached -p --stat
+	# what would be committed with "git commit -a"
+	da = diff -p --stat HEAD
+	# show different files between working tree and the index
+	ds = diff --stat
 	dt = difftool
-	last = diff HEAD^
+	diff-last = diff HEAD^
 
 	fp = format-patch -s
 
+	# log list
 	l = log --pretty=tformat:'%C(auto)%h %s <%aN %ad>' --date=relative
+	# log list with graph
 	lg = log --pretty=tformat:'%C(auto)%h %s <%aN %ad>%d' --date=relative --decorate --graph
+	# the last log
 	l1 = !git --no-pager log -1 --decorate --date=relative
-	lref = log --pretty=tformat:'%C(auto)%h %aN %s %ad' --date=relative 'HEAD@{1}'...
-	lpref = log -p --pretty=tformat:'%C(auto)%h %aN %s %ad' --date=relative 'HEAD@{1}'...
 	lp = log -p
 	stat = log --stat
 
 	mt = mergetool
 
-	mb = !git merge-base HEAD \"$(git config --get user.reviewBase || echo master)\"
-	cpr = "!f() { git current -u; gh pr create \"$@\"; }; f"
-
 	rb = rebase
 	rc = rebase --continue
 	ra = rebase --abort
-	rs = rebase --skip
 
 	st = status --short --branch -u .
 	dotfiles = "!git multistatus ~/.dotfiles ~/.dotfiles/repos/public ~/.dotfiles/repos/private ~/Dropbox/Brain"
 	all = "!f() { fd -t d -I -H -g --prune \"$@\" .git -X git multistatus \"{//}\"; }; f"
-  ms = multistatus
+	ms = multistatus
 
 	ls = ls-files
-	grep = grep -Ii
 	rg = "!git ls-files -z | xargs -0 rg"
 
 	assume = update-index --assume-unchanged
@@ -74,8 +77,6 @@
 	giveup = reset --hard @{u}
 
 	me = "!f() { git config user.email __EMAIL__; git config user.signingkey FD7051CE32E62CE7; git config commit.gpgSign true; }; f"
-	config-review-base = config user.reviewBase
-	config-current-remote = config user.currentRemote
 
 	rs = restore --staged
 	fa = "!f() { git diff --name-only | fzf -m --print0 --preview 'git diff --color -- {}' | xargs -0 git add \"$@\"; }; f"
