@@ -68,7 +68,7 @@ if [[ "$OPT_RECURSIVE" == "true" ]]; then
   exec fzf "${FZF_ARGS[@]}"
 fi
 
-FZF_ARGS+=(--bind "ctrl-f:accept" --bind "ctrl-l:become(echo :cd {})" --bind "ctrl-h:become(echo :cd ..)")
+FZF_ARGS+=(--prompt "(h:up l:cd)❯ " --bind "ctrl-r:clear-screen" --bind "ctrl-l:become(echo :cd {})" --bind "ctrl-h:become(echo :cd ..)")
 ACCEPTED_LINES="$(exa --color=always | fzf "${FZF_ARGS[@]}")"
 
 while read line; do

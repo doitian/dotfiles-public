@@ -32,7 +32,7 @@ up_to_date = '[≡](green bold)'
 EOF
 }
 
-function main() {
+function show_status() {
   export STARSHIP_CONFIG="$HOME/.config/starship-git-multistatus.toml"
   if ! [ -e "$STARSHIP_CONFIG" ]; then
     mkdir -p "$(dirname "$STARSHIP_CONFIG")"
@@ -54,11 +54,11 @@ function main() {
 
 if [ -t 1 ]; then
   RELOAD_COMMAND="git-multistatus$(printf ' %q' "$@")"
-  main "$@" | fzf --ansi --multi -q todo -d ' ±' \
-    --prompt 'ctrl-g> ' \
+  show_status "$@" | fzf --ansi --multi -q todo -d ' ±' \
+    --prompt '(g:lazygit)❯ ' \
     --preview="bash -c 'git -c color.ui=always -C {1} status --short --branch -u {1}'" \
     --bind="ctrl-g:execute(bash -c 'cd {1} && lazygit -g \"\$(git rev-parse --git-dir)\"')+reload($RELOAD_COMMAND)" \
     --bind="enter:become(echo {1})"
 else
-  main "$@"
+  show_status "$@"
 fi

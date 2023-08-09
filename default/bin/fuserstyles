@@ -18,7 +18,7 @@ function list_keys() {
 }
 
 if [ -z "${1:-}" ]; then
-  SITE="$(list_keys | fzf --prompt "userstyle> " --preview "fuserstyles {} --color=always")"
+  SITE="$(list_keys | fzf --prompt "userstyle❯ " --preview "fuserstyles {} --color=always")"
   if [ -n "$SITE" ]; then
     show_file "$SITE"
   fi

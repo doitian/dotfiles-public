@@ -1,5 +1,5 @@
 #autoload
 # Custom FZF Compleitions https://github.com/junegunn/fzf#custom-fuzzy-completion
-_fzf_complete --prompt="gopass> " -- "$@" < <(
+_fzf_complete --prompt="gopass❯ " -- "$@" < <(
   gopass list -f
 )

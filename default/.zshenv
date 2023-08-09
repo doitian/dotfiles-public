@@ -31,10 +31,11 @@ fi
 # theme
 export LESS='--RAW-CONTROL-CHARS --quiet --HILITE-UNREAD --ignore-case --long-prompt --no-init'
 export TERM_BACKGROUND="${TERM_BACKGROUND:-light}"
-unset BAT_THEME FZF_DEFAULT_OPTS
+export FZF_DEFAULT_OPTS="--prompt='❯ '"
+unset BAT_THEME
 if [ "$TERM_BACKGROUND" = light ]; then
-  export BAT_THEME='Coldark-Cold'
   export FZF_DEFAULT_OPTS='--color light'
+  export BAT_THEME='Coldark-Cold'
 fi
 export DIRENV_LOG_FORMAT=$'\001\e[30m\002.- %s\001\e[0m\002'
 if [[ $COLORTERM =~ ^(truecolor|24bit)$ ]]; then
