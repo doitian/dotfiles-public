@@ -1,5 +1,6 @@
 #compdef bd
 local -a components=("/" ${(ps:/:)${PWD%/*}})
+# reverse
 components=(${(Oa)components})
 
 _describe -V "bd" components
