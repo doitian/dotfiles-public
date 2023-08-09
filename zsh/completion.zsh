@@ -49,7 +49,7 @@ bindkey -M vicmd "^I" expand-or-complete-with-dots
 autoload -U +X bashcompinit && bashcompinit
 
 # the autoload directive does not work, manually autoload them
-autoload -Uz _fzf_complete_gopass _fzf_complete_j
+autoload -Uz _fzf_complete_gopass _fzf_complete_j _fzf_complete_git
 
 # some quick completion functions
 compdef _precommand ts

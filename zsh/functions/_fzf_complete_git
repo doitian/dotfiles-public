@@ -1,0 +1,14 @@
+#autoload
+# Custom FZF Compleitions https://github.com/junegunn/fzf#custom-fuzzy-completion
+
+_fzf_complete_git() {
+  _fzf_complete --prompt="aliases❯ " -- "$@" < <(
+    git config -l | sed -n 's/^alias\.//p'
+  )
+}
+
+_fzf_complete_git_post() {
+  awk -F '=' '{print $1}'
+}
+
+_fzf_complete_git
