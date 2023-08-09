@@ -62,9 +62,9 @@ jobs:
           mkdir -p ~/.config
           rm -rf ~/.config/nvim
           ln -snf ${{ github.workspace }}/vimfiles/nvim ~/.config/nvim
-          ln -snf ${{ github.workspace }}/vimrc ~/.vimrc
-          mkdir -p .config
-          ln -snf ${{ github.workspace }}/nvim ~/.config/
+
+          ls -lR .
+          ls -lR ~/.vimrc ~/.config/nvim/
 
       - name: Install Vim packs
         run: vim +PackUpdate +qall
