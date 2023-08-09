@@ -10,6 +10,7 @@ alias viper="$__VIM_PROGRAM__ +Viper"
 ##################################################
 # TMUX
 alias t='tmux'
+alias tA='tmux-launcher'
 alias ta='tmux-fzf-session'
 alias tj='tmux-fzf-pane -s -p'
 alias tk='tmux-fzf-pane -a -p'
