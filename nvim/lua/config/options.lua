@@ -4,6 +4,8 @@
 
 local opt = vim.opt
 
+opt.background = vim.env.TERM_BACKGROUND or "light"
+
 opt.listchars = { tab = "▸ ", trail = "·", extends = "»", precedes = "«", nbsp = "␣" }
 opt.spellfile = { vim.env.HOME .. "/.vim-spell-en.utf-8.add", ".vim-spell-en.utf-8.add" }
 opt.timeoutlen = 700
