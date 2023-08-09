@@ -4,8 +4,8 @@ local function dynamic(config)
   local appearance = wezterm.gui and wezterm.gui.get_appearance() or "Light"
   if appearance:find("Dark") then
     config.color_scheme = "Catppuccin Mocha"
-    config.window_background_gradient = nil
     config.set_environment_variables.TERM_BACKGROUND = "dark"
+    config.window_background_gradient.colors = { "#230646", "#1E1E1E" }
   end
 
   return config
