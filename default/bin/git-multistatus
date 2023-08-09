@@ -5,11 +5,40 @@ set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
 unset GIT_DIR
-if [ -z "${GIT_MULTISTATUS_OUTPUT_FORMAT:-}" ]; then
-  GIT_MULTISTATUS_OUTPUT_FORMAT=$'\001\e[30m\002'".- %s"
-fi
+
+function starship_config() {
+  cat <<"EOF"
+add_newline = false
+
+[directory]
+truncation_length = 1000
+truncate_to_repo = true
+format = '[$path]($style)'
+
+[git_branch]
+symbol = "±"
+format = ' [$symbol$branch(:$remote_branch)]($style)'
+
+[git_status]
+format = ' ([\[](white bold)[(todo $all_status$diverged)$ahead_behind]($style)[\]](white bold))'
+ahead = "↑"
+behind = "↓"
+conflicted = "[!](red)"
+diverged = "↕"
+modified = '[!](bright-yellow bold)'
+renamed = '[»](bright-yellow bold)'
+staged = '[+](green bold)'
+up_to_date = '[≡](green bold)'
+EOF
+}
 
 function main() {
+  export STARSHIP_CONFIG="$HOME/.config/starship-git-multistatus.toml"
+  if ! [ -e "$STARSHIP_CONFIG" ]; then
+    mkdir -p "$(dirname "$STARSHIP_CONFIG")"
+    starship_config >"$STARSHIP_CONFIG"
+  fi
+
   for arg; do
     if ! [ -d "$arg" ]; then
       continue
@@ -19,16 +48,17 @@ function main() {
     local git_branch="$(starship module -p "$arg" git_branch)"
     local git_status="$(starship module -p "$arg" git_status)"
 
-    printf "$GIT_MULTISTATUS_OUTPUT_FORMAT\n" "$directory$git_branch$git_status"
+    echo "$directory$git_branch$git_status"
   done
 }
 
 if [ -t 1 ]; then
-  export GIT_MULTISTATUS_OUTPUT_FORMAT="%s"
-  PREVIEW_COMMAND="bash -c 'git -c color.ui=always -C {1} status --short --branch -u {1}'"
   RELOAD_COMMAND="git-multistatus$(printf ' %q' "$@")"
-  KEYMAPS="ctrl-g:execute(bash -c 'cd {1} && lazygit -g \"\$(git rev-parse --git-dir)\"')+reload($RELOAD_COMMAND)"
-  main "$@" | fzf --ansi --multi -d ' on ' --preview="$PREVIEW_COMMAND" --bind="$KEYMAPS"
+  main "$@" | fzf --ansi --multi -q todo -d ' ±' \
+    --prompt 'ctrl-g> ' \
+    --preview="bash -c 'git -c color.ui=always -C {1} status --short --branch -u {1}'" \
+    --bind="ctrl-g:execute(bash -c 'cd {1} && lazygit -g \"\$(git rev-parse --git-dir)\"')+reload($RELOAD_COMMAND)" \
+    --bind="enter:become(echo {1})"
 else
   main "$@"
 fi
