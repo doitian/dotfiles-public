@@ -67,7 +67,8 @@ jobs:
           ls -lR ~/.vimrc ~/.config/nvim/
 
       - name: Install Vim packs
-        run: vim +PackUpdate +qall
+        run: |
+          vim +PackStatus +"call minpac#update('', {'do': 'qall'})"
 
       - name: Package Vim files
         run: |
