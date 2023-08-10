@@ -59,17 +59,17 @@ cd "$OPT_DIRECTORY"
 
 export OPT_PREVIEW
 
-FZF_ARGS=(--header "$(pwd)/" --ansi --multi)
+FZF_ARGS=(--header "$(pwd)/" --ansi --multi --nth='2..')
 if [ -n "$OPT_PREVIEW" ]; then
-  FZF_ARGS+=(--preview 'dog {}')
+  FZF_ARGS+=(--preview 'dog {2..}')
 fi
 
 if [[ "$OPT_RECURSIVE" == "true" ]]; then
   exec fzf "${FZF_ARGS[@]}"
 fi
 
-FZF_ARGS+=(--prompt "(h:up l:cd)❯ " --bind "ctrl-r:clear-screen" --bind "ctrl-l:become(echo :cd {})" --bind "ctrl-h:become(echo :cd ..)")
-ACCEPTED_LINES="$(exa --color=always | fzf "${FZF_ARGS[@]}")"
+FZF_ARGS+=(--prompt "(h:up l:cd)❯ " --bind "ctrl-r:clear-screen" --bind "ctrl-l:become(echo :cd {2..})" --bind "ctrl-h:become(echo :cd ..)")
+ACCEPTED_LINES="$(exa --icons --color=always | fzf "${FZF_ARGS[@]}")"
 
 while read line; do
   case "$line" in
