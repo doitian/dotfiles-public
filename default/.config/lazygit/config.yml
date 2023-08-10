@@ -40,10 +40,10 @@ customCommands:
     command: |
       {{if .SelectedCommitFile}}
       git show '{{.SelectedLocalCommit.Sha}}^:{{.SelectedCommitFile.Name}}' |\
-      vim -Rm - +"let b:fname = 'file git://{{.SelectedLocalCommit.Sha}}^/{{.SelectedCommitFile.Name}}'" \
+      nvim -Rm - +"let b:fname = 'file git://{{.SelectedLocalCommit.Sha}}^/{{.SelectedCommitFile.Name}}'" \
       {{else}}
       git show '{{.SelectedLocalCommit.Sha}}' -- git show {{.SelectedCommitFilePath}} |\
-      vim -Rm - +"let b:fname = 'file git://{{.SelectedLocalCommit.Sha}}/{{.SelectedCommitFilePath}}.patch'" \
+      nvim -Rm - +"let b:fname = 'file git://{{.SelectedLocalCommit.Sha}}/{{.SelectedCommitFilePath}}.patch'" \
       {{end}}--cmd 'set mls=0' \
              +'nnoremap <buffer> q <Cmd>quit<CR>' \
              +"exec 'file '.fnameescape(b:fname) | unlet b:fname | set mls=5 | silent! filetype detect"
