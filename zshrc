@@ -6,7 +6,7 @@ fi
 ZSH_CACHE_DIR="$HOME/.zcompcache"
 ZSH="$HOME/.dotfiles/repos/public/zsh"
 MAGIC_ENTER_GIT_COMMAND=" g st ."
-MAGIC_ENTER_OTHER_COMMAND=" ll"
+MAGIC_ENTER_OTHER_COMMAND=" l"
 
 fpath=("$ZSH/functions" $fpath)
 
