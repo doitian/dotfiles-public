@@ -1,0 +1,21 @@
+#!/bin/bash
+
+TERM_BACKGROUND="$(defaults read -g AppleInterfaceStyle 2>/dev/null | tr 'A-Z' 'a-z')"
+
+CACHE_TERM_BACKGROUND_FILE="$HOME/.apple_terminal_appereance_is_dark"
+CACHED_TERM_BACKGROUND=light
+if [[ -e "$CACHE_TERM_BACKGROUND_FILE" ]]; then
+  CACHED_TERM_BACKGROUND=dark
+fi
+
+if [[ "$TERM_BACKGROUND" != "$CACHED_TERM_BACKGROUND" ]]; then
+  osascript -e 'tell application "Terminal"
+    set current settings of tabs of windows to settings set "'$TERM_BACKGROUND'"
+    set default settings to settings set "'$TERM_BACKGROUND'"
+  end tell'
+  if [[ "$TERM_BACKGROUND" == light ]]; then
+    rm -f "$CACHE_TERM_BACKGROUND_FILE"
+  else
+    touch "$CACHE_TERM_BACKGROUND_FILE"
+  fi
+fi

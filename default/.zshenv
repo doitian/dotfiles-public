@@ -32,6 +32,10 @@ fi
 export LESS='--RAW-CONTROL-CHARS --quiet --HILITE-UNREAD --ignore-case --long-prompt --no-init'
 
 # also edit tmux.*.conf set-background
+if [[ -z "${TERM_BACKGROUND-}" && "$TERM_PROGRAM" == Apple_Terminal ]]; then
+  TERM_BACKGROUND="$(defaults read -g AppleInterfaceStyle 2>/dev/null | tr 'A-Z' 'a-z')"
+  apple_terminal_appereance
+fi
 export TERM_BACKGROUND="${TERM_BACKGROUND:-light}"
 export FZF_DEFAULT_OPTS="--prompt='❯ ' --color light"
 export BAT_THEME='OneHalfLight'
