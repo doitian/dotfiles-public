@@ -57,7 +57,7 @@ if [[ "${1-}" != "-p" && "$*" != *" -p" && -t 1 ]]; then
   show_status "$@" | fzf --ansi --multi -q todo -d ':' \
     --prompt '(l:lazygit)❯ ' \
     --preview="bash -c 'git -c color.ui=always -C {1} status --short --branch -u {1}'" \
-    --bind="ctrl-l:execute(bash -c 'cd {1} && lazygit -g \"\$(git rev-parse --git-dir)\"')+reload($RELOAD_COMMAND)" \
+    --bind="ctrl-l:execute(bash -c 'cd '{1}' && lazygit -g \"\$(git rev-parse --git-dir)\"')+reload($RELOAD_COMMAND)" \
     --bind="ctrl-r:clear-screen" \
     --bind="enter:become(echo {1})"
 else
