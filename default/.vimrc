@@ -47,6 +47,7 @@ function! s:PackInit() abort
   call minpac#add('NLKNguyen/papercolor-theme', {'type': 'opt'})
   call minpac#add('k-takata/minpac', {'type': 'opt'})
   call minpac#add('tpope/vim-dispatch', {'type': 'opt'})
+  call minpac#add('sbdchd/neoformat', {'type': 'opt'})
 
   if has('win32')
     call minpac#add('PProvost/vim-ps1')
@@ -260,8 +261,8 @@ nnoremap <silent> `! <Cmd>Dispatch!<CR>
 nnoremap <silent> '<CR> <Cmd>Start<CR>
 nnoremap <silent> '! <Cmd>Start!<CR>
 
-nnoremap f<CR> m`gg=G``<Cmd>up<CR>
-nnoremap <Leader>cf m`gg=G``
+nnoremap f<CR> <Cmd>undojoin<Bar>Neoformat<Bar>up<CR>
+nnoremap <Leader>cf <Cmd>undojoin<Bar>Neoformat<CR>
 
 " finder {{{2
 if s:has_fzf
@@ -326,6 +327,7 @@ augroup vimrc_au
   autocmd!
 
   autocmd CmdUndefined Make,Dispatch,Start,FocusDispatch packadd vim-dispatch
+  autocmd CmdUndefined Neoformat packadd neoformat
 
   autocmd FileType gitcommit,markdown setlocal spell wrap
   autocmd FileType vim,beancount,i3config setlocal foldmethod=marker
