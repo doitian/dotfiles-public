@@ -25,6 +25,7 @@ See https://github.com/doitian/dotfiles
 -   [fpass]: copy password from pass via fzf
 -   [fzf-finder]: a file explorer built based on fzf, bat, exa
 -   [gfw]: a shell proxy manager
+-   [git-fzf-log]: pick git log via fzf, using ctrl-l to show commit and open file before changes in neovim
 -   [git-multistatus]: quickly check git status of multiple repos using fzf, starship, and lazygit
 -   [tmux-up]: a tmux session manager
 -   [tt]: a wrap script which sends keys to tmux panes
@@ -33,6 +34,7 @@ See https://github.com/doitian/dotfiles
 [fpass]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/fpass
 [fzf-finder]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/fzf-finder
 [gfw]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/gfw
+[git-fzf-log]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/gig-fzf-log
 [git-multistatus]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/git-multistatus
 [tmux-up]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/tmux-up
 [tt]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/tt
