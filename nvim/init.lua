@@ -1,6 +1,7 @@
 -- no 24-bit colors
 local lazy = vim.env.LAZY or vim.tbl_contains({ "truecolor", "24bit" }, vim.env.COLORTERM)
 if not lazy or lazy == "0" then
+  -- Use fallback vimrc. I don't add ~/.vim to rtp here.
   vim.cmd.source("~/.vimrc")
   return
 end
