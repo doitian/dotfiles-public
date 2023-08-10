@@ -31,8 +31,7 @@ alias gff='git flow feature'
 alias gfh='git flow hotfix'
 alias gfr='git flow release'
 alias gfs='git flow support'
-alias lg='lazygit'
-alias lgg='lazygit -g "$(git rev-parse --git-dir)"'
+alias lg='lazygit -g "$(git rev-parse --git-dir)"'
 
 ##################################################
 # Directories
