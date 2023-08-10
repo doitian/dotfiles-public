@@ -1,6 +1,9 @@
 #!/bin/bash
 
 TERM_BACKGROUND="$(defaults read -g AppleInterfaceStyle 2>/dev/null | tr 'A-Z' 'a-z')"
+if [[ "$TERM_BACKGROUND" != dark ]]; then
+  TERM_BACKGROUND=light
+fi
 
 CACHE_TERM_BACKGROUND_FILE="$HOME/.apple_terminal_appereance_is_dark"
 CACHED_TERM_BACKGROUND=light
