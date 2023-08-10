@@ -47,6 +47,13 @@
 	lp = log -p
 	stat = log --stat
 
+	# search commits that has changed the string occurrences number
+	log-search-changed = log -S
+	# search commnts that has changed a function, usage :fname:file or /regex/,/regex/:file
+	log-search-function = log -L
+	# search commits which changes matched the regex
+	log-grep = log -G
+
 	mt = mergetool
 
 	rb = rebase
