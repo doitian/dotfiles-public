@@ -34,7 +34,6 @@
 	dcs = diff --stat --cached
 	# what would be committed with "git commit -a"
 	das = diff --stat HEAD
-	dt = difftool
 
 	fp = format-patch -s
 
@@ -53,8 +52,6 @@
 	log-search-function = log -L
 	# search commits which changes matched the regex
 	log-grep = log -G
-
-	mt = mergetool
 
 	rb = rebase
 	rbc = rebase --continue
@@ -102,6 +99,23 @@
 	fdc = "!f() { git diff --name-only --cached | fzf -m --print0 --preview 'git diff --color --cached -- {}' | xargs -0 git diff --cached -p --stat; }; f"
 	# show what would be committed with "git commit -a" via fzf
 	fda = "!f() { git diff --name-only HEAD | fzf -m --print0 --preview 'git diff --color HEAD -- {}' | xargs -0 git diff -p --stat HEAD; }; f"
+	# fzf log
+	fl = fzf-log
+	# fzf show commit
+	fsc = fzf-show-commit
+
+	dt = difftool
+	mt = mergetool
+	nvim-diff = difftool --tool nvimdiff
+	# Use Neovim with a 4 panes layout
+	nvim-merge = mergetool --tool nvimdiff
+	# Use Neovim with a 2 panes layout (LOCAL and REMOTE)
+	nvim-merge1 = mergetool --tool nvimdiff
+	# Use Neovim with a 3 panes layout (LOCAL, MERGED and REMOTE)
+	nvim-merge2 = mergetool --tool nvimdiff
+  # Use Neovim where only the MERGED file is shown
+	nvim-merge3 = mergetool --tool nvimdiff
+	lazy = "!lazygit -g \"$(git rev-parse --git-dir)\""
 
 [core]
 	excludesfile = "__HOME__/.ignore"
@@ -122,10 +136,12 @@
 	algorithm = patience
 [difftool]
 	prompt = false
+	trustExitCode = true
 [merge]
 	defaultToUpstream = true
 [mergetool]
 	prompt = false
+	trustExitCode = true
 
 [rerere]
 	enabled = true

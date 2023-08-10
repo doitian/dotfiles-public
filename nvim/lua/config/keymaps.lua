@@ -40,3 +40,7 @@ map("n", "]b", function() require("bufferline").cycle(vim.v.count1) end, { desc 
 -- stylua: ignore
 map("n", "[b", function() require("bufferline").cycle(-vim.v.count1) end, { desc = "Next Tab" })
 map("n", "<Leader>bs", "<Cmd>BufferLinePick<CR>", { desc = "Pick Tab" })
+
+if vim.env.GIT_DIFF_TOOL or vim.env.GIT_MERGE_TOOL then
+  map("n", "<C-G><C-G>", "<Cmd>qall<CR>")
+end

@@ -322,6 +322,11 @@ smap <expr> <Tab>   vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<Tab>'
 imap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
 smap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
 
+" vimdiff {{{2
+if exists("$GIT_DIFF_TOOL") || exists("GIT_MERGE_TOOL")
+  nnoremap <C-G><C-G> <Cmd>qall<CR>
+end
+
 " Filetype specific handling {{{1
 augroup vimrc_au
   autocmd!
