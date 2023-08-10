@@ -5,7 +5,7 @@ set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
 POSITIONAL_ARGS=()
-OPT_PREVIEW="${OPT_PREVIEW:-true}"
+FZF_FINDER_PREVIEW="${FZF_FINDER_PREVIEW:-true}"
 OPT_DIRECTORY="."
 OPT_RECURSIVE=
 
@@ -13,10 +13,16 @@ usage() {
   echo "Usage: fzf-finder [-R|--recursive] [-d|--directory DIRECTORY] [--no-preview]" >&2
 }
 
+open_dwim() {
+  open "$1"
+}
+
+KEEP_OPTS=()
 while [[ $# -gt 0 ]]; do
   case $1 in
   --no-preview)
-    OPT_PREVIEW=
+    KEEP_OPTS+=("$1")
+    FZF_FINDER_PREVIEW=
     shift # past argument
     ;;
   -d | --directory)
@@ -44,6 +50,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+export FZF_FINDER_PREVIEW
 set -- "${POSITIONAL_ARGS[@]+"${POSITIONAL_ARGS[@]}"}" # restore positional parameters
 
 if [[ $# -gt 1 ]]; then
@@ -55,12 +62,18 @@ fi
 if [[ $# -gt 0 ]]; then
   OPT_DIRECTORY="$1"
 fi
-cd "$OPT_DIRECTORY"
 
-export OPT_PREVIEW
+if [[ -d "$OPT_DIRECTORY" ]]; then
+  cd "$OPT_DIRECTORY"
+else
+  dog "$OPT_DIRECTORY"
+  echo "Enter to contine"
+  read
+  exec "fzf-finder"
+fi
 
 FZF_ARGS=(--header "$(pwd)/" --ansi --multi --nth='2..')
-if [ -n "$OPT_PREVIEW" ]; then
+if [ -n "$FZF_FINDER_PREVIEW" ]; then
   FZF_ARGS+=(--preview 'dog {2..}')
 fi
 
@@ -68,21 +81,7 @@ if [[ "$OPT_RECURSIVE" == "true" ]]; then
   exec fzf "${FZF_ARGS[@]}"
 fi
 
-FZF_ARGS+=(--prompt "(h:up l:cd)❯ " --bind "ctrl-r:clear-screen" --bind "ctrl-l:become(echo :cd {2..})" --bind "ctrl-h:become(echo :cd ..)")
-ACCEPTED_LINES="$(exa --icons --color=always | fzf "${FZF_ARGS[@]}")"
-
-while read line; do
-  case "$line" in
-  ":cd "*)
-    NEW_OPT_DIRECTORY="${line#:cd }"
-    if [ -d "$NEW_OPT_DIRECTORY" ]; then
-      exec fzf-finder "$NEW_OPT_DIRECTORY"
-    else
-      exec fzf-finder
-    fi
-    ;;
-  *)
-    echo "$(pwd)/$line"
-    ;;
-  esac
-done <<<"$ACCEPTED_LINES"
+FZF_ARGS+=(--prompt "(h:up l:cd)❯ " --bind "ctrl-r:clear-screen" --bind "ctrl-l:become(fzf-finder -d {2..})" --bind "ctrl-h:become(fzf-finder -d ..)")
+FZF_ARGS+=(--bind "ctrl-o:execute-silent(open {2..})")
+FZF_ARGS+=(--bind "ctrl-v:execute(nvim {2..})")
+exa --icons --color=always | fzf "${FZF_ARGS[@]}"
