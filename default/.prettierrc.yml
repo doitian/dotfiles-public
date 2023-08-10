@@ -1,0 +1,9 @@
+editorconfig: true
+# Prettierd only reads .editorconfig in the project directory,
+# so overrides the settings here as well.
+overrides:
+  - files:
+      - "*.md"
+      - "*.markdown"
+    options:
+      tabWidth: 4
