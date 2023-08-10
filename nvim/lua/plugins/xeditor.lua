@@ -13,10 +13,10 @@ return {
       { "<Leader>ff", Util.telescope("find_files"), desc = "Find Files (root dir)" },
       { "<Leader>fF", Util.telescope("find_files", { cwd = false }), desc = "Find Files (cwd)" },
       { "<Leader>fh", Util.telescope("find_files", { cwd = "%:h" }), desc = "Find Files Here" },
-      { "<Leader>sB", "<cmd>Telescope live_grep grep_open_files=true<cr>", desc = "All Buffers" },
-      { "<Leader>si", "<cmd>Telescope current_buffer_ctags<cr>", desc = "BTags" },
-      { "<Leader>s<C-I>", "<cmd>Telescope current_buffer_tags<cr>", desc = "Tags (Buffer)" },
-      { "<Leader>sI", "<cmd>Telescope tags<cr>", desc = "Tags" },
+      { "<Leader>sB", "<Cmd>Telescope live_grep grep_open_files=true<CR>", desc = "All Buffers" },
+      { "<Leader>si", "<Cmd>Telescope current_buffer_ctags<CR>", desc = "BTags" },
+      { "<Leader>s<C-I>", "<Cmd>Telescope current_buffer_tags<CR>", desc = "Tags (Buffer)" },
+      { "<Leader>sI", "<Cmd>Telescope tags<CR>", desc = "Tags" },
     },
     opts = {
       defaults = {
@@ -57,7 +57,7 @@ return {
           else
             local ok, err = pcall(vim.cmd.cprev)
             if not ok then
-              vim.notify(err, vim.log.levels.ERROR)
+              return vim.notify(err, vim.log.levels.ERROR)
             end
           end
           vim.cmd.norm("zv")
@@ -72,7 +72,7 @@ return {
           else
             local ok, err = pcall(vim.cmd.cnext)
             if not ok then
-              vim.notify(err, vim.log.levels.ERROR)
+              return vim.notify(err, vim.log.levels.ERROR)
             end
           end
           vim.cmd.norm("zv")
