@@ -14,6 +14,6 @@ VIM_EDIT="$VIM_EDIT +\"exec 'file '.fnameescape(b:fname) | unlet b:fname | set m
 
 git -c color.ui=always show --pretty="$GIT_LOG_FORMAT" --name-status "$@" |
   fzf --ansi --header-lines=2 --preview="$PREVIEW" \
-    --bind="enter:become(echo $COMMIT_SHA^:{2..})" \
+    --bind="enter:abort+become(echo $COMMIT_SHA^:{2..})" \
     --bind="ctrl-l:execute($VIM_EDIT)" \
     --bind='ctrl-r:clear-screen'

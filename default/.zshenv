@@ -41,7 +41,6 @@ export FZF_DEFAULT_OPTS="--prompt='❯ ' --color light"
 export BAT_THEME='OneHalfLight'
 if [ "$TERM_BACKGROUND" = dark ]; then
   export FZF_DEFAULT_OPTS="--prompt='❯ '"
-  export DELTA_FEATURES='line-numbers decorations'
   export BAT_THEME='OneHalfDark'
   export LG_CONFIG_FILE="$HOME/.config/lazygit/config.yml,$HOME/.config/lazygit/config-dark.yml"
 fi

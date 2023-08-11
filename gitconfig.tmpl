@@ -117,6 +117,9 @@
 	nvim-merge3 = mergetool --tool nvimdiff
 	lazy = "!lazygit -g \"$(git rev-parse --git-dir)\""
 
+[user]
+	name = __NAME__
+	useConfigOnly = true
 [core]
 	excludesfile = "__HOME__/.ignore"
 	attributesFile = "__HOME__/.gitattributes"
@@ -134,52 +137,40 @@
 	default = upstream
 [diff]
 	algorithm = patience
+	colorMoved = default
 [difftool]
 	prompt = false
 	trustExitCode = true
 [merge]
+	conflictstyle = diff3
 	defaultToUpstream = true
 [mergetool]
 	prompt = false
 	trustExitCode = true
-
 [rerere]
 	enabled = true
-
-[filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
-
-[user]
-	name = __NAME__
-	useConfigOnly = true
-
-[pager]
-	branch = false
-
-[color "diff"]
-	meta = blue bold
-
-[delta]
-	features = light-background line-numbers decorations
-
-[delta "light-background"]
-	light = true
-
-[delta "decorations"]
-	commit-decoration-style = bold yellow box ul
-	file-style = bold blue ul
-	hunk-header-decoration-style = cyan box ul
-
-[delta "interactive"]
-	keep-plus-minus-markers = false
 
 [difftool "vscode"]
 	cmd = code --wait --diff $LOCAL $REMOTE
 [mergetool "vscode"]
 	cmd = code --wait $MERGED
 
+[color "diff"]
+	meta = blue bold
+
+[pager]
+	branch = false
+
+[delta]
+	features = default-feature
+[delta "default-feature"]
+	line-numbers = true
+
 [gitflow "branch"]
 	master = main
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

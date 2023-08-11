@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SELECTED="$(zoxide query -ls | fzf -n 2 +s --bind 'enter:become(echo {2})')"
+SELECTED="$(zoxide query -ls | fzf -n 2 +s --bind 'enter:become(echo {2})+close')"
 if [[ -n "$SELECTED" && -d "$SELECTED" ]]; then
   zoxide add "$SELECTED"
   cd "$SELECTED"

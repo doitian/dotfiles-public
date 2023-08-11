@@ -1,7 +1,10 @@
 # yaml-language-server: $schema=https://json.schemastore.org/lazygit.json
 promptToReturnFromSubprocess: false
 os:
-  editPreset: "nvim"
+  editPreset: nvim
+git:
+  paging:
+    pager: delta --color-only --paging=never
 gui:
   scrollHeight: 20
   theme:
