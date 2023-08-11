@@ -240,8 +240,6 @@ nnoremap gx <Cmd>call job_start(['open',expand('<cfile>')])<CR>
 xnoremap gx y<Cmd>call job_start(['open',@*])<CR>
 nnoremap ]<Space> <Cmd>call append(line('.'), repeat([''], v:count1))<CR>
 nnoremap [<Space> <Cmd>call append(line('.')-1, repeat([''], v:count1))<CR>
-nnoremap ]a <Cmd>exec v:count1.'next'<CR>
-nnoremap [a <Cmd>exec v:count1.'previous'<CR>
 
 " ui {{{2
 nnoremap <C-G><C-G> <Cmd>confirm qall<CR>
@@ -300,6 +298,8 @@ nmap <silent> <expr> H v:count == 0 ? '<Cmd>bprevious<CR>' : 'H'
 nmap <silent> <expr> L v:count == 0 ? '<Cmd>bnext<CR>' : 'L'
 nnoremap <silent> ]b <Cmd>exec v:count1.'bnext'<CR>
 nnoremap <silent> [b <Cmd>exec v:count1.'bprevious'<CR>
+nnoremap ]a <Cmd>exec v:count1.'next'<CR>
+nnoremap [a <Cmd>exec v:count1.'previous'<CR>
 
 nnoremap <Leader>ww <C-w>p
 nnoremap <Leader>wd <C-w>c

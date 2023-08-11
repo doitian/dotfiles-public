@@ -42,4 +42,6 @@ map(
 map("n", "]b", function() require("bufferline").cycle(vim.v.count1) end, { desc = "Next Tab" })
 -- stylua: ignore
 map("n", "[b", function() require("bufferline").cycle(-vim.v.count1) end, { desc = "Next Tab" })
+map("n", "]a", "<Cmd>exec v:count1.'next'<CR>", { desc = "next" })
+map("n", "[a", "<Cmd>exec v:count1.'previous'<CR>", { desc = "previous" })
 map("n", "<Leader>bs", "<Cmd>BufferLinePick<CR>", { desc = "Pick Tab" })
