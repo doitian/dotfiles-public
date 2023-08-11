@@ -67,6 +67,7 @@ return dynamic({
       }, ":")
       :gsub("%~", wezterm.home_dir),
   },
+  ssh_domains = {},
 
   skip_close_confirmation_for_processes_named = {
     "bash",
