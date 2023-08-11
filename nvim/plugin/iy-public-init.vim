@@ -25,7 +25,7 @@ noreabbrev tttime <C-R>=strftime('%I:%M %p')<CR>
 noreabbrev zzettel <C-R>=strftime('%Y%m%d%H%M')<CR>
 
 " Symbols {{{2
-exec 'digraphs AH ' .. 0x27A4
+digraphs AH 10148
 
 noreabbrev vvah ➤
 noreabbrev vveop ∎
