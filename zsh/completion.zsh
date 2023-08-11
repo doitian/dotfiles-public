@@ -57,3 +57,4 @@ function _fzf_complete_g() {
 # some quick completion functions
 compdef _precommand ts
 compdef _dirs d
+compdef _man vman
