@@ -40,7 +40,7 @@ SESSION="${SESSION//[.:]/_}"
 if ! tmux has-session -t "=$SESSION" >/dev/null 2>&1; then
   tmux new -d -c "$ROOT_DIR" -s "$SESSION"
   cat_config_file "$ROOT_DIR/$CONFIG_FILE" |
-    TMUX='' tmux -C attach -t "=$SESSION" -f wait-exit >/dev/null
+    TMUX='' tmux -C attach -t "=$SESSION" >/dev/null
 fi
 
 if [ -n "${TMUX:-}" ]; then
