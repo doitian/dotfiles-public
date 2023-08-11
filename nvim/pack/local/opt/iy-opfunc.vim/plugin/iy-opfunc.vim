@@ -32,15 +32,15 @@ if !exists(':TmuxSend')
 endif
 
 if !get(g:, 'iy_opfunc_no_maps')
-  nmap <Leader>x<Space> :<C-U>TmuxSend<Space>
-  nmap <Leader>x  <Plug>OpfuncTmuxSend
-  xmap <Leader>x  <Plug>OpfuncTmuxSendVis
-  nmap <Leader>xx <Plug>OpfuncTmuxSendLine
+  nmap <Leader>$<Space> :<C-U>TmuxSend<Space>
+  nmap <Leader>$  <Plug>OpfuncTmuxSend
+  xmap <Leader>$  <Plug>OpfuncTmuxSendVis
+  nmap <Leader>$$ <Plug>OpfuncTmuxSendLine
 
-  nmap <Leader>$<Space> :<C-U>System<Space>
-  nmap <Leader>$ <Plug>OpfuncSystemPreview
-  xmap <Leader>$ <Plug>OpfuncSystemPreviewVis
-  nmap <Leader>$$ <Plug>OpfuncSystemPreviewLine
+  nmap <Leader>!<Space> :<C-U>System<Space>
+  nmap <Leader>! <Plug>OpfuncSystemPreview
+  xmap <Leader>! <Plug>OpfuncSystemPreviewVis
+  nmap <Leader>!! <Plug>OpfuncSystemPreviewLine
 
   nmap <Leader>> <Plug>OpfuncSystemPipePreview
   xmap <Leader>> <Plug>OpfuncSystemPipePreviewVis
