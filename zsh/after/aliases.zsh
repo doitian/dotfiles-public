@@ -118,8 +118,4 @@ fi
 ##################################################
 # Dir Aliases
 cb="$HOME/codebase"
-brain="$HOME/Dropbox/Brain"
 dl="$HOME/Downloads"
-dotfiles="$HOME/.dotfiles"
-dotpublic="$HOME/.dotfiles/repos/public"
-dotprivate="$HOME/.dotfiles/repos/private"

@@ -62,4 +62,4 @@ export PAGER="${PAGER:=less}"
 export HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK=1
 
 # zoxide
-export _ZO_EXCLUDE_DIRS="$HOME/Public"
+export _ZO_EXCLUDE_DIRS="$HOME/Public:$HOME/public"
