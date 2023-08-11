@@ -23,24 +23,34 @@ nnoremap <expr> <Plug>OpfuncSystemPipeReplace iy#opfunc#wrap('iy#opfunc#system#P
 xnoremap <expr> <Plug>OpfuncSystemPipeReplaceVis iy#opfunc#wrap('iy#opfunc#system#PipeReplace')
 nnoremap <expr> <Plug>OpfuncSystemPipeReplaceLine iy#opfunc#wrap('iy#opfunc#system#PipeReplace') .. '_'
 
-if !get(g:, 'iy_opfunc_no_maps')
-  nmap <Leader>$  <Plug>OpfuncTmuxSend
-  xmap <Leader>$  <Plug>OpfuncTmuxSendVis
-  nmap <Leader>$$ <Plug>OpfuncTmuxSendLine
+if !exists(':System')
+  command -nargs=* -complete=shellcmd System call iy#opfunc#system#Preview(<q-args>)
+endif
 
-  nmap <Leader>! <Plug>OpfuncSystemPreview
-  xmap <Leader>! <Plug>OpfuncSystemPreviewVis
-  nmap <Leader>!! <Plug>OpfuncSystemPreviewLine
+if !exists(':TmuxSend')
+  command -nargs=* -complete=shellcmd TmuxSend call iy#opfunc#tmux#Send(<q-args>)
+endif
+
+if !get(g:, 'iy_opfunc_no_maps')
+  nmap <Leader>x<Space> :<C-U>TmuxSend<Space>
+  nmap <Leader>x  <Plug>OpfuncTmuxSend
+  xmap <Leader>x  <Plug>OpfuncTmuxSendVis
+  nmap <Leader>xx <Plug>OpfuncTmuxSendLine
+
+  nmap <Leader>$<Space> :<C-U>System<Space>
+  nmap <Leader>$ <Plug>OpfuncSystemPreview
+  xmap <Leader>$ <Plug>OpfuncSystemPreviewVis
+  nmap <Leader>$$ <Plug>OpfuncSystemPreviewLine
 
   nmap <Leader>> <Plug>OpfuncSystemPipePreview
   xmap <Leader>> <Plug>OpfuncSystemPipePreviewVis
   nmap <Leader>>> <Plug>OpfuncSystemPipePreviewLine
-  "
+
   nmap <Leader>% <Plug>OpfuncSystemReplace
   xmap <Leader>% <Plug>OpfuncSystemReplaceVis
   nmap <Leader>%% <Plug>OpfuncSystemReplaceLine
 
-  nmap <Leader><lt> <Plug>OpfuncSystemPipeReplace
-  xmap <Leader><lt> <Plug>OpfuncSystemPipeReplaceVis
-  nmap <Leader><lt><lt> <Plug>OpfuncSystemPipeReplaceLine
+  nmap <Leader>< <Plug>OpfuncSystemPipeReplace
+  xmap <Leader><< <Plug>OpfuncSystemPipeReplaceVis
+  nmap <Leader><< <Plug>OpfuncSystemPipeReplaceLine
 end
