@@ -17,7 +17,6 @@ return {
       { "<Leader>si", "<Cmd>Telescope current_buffer_ctags<CR>", desc = "BTags" },
       { "<Leader>s<C-I>", "<Cmd>Telescope current_buffer_tags<CR>", desc = "Tags (Buffer)" },
       { "<Leader>sI", "<Cmd>Telescope tags<CR>", desc = "Tags" },
-      { "<Leader>s?", "<Cmd>Telescope builtin<CR>", desc = "Telescope builtins" },
     },
     opts = {
       defaults = {
