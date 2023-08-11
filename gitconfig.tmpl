@@ -135,6 +135,11 @@
 	ff = only
 [push]
 	default = upstream
+[rerere]
+	enabled = true
+[rebase]
+	updateRefs = true
+
 [diff]
 	algorithm = patience
 	colorMoved = default
@@ -147,8 +152,6 @@
 [mergetool]
 	prompt = false
 	trustExitCode = true
-[rerere]
-	enabled = true
 
 [difftool "vscode"]
 	cmd = code --wait --diff $LOCAL $REMOTE
