@@ -340,6 +340,9 @@ augroup vimrc_au
   autocmd CmdUndefined Make,Dispatch,Start,FocusDispatch packadd vim-dispatch
   autocmd CmdUndefined Neoformat packadd neoformat
 
+  " run the command and keep the window open
+  autocmd CmdwinEnter * map <buffer> <C-W><C-W> <CR>q:dd
+
   autocmd FileType gitcommit,markdown setlocal spell wrap
   autocmd FileType vim,beancount,i3config setlocal foldmethod=marker
 

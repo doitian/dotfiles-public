@@ -11,6 +11,11 @@ local function autocmd(event, pattern, callback)
   })
 end
 
+-- run the command and keep the window open
+autocmd("CmdwinEnter", "*", function()
+  vim.keymap.set("n", "<C-W><C-W>", "<CR>q:dd", { buffer = true })
+end)
+
 autocmd("FileType", { "vim", "beancount", "i3config" }, function()
   vim.opt_local.foldmethod = "marker"
 end)
