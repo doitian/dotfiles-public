@@ -265,12 +265,14 @@ nnoremap f<CR> <Cmd>undojoin<Bar>Neoformat<Bar>up<CR>
 nnoremap <Leader>cf <Cmd>undojoin<Bar>Neoformat<CR>
 
 " finder {{{2
+nnoremap <Leader>fn <Cmd>enew<CR>
 if s:has_fzf
   nnoremap <Leader><Space> <Cmd>Files<CR>
   nnoremap <Leader>ff <Cmd>Files<CR>
   nnoremap <Leader>fb <Cmd>Buffers<CR>
   nnoremap <Leader>, <Cmd>Buffers<CR>
   nnoremap <Leader>fh <Cmd>Files %:h<CR>
+  nnoremap <Leader>fr <Cmd>History<<CR>
   nnoremap <Leader>fS <Cmd>exe 'Files '.g:vsnip_snippet_dir<CR>
   nnoremap <Leader>fs <Cmd>Snippets<CR>
   nnoremap <Leader>fj <Cmd>Zoxide<CR>
@@ -280,6 +282,13 @@ if s:has_fzf
   nnoremap <Leader>si <Cmd>BTags<CR>
   nnoremap <Leader>sI <Cmd>Tags<CR>
   nnoremap <Leader>sg <Cmd>Rg<CR>
+  nnoremap <Leader>sm <Cmd>Marks<CR>
+  nnoremap <Leader>s/ <Cmd>History/<CR>
+  nnoremap <Leader>sc <Cmd>History:<CR>
+  nnoremap <Leader>sC <Cmd>Commands<CR>
+  nnoremap <Leader>sh <Cmd>Helptags<CR>
+  nnoremap <Leader>sk <Cmd>Maps<CR>
+  nnoremap <Leader>gs <Cmd>GFiles?<CR>
 else
   nnoremap <Leader><Space> :<C-u>e <C-z>
   nnoremap <Leader>ff :<C-u>e <C-z>

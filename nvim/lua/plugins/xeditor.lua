@@ -17,6 +17,9 @@ return {
       { "<Leader>si", "<Cmd>Telescope current_buffer_ctags<CR>", desc = "BTags" },
       { "<Leader>s<C-I>", "<Cmd>Telescope current_buffer_tags<CR>", desc = "Tags (Buffer)" },
       { "<Leader>sI", "<Cmd>Telescope tags<CR>", desc = "Tags" },
+      { "<Leader>sq", "<Cmd>Telescope quickfix<CR>", desc = "Quickfix" },
+      { "<Leader>sl", "<Cmd>Telescope loclist<CR>", desc = "Loclist" },
+      { "<Leader>s/", "<Cmd>Telescope search_history<CR>", desc = "Loclist" },
     },
     opts = {
       defaults = {
