@@ -242,8 +242,7 @@ nnoremap ]<Space> <Cmd>call append(line('.'), repeat([''], v:count1))<CR>
 nnoremap [<Space> <Cmd>call append(line('.')-1, repeat([''], v:count1))<CR>
 
 " ui {{{2
-nnoremap <C-G><C-G> <Cmd>confirm qall<CR>
-nnoremap <C-G>g <C-G>
+nnoremap <Leader>qq <Cmd>qa<CR>
 nnoremap <Leader>ur <Cmd>noh<Bar>diffupdate<Bar>normal! <C-L><CR>
 nnoremap <silent> <Leader>e <Cmd>Lexplore<CR>
 
