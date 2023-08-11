@@ -5,7 +5,6 @@ if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath })
 end
 vim.opt.rtp:prepend(lazypath)
-vim.opt.rtp:append(vim.env.HOME .. ".dotfiles/repos/private/nvim")
 
 require("lazy").setup({
   spec = {
@@ -46,6 +45,9 @@ require("lazy").setup({
   performance = {
     rtp = {
       -- disable some rtp plugins
+      paths = {
+        vim.env.HOME .. "/.dotfiles/repos/private/nvim",
+      },
       disabled_plugins = {
         "gzip",
         -- "matchit",
