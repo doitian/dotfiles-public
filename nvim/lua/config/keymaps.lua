@@ -5,7 +5,8 @@
 local map = vim.keymap.set
 local unmap = vim.keymap.del
 
-map("n", "<C-G><C-G>", "<Cmd>qall<CR>")
+map("n", "<C-G><C-G>", "<Cmd>qall<CR>", { desc = "which_key_ignore" })
+map("n", "<C-G>g", "<C-G>", { desc = "which_key_ignore" })
 
 -- editor
 map("n", "<Leader>v", "`[v`]", { desc = "Select yanked/pasted" })

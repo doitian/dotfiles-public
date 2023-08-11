@@ -245,6 +245,7 @@ nnoremap [a <Cmd>exec v:count1.'previous'<CR>
 
 " ui {{{2
 nnoremap <C-G><C-G> <Cmd>confirm qall<CR>
+nnoremap <C-G>g <C-G>
 nnoremap <Leader>ur <Cmd>noh<Bar>diffupdate<Bar>normal! <C-L><CR>
 nnoremap <silent> <Leader>e <Cmd>Lexplore<CR>
 
