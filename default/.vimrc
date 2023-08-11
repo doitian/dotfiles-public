@@ -268,9 +268,12 @@ nnoremap <Leader>cf <Cmd>undojoin<Bar>Neoformat<CR>
 nnoremap <Leader>fn <Cmd>enew<CR>
 if s:has_fzf
   nnoremap <Leader><Space> <Cmd>Files<CR>
+  nnoremap <Leader>, <Cmd>Buffers<CR>
+  nnoremap <Leader>/ <Cmd>Rg<CR>
+  nnoremap <Leader>: <Cmd>History:<CR>
+
   nnoremap <Leader>ff <Cmd>Files<CR>
   nnoremap <Leader>fb <Cmd>Buffers<CR>
-  nnoremap <Leader>, <Cmd>Buffers<CR>
   nnoremap <Leader>fh <Cmd>Files %:h<CR>
   nnoremap <Leader>fr <Cmd>History<<CR>
   nnoremap <Leader>fS <Cmd>exe 'Files '.g:vsnip_snippet_dir<CR>
@@ -291,9 +294,10 @@ if s:has_fzf
   nnoremap <Leader>gs <Cmd>GFiles?<CR>
 else
   nnoremap <Leader><Space> :<C-u>e <C-z>
+  nnoremap <Leader>, <Cmd>ls<CR>:<C-u>b<Space>
+
   nnoremap <Leader>ff :<C-u>e <C-z>
   nnoremap <Leader>fb <Cmd>ls<CR>:<C-u>b<Space>
-  nnoremap <Leader>, <Cmd>ls<CR>:<C-u>b<Space>
   nnoremap <Leader>fh :<C-u>e %:h<C-z><C-z>
   nnoremap <Leader>fS <Cmd>VsnipOpen<CR>
 endif
