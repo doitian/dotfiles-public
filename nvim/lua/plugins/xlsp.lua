@@ -18,11 +18,16 @@ return {
     },
     init = function()
       local format = function()
-        require("lazyvim.plugins.lsp.format").format({ force = true })
-        vim.cmd.update()
+        local lsp_format = require("lazyvim.plugins.lsp.format")
+        if vim.b.autoformat == false or not lsp_format.enabled() then
+          lsp_format.format({ force = true })
+          vim.cmd.update()
+        else
+          vim.cmd.write()
+        end
       end
       local keys = require("lazyvim.plugins.lsp.keymaps").get()
-      keys[#keys + 1] = { "f<CR>", format, desc = "Format Document", has = "formatting" }
+      keys[#keys + 1] = { "f<CR>", format, desc = "Format and save", has = "formatting" }
     end,
   },
 
