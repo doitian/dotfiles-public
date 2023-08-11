@@ -13,14 +13,14 @@ add_newline = false
 [directory]
 truncation_length = 1000
 truncate_to_repo = true
-format = '[$path]($style)'
+format = '$path'
 
 [git_branch]
 symbol = "±"
 format = ' [$symbol$branch(:$remote_branch)]($style)'
 
 [git_status]
-format = ' ([\[](white bold)[(todo $all_status$diverged)$ahead_behind]($style)[\]](white bold))'
+format = ' ([(todo $all_status$diverged)$ahead_behind]($style))'
 ahead = "↑"
 behind = "↓"
 conflicted = "[!](red)"
