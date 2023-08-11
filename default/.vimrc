@@ -244,6 +244,7 @@ nnoremap ]a <Cmd>exec v:count1.'next'<CR>
 nnoremap [a <Cmd>exec v:count1.'previous'<CR>
 
 " ui {{{2
+nnoremap <C-G><C-G> <Cmd>confirm qall<CR>
 nnoremap <Leader>ur <Cmd>noh<Bar>diffupdate<Bar>normal! <C-L><CR>
 nnoremap <silent> <Leader>e <Cmd>Lexplore<CR>
 
@@ -254,6 +255,7 @@ nnoremap <silent> [q <Cmd>exe v:count1.'cprevious'<CR>zv
 
 " coding {{{2
 nnoremap <silent> g<CR> <Cmd>Dispatch!<CR>
+
 nnoremap <silent> m<CR> <Cmd>Make<CR>
 nnoremap <silent> m! <Cmd>Make!<CR>
 nnoremap <silent> `<CR> <Cmd>Dispatch<CR>
@@ -321,11 +323,6 @@ imap <expr> <Tab>   vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<Tab>'
 smap <expr> <Tab>   vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<Tab>'
 imap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
 smap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
-
-" vimdiff {{{2
-if exists("$GIT_DIFF_TOOL") || exists("GIT_MERGE_TOOL")
-  nnoremap <C-G><C-G> <Cmd>qall<CR>
-end
 
 " Filetype specific handling {{{1
 augroup vimrc_au
