@@ -145,7 +145,7 @@ set number
 set pumheight=10
 set relativenumber
 set scrolloff=4
-set sessionoptions=buffers,curdir,tabpages,winsize,help,globals,skiprtp
+set sessionoptions-=blank ssop-=options ssop+=tabpages
 set shiftround
 set shiftwidth=2
 set shortmess+=WIc
@@ -364,6 +364,9 @@ augroup vimrc_au
         \   exe 'normal! g`"zv' |
         \ endif
   autocmd SwapExists * echow "swap exists" | let v:swapchoice=exists('b:swapchoice')?b:swapchoice:'o'
+
+  " auto save session
+  autocmd VimLeavePre * if v:this_session !=# '' | exec 'sil! mks! '.v:this_session | endif
 augroup END
 
 " Direnv {{{1
