@@ -4,7 +4,7 @@ os:
   editPreset: nvim
 git:
   paging:
-    pager: delta --color-only --paging=never
+    pager: delta --paging=never
 gui:
   scrollHeight: 20
   theme:
