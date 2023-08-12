@@ -11,9 +11,6 @@ export PATH="${PATH:-/bin:/usr/bin}:$HOME/bin:$GOPATH/bin:$HOME/.cargo/bin:$HOME
 if [ -n "$VSCODE_RESOLVING_ENVIRONMENT" ]; then
   export PATH="$PATH:$HOME/.asdf/shims"
 fi
-if [[ "$OSTYPE" == "linux"* && -O "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-fi
 
 # lang
 export LANG=en_US.UTF-8
@@ -56,8 +53,16 @@ export VISUAL="$EDITOR"
 export ALTERNATE_EDITOR="$EDITOR"
 export PAGER="${PAGER:=less}"
 
-# homebrew
-export HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK=1
-
 # zoxide
 export _ZO_EXCLUDE_DIRS="$HOME:$HOME/Public:$HOME/public:/tmp/*:/private/*"
+
+# homebrew
+HOMEBREW_PREFIX=/home/linuxbrew/.linuxbrew
+if [[ "$OSTYPE" == "linux"* && -O "$HOMEBREW_PREFIX/bin/brew" ]]; then
+  export HOMEBREW_CELLAR="$HOMEBREW_PREFIX/Cellar"
+  export HOMEBREW_REPOSITORY="$HOMEBREW_PREFIX/Homebrew"
+  export PATH="$PATH:$HOMEBREW_PREFIX/bin:$HOMEBREW_PREFIX/sbin"
+else
+  unset HOMEBREW_PREFIX
+fi
+export HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK=1
