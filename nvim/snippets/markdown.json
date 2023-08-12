@@ -1,4 +1,9 @@
 {
+  "Markdown ➤ Journal Section": {
+    "prefix": "jsec",
+    "body": ["### $CURRENT_HOUR:$CURRENT_MINUTE$1", "", "$0"]
+  },
+
   "Obsidian ➤ Docklet": {
     "prefix": "docklet",
     "body": [

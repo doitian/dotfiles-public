@@ -19,8 +19,8 @@ map("x", "gx", "y<Cmd>call jobstart(['open',@*])<CR>", { desc = "Open selected f
 -- map nN does not work with folding
 map("n", "n", "'Nn'[v:searchforward].'zv'", { expr = true, desc = "Next search result" })
 map("n", "N", "'nN'[v:searchforward].'zv'", { expr = true, desc = "Prev search result" })
-unmap({ "s" }, ">")
-unmap({ "s" }, "<")
+vim.F.npcall(unmap, { "s" }, ">")
+vim.F.npcall(unmap, { "s" }, "<")
 
 -- navigation
 map(
@@ -42,3 +42,4 @@ map("n", "[b", function() require("bufferline").cycle(-vim.v.count1) end, { desc
 map("n", "]a", "<Cmd>exec v:count1.'next'<CR>", { desc = "next" })
 map("n", "[a", "<Cmd>exec v:count1.'previous'<CR>", { desc = "previous" })
 map("n", "<Leader>bs", "<Cmd>BufferLinePick<CR>", { desc = "Pick Tab" })
+map("n", "<Leader>j", "<Cmd>e `jrnl -o`<CR>", { desc = "Edit vimrc" })
