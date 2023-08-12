@@ -56,7 +56,7 @@ endfunction
 
 cnoreabbrev <expr> e/ <SID>ExpandAlias(':', 'e/', 'e <C-R>=expand("%:h")<CR>') " :e//
 cnoreabbrev <expr> mapcr <SID>ExpandAlias(':', 'mapcr', 'nnoremap <buffer> <lt>CR> <lt>Cmd>:up<lt>Bar>!<lt>CR><Left><Left><Left><Left>')
-cnoreabbrev <expr> xmapcr <SID>ExpandAlias(':', 'xmapcr', 'xnoremap <buffer> <lt>CR> y<lt>Cmd>call iy#tmux#Send()<lt>CR><Left><Left><Left><Left><Left>')
+cnoreabbrev <expr> xmapcr <SID>ExpandAlias(':', 'xmapcr', 'xnoremap <buffer> <lt>CR> y<lt>Cmd>call iy#tmux#SendKeys("-l", @")<lt>CR><Left><Left><Left><Left><Left>')
 cnoreabbrev <expr> ycd <SID>ExpandAlias(':', 'ycd', 'let @* = 'cd ' . shellescape(getcwd())')
 cnoreabbrev <expr> y' <SID>ExpandAlias(':', "y'", "let @* = '<Left>") " :y''
 
@@ -69,8 +69,8 @@ augroup lazyload_au
   autocmd CmdUndefined Bm packadd iy-bm.vim
   autocmd CmdUndefined DiffOrig packadd iy-diff-orig.vim
   autocmd CmdUndefined Delete,Move packadd iy-nano-fs.vim
-  autocmd CmdUndefined TmuxSend packadd iy-tmux.vim
-  autocmd FuncUndefined iy#tmux#Send packadd iy-tmux.vim
+  autocmd CmdUndefined TmuxSendKeys,TmuxSendLine packadd iy-tmux.vim
+  autocmd FuncUndefined iy#tmux#SendKeys packadd iy-tmux.vim
   if !exists(':Explore')
     autocmd CmdUndefined Lexplore,Explore sil! unlet g:loaded_netrwPlugin | runtime plugin/netrwPlugin.vim | do FileExplorer VimEnter *
   endif

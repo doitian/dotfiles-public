@@ -6,18 +6,18 @@ endfunction
 
 function! s:GetTarget() abort
   if exists('b:iy_tmux_target')
-    return b:iy_tmux_target
+    return trim(b:iy_tmux_target)
   endif
   if !exists('g:iy_tmux_target')
     let g:iy_tmux_target = s:CreateTarget()
   endif
-  return g:iy_tmux_target
+  return trim(g:iy_tmux_target)
 endfunction
 
-function! iy#tmux#Send(lines = @") abort
+function! iy#tmux#SendKeys(...) abort
   if !exists('g:iy_tmux_target')
     let g:iy_tmux_target = s:CreateTarget()
   endif
-  let comm = ['tmux', 'send-keys', '-l', '-t', trim(g:iy_tmux_target), a:lines]
+  let comm = flatten([['tmux', 'send-keys', '-t', s:GetTarget()], a:000], 1)
   call s:System(comm)
 endfunction
