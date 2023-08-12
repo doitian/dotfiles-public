@@ -22,6 +22,7 @@ up_to_date = '[≡](green bold)'
 
 [status]
 disabled = false
+symbol = '⚠ '
 
 [shell]
 disabled = false
