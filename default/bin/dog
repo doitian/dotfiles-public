@@ -16,21 +16,21 @@ elif [ "${1:-}" = "--fzf-disable" ]; then
   exit 0
 fi
 
+BAT_OPTS="${BAT_OPTS:-} --color=always --line-range :5000"
+if [ -n "${FZF_PREVIEW_COLUMNS:-}" ]; then
+  BAT_OPTS="$BAT_OPTS --terminal-width=$FZF_PREVIEW_COLUMNS --style=numbers"
+fi
+
 function preview() {
   local arg="$1"
   if [ -d "$arg" ]; then
     exa -1 --color always --icons "$arg"
   else
-    BAT_OPTS="--color=always --line-range :5000"
-    if [ -n "${FZF_PREVIEW_LINES:-}" ]; then
-      BAT_OPTS="$BAT_OPTS --style=numbers"
-    fi
-
     if [ -e "$arg" ]; then
       local MIME="$(file --mime "$arg" 2>/dev/null || true)"
       case "$MIME" in
       *image/*)
-        if [[ -n "${WEZTERM_UNIX_SOCKET-}" && -z "${TMUX-}" && -z "${FZF_PREVIEW_LINES-}" ]]; then
+        if [[ -n "${WEZTERM_UNIX_SOCKET-}" && -z "${TMUX-}" && -z "${FZF_PREVIEW_COLUMNS-}" ]]; then
           wezterm imgcat "$arg"
           return
         fi
@@ -53,7 +53,14 @@ function preview() {
   fi
 }
 
-[[ "$#" = 0 ]] && preview .
-for arg; do
-  preview "$arg"
-done
+if [[ "$#" = 0 ]]; then
+  if [ -t 0 ]; then
+    preview .
+  else
+    bat $BAT_OPTS "$@"
+  fi
+else
+  for arg; do
+    preview "$arg"
+  done
+fi
