@@ -6,7 +6,7 @@ set -u
 
 if [ "${1:-}" = "--fzf-enable" ]; then
   echo ': "${FZF_ORIG_OPTS:="$FZF_DEFAULT_OPTS"}"'
-  echo 'export FZF_DEFAULT_OPTS="$FZF_ORIG_OPTS --preview='\''preview {}'\''"'
+  echo 'export FZF_DEFAULT_OPTS="$FZF_ORIG_OPTS --preview='\''dog {}'\''"'
   echo '# eval "$(preview --fzf-enable)"'
   exit 0
 elif [ "${1:-}" = "--fzf-disable" ]; then
@@ -47,11 +47,13 @@ function preview() {
         echo "${MIME#*: }"
       fi
     else
-      echo "$arg" | bat $BAT_OPTS --plain
+      echo "$arg: No such file or directory" >&2
+      exit 1
     fi
   fi
 }
 
+[[ "$#" = 0 ]] && preview .
 for arg; do
   preview "$arg"
 done

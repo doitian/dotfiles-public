@@ -55,7 +55,7 @@ function show_status() {
 if [[ "${1-}" != "-p" && "$*" != *" -p" && -t 1 ]]; then
   RELOAD_COMMAND="git-multistatus$(printf ' %q' "$@")"
   show_status "$@" | fzf --ansi --multi -q todo -d ':' \
-    --prompt '(l:lazygit)❯ ' \
+    --header='^l:lazygit' --header-first \
     --preview="bash -c 'git -c color.ui=always -C {1} status --short --branch -u {1}'" \
     --bind="ctrl-l:execute(bash -c 'cd '{1}' && lazygit -g \"\$(git rev-parse --git-dir)\"')+reload($RELOAD_COMMAND)" \
     --bind="ctrl-r:clear-screen" \
