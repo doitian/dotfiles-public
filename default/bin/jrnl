@@ -4,7 +4,7 @@ set -e
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
-for JOURNAL_DIR in "$HOME/Dropbox/Brain/journal" "$HOME/.journal"; do
+for JOURNAL_DIR in "$HOME/Dropbox/Brain/journal" "$HOME/Brain/journal" "$HOME/.journal"; do
   [[ -d "$JOURNAL_DIR" ]] && break
 done
 JOURNAL_FILE="$JOURNAL_DIR/Journal $(date +'%Y-%m-%d').md"
