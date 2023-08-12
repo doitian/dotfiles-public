@@ -4,10 +4,9 @@ set -e
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
-JOURNAL_DIR="$HOME/.journal"
-if ! [ -e "$JOURNAL_DIR" ] && [ -d "$HOME/Dropbox/Brain/journal" ]; then
-  ln -snf "$HOME/Dropbox/Brain/journal" "$HOME/.journal"
-fi
+for JOURNAL_DIR in "$HOME/Dropbox/Brain/journal" "$HOME/.journal"; do
+  [[ -d "$JOURNAL_DIR" ]] && break
+done
 JOURNAL_FILE="$JOURNAL_DIR/Journal $(date +'%Y-%m-%d').md"
 
 _date() {
@@ -54,6 +53,11 @@ main() {
   ensure_journal_file
 
   sep_title="$*"
+  if [ "$sep_title" = "-o" ]; then
+    echo "$JOURNAL_FILE"
+    return
+  fi
+
   if [ -n "$sep_title" ]; then
     sep_title=" $sep_title"
   fi
