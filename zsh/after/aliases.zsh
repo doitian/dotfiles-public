@@ -120,5 +120,6 @@ fi
 
 ##################################################
 # Dir Aliases
+dotfiles="$HOME/.dotfiles"
 cb="$HOME/codebase"
 dl="$HOME/Downloads"
