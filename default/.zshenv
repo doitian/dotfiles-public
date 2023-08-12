@@ -11,10 +11,8 @@ export PATH="${PATH:-/bin:/usr/bin}:$HOME/bin:$GOPATH/bin:$HOME/.cargo/bin:$HOME
 if [ -n "$VSCODE_RESOLVING_ENVIRONMENT" ]; then
   export PATH="$PATH:$HOME/.asdf/shims"
 fi
-
-# use gpg as ssh-agent
-if ! [[ -n "$SSH_TTY" && -S "$SSH_AUTH_SOCK" ]]; then
-  export SSH_AUTH_SOCK="$HOME/.gnupg/S.gpg-agent.ssh"
+if [[ "$OSTYPE" == "linux"* && -O "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
 # lang

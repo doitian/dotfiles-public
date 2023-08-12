@@ -1,8 +1,5 @@
 if [[ "$-" != *i* ]]; then return 0; fi
 
-if ! [[ -n "$SSH_TTY" && -S "$SSH_AUTH_SOCK" ]]; then
-  export SSH_AUTH_SOCK="$HOME/.gnupg/S.gpg-agent.ssh"
-fi
 ZSH_CACHE_DIR="$HOME/.zcompcache"
 ZSH="$HOME/.dotfiles/repos/public/zsh"
 MAGIC_ENTER_GIT_COMMAND=" g st ."
