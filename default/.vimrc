@@ -331,6 +331,8 @@ nnoremap <Leader><Tab>f <Cmd>tabclose<CR>
 nnoremap <Leader><Tab>] gt
 nnoremap <Leader><Tab>[ gT
 
+nnoremap <Leader>j <Cmd>e `jrnl -p`<CR>
+
 " complete {{{2
 imap <expr> <Tab>   vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<Tab>'
 smap <expr> <Tab>   vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<Tab>'

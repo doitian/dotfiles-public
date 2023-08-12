@@ -53,9 +53,11 @@ main() {
   ensure_journal_file
 
   sep_title="$*"
-  if [ "$sep_title" = "-o" ]; then
+  if [ "$sep_title" = "-p" ]; then
     echo "$JOURNAL_FILE"
     return
+  elif [ "$sep_title" = "-e" ]; then
+    exec "${EDITOR:-nvim}" "$JOURNAL_FILE"
   fi
 
   if [ -n "$sep_title" ]; then

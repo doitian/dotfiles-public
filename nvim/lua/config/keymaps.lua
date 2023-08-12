@@ -42,4 +42,5 @@ map("n", "[b", function() require("bufferline").cycle(-vim.v.count1) end, { desc
 map("n", "]a", "<Cmd>exec v:count1.'next'<CR>", { desc = "next" })
 map("n", "[a", "<Cmd>exec v:count1.'previous'<CR>", { desc = "previous" })
 map("n", "<Leader>bs", "<Cmd>BufferLinePick<CR>", { desc = "Pick Tab" })
-map("n", "<Leader>j", "<Cmd>e `jrnl -o`<CR>", { desc = "Edit vimrc" })
+
+map("n", "<Leader>j", "<Cmd>e `jrnl -p`<CR>", { desc = "Edit vimrc" })
