@@ -42,3 +42,10 @@ function vman() {
   [[ -z "${1:-}" ]] && return 1
   man "$@" | nvim '+Man!' -
 }
+
+function fixauth() {
+  local authenv="$(command fixauth)"
+  echo "$authenv"
+  echo ".- sourced"
+  eval "$authenv"
+}
