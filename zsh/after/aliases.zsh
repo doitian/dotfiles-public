@@ -100,6 +100,9 @@ alias pst="ps -o pid,time,%cpu,%mem,args -w -w"
 alias psu="ps -u $UID -o pid,tt,time,%cpu,%mem,args -w -w"
 # ps all users
 alias psa="ps -A -o pid,user,time,%cpu,%mem,args -w -w"
+alias pstg="pst | rg"
+alias psug="psu | rg"
+alias psag="psa | rg"
 
 ##################################################
 # Skip History
