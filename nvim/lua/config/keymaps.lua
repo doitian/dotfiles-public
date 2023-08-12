@@ -16,6 +16,7 @@ map("n", "]<Space>", "<Cmd>call append(line('.'), repeat([''], v:count1))<CR>", 
 map("n", "[<Space>", "<Cmd>call append(line('.')-1, repeat([''], v:count1))<CR>", { desc = "Insert lines above" })
 map("n", "gx", "<Cmd>call jobstart(['open',expand('<cfile>')])<CR>", { desc = "Open file under cursor", silent = true })
 map("x", "gx", "y<Cmd>call jobstart(['open',@*])<CR>", { desc = "Open selected file", silent = true })
+map("x", "&", ":&&<CR>", { desc = "Repeat search on selected lines" })
 -- map nN does not work with folding
 map("n", "n", "'Nn'[v:searchforward].'zv'", { expr = true, desc = "Next search result" })
 map("n", "N", "'nN'[v:searchforward].'zv'", { expr = true, desc = "Prev search result" })

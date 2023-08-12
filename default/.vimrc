@@ -240,6 +240,8 @@ nnoremap gx <Cmd>call job_start(['open',expand('<cfile>')])<CR>
 xnoremap gx y<Cmd>call job_start(['open',@*])<CR>
 nnoremap ]<Space> <Cmd>call append(line('.'), repeat([''], v:count1))<CR>
 nnoremap [<Space> <Cmd>call append(line('.')-1, repeat([''], v:count1))<CR>
+nnoremap & <Cmd>&&<CR>
+xnoremap & :&&<CR>
 
 " ui {{{2
 nnoremap <Leader>qq <Cmd>qa<CR>
