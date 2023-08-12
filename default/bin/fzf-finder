@@ -85,4 +85,5 @@ FZF_ARGS+=(--header "^h:up ^l:drill ^o:open ^v:edit" --header-first)
 FZF_ARGS+=(--bind "ctrl-r:clear-screen" --bind "ctrl-l:become(fzf-finder -d {2..})" --bind "ctrl-h:become(fzf-finder -d ..)")
 FZF_ARGS+=(--bind "ctrl-o:execute-silent(open {2..})")
 FZF_ARGS+=(--bind "ctrl-v:execute(nvim {2..})")
+FZF_ARGS+=(--bind "enter:abort+become(echo \"\$PWD/\"{2..})")
 exa --icons --color=always | fzf "${FZF_ARGS[@]}"
