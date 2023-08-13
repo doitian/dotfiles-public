@@ -8,9 +8,6 @@ fi
 # path
 export GOPATH="$HOME/codebase/gopath"
 export PATH="${PATH:-/bin:/usr/bin}:$HOME/bin:$GOPATH/bin:$HOME/.cargo/bin:$HOME/.asdf/bin:$HOME/.node-packages/bin:$HOME/.local/share/nvim/mason/bin:/usr/local/bin"
-if [ -n "$VSCODE_RESOLVING_ENVIRONMENT" ]; then
-  export PATH="$PATH:$HOME/.asdf/shims"
-fi
 
 # lang
 export LANG=en_US.UTF-8
