@@ -14,20 +14,20 @@ C = {
         "title": "Sans",
         # "Ysabeau Office"
         "prefer": ["Poppins"],
-        "sc": ["LXGW WenKai", "Noto Sans CJK SC"],
-        "tc": ["LXGW WenKai", "Noto Sans CJK TC"],
-        "hk": ["LXGW WenKai", "Noto Sans CJK HK"],
-        "jp": ["LXGW WenKai", "Noto Sans CJK JP"],
-        "kr": ["LXGW WenKai", "Noto Sans CJK KR"],
+        "sc": ["Noto Sans CJK SC", "LXGW WenKai"],
+        "tc": ["Noto Sans CJK TC", "LXGW WenKai"],
+        "hk": ["Noto Sans CJK HK", "LXGW WenKai"],
+        "jp": ["Noto Sans CJK JP", "LXGW WenKai"],
+        "kr": ["Noto Sans CJK KR", "LXGW WenKai"],
     },
     "monospace": {
         # "Cascadia Code"
         "prefer": ["Cartograph CF"],
-        "sc": ["LXGW WenKai", "Noto Sans CJK SC"],
-        "tc": ["LXGW WenKai", "Noto Sans CJK TC"],
-        "hk": ["LXGW WenKai", "Noto Sans CJK HK"],
-        "jp": ["LXGW WenKai", "Noto Sans CJK JP"],
-        "kr": ["LXGW WenKai", "Noto Sans CJK KR"],
+        "sc": ["Noto Sans CJK SC", "LXGW WenKai"],
+        "tc": ["Noto Sans CJK TC", "LXGW WenKai"],
+        "hk": ["Noto Sans CJK HK", "LXGW WenKai"],
+        "jp": ["Noto Sans CJK JP", "LXGW WenKai"],
+        "kr": ["Noto Sans CJK KR", "LXGW WenKai"],
     },
     "system-ui": {
         "title": "System UI",
@@ -104,8 +104,6 @@ for name, spec in C.items():
     root.append(comment('Compatible'))
     root.append(comment('"lang=zh-cn" or "lang=zh-cn-*"'))
     root.append(match(name, 'zh-cn', spec['sc']))
-    root.append(comment('"lang=zh-tw" or "lang=zh-tw-*"'))
-    root.append(match(name, 'zh-tw', spec['tc']))
     root.append(comment('"lang=zh-tw" or "lang=zh-tw-*"'))
     root.append(match(name, 'zh-tw', spec['tc']))
     root.append(comment('"lang=zh-hk" or "lang=zh-hk-*"'))
