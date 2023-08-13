@@ -293,18 +293,11 @@ return {
     "RRethy/vim-illuminate",
     optional = true,
     config = function(_, opts)
-      -- Override config to change the keymaps
+      -- Use default <M-n> <M-p>
       require("illuminate").configure(opts)
-      local function map(key, dir, buffer)
-        vim.keymap.set("n", key, function()
-          require("illuminate")["goto_" .. dir .. "_reference"](false)
-        end, { desc = dir:sub(1, 1):upper() .. dir:sub(2) .. " Reference", buffer = buffer })
-      end
-      map("]r", "next")
-      map("[r", "prev")
     end,
     keys = function()
-      return { { "]r", desc = "Next Reference" }, { "[r", desc = "Prev Reference" } }
+      return {}
     end,
   },
 
