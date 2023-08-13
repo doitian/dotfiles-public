@@ -46,6 +46,6 @@ function vman() {
 function fixauth() {
   local authenv="$(command fixauth)"
   echo "$authenv"
-  echo ".- sourced"
+  echo "echo '.- sourced'"
   eval "$authenv"
 }
