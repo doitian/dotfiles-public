@@ -42,7 +42,6 @@ function! s:PackInit() abort
   call minpac#add('hrsh7th/vim-vsnip')
   call minpac#add('hrsh7th/vim-vsnip-integ')
   call minpac#add('lifepillar/vim-mucomplete')
-  call minpac#add('rafamadriz/friendly-snippets')
 
   call minpac#add('NLKNguyen/papercolor-theme', {'type': 'opt'})
   call minpac#add('k-takata/minpac', {'type': 'opt'})
