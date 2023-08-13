@@ -4,4 +4,4 @@ pdf-engine: xelatex
 variables:
   mainfont: Noto Sans
   sansfont: Lato
-  monofont: JetBrains Mono
+  monofont: Cascadia Code
