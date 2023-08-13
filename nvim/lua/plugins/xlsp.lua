@@ -8,12 +8,12 @@ return {
       { import = "lazyvim.plugins.extras.formatting.prettier" },
       { import = "lazyvim.plugins.extras.lang.go" },
       { import = "lazyvim.plugins.extras.lang.java" },
-      { import = "lazyvim.plugins.extras.lang.python" },
       { import = "lazyvim.plugins.extras.lang.rust" },
     },
     opts = {
       servers = {
         tsserver = {},
+        ruff_lsp = {},
       },
     },
     init = function()
@@ -32,12 +32,32 @@ return {
   },
 
   {
+    "nvim-treesitter/nvim-treesitter",
+    optional = true,
+    opts = function(_, opts)
+      if type(opts.ensure_installed) == "table" then
+        vim.list_extend(opts.ensure_installed, { "ninja", "python", "rst", "toml" })
+      end
+    end,
+  },
+
+  {
     "jose-elias-alvarez/null-ls.nvim",
     optional = true,
     opts = function(_, opts)
       local nls = require("null-ls")
       vim.list_extend(opts.sources, {
-        nls.builtins.formatting.ruff,
+        nls.builtins.formatting.autopep8,
+      })
+    end,
+  },
+
+  {
+    "williamboman/mason.nvim",
+    optional = true,
+    opts = function(_, opts)
+      vim.list_extend(opts.ensure_installed, {
+        "autopep8",
       })
     end,
   },
