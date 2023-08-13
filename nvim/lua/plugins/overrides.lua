@@ -9,6 +9,7 @@ return {
     "folke/noice.nvim",
     optional = true,
     opts = function(_, opts)
+      -- filter notices
       opts.routes = vim.list_extend({
         {
           filter = {
@@ -49,7 +50,9 @@ return {
     "nvim-lualine/lualine.nvim",
     optional = true,
     opts = function(_, opts)
+      -- no clock
       opts.sections.lualine_z = nil
+      -- proxy flag
       table.insert(opts.sections.lualine_x, 2, {
         function()
           return "🛡️"
@@ -86,21 +89,12 @@ return {
     },
     opts = {
       defaults = {
-        vimgrep_arguments = {
-          "rg",
-          "--color=never",
-          "--no-heading",
-          "--with-filename",
-          "--line-number",
-          "--column",
-          "--smart-case",
-          "--hidden",
-          "--glob",
-          "!**/.git/*",
-        },
+        -- stylua: ignore
+        vimgrep_arguments = { "rg", "--color=never", "--no-heading", "--with-filename", "--line-number", "--column", "--smart-case", "--hidden", "--glob", "!**/.git/*" },
       },
       pickers = {
         find_files = {
+          -- stylua: ignore
           find_command = { "fd", "--type", "f", "--hidden", "--follow", "--exclude", ".git" },
         },
       },
@@ -178,7 +172,7 @@ return {
 
   {
     "hrsh7th/nvim-cmp",
-    version = false, -- last release is way too old
+    optional = true,
     opts = {
       completion = {
         autocomplete = false,
@@ -188,6 +182,7 @@ return {
       opts.mapping["<C-L>"] = opts.mapping["<C-Space>"]
       local cmp = require("cmp")
       cmp.setup(opts)
+      -- delay autocompletion using updatetime
       vim.api.nvim_create_autocmd("CursorHoldI", {
         group = vim.api.nvim_create_augroup("cmp_delay", { clear = true }),
         pattern = "*",
