@@ -3,7 +3,7 @@ import sys
 
 C = {
     "serif": {
-        "prefer": ["EB Garamond"],
+        "prefer": ["Roboto Slab"],
         "sc": ["FZQingKeBenYueSongS-R-GB", "Noto Serif CJK SC", "LXGW WenKai"],
         "tc": ["Noto Serif CJK TC", "LXGW WenKai"],
         "hk": ["Noto Serif CJK HK", "LXGW WenKai"],
@@ -12,7 +12,6 @@ C = {
     },
     "sans-serif": {
         "title": "Sans",
-        # "Ysabeau Office"
         "prefer": ["Poppins"],
         "sc": ["Noto Sans CJK SC", "LXGW WenKai"],
         "tc": ["Noto Sans CJK TC", "LXGW WenKai"],
@@ -31,8 +30,7 @@ C = {
     },
     "system-ui": {
         "title": "System UI",
-        # "Lato"
-        "prefer": ["Ysabeau"],
+        "prefer": ["Lato"],
         "sc": ["LXGW WenKai", "Noto Sans CJK SC"],
         "tc": ["LXGW WenKai", "Noto Sans CJK TC"],
         "hk": ["LXGW WenKai", "Noto Sans CJK HK"],
