@@ -74,6 +74,8 @@ let g:dispatch_no_maps = 1
 
 let g:mucomplete#no_mappings = 1
 let g:mucomplete#enable_auto_at_startup = 1
+let g:mucomplete#completion_delay = 1
+let g:mucomplete#empty_text = 1
 let g:mucomplete#chains = {
       \ 'default' : ['vsnip', 'path', 'omni', 'keyn', 'dict', 'uspl'],
       \ 'vim'     : ['vsnip', 'path', 'cmd', 'keyn']
@@ -340,6 +342,9 @@ imap <expr> <Tab>   vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<Tab>'
 smap <expr> <Tab>   vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<Tab>'
 imap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
 smap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
+imap <C-L> <Plug>(MUcompleteFwd)
+" always insert newline
+inoremap <expr> <C-J> pumvisible() ? "<c-e><C-J>" : "<C-J>"
 
 " Filetype specific handling {{{1
 augroup vimrc_au

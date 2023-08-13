@@ -16,27 +16,34 @@ return {
         desc = "Edit Snippets",
       },
     },
+    config = function(_, opts)
+      require("luasnip").setup(opts)
+      require("luasnip.loaders.from_vscode").lazy_load()
+    end,
   },
   {
     "rafamadriz/friendly-snippets",
-    optional = true,
-    config = function()
-      local luasnip = require("luasnip")
-      luasnip.filetype_extend("typescript", { "tsdoc" })
-      luasnip.filetype_extend("javascript", { "jsdoc" })
-      luasnip.filetype_extend("lua", { "luadoc" })
-      luasnip.filetype_extend("python", { "python-docstring" })
-      luasnip.filetype_extend("rust", { "rustdoc" })
-      luasnip.filetype_extend("cs", { "csharpdoc" })
-      luasnip.filetype_extend("java", { "javadoc" })
-      luasnip.filetype_extend("sh", { "shelldoc" })
-      luasnip.filetype_extend("zsh", { "shelldoc" })
-      luasnip.filetype_extend("c", { "cdoc" })
-      luasnip.filetype_extend("cpp", { "cppdoc" })
-      luasnip.filetype_extend("php", { "phpdoc" })
-      luasnip.filetype_extend("kotlin", { "kdoc" })
-      luasnip.filetype_extend("ruby", { "rdoc" })
-      require("luasnip.loaders.from_vscode").lazy_load()
+    enabled = false,
+  },
+  {
+    "hrsh7th/nvim-cmp",
+    version = false, -- last release is way too old
+    opts = {
+      completion = {
+        autocomplete = false,
+      },
+    },
+    config = function(_, opts)
+      opts.mapping["<C-L>"] = opts.mapping["<C-Space>"]
+      local cmp = require("cmp")
+      cmp.setup(opts)
+      vim.api.nvim_create_autocmd("CursorHoldI", {
+        group = vim.api.nvim_create_augroup("cmp_delay", { clear = true }),
+        pattern = "*",
+        callback = function()
+          cmp.complete({ reason = cmp.ContextReason.Auto })
+        end,
+      })
     end,
   },
 
