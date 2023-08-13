@@ -18,3 +18,4 @@ opt.winwidth = 78
 vim.g.netrw_winsize = -40
 vim.g.netrw_banner = 0
 vim.g.netrw_liststyle = 3
+vim.g.markdown_folding = 1
