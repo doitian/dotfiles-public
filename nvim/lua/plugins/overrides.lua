@@ -19,6 +19,9 @@ return {
         messages = {
           view = "mini",
         },
+        presets = {
+          long_message_to_split = true,
+        },
         routes = vim.list_extend({
           {
             filter = {
@@ -38,6 +41,16 @@ return {
               find = "nvim%-dap",
             },
             opts = { skip = true },
+          },
+          {
+            filter = {
+              event = "msg_show",
+              any = {
+                { cmdline = true, min_height = 2 },
+                { cmdline = "args" },
+              },
+            },
+            view = "popup",
           },
         }, opts.routes or {}),
       })
