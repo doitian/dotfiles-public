@@ -4,6 +4,9 @@ export SHELL_ENV_LOADED=1
 if [[ -n "$BASH_VERSION" && -f "$HOME/.bashrc" ]]; then
   . "$HOME/.bashrc"
 fi
+if [[ "$OSTYPE" == "linux"* && (-n "${DISPLAY:-}" || -n "${WAYLAND_DISPLAY:-}") ]]; then
+  export GPG_TTY="${TTY:-}"
+fi
 
 # path
 export GOPATH="$HOME/codebase/gopath"
