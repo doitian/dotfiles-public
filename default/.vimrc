@@ -19,15 +19,11 @@ let g:vsnip_snippet_dir = $HOME.'/.config/nvim/snippets'
 function! s:PackInit() abort
   if exists('g:loaded_minpac') | return | endif
 
-  if has('ios')
-    packadd minpac-ios
-  else
-    let minpacpath = $HOME.'/.vim/pack/minpac/opt/minpac'
-    if !isdirectory(minpacpath)
-      call system('git clone --filter=blob:none https://github.com/k-takata/minpac.git ' . shellescape(minpacpath))
-    endif
-    packadd minpac
+  let minpacpath = $HOME.'/.vim/pack/minpac/opt/minpac'
+  if !isdirectory(minpacpath) && executable('git')
+    call system('git clone --filter=blob:none https://github.com/k-takata/minpac.git ' . shellescape(minpacpath))
   endif
+  packadd minpac
 
   call minpac#init()
 
@@ -55,7 +51,6 @@ function! s:PackInit() abort
   if s:has_fzf
     call minpac#add('junegunn/fzf')
     call minpac#add('junegunn/fzf.vim')
-    silent! packadd! fzf-vsnip
   endif
 endfunction
 
@@ -65,9 +60,10 @@ filetype plugin indent on
 syntax enable
 
 " Plugins Options {{{1
-let g:netrw_winsize = -40
+let g:markdown_folding = 1
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
+let g:netrw_winsize = -40
 
 let g:dispatch_no_maps = 1
 
@@ -78,23 +74,6 @@ let g:mucomplete#empty_text = 1
 let g:mucomplete#chains = {
       \ 'default' : ['vsnip', 'path', 'omni', 'keyn', 'dict', 'uspl'],
       \ 'vim'     : ['vsnip', 'path', 'cmd', 'keyn']
-      \ }
-
-let g:vsnip_filetypes = {
-      \ 'typescript' : ['typescript', 'tsdoc'],
-      \ 'javascript' : ['javascript', 'jsdoc'],
-      \ 'lua' : ['lua', 'luadoc'],
-      \ 'python' : ['python', 'pydoc'],
-      \ 'rust' : ['rust', 'rustdoc'],
-      \ 'cs' : ['cs', 'csharpdoc'],
-      \ 'java' : ['java', 'javadoc'],
-      \ 'sh' : ['sh', 'shelldoc'],
-      \ 'zsh' : ['sh', 'shelldoc'],
-      \ 'c' : ['c', 'cdoc'],
-      \ 'cpp' : ['cpp', 'cppdoc'],
-      \ 'php' : ['php', 'phpdoc'],
-      \ 'kotlin' : ['kotlin', 'kdoc'],
-      \ 'ruby' : ['ruby', 'rdoc']
       \ }
 
 let g:loaded_2html_plugin = 1
@@ -282,7 +261,7 @@ if s:has_fzf
   nnoremap <Leader>fh <Cmd>Files %:h<CR>
   nnoremap <Leader>fr <Cmd>History<<CR>
   nnoremap <Leader>fS <Cmd>exe 'Files '.g:vsnip_snippet_dir<CR>
-  nnoremap <Leader>fs <Cmd>Snippets<CR>
+  nnoremap <Leader>fs <Cmd>VSnippets<CR>
   nnoremap <Leader>fj <Cmd>Zoxide<CR>
   nnoremap <Leader>sm <Cmd>Marks<CR>
   nnoremap <Leader>sb <Cmd>BLines<CR>
@@ -321,7 +300,9 @@ nnoremap [a <Cmd>exec v:count1.'previous'<CR>
 nnoremap <Leader>ww <C-w>p
 nnoremap <Leader>wd <C-w>c
 nnoremap <Leader>w- <C-w>s
+nnoremap <Leader>ws <C-w>s
 nnoremap <Leader>w<Bar> <C-w>v
+nnoremap <Leader>wv <C-w>v
 nnoremap <Leader>- <C-w>s
 nnoremap <Leader><Bar> <C-w>v
 nnoremap <C-H> <C-W>h
