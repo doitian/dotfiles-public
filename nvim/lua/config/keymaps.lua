@@ -1,11 +1,12 @@
 -- Keymaps are automatically loaded on the VeryLazy event
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
+-- vim: foldmethod=marker
 
 local map = vim.keymap.set
 local unmap = vim.keymap.del
 
--- editor
+-- editor {{{1
 map("n", "<Leader>v", "`[v`]", { desc = "Select yanked/pasted" })
 map({ "n", "x" }, "<Leader>d", [["_d]], { desc = "Delete without yanking" })
 map({ "n", "x" }, "<Leader>p", [["0p]], { desc = "Paste from yanked" })
@@ -25,28 +26,28 @@ map("n", "N", "'nN'[v:searchforward].'zv'", { expr = true, desc = "Prev search r
 vim.F.npcall(unmap, { "s" }, ">")
 vim.F.npcall(unmap, { "s" }, "<")
 
--- navigation
+-- navigation {{{1
 map(
   "n",
   "<S-H>",
   "v:count == 0 ? '<Cmd>BufferLineCyclePrev<CR>' : '<S-H>'",
-  { expr = true, replace_keycodes = false, silent = true, desc = "Next Tab" }
+  { expr = true, replace_keycodes = false, silent = true, desc = "Next tab" }
 )
 map(
   "n",
   "<S-L>",
   "v:count == 0 ? '<Cmd>BufferLineCycleNext<CR>' : '<S-L>'",
-  { expr = true, replace_keycodes = false, silent = true, desc = "Prev Tab" }
+  { expr = true, replace_keycodes = false, silent = true, desc = "Prev tab" }
 )
 -- stylua: ignore
-map("n", "]b", function() require("bufferline").cycle(vim.v.count1) end, { desc = "Next Tab" })
+map("n", "]b", function() require("bufferline").cycle(vim.v.count1) end, { desc = "Next tab" })
 -- stylua: ignore
-map("n", "[b", function() require("bufferline").cycle(-vim.v.count1) end, { desc = "Next Tab" })
-map("n", "]a", "<Cmd>exec v:count1.'next'<CR>", { desc = "next" })
-map("n", "[a", "<Cmd>exec v:count1.'previous'<CR>", { desc = "previous" })
-map("n", "<Leader>bs", "<Cmd>BufferLinePick<CR>", { desc = "Pick Tab" })
+map("n", "[b", function() require("bufferline").cycle(-vim.v.count1) end, { desc = "Next tab" })
+map("n", "]a", "<Cmd>exec v:count1.'next'<CR>", { desc = "Next arg" })
+map("n", "[a", "<Cmd>exec v:count1.'previous'<CR>", { desc = "Previous arg" })
+map("n", "<Leader>bs", "<Cmd>BufferLinePick<CR>", { desc = "Pick tab" })
 
 map("n", "<leader>ws", "<C-W>s", { desc = "Split window below", remap = true })
 map("n", "<leader>wv", "<C-W>v", { desc = "Split window right", remap = true })
 
-map("n", "<Leader>j", "<Cmd>e `jrnl -p`<CR>", { desc = "Edit vimrc" })
+map("n", "<Leader>j", "<Cmd>e `jrnl -p`<CR>", { desc = "Edit journal" })
