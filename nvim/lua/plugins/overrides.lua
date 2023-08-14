@@ -218,9 +218,11 @@ return {
     dependencies = {
       -- Extras
       { import = "lazyvim.plugins.extras.formatting.prettier" },
-      { import = "lazyvim.plugins.extras.lang.json" },
       { import = "lazyvim.plugins.extras.lang.rust" },
-      { import = "lazyvim.plugins.extras.lang.yaml" },
+
+      -- buggy: waiting for release
+      -- { import = "lazyvim.plugins.extras.lang.yaml" },
+      -- { import = "lazyvim.plugins.extras.lang.json" },
 
       { import = "lazyvim.plugins.extras.lang.go" },
       { import = "lazyvim.plugins.extras.lang.java" },
@@ -229,6 +231,8 @@ return {
       servers = {
         tsserver = {},
         ruff_lsp = {},
+        yamlls = {},
+        jsonls = {},
       },
     },
     init = function()
@@ -251,7 +255,7 @@ return {
     optional = true,
     opts = function(_, opts)
       if type(opts.ensure_installed) == "table" then
-        vim.list_extend(opts.ensure_installed, { "ninja", "python", "rst", "toml" })
+        vim.list_extend(opts.ensure_installed, { "ninja", "python", "rst", "toml", "yaml", "json", "json5", "jsonc" })
       end
     end,
   },
