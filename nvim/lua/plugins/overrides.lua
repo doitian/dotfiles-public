@@ -173,7 +173,9 @@ return {
         group = vim.api.nvim_create_augroup("cmp_delay", { clear = true }),
         pattern = "*",
         callback = function()
-          cmp.complete({ reason = cmp.ContextReason.Auto })
+          if not cmp.visible() then
+            cmp.complete({ reason = cmp.ContextReason.Auto })
+          end
         end,
       })
     end,
