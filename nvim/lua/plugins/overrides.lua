@@ -9,40 +9,32 @@ return {
     "folke/noice.nvim",
     optional = true,
     opts = function(_, opts)
-      -- filter notices
-      opts.routes = vim.list_extend({
-        {
-          filter = {
-            event = "lsp",
-            kind = "progress",
-            any = {
-              { find = "Validate documents" },
-              { find = "Publish Diagnostics" },
-            },
-          },
-          opts = { skip = true },
-        },
-        {
-          filter = {
-            event = "msg_show",
-            kind = "",
-            find = "nvim%-dap",
-          },
-          opts = { skip = true },
-        },
-        {
-          filter = {
-            event = "msg_show",
-            kind = "",
-            any = {
-              { find = "%d+ lines" },
-              { find = "fewer lines" },
-              { find = "more lines" },
-            },
-          },
+      return vim.tbl_deep_extend("force", opts, {
+        messages = {
           view = "mini",
         },
-      }, opts.routes or {})
+        routes = vim.list_extend({
+          {
+            filter = {
+              event = "lsp",
+              kind = "progress",
+              any = {
+                { find = "Validate documents" },
+                { find = "Publish Diagnostics" },
+              },
+            },
+            opts = { skip = true },
+          },
+          {
+            filter = {
+              event = "msg_show",
+              kind = "",
+              find = "nvim%-dap",
+            },
+            opts = { skip = true },
+          },
+        }, opts.routes or {}),
+      })
     end,
   },
 
