@@ -31,6 +31,7 @@ function! s:PackInit() abort
   call minpac#add('justinmk/vim-sneak') " s (o)z
   call minpac#add('thinca/vim-visualstar') " * # g* g#
   call minpac#add('tomtom/tcomment_vim') " gc
+  call minpac#add('tpope/vim-markdown') " latest version
   call minpac#add('tpope/vim-repeat')
   call minpac#add('tpope/vim-sleuth')
   call minpac#add('tpope/vim-surround') " ys ds cs (v)S
@@ -41,8 +42,8 @@ function! s:PackInit() abort
 
   call minpac#add('NLKNguyen/papercolor-theme', {'type': 'opt'})
   call minpac#add('k-takata/minpac', {'type': 'opt'})
-  call minpac#add('tpope/vim-dispatch', {'type': 'opt'})
   call minpac#add('sbdchd/neoformat', {'type': 'opt'})
+  call minpac#add('tpope/vim-dispatch', {'type': 'opt'})
 
   if has('win32')
     call minpac#add('PProvost/vim-ps1')
