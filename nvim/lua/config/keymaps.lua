@@ -51,3 +51,6 @@ map("n", "<leader>ws", "<C-W>s", { desc = "Split window below", remap = true })
 map("n", "<leader>wv", "<C-W>v", { desc = "Split window right", remap = true })
 
 map("n", "<Leader>j", "<Cmd>e `jrnl -p`<CR>", { desc = "Edit journal" })
+
+-- coding {{{1
+map("n", "<Leader>cw", "<Cmd>ru macros/buffer/whitespace.vim<CR>", { desc = "Fix whitespace issues" })
