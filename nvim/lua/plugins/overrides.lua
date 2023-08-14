@@ -1,5 +1,11 @@
 -- vim: foldmethod=marker
 local Util = require("lazyvim.util")
+local function autozv(func)
+  return function(...)
+    func(...)
+    vim.cmd.norm("zv")
+  end
+end
 
 return {
   -- ui {{{1
@@ -100,38 +106,13 @@ return {
 
   {
     "folke/trouble.nvim",
-    keys = {
-      {
-        "[q",
-        function()
-          if require("trouble").is_open() then
-            require("trouble").previous({ skip_groups = true, jump = true })
-          else
-            local ok, err = pcall(vim.cmd.cprev)
-            if not ok then
-              return vim.notify(err, vim.log.levels.ERROR)
-            end
-          end
-          vim.cmd.norm("zv")
-        end,
-        desc = "Previous trouble/quickfix item",
-      },
-      {
-        "]q",
-        function()
-          if require("trouble").is_open() then
-            require("trouble").next({ skip_groups = true, jump = true })
-          else
-            local ok, err = pcall(vim.cmd.cnext)
-            if not ok then
-              return vim.notify(err, vim.log.levels.ERROR)
-            end
-          end
-          vim.cmd.norm("zv")
-        end,
-        desc = "Next trouble/quickfix item",
-      },
-    },
+    keys = function(_, keys)
+      for _, key in ipairs(keys) do
+        if key[1] == "[q" or key[1] == "]q" then
+          key[2] = autozv(key[2])
+        end
+      end
+    end,
   },
 
   -- coding {{{1
@@ -193,6 +174,7 @@ return {
       for _, k in ipairs(keys) do
         if k[1] == "S" then
           k.mode = { "n", "o" }
+          break
         end
       end
       return vim.list_extend(keys, {
@@ -221,9 +203,12 @@ return {
     dependencies = {
       -- Extras
       { import = "lazyvim.plugins.extras.formatting.prettier" },
+      { import = "lazyvim.plugins.extras.lang.json" },
+      { import = "lazyvim.plugins.extras.lang.rust" },
+      { import = "lazyvim.plugins.extras.lang.yaml" },
+
       { import = "lazyvim.plugins.extras.lang.go" },
       { import = "lazyvim.plugins.extras.lang.java" },
-      { import = "lazyvim.plugins.extras.lang.rust" },
     },
     opts = {
       servers = {
