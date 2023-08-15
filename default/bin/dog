@@ -23,11 +23,16 @@ fi
 
 function preview() {
   local arg="$1"
+  local resolved="$arg"
+  if [ -L "$arg" ] && command -v realpath; then
+    resolved="$(realpath "$arg")"
+  fi
+
   if [ -d "$arg" ]; then
     exa -1 --color always --icons "$arg"
   else
     if [ -e "$arg" ]; then
-      local MIME="$(file --mime "$arg" 2>/dev/null || true)"
+      local MIME="$(file --mime "$resolved" 2>/dev/null || true)"
       case "$MIME" in
       *image/*)
         if [[ -n "${WEZTERM_UNIX_SOCKET-}" && -z "${TMUX-}" && -z "${FZF_PREVIEW_COLUMNS-}" ]]; then
