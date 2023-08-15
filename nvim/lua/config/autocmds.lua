@@ -16,10 +16,6 @@ autocmd("CmdwinEnter", "*", function()
   vim.keymap.set("n", "<C-W><C-W>", "<CR>q:dd", { buffer = true })
 end)
 
-autocmd("FileType", { "vim", "beancount", "i3config" }, function()
-  vim.opt_local.foldmethod = "marker"
-end)
-
 autocmd("FileType", { "qf" }, function()
   vim.opt_local.errorformat = "%f|%l col %c|%m"
 
