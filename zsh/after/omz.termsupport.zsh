@@ -39,7 +39,7 @@ function title {
 }
 
 ZSH_THEME_TERM_TAB_TITLE_IDLE="${SSH_TTY:+$SHORT_HOST:}%(4~|%-1~/…/%2~|%~)"
-ZSH_THEME_TERM_TITLE_IDLE="%n@%m:%~"
+ZSH_THEME_TERM_TITLE_IDLE="%n@$SHORT_HOST:%~"
 # Avoid duplication of directory in terminals with independent dir display
 if [[ "$TERM_PROGRAM" == Apple_Terminal ]]; then
   ZSH_THEME_TERM_TITLE_IDLE="%n@%m"
@@ -97,8 +97,9 @@ function omz_termsupport_preexec {
   # cmd name only, or if this is sudo or ssh, the next cmd
   local CMD="${1[(wr)^(*=*|sudo|ssh|mosh|rake|gfw|-*)]:gs/%/%%}"
   local LINE="${2:gs/%/%%}"
+  local PREFIX="${SSH_TTY:+$SHORT_HOST: }"
 
-  title "$CMD" "%100>...>${LINE}%<<"
+  title "$PREFIX$CMD" "%100>...>${PREFIX}${LINE}%<<"
 }
 
 autoload -Uz add-zsh-hook
