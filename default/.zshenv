@@ -10,7 +10,23 @@ fi
 
 # path
 export GOPATH="$HOME/codebase/gopath"
-export PATH="${PATH:-/bin:/usr/bin}:$HOME/bin:$GOPATH/bin:$HOME/.cargo/bin:$HOME/.asdf/bin:$HOME/.node-packages/bin:$HOME/.local/share/nvim/mason/bin:/usr/local/bin"
+export PATH="${PATH:-/bin:/usr/bin:/usr/local/bin}:$HOME/bin:$HOME/.cargo/bin:$HOME/.asdf/bin:$GOPATH/bin:$HOME/.node-packages/bin:$HOME/.local/share/nvim/mason/bin"
+function asdfenv() {
+  local tool_path="$(asdf where "$1" 2>/dev/null)"
+  if [ -n "$tool_path" ]; then
+    export PATH="$PATH:$tool_path/bin"
+    local exec_env_path="${ASDF:-$HOME/.asdf}/plugins/$1/bin/exec-env"
+    if [ -f "$exec_env_path" ]; then
+      source "$exec_env_path"
+    fi
+  fi
+}
+if ! command -v node &>/dev/null; then
+  asdfenv nodejs
+fi
+if ! command -v go &>/dev/null; then
+  asdfenv golang
+fi
 
 # lang
 export LANG=en_US.UTF-8
