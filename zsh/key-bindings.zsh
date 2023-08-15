@@ -18,9 +18,7 @@ copybuffer () {
   printf "%s" "$BUFFER" | ctrlc
 }
 zle -N copybuffer
-bindkey -M emacs "^O" copybuffer
-bindkey -M viins "^O" copybuffer
-bindkey -M vicmd "^O" copybuffer
+bindkey "^O" copybuffer
 
 # ctrl-z to switch between job and shell
 fancy-ctrl-z () {
@@ -72,9 +70,7 @@ gfw-command-line() {
 zle -N gfw-command-line
 
 # Defined shortcut keys: [Esc] [Esc]
-bindkey -M emacs '\e\e' gfw-command-line
-bindkey -M vicmd '\e\e' gfw-command-line
-bindkey -M viins '\e\e' gfw-command-line
+bindkey '\e\e' gfw-command-line
 
 # Make sure that the terminal is in application mode when zle is active, since
 # only then values from $terminfo are valid
@@ -176,7 +172,7 @@ bindkey -M vicmd '^[[1;5D' backward-word
 
 
 bindkey '\ew' kill-region                             # [Esc-w] - Kill from the cursor to the mark
-bindkey -s '\el' 'ls\n'                               # [Esc-l] - run command: ls
+bindkey -s '\el' 'l\n'                               # [Esc-l] - run command: ls
 bindkey '^r' history-incremental-search-backward      # [Ctrl-r] - Search backward incrementally for a specified string. The string may begin with ^ to anchor the search to the beginning of the line.
 bindkey ' ' magic-space                               # [Space] - don't do history expansion
 
