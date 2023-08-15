@@ -6,6 +6,10 @@ truncation_symbol = "…/"
 repo_root_style = "cyan bold italic"
 repo_root_format = '[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) '
 
+[hostname]
+ssh_symbol = ''
+format = '[$ssh_symbol$hostname:]($style)'
+
 [git_branch]
 symbol = "±"
 
