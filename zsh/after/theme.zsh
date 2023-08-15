@@ -31,11 +31,7 @@ if [ "$TERM" = dumb ]; then
 elif (( $+commands[starship] )); then
   eval "$(starship init zsh)"
 else
-  PROMPT_HOST=
-  if [ -n "${SSH_TTY:-}" ]; then
-    PROMPT_HOST="%n@%F{yellow}$SHORT_HOST%f:"
-  fi
-  PROMPT="%(?..%F{red}%?⏎
-)%f# $PROMPT_HOST%F{blue}%(4~|%-1~/…/%2~|%~)%f
-%(1j.%F{yellow}%%%j.)%f$ "
+  PROMPT_HOST="${SSH_TTY:+"%F{yellow}$SHORT_HOST%f:"}"
+  PROMPT="$PROMPT_HOST%F{cyan}%(4~|%-1~/…/%2~|%~)%f
+%(1j.%F{blue}✦ %f.)%(?.%F{green}.%F{red}%? )❯%f "
 fi
