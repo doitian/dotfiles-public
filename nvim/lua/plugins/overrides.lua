@@ -165,8 +165,18 @@ return {
       },
     },
     config = function(_, opts)
-      opts.mapping["<C-L>"] = opts.mapping["<C-Space>"]
       local cmp = require("cmp")
+      local luasnip = require("luasnip")
+
+      local complete = opts.mapping["<C-Space>"]
+      opts.mapping["<C-L>"] = function(fallback)
+        if luasnip.expandable() then
+          luasnip.expand()
+        else
+          complete(fallback)
+        end
+      end
+
       cmp.setup(opts)
       -- delay autocompletion using updatetime
       vim.api.nvim_create_autocmd("CursorHoldI", {
