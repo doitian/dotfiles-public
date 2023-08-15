@@ -95,11 +95,16 @@ function omz_termsupport_preexec {
   fi
 
   # cmd name only, or if this is sudo or ssh, the next cmd
+  local UNALIAS="${aliases[$1]}"
+  if [ -n "$UNALIAS" ]; then
+    1="${UNALIAS%% *}"
+  fi
   local CMD="${1[(wr)^(*=*|sudo|ssh|mosh|rake|gfw|-*)]:gs/%/%%}"
   local LINE="${2:gs/%/%%}"
   local PREFIX="${SSH_TTY:+$SHORT_HOST: }"
+  local UNALIAS="${aliases[$CMD]}"
 
-  title "$PREFIX$CMD" "%100>...>${PREFIX}${LINE}%<<"
+  title "$PREFIX${CMD##*/}" "%100>...>${PREFIX}${LINE}%<<"
 }
 
 autoload -Uz add-zsh-hook
