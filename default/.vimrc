@@ -340,7 +340,6 @@ augroup vimrc_au
   autocmd CmdwinEnter * map <buffer> <C-W><C-W> <CR>q:dd
 
   autocmd FileType gitcommit,markdown setlocal spell wrap
-  autocmd FileType vim,beancount,i3config setlocal foldmethod=marker
 
   " edit qf: set ma | ... | cgetb
   autocmd FileType qf
