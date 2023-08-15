@@ -4,7 +4,7 @@ case "${1:-}" in
 light)
   echo "export TERM_BACKGROUND=light"
   echo "export BAT_THEME=OneHalfLight"
-  echo "export FZF_DEFAULT_OPTS='--prompt='❯ ' --color light'"
+  echo "export FZF_DEFAULT_OPTS=\"--prompt='❯ ' --color light\""
   echo "unset LG_CONFIG_FILE"
   if [ -n "${TMUX:-}" ]; then
     echo "tmux source ~/.tmux.light.conf"
