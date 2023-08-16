@@ -63,6 +63,19 @@ return {
     opts = function(_, opts)
       -- no clock
       opts.sections.lualine_z = nil
+      opts.sections.lualine_c[3] = function()
+        local fn = vim.fn.expand("%:~:.")
+        if vim.startswith(fn, "jdt://") then
+          fn = string.sub(fn, 0, string.find(fn, "?") - 1)
+        end
+        if vim.bo.modified then
+          fn = fn .. "  "
+        end
+        if vim.bo.modifiable == false or vim.bo.readonly == true then
+          fn = fn .. " 󰍁 "
+        end
+        return fn
+      end
       -- proxy flag
       table.insert(opts.sections.lualine_x, 2, {
         function()
