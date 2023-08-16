@@ -6,14 +6,23 @@ import sys
 import subprocess
 import json
 from collections import namedtuple, OrderedDict
-import requests
-from requests.auth import HTTPBasicAuth
+import urllib.request
+import base64
+
+basic_auth = base64.b64encode(
+    f":{os.environ['GITHUB_TOKEN']}".encode()).decode()
 
 
 def _str(s):
     if sys.version_info >= (3, 0):
         return s.decode('utf-8')
     return s
+
+
+def get(endpoint):
+    req = urllib.request.Request(endpoint)
+    req.add_header("Authorization", f"Basic {basic_auth}")
+    return urllib.request.urlopen(req)
 
 
 os.makedirs(".git/changes", exist_ok=True)
@@ -68,8 +77,6 @@ SCOPE_TITLE = {
     'refactor': 'Improvements',
 }
 
-auth = HTTPBasicAuth('', os.environ['GITHUB_TOKEN'])
-
 for line in logs.splitlines():
     pr_numbers = []
 
@@ -91,12 +98,12 @@ for line in logs.splitlines():
             print("get pr #" + pr_number, file=sys.stderr)
             api_endpoint = 'https://api.github.com/repos/{}/pulls/{}'.format(
                 repo, pr_number)
-            pr_resp = requests.get(api_endpoint, auth=auth)
-            if pr_resp.status_code == 404:
+            pr_resp = get(api_endpoint)
+            if pr_resp.status == 404:
                 print("PR {} not found".format(pr_number), file=sys.stderr)
                 continue
 
-            pr = pr_resp.json()
+            pr = json.loads(pr_resp.read().decode())
             if 'message' in pr:
                 print(pr['message'], file=sys.stderr)
                 sys.exit(1)
