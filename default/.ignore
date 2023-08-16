@@ -1,5 +1,6 @@
 *.pyc
 *.qf
+*.tags
 *~
 .*.sw?
 .DS_Store
