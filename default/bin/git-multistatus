@@ -13,12 +13,13 @@ add_newline = false
 [directory]
 truncation_length = 1000
 truncate_to_repo = true
-format = '$path'
+format = "$path"
 
 [git_branch]
 # symbol = "±"
 symbol = " "
-format = ' [$symbol$branch(:$remote_branch)]($style)'
+format = " [$symbol$branch(:$remote_branch)]($style)"
+style = ""
 
 [git_status]
 format = '[( dirty $all_status$diverged)( $ahead_behind)]($style)'

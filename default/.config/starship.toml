@@ -15,6 +15,7 @@ format = '[$ssh_symbol$hostname:]($style)'
 [git_branch]
 # symbol = "±"
 symbol = " "
+style = "green"
 
 [git_status]
 format = '([\[](white bold)[$all_status$ahead_behind]($style)[\]](white bold)) '
