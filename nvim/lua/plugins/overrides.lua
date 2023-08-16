@@ -286,7 +286,7 @@ return {
     "jose-elias-alvarez/null-ls.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.debug = true
+      -- opts.debug = true
       local nls = require("null-ls")
       vim.list_extend(opts.sources, {
         nls.builtins.formatting.autopep8,
