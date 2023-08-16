@@ -54,4 +54,11 @@ return {
       require("telescope").load_extension("luasnip")
     end,
   },
+
+  {
+    "folke/zen-mode.nvim",
+    cmd = { "ZenMode" },
+    opts = { window = { backdrop = 1, options = { signcolumn = "no", number = false, relativenumber = false } } },
+    keys = { { "<C-W>z", "<Cmd>ZenMode<CR>", desc = "ZenMode" } },
+  },
 }

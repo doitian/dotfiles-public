@@ -1,4 +1,5 @@
 " Preamble {{{1
+" vim: foldmethod=marker
 if &compatible | set nocompatible | endif
 set encoding=utf-8
 set background=light
@@ -45,6 +46,7 @@ function! s:PackInit() abort
   call minpac#add('k-takata/minpac', {'type': 'opt'})
   call minpac#add('sbdchd/neoformat', {'type': 'opt'})
   call minpac#add('tpope/vim-dispatch', {'type': 'opt'})
+  call minpac#add('junegunn/goyo.vim', {'type': 'opt'})
 
   if has('win32')
     call minpac#add('PProvost/vim-ps1')
@@ -237,6 +239,8 @@ nnoremap <Leader>xl <Cmd>lopen<CR>
 nnoremap <silent> ]q <Cmd>exe v:count1.'cnext'<CR>zv
 nnoremap <silent> [q <Cmd>exe v:count1.'cprevious'<CR>zv
 
+nnoremap <C-W>z <Cmd>Goyo<CR>
+
 " coding {{{2
 nnoremap <silent> g<CR> <Cmd>Dispatch!<CR>
 
@@ -337,6 +341,7 @@ augroup vimrc_au
 
   autocmd CmdUndefined Make,Dispatch,Start,FocusDispatch packadd vim-dispatch
   autocmd CmdUndefined Neoformat packadd neoformat
+  autocmd CmdUndefined Goyo packadd goyo.vim
 
   " run the command and keep the window open
   autocmd CmdwinEnter * map <buffer> <C-W><C-W> <CR>q:dd
