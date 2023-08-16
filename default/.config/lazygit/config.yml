@@ -5,6 +5,7 @@ os:
 git:
   paging:
     pager: delta --paging=never
+  autoFetch: false
 gui:
   scrollHeight: 20
   theme:
