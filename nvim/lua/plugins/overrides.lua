@@ -240,7 +240,6 @@ return {
     optional = true,
     dependencies = {
       -- Extras
-      { import = "lazyvim.plugins.extras.formatting.prettier" },
       { import = "lazyvim.plugins.extras.lang.rust" },
 
       -- buggy: waiting for release
@@ -287,9 +286,11 @@ return {
     "jose-elias-alvarez/null-ls.nvim",
     optional = true,
     opts = function(_, opts)
+      opts.debug = true
       local nls = require("null-ls")
       vim.list_extend(opts.sources, {
         nls.builtins.formatting.autopep8,
+        nls.builtins.formatting.prettier,
       })
     end,
   },
@@ -300,6 +301,7 @@ return {
     opts = function(_, opts)
       vim.list_extend(opts.ensure_installed, {
         "autopep8",
+        "prettier",
       })
     end,
   },
