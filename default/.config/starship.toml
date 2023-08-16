@@ -5,13 +5,16 @@ truncation_length = 5
 truncation_symbol = "…/"
 repo_root_style = "cyan bold italic"
 repo_root_format = '[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) '
+read_only = " 󰌾"
 
 [hostname]
-ssh_symbol = ''
+# ssh_symbol = ""
+ssh_symbol = " "
 format = '[$ssh_symbol$hostname:]($style)'
 
 [git_branch]
-symbol = "±"
+# symbol = "±"
+symbol = " "
 
 [git_status]
 format = '([\[](white bold)[$all_status$ahead_behind]($style)[\]](white bold)) '
@@ -47,14 +50,101 @@ style = "bold red"
 threshold = 30
 style = "bold yellow"
 
-[erlang]
-symbol = "ⓔ "
-
-[pulumi]
-symbol = "🧊 "
-
-[nodejs]
-symbol = '🤖 '
-
 [env_var.HTTP_PROXY]
 format = '🛡️'
+
+# [nodejs]
+# symbol = '🤖 '
+#
+# [erlang]
+# symbol = "ⓔ "
+#
+# [pulumi]
+# symbol = "🧊 "
+
+[aws]
+symbol = "  "
+
+[buf]
+symbol = " "
+
+[c]
+symbol = " "
+
+[conda]
+symbol = " "
+
+[dart]
+symbol = " "
+
+[docker_context]
+symbol = " "
+
+[elixir]
+symbol = " "
+
+[elm]
+symbol = " "
+
+[fossil_branch]
+symbol = " "
+
+[golang]
+symbol = " "
+
+[guix_shell]
+symbol = " "
+
+[haskell]
+symbol = " "
+
+[haxe]
+symbol = " "
+
+[hg_branch]
+symbol = " "
+
+[java]
+symbol = " "
+
+[julia]
+symbol = " "
+
+[lua]
+symbol = " "
+
+[memory_usage]
+symbol = "󰍛 "
+
+[meson]
+symbol = "󰔷 "
+
+[nim]
+symbol = "󰆥 "
+
+[nix_shell]
+symbol = " "
+
+[nodejs]
+symbol = " "
+
+[package]
+symbol = "󰏗 "
+
+[pijul_channel]
+symbol = " "
+
+[python]
+symbol = " "
+
+[rlang]
+symbol = "󰟔 "
+
+[ruby]
+symbol = " "
+
+[rust]
+symbol = " "
+
+[scala]
+symbol = " "

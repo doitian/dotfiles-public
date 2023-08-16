@@ -16,7 +16,8 @@ truncate_to_repo = true
 format = '$path'
 
 [git_branch]
-symbol = "±"
+# symbol = "±"
+symbol = " "
 format = ' [$symbol$branch(:$remote_branch)]($style)'
 
 [git_status]
