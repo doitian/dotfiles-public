@@ -1,5 +1,4 @@
 add_newline = false
-right_format = "$cmd_duration"
 
 [directory]
 truncation_length = 5
