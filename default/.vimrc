@@ -11,6 +11,7 @@ set rtp+=$HOME/.dotfiles/repos/private/nvim
 set pp=$HOME/.vim,$HOME/.config/nvim,$VIMRUNTIME
 if !has('nvim')
   set rtp^=$HOME/.config/nvim
+  set rtp+=$HOME/.config/nvim/after
 endif
 
 let s:has_fzf = executable('fzf')
@@ -106,7 +107,7 @@ set autoread
 set autowrite
 set backspace=indent,eol,start
 set clipboard^=unnamedplus,unnamed
-set completeopt=menuone,noinsert
+set completeopt=menuone
 set conceallevel=3
 set confirm
 set cursorline
@@ -326,9 +327,9 @@ smap <expr> <Tab>   vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<Tab>'
 imap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
 smap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
 imap <expr> <C-L>   vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<Plug>(MUcompleteFwd)'
-
+imap <expr> <CR>    pumvisible() ? '<C-Y>' : '<CR>'
 " always insert newline
-inoremap <expr> <C-J> pumvisible() ? "<c-e><C-J>" : "<C-J>"
+inoremap <expr> <C-J> pumvisible() ? "<C-E><C-J>" : "<C-J>"
 
 " Filetype specific handling {{{1
 augroup vimrc_au
