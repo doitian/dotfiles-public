@@ -1,12 +1,12 @@
 autoload -Uz add-zsh-hook
 function new_line_before_promopt() {
-    # Print a newline before the prompt, unless it's the
-    # first prompt in the process.
-    if [ -z "$ZSH_THEME_NEW_LINE_BEFORE_PROMPT" ]; then
-        ZSH_THEME_NEW_LINE_BEFORE_PROMPT=1
-    elif [ "$ZSH_THEME_NEW_LINE_BEFORE_PROMPT" -eq 1 ]; then
-        echo
-    fi
+  # Print a newline before the prompt, unless it's the
+  # first prompt in the process.
+  if [ -z "$ZSH_THEME_NEW_LINE_BEFORE_PROMPT" ]; then
+    ZSH_THEME_NEW_LINE_BEFORE_PROMPT=1
+  else
+    echo
+  fi
 }
 add-zsh-hook precmd new_line_before_promopt
 
