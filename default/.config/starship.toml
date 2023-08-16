@@ -29,7 +29,8 @@ up_to_date = '[≡](green bold)'
 
 [status]
 disabled = false
-symbol = ''
+# symbol = ''
+symbol = '󰗼 '
 
 [shell]
 disabled = false
@@ -37,12 +38,12 @@ zsh_indicator = ''
 unknown_indicator = 'sh?'
 format = '[$indicator]($style)'
 
-[battery]
-full_symbol = "🔋 "
-charging_symbol = "⚡️ "
-discharging_symbol = "💀 "
-unknown_symbol = "💀 "
-empty_symbol = "🪫 "
+# [battery]
+# full_symbol = "🔋 "
+# charging_symbol = "⚡️ "
+# discharging_symbol = "💀 "
+# unknown_symbol = "💀 "
+# empty_symbol = "🪫 "
 [[battery.display]]
 threshold = 10
 style = "bold red"
