@@ -25,6 +25,7 @@ map("n", "n", "'Nn'[v:searchforward].'zv'", { expr = true, desc = "Next search r
 map("n", "N", "'nN'[v:searchforward].'zv'", { expr = true, desc = "Prev search result" })
 vim.F.npcall(unmap, { "s" }, ">")
 vim.F.npcall(unmap, { "s" }, "<")
+vim.F.npcall(unmap, { "n", "x" }, "gw")
 
 -- navigation {{{1
 map(
