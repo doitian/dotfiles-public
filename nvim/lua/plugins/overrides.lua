@@ -88,6 +88,53 @@ return {
     end,
   },
 
+  {
+    "akinsho/bufferline.nvim",
+    optional = true,
+    opts = {
+      options = {
+        numbers = function(opts)
+          return opts.ordinal
+        end,
+      },
+    },
+    keys = function()
+      local sort = function()
+        require("bufferline").sort_by("none")
+      end
+      return {
+        {
+          "<leader>bp",
+          function()
+            require("bufferline.groups").toggle_pin()
+            vim.schedule(sort)
+          end,
+          desc = "Toggle pin",
+        },
+        { "<leader>bP", "<Cmd>BufferLineGroupClose ungrouped<CR>", desc = "Delete non-pinned buffers" },
+        {
+          "<Leader>bg",
+          function()
+            local bufferline = require("bufferline")
+            if vim.v.count == 0 then
+              bufferline.pick()
+            else
+              bufferline.go_to(vim.v.count, true)
+            end
+          end,
+          desc = "Goto buffer",
+        },
+        -- stylua: ignore
+        { "<Leader>b.", function() require("bufferline").move_to(vim.v.count1) end, desc = "Move buffer" },
+        { "<Leader>bx", "<Cmd>BufferLinePickClose<CR>", desc = "Pick buffer to close" },
+        { "<Leader>bod", "<Cmd>BufferLineSortByDirectory<CR>", desc = "Sort buffers by directory" },
+        { "<Leader>boe", "<Cmd>BufferLineSortByExtension<CR>", desc = "Sort buffers by extension" },
+        { "<Leader>bor", "<Cmd>BufferLineSortByRelativeDirectory<CR>", desc = "Sort buffers by relative directory" },
+        { "<Leader>bot", "<Cmd>BufferLineSortByTabs<CR>", desc = "Sort buffers by tags" },
+      }
+    end,
+  },
+
   -- editor {{{1
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazy/vim/plugins/editor.lua
 
@@ -255,6 +302,13 @@ return {
         ruff_lsp = {},
         yamlls = {},
         jsonls = {},
+        rust_analyzer = {
+          settings = {
+            ["rust-analyzer"] = {
+              files = { excludeDirs = { "bin/test", "bin/main", "node_modules", "var", "run" } },
+            },
+          },
+        },
       },
     },
     init = function()

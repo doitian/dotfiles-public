@@ -46,7 +46,6 @@ map("n", "]b", function() require("bufferline").cycle(vim.v.count1) end, { desc 
 map("n", "[b", function() require("bufferline").cycle(-vim.v.count1) end, { desc = "Next tab" })
 map("n", "]a", "<Cmd>exec v:count1.'next'<CR>", { desc = "Next arg" })
 map("n", "[a", "<Cmd>exec v:count1.'previous'<CR>", { desc = "Previous arg" })
-map("n", "<Leader>bs", "<Cmd>BufferLinePick<CR>", { desc = "Pick tab" })
 
 map("n", "<leader>ws", "<C-W>s", { desc = "Split window below", remap = true })
 map("n", "<leader>wv", "<C-W>v", { desc = "Split window right", remap = true })
