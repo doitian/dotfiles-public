@@ -345,6 +345,7 @@ return {
       vim.list_extend(opts.sources, {
         nls.builtins.formatting.autopep8,
         nls.builtins.formatting.prettier,
+        nls.builtins.formatting.bean_format,
       })
     end,
   },
