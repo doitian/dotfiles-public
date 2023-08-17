@@ -55,11 +55,12 @@ function! s:ExpandAlias(cmdtype, trigger, content)
 endfunction
 
 cnoreabbrev <expr> e/ <SID>ExpandAlias(':', 'e/', 'e <C-R>=expand("%:h")<CR>') " :e//
+cnoreabbrev <expr> ru/ <SID>ExpandAlias(':', "ru/", "ru macros/buffer") " :ru//
 cnoreabbrev <expr> mapcr <SID>ExpandAlias(':', 'mapcr', 'nnoremap <buffer> <lt>CR> <lt>Cmd>:up<lt>Bar>!<lt>CR><Left><Left><Left><Left>')
 cnoreabbrev <expr> xmapcr <SID>ExpandAlias(':', 'xmapcr', 'xnoremap <buffer> <lt>CR> y<lt>Cmd>call iy#tmux#SendKeys("-l", @")<lt>CR><Left><Left><Left><Left><Left>')
+cnoreabbrev <expr> xmapai <SID>ExpandAlias(':', 'xmapai', "xnoremap <buffer> <lt>CR> y<lt>Cmd>\'>put =system(['ai-chat', 'p', 'Polish'], @\\\")<lt>CR>")
 cnoreabbrev <expr> ycd <SID>ExpandAlias(':', 'ycd', 'let @* = 'cd ' . shellescape(getcwd())')
 cnoreabbrev <expr> y' <SID>ExpandAlias(':', "y'", "let @* = '<Left>") " :y''
-cnoreabbrev <expr> ru/ <SID>ExpandAlias(':', "ru/", "ru macros/buffer") " :ru//
 
 if has('win32')
   cnoreabbrev <expr> cmd <SID>ExpandAlias(":", "cmd", "set shell=cmd.exe shellcmdflag=/c noshellslash guioptions-=!")
