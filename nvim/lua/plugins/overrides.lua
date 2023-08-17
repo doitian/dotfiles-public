@@ -99,7 +99,7 @@ return {
       },
     },
     keys = function()
-      local sort = function()
+      local sort_by_none = function()
         require("bufferline").sort_by("none")
       end
       return {
@@ -107,7 +107,7 @@ return {
           "<leader>bp",
           function()
             require("bufferline.groups").toggle_pin()
-            vim.schedule(sort)
+            vim.schedule(sort_by_none)
           end,
           desc = "Toggle pin",
         },
@@ -127,6 +127,8 @@ return {
         -- stylua: ignore
         { "<Leader>b.", function() require("bufferline").move_to(vim.v.count1) end, desc = "Move buffer" },
         { "<Leader>bx", "<Cmd>BufferLinePickClose<CR>", desc = "Pick buffer to close" },
+        -- stylua: ignore
+        { "<Leader>boo", sort_by_none, desc = "Renumber buffers" },
         { "<Leader>bod", "<Cmd>BufferLineSortByDirectory<CR>", desc = "Sort buffers by directory" },
         { "<Leader>boe", "<Cmd>BufferLineSortByExtension<CR>", desc = "Sort buffers by extension" },
         { "<Leader>bor", "<Cmd>BufferLineSortByRelativeDirectory<CR>", desc = "Sort buffers by relative directory" },
