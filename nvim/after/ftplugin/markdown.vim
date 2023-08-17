@@ -1,5 +1,4 @@
 setlocal suffixesadd=.md
-setlocal isfname+=32
 setlocal foldlevel=1
 let &l:includeexpr = 'substitute(v:fname,"^\\[*\\([^\\]|]*\\).*","\\1","")'
 
