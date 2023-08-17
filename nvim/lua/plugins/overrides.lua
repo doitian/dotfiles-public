@@ -96,6 +96,8 @@ return {
         numbers = function(opts)
           return opts.ordinal
         end,
+        enforce_regular_tabs = true,
+        show_buffer_close_icons = false,
       },
     },
     keys = function()
@@ -113,7 +115,7 @@ return {
         },
         { "<leader>bP", "<Cmd>BufferLineGroupClose ungrouped<CR>", desc = "Delete non-pinned buffers" },
         {
-          "<Leader>bg",
+          "<Leader>bj",
           function()
             local bufferline = require("bufferline")
             if vim.v.count == 0 then
