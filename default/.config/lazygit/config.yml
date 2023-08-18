@@ -7,6 +7,9 @@ git:
     pager: delta --paging=never
   autoFetch: false
 gui:
+  skipRewordInEditorWarning: false
+  expandFocusedSidePanel: true
+  commandLogSize: 2
   scrollHeight: 20
   theme:
     activeBorderColor:
