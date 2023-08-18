@@ -58,10 +58,12 @@ fi
 export TERM_BACKGROUND="${TERM_BACKGROUND:-light}"
 export FZF_DEFAULT_OPTS="--prompt='❯ ' --color light"
 export BAT_THEME='OneHalfLight'
+unset DELTA_FEATURES
 if [ "$TERM_BACKGROUND" = dark ]; then
   export FZF_DEFAULT_OPTS="--prompt='❯ '"
   export BAT_THEME='OneHalfDark'
   export LG_CONFIG_FILE="$HOME/.config/lazygit/config.yml,$HOME/.config/lazygit/config-dark.yml"
+  export DELTA_FEATURES='+zebra-dark'
 fi
 
 export DIRENV_LOG_FORMAT=$'\001\e[30m\002.- %s\001\e[0m\002'

@@ -7,10 +7,11 @@ git:
     pager: delta --paging=never
   autoFetch: false
 gui:
-  skipRewordInEditorWarning: false
-  expandFocusedSidePanel: true
   commandLogSize: 2
+  expandFocusedSidePanel: true
   scrollHeight: 20
+  showBottomLine: false
+  skipRewordInEditorWarning: false
   theme:
     activeBorderColor:
       - "#40a02b" # Green
