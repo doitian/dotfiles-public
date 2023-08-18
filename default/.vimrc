@@ -267,7 +267,7 @@ if s:has_fzf
   nnoremap <Leader>fr <Cmd>History<<CR>
   nnoremap <Leader>fS <Cmd>exe 'Files '.g:vsnip_snippet_dir<CR>
   nnoremap <Leader>fs <Cmd>VSnippets<CR>
-  nnoremap <Leader>fj <Cmd>Zoxide<CR>
+  nnoremap <Leader>fz <Cmd>Zoxide<CR>
   nnoremap <Leader>sm <Cmd>Marks<CR>
   nnoremap <Leader>sb <Cmd>BLines<CR>
   nnoremap <Leader>sB <Cmd>Lines<CR>
@@ -322,7 +322,7 @@ nnoremap <Leader><Tab>f <Cmd>tabclose<CR>
 nnoremap <Leader><Tab>] gt
 nnoremap <Leader><Tab>[ gT
 
-nnoremap <Leader>j <Cmd>e `jrnl -p`<CR>
+nnoremap <Leader>fj <Cmd>drop `jrnl -p`<CR>
 
 " complete {{{2
 imap <expr> <Tab>   vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<Tab>'

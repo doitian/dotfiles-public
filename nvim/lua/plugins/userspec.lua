@@ -34,7 +34,7 @@ return {
       return vim.fn.executable("zoxide") == 1
     end,
     keys = {
-      { "<Leader>fj", "<Cmd>Telescope zoxide list<CR>", desc = "Zoxide" },
+      { "<Leader>fz", "<Cmd>Telescope zoxide list<CR>", desc = "Zoxide" },
     },
     config = function()
       require("telescope").load_extension("zoxide")
