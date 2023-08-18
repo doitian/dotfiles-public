@@ -104,37 +104,63 @@ return {
       local sort_by_none = function()
         require("bufferline").sort_by("none")
       end
+      local go_to = function()
+        local bufferline = require("bufferline")
+        if vim.v.count == 0 then
+          bufferline.pick()
+        else
+          bufferline.go_to(vim.v.count, true)
+        end
+      end
+      local toggle_pin = function()
+        require("bufferline.groups").toggle_pin()
+        vim.schedule(sort_by_none)
+      end
+      local move_to = function()
+        require("bufferline").move_to(vim.v.count1)
+      end
+      local nth = function(n)
+        return function()
+          require("bufferline").go_to(n)
+        end
+      end
+      local move_to_nth = function(n)
+        return function()
+          require("bufferline").move_to(n)
+        end
+      end
       return {
-        {
-          "<leader>bp",
-          function()
-            require("bufferline.groups").toggle_pin()
-            vim.schedule(sort_by_none)
-          end,
-          desc = "Toggle pin",
-        },
-        { "<leader>bP", "<Cmd>BufferLineGroupClose ungrouped<CR>", desc = "Delete non-pinned buffers" },
-        {
-          "<Leader>bj",
-          function()
-            local bufferline = require("bufferline")
-            if vim.v.count == 0 then
-              bufferline.pick()
-            else
-              bufferline.go_to(vim.v.count, true)
-            end
-          end,
-          desc = "Goto buffer",
-        },
-        -- stylua: ignore
-        { "<Leader>b.", function() require("bufferline").move_to(vim.v.count1) end, desc = "Move buffer" },
+        { "<Leader>bp", toggle_pin, desc = "Toggle pin" },
+        { "<Leader>bP", "<Cmd>BufferLineGroupClose ungrouped<CR>", desc = "Delete non-pinned buffers" },
+        { "<leader>bj", go_to, desc = "Go to buffer" },
+        { "<leader>j", go_to, desc = "Go to buffer" },
+        { "<Leader>b.", move_to, desc = "Move buffer" },
         { "<Leader>bx", "<Cmd>BufferLinePickClose<CR>", desc = "Pick buffer to close" },
-        -- stylua: ignore
         { "<Leader>boo", sort_by_none, desc = "Renumber buffers" },
         { "<Leader>bod", "<Cmd>BufferLineSortByDirectory<CR>", desc = "Sort buffers by directory" },
         { "<Leader>boe", "<Cmd>BufferLineSortByExtension<CR>", desc = "Sort buffers by extension" },
         { "<Leader>bor", "<Cmd>BufferLineSortByRelativeDirectory<CR>", desc = "Sort buffers by relative directory" },
         { "<Leader>bot", "<Cmd>BufferLineSortByTabs<CR>", desc = "Sort buffers by tags" },
+        { "<Leader>1", nth(1), desc = "which_key_ignore" },
+        { "<Leader>2", nth(2), desc = "which_key_ignore" },
+        { "<Leader>3", nth(3), desc = "which_key_ignore" },
+        { "<Leader>4", nth(4), desc = "which_key_ignore" },
+        { "<Leader>5", nth(5), desc = "which_key_ignore" },
+        { "<Leader>6", nth(6), desc = "which_key_ignore" },
+        { "<Leader>7", nth(7), desc = "which_key_ignore" },
+        { "<Leader>8", nth(8), desc = "which_key_ignore" },
+        { "<Leader>9", nth(9), desc = "which_key_ignore" },
+        { "<Leader>0", nth(-1), desc = "which_key_ignore" },
+        { "<Leader>!", move_to_nth(1), desc = "which_key_ignore" },
+        { "<Leader>@", move_to_nth(2), desc = "which_key_ignore" },
+        { "<Leader>#", move_to_nth(3), desc = "which_key_ignore" },
+        { "<Leader>$", move_to_nth(4), desc = "which_key_ignore" },
+        { "<Leader>%", move_to_nth(5), desc = "which_key_ignore" },
+        { "<Leader>^", move_to_nth(6), desc = "which_key_ignore" },
+        { "<Leader>&", move_to_nth(7), desc = "which_key_ignore" },
+        { "<Leader>*", move_to_nth(8), desc = "which_key_ignore" },
+        { "<Leader>(", move_to_nth(9), desc = "which_key_ignore" },
+        { "<Leader>)", move_to_nth(-1), desc = "which_key_ignore" },
       }
     end,
   },
@@ -142,7 +168,7 @@ return {
   -- editor {{{1
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazy/vim/plugins/editor.lua
 
-  -- { "folke/which-key.nvim", enabled = false },
+  { "folke/which-key.nvim", optional = true, opts = { defaults = { ["<Leader>bo"] = { name = "+sort" } } } },
 
   {
     "nvim-telescope/telescope.nvim",
