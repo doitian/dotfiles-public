@@ -17,10 +17,13 @@ return {
     opts = function(_, opts)
       return vim.tbl_deep_extend("force", opts, {
         messages = {
-          view = "mini",
+          enabled = false,
         },
-        presets = {
-          long_message_to_split = true,
+        cmdline = {
+          view = "cmdline",
+        },
+        views = {
+          mini = { position = { row = -2 } },
         },
         routes = vim.list_extend({
           {
@@ -33,24 +36,6 @@ return {
               },
             },
             opts = { skip = true },
-          },
-          {
-            filter = {
-              event = "msg_show",
-              kind = "",
-              find = "nvim%-dap",
-            },
-            opts = { skip = true },
-          },
-          {
-            filter = {
-              event = "msg_show",
-              any = {
-                { cmdline = true, min_height = 2 },
-                { cmdline = "args" },
-              },
-            },
-            view = "popup",
           },
         }, opts.routes or {}),
       })
