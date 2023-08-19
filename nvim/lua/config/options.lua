@@ -8,6 +8,7 @@ opt.background = vim.env.TERM_BACKGROUND or "light"
 
 opt.completeopt = { "menu" }
 opt.grepprg = "rg --hidden -g '!.git' --vimgrep"
+opt.laststatus = 2
 opt.listchars = { tab = "▸ ", trail = "·", extends = "»", precedes = "«", nbsp = "␣" }
 opt.spellfile = { vim.env.HOME .. "/.vim-spell-en.utf-8.add", ".vim-spell-en.utf-8.add" }
 opt.timeoutlen = 700

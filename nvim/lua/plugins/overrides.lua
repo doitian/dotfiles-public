@@ -46,6 +46,7 @@ return {
     "nvim-lualine/lualine.nvim",
     optional = true,
     opts = function(_, opts)
+      opts.options.globalstatus = false
       -- no clock
       opts.sections.lualine_z = nil
       opts.sections.lualine_c[3] = function()
@@ -81,8 +82,8 @@ return {
         numbers = function(opts)
           return opts.ordinal
         end,
-        enforce_regular_tabs = true,
         show_buffer_close_icons = false,
+        tab_size = 8,
       },
     },
     keys = function()
