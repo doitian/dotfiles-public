@@ -2,7 +2,7 @@
 " vim: foldmethod=marker
 if &compatible | set nocompatible | endif
 set encoding=utf-8
-if !has('nvim') && exists("$TERM_BACKGROUND") | let &background=$TERM_BACKGROUND | endif
+if exists("$TERM_BACKGROUND") | let &background=$TERM_BACKGROUND | endif
 if has('win32') | language en | set ff=unix | endif
 if &term ==? 'win32' | set t_Co=256 | endif
 
