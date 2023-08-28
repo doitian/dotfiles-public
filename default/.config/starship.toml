@@ -54,7 +54,7 @@ threshold = 30
 style = "bold yellow"
 
 [env_var.HTTP_PROXY]
-format = '🛡️'
+format = '🛡️ '
 
 # [nodejs]
 # symbol = '🤖 '
