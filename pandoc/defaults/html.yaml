@@ -10,6 +10,6 @@ shift-heading-level-by: -1
 reference-links: true
 variables:
   mainfont: |
-    system-ui, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif, 'LXGW WenKai', 'Symbols Nerd Font Mono'
+    system-ui, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif, 'Symbols Nerd Font Mono'
   monofont: |
-    'Cartograph CF', 'Cascadia Code', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace, 'LXGW WenKai', 'Symbols Nerd Font Mono'
+    'Cascadia Code', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace, 'Symbols Nerd Font Mono'

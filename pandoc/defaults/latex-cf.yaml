@@ -1,7 +1,0 @@
-defaults:
-  - latex-base
-pdf-engine: xelatex
-variables:
-  mainfont: Greycliff CF
-  sansfont: Artifex Hand CF
-  monofont: Cartograph CF

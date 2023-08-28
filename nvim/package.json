@@ -31,16 +31,6 @@
       },
       {
         "language": [
-          "css",
-          "scss",
-          "sass",
-          "less",
-          "stylus"
-        ],
-        "path": "./snippets/css.json"
-      },
-      {
-        "language": [
           "java"
         ],
         "path": "./snippets/java.json"

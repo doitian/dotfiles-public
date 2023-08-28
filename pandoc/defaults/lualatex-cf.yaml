@@ -1,4 +1,0 @@
-defaults:
-  - lualatex-base
-include-in-header:
-  - lualatex-font-cf.tex

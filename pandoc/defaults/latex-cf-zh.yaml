@@ -1,6 +1,0 @@
-defaults:
-  - latex-cf
-variables:
-  CJKmainfont: LXGW Bright GB
-  CJKsansfont: LXGW Bright GB
-  CJKmonofont: LXGW Bright GB
