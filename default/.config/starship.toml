@@ -36,6 +36,7 @@ symbol = '󰗼 '
 [shell]
 disabled = false
 zsh_indicator = ''
+powershell_indicator = ''
 unknown_indicator = 'sh?'
 format = '[$indicator]($style)'
 
