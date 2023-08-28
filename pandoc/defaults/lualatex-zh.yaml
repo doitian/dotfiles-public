@@ -1,4 +1,4 @@
 defaults:
   - lualatex-base
 include-in-header:
-  - lualatex-font-noto.tex
+  - lualatex-font-zh.tex
