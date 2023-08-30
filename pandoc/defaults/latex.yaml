@@ -2,6 +2,6 @@ defaults:
   - latex-base
 pdf-engine: xelatex
 variables:
-  mainfont: Noto Sans
+  mainfont: Atkinson Hyperlegible
   sansfont: Lato
   monofont: Cascadia Code
