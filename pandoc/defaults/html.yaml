@@ -12,4 +12,4 @@ variables:
   mainfont: |
     Inter, system-ui, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", "Noto Sans", "Noto Sans CJK SC", sans-serif;
   monofont: |
-    "Cartograph CF", "JetBrains Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", "Noto Sans CJK SC", monospace;
+    "Cartograph CF", "Fira Code", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", "Noto Sans CJK SC", monospace;
