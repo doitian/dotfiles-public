@@ -4,4 +4,4 @@ pdf-engine: xelatex
 variables:
   mainfont: Atkinson Hyperlegible
   sansfont: Lato
-  monofont: Fira Code
+  monofont: JetBrains Mono
