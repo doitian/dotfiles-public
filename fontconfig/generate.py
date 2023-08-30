@@ -4,7 +4,7 @@ import sys
 C = {
     "serif": {
         "prefer": ["Roboto Slab"],
-        "sc": ["FZQingKeBenYueSongS-R-GB", "Noto Serif CJK SC"],
+        "sc": ["Noto Serif CJK SC"],
         "tc": ["Noto Serif CJK TC"],
         "hk": ["Noto Serif CJK HK"],
         "jp": ["Noto Serif CJK JP"],
@@ -12,7 +12,7 @@ C = {
     },
     "sans-serif": {
         "title": "Sans",
-        "prefer": ["Poppins"],
+        "prefer": ["Atkinson Hyperlegible"],
         "sc": ["Noto Sans CJK SC"],
         "tc": ["Noto Sans CJK TC"],
         "hk": ["Noto Sans CJK HK"],
@@ -20,7 +20,6 @@ C = {
         "kr": ["Noto Sans CJK KR"],
     },
     "monospace": {
-        # "Cascadia Code"
         "prefer": ["Cartograph CF"],
         "sc": ["Noto Sans CJK SC"],
         "tc": ["Noto Sans CJK TC"],
