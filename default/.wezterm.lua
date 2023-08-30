@@ -39,10 +39,10 @@ return dynamic({
   hide_tab_bar_if_only_one_tab = true,
   window_frame = {
     font = wezterm.font_with_fallback({
-      "Artifex Hand CF",
-      "LXGW Bright GB",
+      "Roboto Slab",
+      "Noto Serif CJK SC",
     }),
-    font_size = 15,
+    font_size = 12,
   },
   window_padding = {
     left = 0,
