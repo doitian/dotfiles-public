@@ -10,6 +10,6 @@ shift-heading-level-by: -1
 reference-links: true
 variables:
   mainfont: |
-    system-ui, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif, 'Symbols Nerd Font Mono'
+    Inter, system-ui, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", "Noto Sans", "Noto Sans CJK SC", sans-serif;
   monofont: |
-    'Cascadia Code', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace, 'Symbols Nerd Font Mono'
+    "Cartograph CF", "JetBrains Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", "Noto Sans CJK SC", monospace;
