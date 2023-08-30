@@ -12,7 +12,7 @@ C = {
     },
     "sans-serif": {
         "title": "Sans",
-        "prefer": ["Atkinson Hyperlegible"],
+        "prefer": ["Greycliff CF", "Atkinson Hyperlegible"],
         "sc": ["Noto Sans CJK SC"],
         "tc": ["Noto Sans CJK TC"],
         "hk": ["Noto Sans CJK HK"],
@@ -20,7 +20,7 @@ C = {
         "kr": ["Noto Sans CJK KR"],
     },
     "monospace": {
-        "prefer": ["Cartograph CF"],
+        "prefer": ["Cartograph CF", "Cascadia Code"],
         "sc": ["Noto Sans CJK SC"],
         "tc": ["Noto Sans CJK TC"],
         "hk": ["Noto Sans CJK HK"],
