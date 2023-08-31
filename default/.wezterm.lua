@@ -30,7 +30,7 @@ return dynamic({
 
   font = wezterm.font_with_fallback({
     "Cartograph CF",
-    "LXGW Bright GB",
+    "Noto Sans Mono CJK SC",
   }),
   font_size = 16,
 
@@ -39,10 +39,10 @@ return dynamic({
   hide_tab_bar_if_only_one_tab = true,
   window_frame = {
     font = wezterm.font_with_fallback({
-      "Roboto Slab",
-      "Noto Serif CJK SC",
+      "Lato",
+      "Noto Sans CJK SC",
     }),
-    font_size = 12,
+    font_size = 13,
   },
   window_padding = {
     left = 0,
