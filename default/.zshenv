@@ -11,30 +11,6 @@ fi
 # path
 export GOPATH="$HOME/codebase/gopath"
 export PATH="${PATH:-/bin:/usr/bin:/usr/local/bin}:$HOME/bin:$HOME/.cargo/bin:$HOME/.asdf/bin:$GOPATH/bin:$HOME/.node-packages/bin:$HOME/.local/share/nvim/mason/bin"
-function asdfenv() {
-  local ASDF_INSTALL_PATH="$(asdf where "$1" 2>/dev/null)"
-  if [ -n "$ASDF_INSTALL_PATH" ]; then
-    local exec_env_path="${ASDF:-$HOME/.asdf}/plugins/$1/bin/exec-env"
-    local list_bin_path="${ASDF:-$HOME/.asdf}/plugins/$1/bin/list-bin-paths"
-    local bin_path
-    if [ -x "$list_bin_path" ]; then
-      for bin_path in $("$list_bin_path"); do
-        export PATH="$PATH:$ASDF_INSTALL_PATH/$bin_path"
-      done
-    else
-      export PATH="$PATH:$ASDF_INSTALL_PATH/bin"
-    fi
-    if [ -f "$exec_env_path" ]; then
-      source "$exec_env_path"
-    fi
-  fi
-}
-if ! command -v node &>/dev/null; then
-  asdfenv nodejs
-fi
-if ! command -v go &>/dev/null; then
-  asdfenv golang
-fi
 
 # lang
 export LANG=en_US.UTF-8
