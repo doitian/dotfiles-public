@@ -20,7 +20,7 @@ C = {
         "kr": ["Noto Sans CJK KR"],
     },
     "monospace": {
-        "prefer": ["Cartograph CF", "Cascadia Code"],
+        "prefer": ["Cartograph CF"],
         "sc": ["Noto Sans CJK SC"],
         "tc": ["Noto Sans CJK TC"],
         "hk": ["Noto Sans CJK HK"],
