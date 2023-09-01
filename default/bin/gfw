@@ -4,7 +4,7 @@ set -e
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
-if [ -z "${HTTP_PROXY:-}" ]; then
+if [ -z "${http_proxy:-}" ]; then
   PROXY_PROTOCOL="${PROXY_PROTOCOL:-http}"
   PROXY_HOST="${PROXY_HOST:-127.0.0.1}"
   PROXY_PORT="${PROXY_PORT:-7890}"
@@ -22,16 +22,16 @@ if [ -z "${HTTP_PROXY:-}" ]; then
     PROXY_HOST="$($PS -NoProfile -Command "(Get-NetIPAddress -InterfaceAlias Wi-Fi -AddressFamily IPv4).IPAddress | Write-Host -NoNewLine")"
   fi
 
-  export HTTP_PROXY="${PROXY_PROTOCOL}://${PROXY_HOST}:${PROXY_PORT}"
+  export http_proxy="${PROXY_PROTOCOL}://${PROXY_HOST}:${PROXY_PORT}"
 fi
 
-export HTTPS_PROXY="$HTTP_PROXY"
-export ALL_PROXY="$HTTP_PROXY"
-export FTP_PROXY="$HTTP_PROXY"
-export RSYNC_PROXY="$HTTP_PROXY"
+export https_proxy="$http_proxy"
+export all_proxy="$http_proxy"
+export FTP_PROXY="$http_proxy"
+export RSYNC_PROXY="$http_proxy"
 export GIT_SSH_COMMAND="gfw ssh"
 
-PROXY_ENVS=({HTTPS,HTTP,ALL,FTP,RSYNC}_PROXY GIT_SSH_COMMAND)
+PROXY_ENVS=({https,http,all,FTP,RSYNC}_PROXY GIT_SSH_COMMAND)
 SSH_CMDS=(ssh sftp scp slogin ssh-copy-id)
 
 function cmd_on() {
@@ -72,7 +72,7 @@ sudo)
 ssh-proxy-command)
   PROXY_TYPE=
   if [[ "$OSTYPE" == "linux"* ]]; then
-    case "$HTTP_PROXY" in
+    case "$http_proxy" in
     socks://* | socks5://*)
       PROXY_TYPE="-X 5"
       ;;
@@ -84,10 +84,10 @@ ssh-proxy-command)
       ;;
     esac
   fi
-  PROXY_NETLOC="${HTTP_PROXY#*://}"
+  PROXY_NETLOC="${http_proxy#*://}"
 
   shift
-  exec nc $PROXY_TYPE -x "${HTTP_PROXY#*://}" "$@"
+  exec nc $PROXY_TYPE -x "${http_proxy#*://}" "$@"
   ;;
 ssh | sftp | scp | slogin | ssh-copy-id)
   shift
