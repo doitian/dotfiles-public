@@ -31,7 +31,7 @@ export FTP_PROXY="$http_proxy"
 export RSYNC_PROXY="$http_proxy"
 export GIT_SSH_COMMAND="gfw ssh"
 
-PROXY_ENVS=({https,http,all,FTP,RSYNC}_PROXY GIT_SSH_COMMAND)
+PROXY_ENVS=({https,http,all}_proxy {FTP,RSYNC}_PROXY GIT_SSH_COMMAND)
 SSH_CMDS=(ssh sftp scp slogin ssh-copy-id)
 
 function cmd_on() {
