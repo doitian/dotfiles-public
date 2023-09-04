@@ -1,0 +1,10 @@
+{
+  "SSH ➤ ProxyCommand ➤ ssh": {
+    "prefix": "proxyssh",
+    "body": ["ProxyCommand ssh -q ${1:n1.iany.me} nc -q0 %h %p"]
+  },
+  "SSH ➤ ProxyCommand ➤ nc": {
+    "prefix": "proxync",
+    "body": ["ProxyCommand nc -X connect -x ${2:192.168.2.6}:7890 %h %p"]
+  }
+}

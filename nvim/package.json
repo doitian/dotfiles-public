@@ -34,6 +34,12 @@
           "java"
         ],
         "path": "./snippets/java.json"
+      },
+      {
+        "language": [
+          "sshconfig"
+        ],
+        "path": "./snippets/sshconfig.json"
       }
     ]
   }
