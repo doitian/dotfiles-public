@@ -54,7 +54,7 @@ if [ -z "$session" ] || ! tmux has-session -t "=$session" &>/dev/null; then
   if [ -n "$session" ]; then
     opt_select_1=-1
   fi
-  session="$(tmux list-sessions | fzf -d: -n1 $opt_select_1 -0 --print-query -q "$session" --preview "$PREVIEW" --preview-window "$PREVIEW_WINDOW" --bind ctrl-t:toggle-preview +m --bind 'enter:abort+become(echo {1})' | tail -n 1)"
+  session="$(tmux list-sessions | fzf -d: -n1 $opt_select_1 -0 --print-query -q "$session" --preview "$PREVIEW" --preview-window "$PREVIEW_WINDOW" --bind ctrl-t:toggle-preview +m | cut -f1 -d: | tail -n 1)"
 fi
 
 if [ -n "$session" ]; then
