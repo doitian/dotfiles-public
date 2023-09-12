@@ -19,9 +19,6 @@ return {
         messages = {
           enabled = false,
         },
-        cmdline = {
-          view = "cmdline",
-        },
         views = {
           mini = { position = { row = -2 } },
         },
