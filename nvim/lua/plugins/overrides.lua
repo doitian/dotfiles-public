@@ -25,6 +25,14 @@ return {
         routes = vim.list_extend({
           {
             filter = {
+              event = "msg_show",
+              kind = "",
+              find = "nvim%-dap",
+            },
+            opts = { skip = true },
+          },
+          {
+            filter = {
               event = "lsp",
               kind = "progress",
               any = {
@@ -343,9 +351,20 @@ return {
     "nvim-treesitter/nvim-treesitter",
     optional = true,
     opts = function(_, opts)
-      if type(opts.ensure_installed) == "table" then
-        vim.list_extend(opts.ensure_installed, { "ninja", "python", "rst", "toml", "yaml", "json", "json5", "jsonc" })
-      end
+      opts.ensure_installed = vim.list_extend(opts.ensure_installed or {}, {
+        "ninja",
+        "python",
+        "rst",
+        "toml",
+        "yaml",
+        "json",
+        "json5",
+        "jsonc",
+        "bash",
+        "regex",
+        "markdown",
+        "markdown_inline",
+      })
     end,
   },
 
