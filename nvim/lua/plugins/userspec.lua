@@ -68,19 +68,9 @@ return {
   },
 
   {
-    "echasnovski/mini.operators",
-    opts = {
-      exchange = {
-        prefix = "cx",
-      },
-    },
+    "tommcdo/vim-exchange",
     keys = {
       { "cx", mode = { "n", "x" }, desc = "Exchange" },
-      { "g=", mode = { "n", "x" }, desc = "Evaluate" },
-      { "gm", mode = { "n", "x" }, desc = "Multiply" },
-      { "gr", mode = { "n", "x" }, desc = "Replace" },
-      { "gs", mode = { "n", "x" }, desc = "Sort" },
     },
-    config = true,
   },
 }
