@@ -61,7 +61,7 @@ exec swayidle -w \
 #
 # You can get the names of your inputs by running: swaymsg -t get_inputs
 # Read `man 5 sway-input` for more information about this section.
-seat seat0 xcursor_theme Adwaita 48
+seat seat0 xcursor_theme phinger-cursors-light 36
 input type:pointer {
     natural_scroll enabled
 }
