@@ -31,6 +31,7 @@ function! s:PackInit() abort
   call minpac#add('editorconfig/editorconfig-vim')
   call minpac#add('justinmk/vim-sneak') " s (o)z
   call minpac#add('thinca/vim-visualstar') " * # g* g#
+  call minpac#add('tommcdo/vim-exchange') " cx
   call minpac#add('tomtom/tcomment_vim') " gc
   call minpac#add('tpope/vim-markdown') " latest version
   call minpac#add('tpope/vim-repeat')
