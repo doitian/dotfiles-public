@@ -7,13 +7,22 @@ set -u
 mkdir -p "$HOME/Downloads"
 cd "$HOME/Downloads"
 
-if [ -z "${1:-}" ]; then
-  echo "screen"
+on_list() {
+  echo screen
   swaymsg -t get_tree |
     jq -r '.nodes[].nodes[] | . as $ws | if .nodes then [recurse(.nodes[])] else [] end + .floating_nodes |  .[]  |
-    select(.pid) | ("[" + ($ws | .name) + "] " + (.rect | (.x | tostring) + "," + (.y | tostring) + " " + (.width | tostring) + "x" + (.height | tostring)) + " " + .name)'
-else
-  echo "$*" | {
+    select(.pid? and .visible) | ("[" + ($ws | .name) + "] " + (.rect | (.x | tostring) + "," + (.y | tostring) + " " + (.width | tostring) + "x" + (.height | tostring)) + " " + .name)'
+}
+
+on_pick() {
+  on_list | rofi -dmenu
+}
+
+case "${1:-list}" in
+list) on_list ;;
+pick) on_pick ;;
+grab)
+  on_pick | {
     read -r ws anchor size name
     if [ -z "$anchor" ]; then
       grim
@@ -21,4 +30,5 @@ else
       grim -g "$anchor $size"
     fi
   }
-fi
+  ;;
+esac

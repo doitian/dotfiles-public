@@ -82,7 +82,7 @@ input type:pointer {
     bindsym $mod+Shift+d exec $gfwmenu
     bindsym $mod+Shift+p exec "rofi -modi 'Gopass:fpass --rofi' -show Gopass"
     bindsym $mod+g exec "rofi -modi 'window:swaywm' -show window"
-    bindsym $mod+Shift+Ctrl+5 exec "rofi -modi 'grim:swaygrim' -show grim"
+    bindsym $mod+Shift+Ctrl+5 exec "swaygrim grab"
     bindsym $mod+v exec "clipman pick -t rofi"
 
     # Drag floating windows by holding down $mod and left mouse button.
