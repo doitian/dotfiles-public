@@ -66,4 +66,21 @@ return {
     "nathangrigg/vim-beancount",
     ft = "beancount",
   },
+
+  {
+    "echasnovski/mini.operators",
+    opts = {
+      exchange = {
+        prefix = "cx",
+      },
+    },
+    keys = {
+      { "cx", mode = { "n", "x" }, desc = "Exchange" },
+      { "g=", mode = { "n", "x" }, desc = "Evaluate" },
+      { "gm", mode = { "n", "x" }, desc = "Multiply" },
+      { "gr", mode = { "n", "x" }, desc = "Replace" },
+      { "gs", mode = { "n", "x" }, desc = "Sort" },
+    },
+    config = true,
+  },
 }
