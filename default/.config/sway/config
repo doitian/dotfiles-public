@@ -84,6 +84,7 @@ input type:pointer {
     bindsym $mod+g exec "rofi -modi 'window:swaywm' -show window"
     bindsym $mod+Shift+Ctrl+5 exec "swaygrim grab"
     bindsym $mod+v exec "clipman pick -t rofi"
+    bindsym $mod+Alt+v exec "clipman clear -a"
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
