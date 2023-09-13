@@ -1,5 +1,5 @@
 let _s=@/
-%s;^Referred in <a[^>]*>\(.*\)</a>$;Referred in [[\1]];e
+%s;^Referred in <a[^>]*>\(.*\)</a>$;**Parent**:: [[\1]];e
 %s; <span class="citation"[^>]*>(.*)</span> \(.*\);> \1;e
 %s;^<span class="citation"[^>]*>(.*)</span> \(.*\);> \1;e
 %s; <span class="citation"[^>]*>(.*)</span>;;e
