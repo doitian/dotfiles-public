@@ -83,6 +83,7 @@ input type:pointer {
     bindsym $mod+Shift+p exec "rofi -modi 'Gopass:fpass --rofi' -show Gopass"
     bindsym $mod+g exec "rofi -modi 'window:swaywm' -show window"
     bindsym $mod+Shift+Ctrl+5 exec "rofi -modi 'grim:swaygrim' -show grim"
+    bindsym $mod+v exec "clipman pick -t rofi"
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
@@ -152,8 +153,8 @@ input type:pointer {
     # You can "split" the current object of your focus with
     # $mod+b or $mod+v, for horizontal and vertical splits
     # respectively.
-    bindsym $mod+Shift+v splith
-    bindsym $mod+v splitv
+    bindsym $mod+bar splith
+    bindsym $mod+minus splitv
 
     # Switch the current container between different layout styles
     bindsym $mod+s layout stacking
@@ -181,11 +182,11 @@ input type:pointer {
     # You can send windows there and get them back later.
 
     # Move the currently focused window to the scratchpad
-    bindsym $mod+Shift+minus move scratchpad
+    bindsym $mod+Shift+equal move scratchpad
 
     # Show the next scratchpad window or hide the focused scratchpad window.
     # If there are multiple scratchpad windows, this command cycles through them.
-    bindsym $mod+minus scratchpad show
+    bindsym $mod+equal scratchpad show
 
     # swaymsg -t get_tree
     bindsym $mod+grave [app_id="foot"] scratchpad show
@@ -244,8 +245,9 @@ include /etc/sway/config.d/*
 #
 # Autostart:
 #
-exec --no-startup-id fcitx5 -d --replace
-# exec --no-startup-id nm-applet
+exec fcitx5 -d --replace
+exec wl-paste -t text --watch clipman store
+# exec nm-applet
 # Start XDG autostart .desktop files using dex. See also
 # https://wiki.archlinux.org/index.php/XDG_Autostart
-# exec --no-startup-id dex-autostart --autostart --environment sway
+# exec dex-autostart --autostart --environment sway
