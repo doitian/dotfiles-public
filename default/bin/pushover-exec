@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+: "${HOST:=${HOSTNAME:-}}"
+
 main() {
   local stime=$(date '+%s')
   "$@"
@@ -13,9 +15,9 @@ main() {
   local times=$(printf '%d:%02d:%02d' $dh $dm $ds)
 
   if [ "$exitcode" = 0 ]; then
-    pushover-send -d "title=exec $*" -d "message=Succeeded on $HOST in $times"
+    pushover-send -d "title=exec $*" -d "message=Succeeded${HOST:+ on $HOST} in $times"
   else
-    pushover-send -d "title=exec $*" -d "priority=1" -d "message=Failed on $HOST in $times"
+    pushover-send -d "title=exec $*" -d "priority=1" -d "message=Failed${HOST:+ on $HOST} in $times"
   fi
 }
 
