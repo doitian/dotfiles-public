@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+main() {
+  local stime=$(date '+%s')
+  "$@"
+  local exitcode="$?"
+  local etime=$(date '+%s')
+
+  local dt=$((etime - stime))
+  local ds=$((dt % 60))
+  local dm=$(((dt / 60) % 60))
+  local dh=$((dt / 3600))
+  local times=$(printf '%d:%02d:%02d' $dh $dm $ds)
+
+  if [ "$exitcode" = 0 ]; then
+    pushover-send -d "title=exec $*" -d "message=Succeeded on $HOST in $times"
+  else
+    pushover-send -d "title=exec $*" -d "priority=1" -d "message=Failed on $HOST in $times"
+  fi
+}
+
+main "$@"
