@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+: "${HOST:=${HOSTNAME:-}}"
+
+discord() {
+  curl -sSfX POST "$DISCORD_WEBHOOK${DISCORD_THREAD_ID:+?thread_id=$DISCORD_THREAD_ID}" \
+    "$@"
+}
+main() {
+  local stime=$(date '+%s')
+  "$@"
+  local exitcode="$?"
+  local etime=$(date '+%s')
+
+  local dt=$((etime - stime))
+  local ds=$((dt % 60))
+  local dm=$(((dt / 60) % 60))
+  local dh=$((dt / 3600))
+  local times=$(printf '%d:%02d:%02d' $dh $dm $ds)
+
+  if [ "$exitcode" = 0 ]; then
+    discord -d "content=exec $*
+Succeeded${HOST:+ on $HOST} in $times"
+  else
+    discord -d "content=exec $*
+Failed($exitcode)${HOST:+ on $HOST} in $times"
+  fi
+}
+
+main "$@"
