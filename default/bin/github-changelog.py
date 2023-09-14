@@ -126,10 +126,10 @@ for pr_number in pr_numbers:
     message = message.strip()
     message = message[0].upper() + message[1:]
     if module:
-        title = '* #{0} **{1}:** {2} (@{3})'.format(pr_number,
-                                                    module, message, user)
+        title = '-   #{0} **{1}:** {2} (@{3})'.format(pr_number,
+                                                      module, message, user)
     else:
-        title = '* #{0}: {1} (@{2})'.format(pr_number, message, user)
+        title = '-   #{0}: {1} (@{2})'.format(pr_number, message, user)
 
     change = Change(scope, module, title, [])
     Change = namedtuple('Change', ['scope', 'module', 'title', 'text'])
