@@ -4,8 +4,24 @@ set -e
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
-CREDENTIALS="$(gopass show -f web/pushover.net/ian | grep '^\(key\|personal\):')"
-PUSHOVER_USER="$(echo "$CREDENTIALS" | sed -n -e 's/key: //p')"
-PUSHOVER_TOKEN="$(echo "$CREDENTIALS" | sed -n -e 's/personal: //p')"
+if [ -z "${PUSHOVER_USER_KEY:-}" ]; then
+  CREDENTIALS="$(gopass show -f web/pushover.net/ian | grep '^\(key\|personal\):')"
+  PUSHOVER_USER_KEY="$(echo "$CREDENTIALS" | sed -n -e 's/key: //p')"
+  PUSHOVER_APP_TOKEN="$(echo "$CREDENTIALS" | sed -n -e 's/personal: //p')"
+fi
 
-curl -X POST "https://api.pushover.net/1/messages.json" -d "message=$*" -d "user=${PUSHOVER_USER}" -d "token=${PUSHOVER_TOKEN}"
+pushover() {
+  curl -sSfX POST "https://api.pushover.net/1/messages.json" \
+    -d "user=${PUSHOVER_USER_KEY}" \
+    -d "token=${PUSHOVER_APP_TOKEN}" \
+    "$@"
+}
+
+case "${1:-pushover-send}" in
+-*)
+  pushover "$@"
+  ;;
+*)
+  pushover -d "message=$*"
+  ;;
+esac
