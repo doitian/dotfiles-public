@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
 : "${HOST:=${HOSTNAME:-}}"
 
 main() {
