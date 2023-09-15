@@ -160,9 +160,7 @@ input type:pointer {
 #
 # Layout stuff:
 #
-    # You can "split" the current object of your focus with
-    # $mod+b or $mod+v, for horizontal and vertical splits
-    # respectively.
+    # Horizontal and vertical splits
     bindsym $mod+bar splith
     bindsym $mod+minus splitv
 
