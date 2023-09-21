@@ -1,0 +1,45 @@
+{
+  "Python ➤ Import ➤ PyYAML": {
+    "prefix": "iyaml",
+    "body": [
+      "from yaml import load, dump",
+      "try:",
+      "    from yaml import CLoader as Loader, CDumper as Dumper",
+      "except ImportError:",
+      "    from yaml import Loader, Dumper"
+    ]
+  },
+  "Python ➤ Import ➤ Path": {
+    "prefix": "ipath",
+    "body": ["from pathlib import Path"]
+  },
+
+  "Python ➤ Import ➤ NamedTuple": {
+    "prefix": "inamedtuple",
+    "body": ["from typing import NamedTuple"]
+  },
+
+  "Python ➤ Shebang ➤ Python3": {
+    "prefix": "shebang",
+    "body": ["#!/usr/bin/env python3", "$0"]
+  },
+
+  "Python ➤ if __main__": {
+    "prefix": "ifmain",
+    "body": ["if __name__ == '__main__':", "    ${0:main()}"]
+  },
+
+  "Python ➤ os.walk": {
+    "prefix": "walk",
+    "body": ["for root, dirs, files in os.walk(${1:dir}):"]
+  },
+  "Python ➤ NamedTuple": {
+    "prefix": "namedtuple",
+    "body": ["class ${1:Name}(NamedTuple):"]
+  },
+
+  "Python ➤ ruff": {
+    "prefix": "ruffignore",
+    "body": ["# ruff: noqa: ${1:E501}"]
+  }
+}

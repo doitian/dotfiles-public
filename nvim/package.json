@@ -40,6 +40,12 @@
           "sshconfig"
         ],
         "path": "./snippets/sshconfig.json"
+      },
+      {
+        "language": [
+          "python"
+        ],
+        "path": "./snippets/python.json"
       }
     ]
   }
