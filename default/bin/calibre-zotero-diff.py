@@ -9,6 +9,8 @@ import tempfile
 import urllib.request
 from pathlib import Path
 
+# ruff: noqa: E501
+
 BIB_ENTRY_RE = re.compile(r'\s+([\S]+)\s*=\s*{(.*)},?')
 BIB_DOUBLE_QUOTE_RE = re.compile(r'{{([^}]+)}}')
 BIB_SINGLE_QUOTE_RE = re.compile(r'{([^}]+)}')
@@ -121,6 +123,10 @@ def langid_formatter(text, _):
 
 def keywords_formatter(text, _):
     keywords = sorted(text.replace(', ', ',').split(','))
+    try:
+        keywords.remove('x')
+    except ValueError:
+        pass
     try:
         keywords.remove('_tablet')
     except ValueError:
@@ -244,7 +250,8 @@ for line in urllib.request.urlopen(URL).read().decode('utf-8').splitlines():
                 zotero_value = formatter(zotero_value, True)
                 calibre_value = formatter(
                     calibre_entry.get(calibre_key, ""), False)
-                if zotero_value != calibre_value:
+                if zotero_value != calibre_value and \
+                        not (zotero_key == "note" and calibre_value == ""):
                     print(
                         f'±±CZ±± {book["title"]}\n<<<<<<< zotero[{zotero_key}]\n{zotero_value}\n=======\n{calibre_value}\n>>>>>>> calibre[{calibre_key}]')
     else:
