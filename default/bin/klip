@@ -80,7 +80,7 @@ def export_markdown(titles):
 
 
 META_RE = re.compile(
-    r".*位置 (#\d+)(-\d+| )）?的(标注|笔记) \| 添加于 (\d+)年(\d+)月(\d+)日星期. (上午|下午)(\d+):(\d+):(\d+)")
+    r".*位置 (#\d+)(-\d+| )?）的(标注|笔记) \| 添加于 (\d+)年(\d+)月(\d+)日星期. (上午|下午)(\d+):(\d+):(\d+)")
 
 
 def split_title_author(line):
