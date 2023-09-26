@@ -7,6 +7,7 @@ import shutil
 import textwrap
 import csv
 import re
+from datetime import datetime
 from collections import namedtuple
 
 Clipping = namedtuple('Clipping', 'title, body')
@@ -80,7 +81,7 @@ def export_markdown(titles):
 
 
 META_RE = re.compile(
-    r".*位置 (#\d+)(-\d+| )?）的(标注|笔记) \| 添加于 (\d+)年(\d+)月(\d+)日星期. (上午|下午)(\d+):(\d+):(\d+)")
+    r".*Your (Highlight|Note) on page (\d+).*Added on [a-zA-Z]+, (.*)")
 
 
 def split_title_author(line):
@@ -91,28 +92,14 @@ def split_title_author(line):
         last_left_paren = line.rfind('(', 0, last_left_paren)
 
     title = line[0:last_left_paren - 1]
-    author = line[last_left_paren + 1:-2]
+    author = ' & '.join(line[last_left_paren + 1:-2].split(';'))
 
     return (title, author)
 
 
-def parse_meta_time(meta_fields):
-    year = int(meta_fields[3])
-    month = int(meta_fields[4])
-    day = int(meta_fields[5])
-
-    ampm = meta_fields[6]
-    hour = int(meta_fields[7])
-    if hour == 12:
-        hour = 0
-
-    min = int(meta_fields[8])
-    sec = int(meta_fields[9])
-
-    if ampm == '下午':
-        hour = hour + 12
-
-    return "{:04}-{:02}-{:02} {:02}:{:02}:{:02}".format(year, month, day, hour, min, sec)
+def parse_meta_time(text):
+    time = datetime.strptime(text, "%B %d, %Y %I:%M:%S %p")
+    return time.strftime("%Y-%m-%d %H:%M:%S")
 
 
 def export_csv(titles):
@@ -123,7 +110,7 @@ def export_csv(titles):
         title, author = split_title_author(title)
 
         prev_highlight = None
-        prev_end_loc = None
+        prev_end_page = None
         prev_note = None
 
         for clipping in clippings:
@@ -132,22 +119,22 @@ def export_csv(titles):
             body = parts[2]
             body = body.rsplit('\n', 2)[0]
 
-            # 0 - start, 1 - end, 2 - type, 3,4,5 - date, 6 - am/pm, 7,8,9 - time
             meta_match = META_RE.match(meta)
             if meta_match is None:
                 print("Unknown meta: {}".format(meta), file=sys.stderr)
+            # 0 - type, 1 - page, 2 - date
             meta_fields = meta_match.groups()
 
-            time = parse_meta_time(meta_fields)
+            time = parse_meta_time(meta_fields[2])
 
-            if meta_fields[2] == '标注':
-                loc = meta_fields[0][1:]
-                prev_end_loc = meta_fields[1][1:]
+            page = meta_fields[1]
+            prev_end_page = page
 
+            if meta_fields[0] == 'Highlight':
                 if prev_note is not None:
-                    if prev_note[0] == prev_end_loc:
+                    if prev_note[0] == page:
                         w.writerow(
-                            [body, title, author, prev_note[1], loc, time])
+                            [body, title, author, prev_note[1], page, time])
                         prev_note = None
                     else:
                         print("笔记位置和标注不匹配: #{} {}".format(
@@ -157,22 +144,22 @@ def export_csv(titles):
                     if prev_highlight is not None:
                         w.writerow(prev_highlight)
 
-                    prev_highlight = [body, title, author, '', loc, time]
+                    prev_highlight = [body, title, author, '', page, time]
             else:
-                loc = meta_fields[0][1:]
-                if loc != prev_end_loc:
+                page = meta_fields[1]
+                if page != prev_end_page:
                     if prev_note is not None:
                         print("笔记位置和标注不匹配: #{} {}".format(
                             prev_note[0], prev_note[1]), file=sys.stderr)
                         sys.exit(1)
-                    prev_note = [loc, body]
+                    prev_note = [page, body]
                 else:
                     prev_highlight[3] = body
 
                 if prev_highlight is not None:
                     w.writerow(prev_highlight)
                     prev_highlight = None
-                    prev_end_loc = None
+                    prev_end_page = None
 
         if prev_highlight is not None:
             w.writerow(prev_highlight)
