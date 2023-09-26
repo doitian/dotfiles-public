@@ -1,3 +1,5 @@
+\usepackage{luatexja-fontspec}
+\setmainjfont[]{Noto Sans CJK SC}
 \directlua{
   luaotfload.add_fallback("noto-sans", { "Noto Sans CJK SC:mode=harf;", "Noto Color Emoji:mode=harf;", "Symbols Nerd Font Mono:mode=harf;" })
   luaotfload.add_fallback("noto-serif", { "Noto Serif CJK SC:mode=harf;", "Noto Color Emoji:mode=harf;", "Symbols Nerd Font Mono:mode=harf;" })
