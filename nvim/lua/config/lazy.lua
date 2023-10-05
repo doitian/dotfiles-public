@@ -28,6 +28,10 @@ require("lazy").setup({
         },
       },
     },
+    {
+      "folke/tokyonight.nvim",
+      enabled = false,
+    },
     -- import/override with your plugins
     { import = "plugins" },
   },

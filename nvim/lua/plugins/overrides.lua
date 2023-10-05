@@ -289,12 +289,6 @@ return {
     "folke/flash.nvim",
     optional = true,
     keys = function(_, keys)
-      for _, k in ipairs(keys) do
-        if k[1] == "S" then
-          k.mode = { "n", "o" }
-          break
-        end
-      end
       return vim.list_extend(keys, {
         -- use z becasue s is used by surround
         {
@@ -305,10 +299,10 @@ return {
           mode = { "o" },
           desc = "Flash",
         },
-        { "ys", "gza", desc = "Add surrounding", remap = true },
-        { "S", "gza", desc = "Add surrounding", mode = "x", remap = true },
-        { "ds", "gzd", desc = "Delete surrounding", remap = true },
-        { "cs", "gzr", desc = "Replace surrounding", remap = true },
+        { "ys", "gsa", desc = "Add surrounding", remap = true },
+        { "S", "gsd", desc = "Add surrounding", mode = "x", remap = true },
+        { "ds", "gsd", desc = "Delete surrounding", remap = true },
+        { "cs", "gsr", desc = "Replace surrounding", remap = true },
       })
     end,
   },
@@ -321,11 +315,6 @@ return {
     dependencies = {
       -- Extras
       { import = "lazyvim.plugins.extras.lang.rust" },
-
-      -- buggy: waiting for release
-      -- { import = "lazyvim.plugins.extras.lang.yaml" },
-      -- { import = "lazyvim.plugins.extras.lang.json" },
-
       { import = "lazyvim.plugins.extras.lang.go" },
       { import = "lazyvim.plugins.extras.lang.java" },
     },
@@ -381,7 +370,7 @@ return {
   },
 
   {
-    "jose-elias-alvarez/null-ls.nvim",
+    "nvimtools/none-ls.nvim",
     optional = true,
     opts = function(_, opts)
       -- opts.debug = true
