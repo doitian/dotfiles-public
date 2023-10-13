@@ -15,7 +15,7 @@ fi
 
 : ${AZURE_API_VERSION:=2023-05-15}
 : ${AZURE_RESOURCE_NAME:=doitian-chatgpt}
-: ${AZURE_MODEL:=gpt-35-turbo}
+: ${AZURE_MODEL:=gpt-35-turbo-16k}
 
 : ${OPENAI_BACKEND:=azure}
 
@@ -55,28 +55,28 @@ send_session() {
   local line role content
   while read -r line; do
     case "$line" in
-      \*\*model\*\*::\ *)
-        OPENAI_MODEL="${line##*:: }"
-        AZURE_MODEL="${OPENAI_MODEL}"
-        ;;
-      \*\**\*\*::\ *)
-        local parameter_name="${line#\*\*}"
-        parameter_name="${parameter_name%%\*\*::*}"
-        args+=("--${parameter_name}" "${line##*:: }")
-        ;;
-      "### .System" | "### .User" | "### .Assistant" | "### .x"*)
-        if [ -n "$role" ] && ! [[ $role == x* ]]; then
-          content="$(printf "%s\n" "${content_lines[@]}" | sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba')"
-          if [ -n "$content" ]; then
-            args+=(-g "$role" "$content")
-          fi
+    \*\*model\*\*::\ *)
+      OPENAI_MODEL="${line##*:: }"
+      AZURE_MODEL="${OPENAI_MODEL}"
+      ;;
+    \*\**\*\*::\ *)
+      local parameter_name="${line#\*\*}"
+      parameter_name="${parameter_name%%\*\*::*}"
+      args+=("--${parameter_name}" "${line##*:: }")
+      ;;
+    "### .System" | "### .User" | "### .Assistant" | "### .x"*)
+      if [ -n "$role" ] && ! [[ $role == x* ]]; then
+        content="$(printf "%s\n" "${content_lines[@]}" | sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba')"
+        if [ -n "$content" ]; then
+          args+=(-g "$role" "$content")
         fi
-        role="$(echo "${line#* .}" | tr 'A-Z' 'a-z')"
-        content_lines=()
-        ;;
-      *)
-        content_lines+=("$line")
-        ;;
+      fi
+      role="$(echo "${line#* .}" | tr 'A-Z' 'a-z')"
+      content_lines=()
+      ;;
+    *)
+      content_lines+=("$line")
+      ;;
     esac
   done <<<"$1"
   if [ "${#args[@]}" = 0 ]; then
@@ -187,22 +187,22 @@ handle_search() {
 main() {
   while [[ "${1:-}" = -* ]]; do
     case "$1" in
-      -v | --verbose)
-        OPTION_VERBOSE=yes
-        shift
-        ;;
-      -n | --dry-run)
-        OPTION_DRY_RUN=yes
-        shift
-        ;;
-      -h | --help)
-        handle_usage
-        exit 0
-        ;;
-      *)
-        handle_usage
-        echo 1
-        ;;
+    -v | --verbose)
+      OPTION_VERBOSE=yes
+      shift
+      ;;
+    -n | --dry-run)
+      OPTION_DRY_RUN=yes
+      shift
+      ;;
+    -h | --help)
+      handle_usage
+      exit 0
+      ;;
+    *)
+      handle_usage
+      echo 1
+      ;;
     esac
   done
 
@@ -213,29 +213,29 @@ main() {
   fi
 
   case "x$action" in
-    x | xsession)
-      handle_session
-      ;;
-    xp | xpreset)
-      handle_preset "$*"
-      ;;
-    xshow)
-      handle_show "$*"
-      ;;
-    xlist)
-      handle_list
-      ;;
-    xsearch)
-      handle_search
-      ;;
-    help)
-      handle_usage
-      exit 0
-      ;;
-    *)
-      handle_usage
-      exit 1
-      ;;
+  x | xsession)
+    handle_session
+    ;;
+  xp | xpreset)
+    handle_preset "$*"
+    ;;
+  xshow)
+    handle_show "$*"
+    ;;
+  xlist)
+    handle_list
+    ;;
+  xsearch)
+    handle_search
+    ;;
+  help)
+    handle_usage
+    exit 0
+    ;;
+  *)
+    handle_usage
+    exit 1
+    ;;
   esac
 }
 
