@@ -70,10 +70,10 @@ return {
       -- proxy flag
       table.insert(opts.sections.lualine_x, 2, {
         function()
-          return "🛡️"
+          return "󰚻 "
         end,
         cond = function()
-          return vim.env.HTTP_PROXY ~= nil
+          return vim.env.http_proxy ~= nil
         end,
       })
     end,
@@ -164,9 +164,6 @@ return {
   {
     "nvim-telescope/telescope.nvim",
     optional = true,
-    dependencies = {
-      { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
-    },
     cmd = "Telescope",
     keys = {
       -- always use find_files instead of git_files
@@ -206,7 +203,6 @@ return {
       local telescope = require("telescope")
       telescope.setup(opts)
       telescope.load_extension("current_buffer_ctags")
-      telescope.load_extension("fzf")
     end,
   },
 
@@ -312,12 +308,6 @@ return {
   {
     "neovim/nvim-lspconfig",
     optional = true,
-    dependencies = {
-      -- Extras
-      { import = "lazyvim.plugins.extras.lang.rust" },
-      { import = "lazyvim.plugins.extras.lang.go" },
-      { import = "lazyvim.plugins.extras.lang.java" },
-    },
     opts = {
       servers = {
         tsserver = {},
@@ -335,7 +325,7 @@ return {
     },
     init = function()
       local format = function()
-        local lsp_format = require("lazyvim.plugins.lsp.format")
+        local lsp_format = require("lazyvim.util.format")
         if vim.b.autoformat == false or not lsp_format.enabled() then
           lsp_format.format({ force = true })
           vim.cmd.update()
@@ -370,17 +360,29 @@ return {
   },
 
   {
-    "nvimtools/none-ls.nvim",
+    "stevearc/conform.nvim",
     optional = true,
-    opts = function(_, opts)
-      -- opts.debug = true
-      local nls = require("null-ls")
-      vim.list_extend(opts.sources, {
-        nls.builtins.formatting.autopep8,
-        nls.builtins.formatting.prettier,
-        nls.builtins.formatting.bean_format,
-      })
-    end,
+    opts = {
+      formatters_by_ft = {
+        ["javascript"] = { "prettier" },
+        ["javascriptreact"] = { "prettier" },
+        ["typescript"] = { "prettier" },
+        ["typescriptreact"] = { "prettier" },
+        ["vue"] = { "prettier" },
+        ["css"] = { "prettier" },
+        ["scss"] = { "prettier" },
+        ["less"] = { "prettier" },
+        ["html"] = { "prettier" },
+        ["json"] = { "prettier" },
+        ["jsonc"] = { "prettier" },
+        ["yaml"] = { "prettier" },
+        ["markdown"] = { "prettier" },
+        ["markdown.mdx"] = { "prettier" },
+        ["graphql"] = { "prettier" },
+        ["handlebars"] = { "prettier" },
+        ["python"] = { "black" },
+      },
+    },
   },
 
   {
@@ -388,8 +390,8 @@ return {
     optional = true,
     opts = function(_, opts)
       vim.list_extend(opts.ensure_installed, {
-        "autopep8",
         "prettier",
+        "black",
       })
     end,
   },
@@ -409,16 +411,6 @@ return {
       return {}
     end,
   },
-
-  -- imports {{{1
-  -- :let @/ = "[- ]*"
-  { import = "lazyvim.plugins.extras.coding.copilot" },
-  -- { import = "lazyvim.plugins.extras.dap.core" },
-  -- { import = "lazyvim.plugins.extras.test.core" },
-  -- IDE like window layout
-  -- { import = "lazyvim.plugins.extras.ui.edgy" },
-  -- { import = "lazyvim.plugins.extras.ui.mini-animate" },
-  { import = "lazyvim.plugins.extras.util.mini-hipatterns" },
 
   -- }}}1
 }

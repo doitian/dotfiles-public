@@ -53,8 +53,8 @@ style = "bold red"
 threshold = 30
 style = "bold yellow"
 
-[env_var.HTTP_PROXY]
-format = '🛡️ '
+[env_var.http_proxy]
+format = '󰚻 '
 
 # [nodejs]
 # symbol = '🤖 '
