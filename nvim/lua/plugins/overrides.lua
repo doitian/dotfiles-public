@@ -6,6 +6,15 @@ local function autozv(func)
     vim.cmd.norm("zv")
   end
 end
+local format = function()
+  local lazy_format = require("lazyvim.util.format")
+  if vim.b.autoformat == false or not lazy_format.enabled() then
+    lazy_format.format({ force = true })
+    vim.cmd.update()
+  else
+    vim.cmd.write()
+  end
+end
 
 return {
   -- ui {{{1
@@ -323,19 +332,9 @@ return {
         },
       },
     },
-    init = function()
-      local format = function()
-        local lsp_format = require("lazyvim.util.format")
-        if vim.b.autoformat == false or not lsp_format.enabled() then
-          lsp_format.format({ force = true })
-          vim.cmd.update()
-        else
-          vim.cmd.write()
-        end
-      end
-      local keys = require("lazyvim.plugins.lsp.keymaps").get()
-      keys[#keys + 1] = { "f<CR>", format, desc = "Format and save", has = "formatting" }
-    end,
+    keys = {
+      { "f<CR>", format, desc = "Format and save" },
+    },
   },
 
   {
@@ -381,6 +380,10 @@ return {
         ["graphql"] = { "prettier" },
         ["handlebars"] = { "prettier" },
         ["python"] = { "black" },
+        ["beancount"] = { "bean-format" },
+      },
+      formatters = {
+        ["bean-format"] = { command = "bean-format" },
       },
     },
   },
