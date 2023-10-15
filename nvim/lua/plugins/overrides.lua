@@ -320,7 +320,23 @@ return {
     opts = {
       servers = {
         tsserver = {},
-        ruff_lsp = {},
+        ruff_lsp = {
+          keys = {
+            {
+              "<leader>co",
+              function()
+                vim.lsp.buf.code_action({
+                  apply = true,
+                  context = {
+                    only = { "source.organizeImports" },
+                    diagnostics = {},
+                  },
+                })
+              end,
+              desc = "Organize Imports",
+            },
+          },
+        },
         yamlls = {},
         jsonls = {},
         rust_analyzer = {
@@ -375,8 +391,7 @@ return {
         ["json"] = { "prettier" },
         ["jsonc"] = { "prettier" },
         ["yaml"] = { "prettier" },
-        ["markdown"] = { "prettier" },
-        ["markdown.mdx"] = { "prettier" },
+        ["markdown"] = { "markdownlint" },
         ["graphql"] = { "prettier" },
         ["handlebars"] = { "prettier" },
         ["python"] = { "black" },
@@ -395,6 +410,7 @@ return {
       vim.list_extend(opts.ensure_installed, {
         "prettier",
         "black",
+        "markdownlint",
       })
     end,
   },
