@@ -5,7 +5,7 @@ alias vim="$__VIM_PROGRAM__"
 alias :e="$__VIM_PROGRAM__"
 alias vi="$__VIM_PROGRAM__"
 alias view="$__VIM_PROGRAM__ -R"
-alias viper="$__VIM_PROGRAM__ +Viper"
+alias viper="$__VIM_PROGRAM__ +Viper /dev/null"
 
 ##################################################
 # TMUX
