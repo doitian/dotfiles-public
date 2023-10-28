@@ -100,7 +100,7 @@ return {
         tab_size = 8,
       },
     },
-    keys = function()
+    keys = function(_, keys)
       local sort_by_none = function()
         require("bufferline").sort_by("none")
       end
@@ -129,39 +129,43 @@ return {
           require("bufferline").move_to(n)
         end
       end
-      return {
-        { "<Leader>bp", toggle_pin, desc = "Toggle pin" },
-        { "<Leader>bP", "<Cmd>BufferLineGroupClose ungrouped<CR>", desc = "Delete non-pinned buffers" },
-        { "<leader>bj", go_to, desc = "Go to buffer" },
-        { "<leader>j", go_to, desc = "Go to buffer" },
-        { "<Leader>b.", move_to, desc = "Move buffer" },
-        { "<Leader>bx", "<Cmd>BufferLinePickClose<CR>", desc = "Pick buffer to close" },
-        { "<Leader>boo", sort_by_none, desc = "Renumber buffers" },
-        { "<Leader>bod", "<Cmd>BufferLineSortByDirectory<CR>", desc = "Sort buffers by directory" },
-        { "<Leader>boe", "<Cmd>BufferLineSortByExtension<CR>", desc = "Sort buffers by extension" },
-        { "<Leader>bor", "<Cmd>BufferLineSortByRelativeDirectory<CR>", desc = "Sort buffers by relative directory" },
-        { "<Leader>bot", "<Cmd>BufferLineSortByTabs<CR>", desc = "Sort buffers by tags" },
-        { "<Leader>1", nth(1), desc = "which_key_ignore" },
-        { "<Leader>2", nth(2), desc = "which_key_ignore" },
-        { "<Leader>3", nth(3), desc = "which_key_ignore" },
-        { "<Leader>4", nth(4), desc = "which_key_ignore" },
-        { "<Leader>5", nth(5), desc = "which_key_ignore" },
-        { "<Leader>6", nth(6), desc = "which_key_ignore" },
-        { "<Leader>7", nth(7), desc = "which_key_ignore" },
-        { "<Leader>8", nth(8), desc = "which_key_ignore" },
-        { "<Leader>9", nth(9), desc = "which_key_ignore" },
-        { "<Leader>0", nth(-1), desc = "which_key_ignore" },
-        { "<Leader>!", move_to_nth(1), desc = "which_key_ignore" },
-        { "<Leader>@", move_to_nth(2), desc = "which_key_ignore" },
-        { "<Leader>#", move_to_nth(3), desc = "which_key_ignore" },
-        { "<Leader>$", move_to_nth(4), desc = "which_key_ignore" },
-        { "<Leader>%", move_to_nth(5), desc = "which_key_ignore" },
-        { "<Leader>^", move_to_nth(6), desc = "which_key_ignore" },
-        { "<Leader>&", move_to_nth(7), desc = "which_key_ignore" },
-        { "<Leader>*", move_to_nth(8), desc = "which_key_ignore" },
-        { "<Leader>(", move_to_nth(9), desc = "which_key_ignore" },
-        { "<Leader>)", move_to_nth(-1), desc = "which_key_ignore" },
-      }
+      return vim.list_extend(
+        vim.tbl_filter(function(item)
+          return item[1] ~= "<leader>bp"
+        end, keys),
+        {
+          { "<Leader>bp", toggle_pin, desc = "Toggle pin" },
+          { "<leader>bj", go_to, desc = "Go to buffer" },
+          { "<leader>j", go_to, desc = "Go to buffer" },
+          { "<Leader>b.", move_to, desc = "Move buffer" },
+          { "<Leader>bx", "<Cmd>BufferLinePickClose<CR>", desc = "Pick buffer to close" },
+          { "<Leader>bss", sort_by_none, desc = "Renumber buffers" },
+          { "<Leader>bsd", "<Cmd>BufferLineSortByDirectory<CR>", desc = "Sort buffers by directory" },
+          { "<Leader>bse", "<Cmd>BufferLineSortByExtension<CR>", desc = "Sort buffers by extension" },
+          { "<Leader>bsr", "<Cmd>BufferLineSortByRelativeDirectory<CR>", desc = "Sort buffers by relative directory" },
+          { "<Leader>bst", "<Cmd>BufferLineSortByTabs<CR>", desc = "Sort buffers by tags" },
+          { "<Leader>1", nth(1), desc = "which_key_ignore" },
+          { "<Leader>2", nth(2), desc = "which_key_ignore" },
+          { "<Leader>3", nth(3), desc = "which_key_ignore" },
+          { "<Leader>4", nth(4), desc = "which_key_ignore" },
+          { "<Leader>5", nth(5), desc = "which_key_ignore" },
+          { "<Leader>6", nth(6), desc = "which_key_ignore" },
+          { "<Leader>7", nth(7), desc = "which_key_ignore" },
+          { "<Leader>8", nth(8), desc = "which_key_ignore" },
+          { "<Leader>9", nth(9), desc = "which_key_ignore" },
+          { "<Leader>0", nth(-1), desc = "which_key_ignore" },
+          { "<Leader>!", move_to_nth(1), desc = "which_key_ignore" },
+          { "<Leader>@", move_to_nth(2), desc = "which_key_ignore" },
+          { "<Leader>#", move_to_nth(3), desc = "which_key_ignore" },
+          { "<Leader>$", move_to_nth(4), desc = "which_key_ignore" },
+          { "<Leader>%", move_to_nth(5), desc = "which_key_ignore" },
+          { "<Leader>^", move_to_nth(6), desc = "which_key_ignore" },
+          { "<Leader>&", move_to_nth(7), desc = "which_key_ignore" },
+          { "<Leader>*", move_to_nth(8), desc = "which_key_ignore" },
+          { "<Leader>(", move_to_nth(9), desc = "which_key_ignore" },
+          { "<Leader>)", move_to_nth(-1), desc = "which_key_ignore" },
+        }
+      )
     end,
   },
 
