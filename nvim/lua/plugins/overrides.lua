@@ -172,7 +172,7 @@ return {
   -- editor {{{1
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazy/vim/plugins/editor.lua
 
-  { "folke/which-key.nvim", optional = true, opts = { defaults = { ["<Leader>bo"] = { name = "+sort" } } } },
+  { "folke/which-key.nvim", optional = true, opts = { defaults = { ["<Leader>bs"] = { name = "+sort" } } } },
 
   {
     "nvim-telescope/telescope.nvim",
