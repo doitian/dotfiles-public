@@ -138,12 +138,13 @@ return {
           { "<leader>bj", go_to, desc = "Go to buffer" },
           { "<leader>j", go_to, desc = "Go to buffer" },
           { "<Leader>b.", move_to, desc = "Move buffer" },
+          { "<Leader>bs", "<Cmd>BufferLinePick<CR>", desc = "Pick buffer" },
           { "<Leader>bx", "<Cmd>BufferLinePickClose<CR>", desc = "Pick buffer to close" },
-          { "<Leader>bss", sort_by_none, desc = "Renumber buffers" },
-          { "<Leader>bsd", "<Cmd>BufferLineSortByDirectory<CR>", desc = "Sort buffers by directory" },
-          { "<Leader>bse", "<Cmd>BufferLineSortByExtension<CR>", desc = "Sort buffers by extension" },
-          { "<Leader>bsr", "<Cmd>BufferLineSortByRelativeDirectory<CR>", desc = "Sort buffers by relative directory" },
-          { "<Leader>bst", "<Cmd>BufferLineSortByTabs<CR>", desc = "Sort buffers by tags" },
+          { "<Leader>bnn", sort_by_none, desc = "Renumber buffers" },
+          { "<Leader>bnd", "<Cmd>BufferLineSortByDirectory<CR>", desc = "Sort buffers by directory" },
+          { "<Leader>bne", "<Cmd>BufferLineSortByExtension<CR>", desc = "Sort buffers by extension" },
+          { "<Leader>bnr", "<Cmd>BufferLineSortByRelativeDirectory<CR>", desc = "Sort buffers by relative directory" },
+          { "<Leader>bnt", "<Cmd>BufferLineSortByTabs<CR>", desc = "Sort buffers by tags" },
           { "<Leader>1", nth(1), desc = "which_key_ignore" },
           { "<Leader>2", nth(2), desc = "which_key_ignore" },
           { "<Leader>3", nth(3), desc = "which_key_ignore" },
@@ -172,7 +173,7 @@ return {
   -- editor {{{1
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazy/vim/plugins/editor.lua
 
-  { "folke/which-key.nvim", optional = true, opts = { defaults = { ["<Leader>bs"] = { name = "+sort" } } } },
+  { "folke/which-key.nvim", optional = true, opts = { defaults = { ["<Leader>bn"] = { name = "+sort" } } } },
 
   {
     "nvim-telescope/telescope.nvim",
