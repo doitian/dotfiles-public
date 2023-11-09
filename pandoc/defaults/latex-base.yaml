@@ -16,8 +16,6 @@ shift-heading-level-by: -1
 reference-links: true
 number-sections: true
 variables:
-  # scrbook, scrreprt, scrartcl, scrlttr2 and typearea
-  documentclass: scrreprt
   classoption:
     - listof=totoc
 
