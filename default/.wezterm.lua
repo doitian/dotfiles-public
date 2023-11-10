@@ -30,7 +30,7 @@ return dynamic({
 
   font = wezterm.font_with_fallback({
     "Cartograph CF",
-    "Noto Sans Mono CJK SC",
+    "MiSans VF",
     "Apple Color Emoji",
   }),
   font_size = 16,
@@ -41,7 +41,7 @@ return dynamic({
   window_frame = {
     font = wezterm.font_with_fallback({
       "Lato",
-      "Noto Sans CJK SC",
+      "MiSans VF",
     }),
     font_size = 13,
   },
