@@ -1,3 +1,0 @@
-defaults:
-  - latex-base
-pdf-engine: lualatex

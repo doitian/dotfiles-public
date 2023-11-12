@@ -1,5 +1,5 @@
 defaults:
-  - latex
+  - xelatex-base
 variables:
   CJKmainfont: Noto Sans CJK SC
   CJKsansfont: Noto Sans CJK SC

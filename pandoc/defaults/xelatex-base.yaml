@@ -1,5 +1,5 @@
 defaults:
-  - latex-reprt
+  - latex-base
 pdf-engine: xelatex
 variables:
   mainfont: Atkinson Hyperlegible

@@ -1,4 +1,5 @@
 defaults:
-  - lualatex-reprt
+  - latex-base
+pdf-engine: lualatex
 include-in-header:
   - lualatex-font-zh.tex
