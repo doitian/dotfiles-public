@@ -1,5 +1,4 @@
 setlocal suffixesadd=.md
-setlocal foldlevel=1
 let &l:includeexpr = 'substitute(v:fname,"^\\[*\\([^\\]|]*\\).*","\\1","")'
 
 nmap <buffer> <Leader>ss <Leader>si
