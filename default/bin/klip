@@ -168,7 +168,7 @@ def export_csv(titles):
 def on_archive(args):
     keep = []
     seen = set()
-    with open_clippings_txt('archive.txt', mode='a') as archive:
+    with open_clippings_txt('archive.bak', mode='a') as archive:
         for clip in each_clipping():
             if args.pattern in clip.title:
                 if clip.title not in seen:
@@ -179,7 +179,7 @@ def on_archive(args):
             else:
                 keep.append(clip)
 
-    shutil.copy('My Clippings.txt', 'backup.txt')
+    shutil.copy('My Clippings.txt', 'backup.bak')
     with open_clippings_txt('My Clippings.txt', mode='w') as orig:
         for clip in keep:
             if clip.title not in seen:
@@ -195,7 +195,7 @@ subparsers = parser.add_subparsers(help='sub-command help')
 parser_list = subparsers.add_parser('list', help='List titles.')
 parser_list.set_defaults(func=on_list)
 parser_archive = subparsers.add_parser(
-    'archive', help='extract matching titles and append them to archive.txt')
+    'archive', help='extract matching titles and append them to archive.bak')
 parser_archive.add_argument(
     'pattern', help='archive titles matching the pattern')
 parser_archive.set_defaults(func=on_archive)
