@@ -234,6 +234,13 @@ mode "resize" {
 bindsym $mod+r mode "resize"
 
 #
+# Auto Rules:
+#
+# https://github.com/swaywm/sway/blob/master/sway/sway.5.scd#criteria
+# Todoist Dialog
+for_window [class="Microsoft-edge" instance="crx__fgcjgjggdkjmafpnbcplcdkbfogcbonk"] floating enable
+
+#
 # Status Bar:
 #
 # Read `man 5 sway-bar` for more information about this section.
