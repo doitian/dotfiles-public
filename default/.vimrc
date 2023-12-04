@@ -107,7 +107,6 @@ set autoindent
 set autoread
 set autowrite
 set backspace=indent,eol,start
-set clipboard^=unnamedplus,unnamed
 set completeopt=menuone
 set conceallevel=3
 set confirm
@@ -202,6 +201,8 @@ nnoremap <Leader>p "0p
 xnoremap <Leader>p "0p
 nnoremap <Leader>P "0P
 xnoremap <Leader>P "0P
+nnoremap <Leader>y "+y
+xnoremap <Leader>y "+y
 nnoremap >gp <Cmd>exec 'put '.v:register<CR>j
 nnoremap <gp <Cmd>exec 'put! '.v:register<CR>j
 nnoremap >p <Cmd>exec 'put '.v:register."<Bar>keepjump norm '["<CR>

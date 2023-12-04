@@ -6,6 +6,7 @@ local opt = vim.opt
 
 opt.background = vim.env.TERM_BACKGROUND or "light"
 
+opt.clipboard = ""
 opt.completeopt = { "menu" }
 opt.grepprg = "rg --hidden -g '!.git' --vimgrep"
 opt.laststatus = 2
