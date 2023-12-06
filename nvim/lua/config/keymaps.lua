@@ -9,9 +9,11 @@ local unmap = vim.keymap.del
 -- editor {{{1
 map("n", "<Leader>v", "`[v`]", { desc = "Select yanked/pasted" })
 map({ "n", "x" }, "<Leader>d", [["_d]], { desc = "Delete without yanking" })
+map({ "n", "x" }, "<Leader>D", [["_D]], { desc = "Delete without yanking" })
 map({ "n", "x" }, "<Leader>p", [["0p]], { desc = "Paste from yanked" })
 map({ "n", "x" }, "<Leader>P", [["0P]], { desc = "Paste from yanked above" })
 map({ "n", "x" }, "<Leader>y", [["+y]], { desc = "Yank into system clipboard" })
+map({ "n", "x" }, "<Leader>Y", [["+Y]], { desc = "Yank into system clipboard" })
 map({ "n" }, ">p", "<Cmd>exec 'put '.v:register.\"<Bar>keepjump norm '[\"<CR>", { desc = "Paste below" })
 map({ "n" }, "<p", "<Cmd>exec 'put! '.v:register.\"<Bar>keepjump norm '[\"<CR>", { desc = "Paste above" })
 map({ "n" }, ">gp", "<Cmd>exec 'put '.v:register<CR>j", { desc = "Paste below" })

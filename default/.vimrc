@@ -197,12 +197,16 @@ nnoremap <Leader>v `[v`]
 nnoremap Y y$
 nnoremap <Leader>d "_d
 xnoremap <Leader>d "_d
+nnoremap <Leader>D "_d$
+xnoremap <Leader>D "_d$
 nnoremap <Leader>p "0p
 xnoremap <Leader>p "0p
 nnoremap <Leader>P "0P
 xnoremap <Leader>P "0P
 nnoremap <Leader>y "+y
 xnoremap <Leader>y "+y
+nnoremap <Leader>Y "+y$
+xnoremap <Leader>Y "+y$
 nnoremap >gp <Cmd>exec 'put '.v:register<CR>j
 nnoremap <gp <Cmd>exec 'put! '.v:register<CR>j
 nnoremap >p <Cmd>exec 'put '.v:register."<Bar>keepjump norm '["<CR>
