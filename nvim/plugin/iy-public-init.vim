@@ -71,7 +71,7 @@ augroup lazyload_au
   autocmd CmdUndefined Bm packadd iy-bm.vim
   autocmd CmdUndefined DiffOrig packadd iy-diff-orig.vim
   autocmd CmdUndefined Delete,Move packadd iy-nano-fs.vim
-  autocmd CmdUndefined TmuxSendKeys,TmuxSendLine packadd iy-tmux.vim
+  autocmd CmdUndefined TmuxSendKeys,TmuxSendLine,TmuxSetBuffer packadd iy-tmux.vim
   autocmd CmdUndefined VSnippets packadd fzf-vsnip
   autocmd FuncUndefined iy#tmux#SendKeys packadd iy-tmux.vim
   if !exists(':Explore')

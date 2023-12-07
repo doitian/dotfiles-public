@@ -21,3 +21,7 @@ function! iy#tmux#SendKeys(...) abort
   let comm = flatten([['tmux', 'send-keys', '-t', s:GetTarget()], a:000], 1)
   call s:System(comm)
 endfunction
+
+function! iy#tmux#SetBuffer(data) abort
+  call s:System(['tmux', 'set-buffer', a:data])
+endfunction

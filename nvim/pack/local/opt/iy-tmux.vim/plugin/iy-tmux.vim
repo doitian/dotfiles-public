@@ -10,3 +10,7 @@ endif
 if !exists(':TmuxSendLine')
   command! -nargs=* -complete=shellcmd TmuxSendLine call iy#tmux#SendKeys('-l', <q-args>."\n")
 endif
+
+if !exists(':TmuxSetBuffer')
+  command! -nargs=* -complete=shellcmd TmuxSetBuffer call iy#tmux#SetBuffer(<q-args>)
+endif
