@@ -261,9 +261,10 @@ nnoremap <Leader>cf <Cmd>undojoin<Bar>Neoformat<CR>
 " finder {{{2
 nnoremap <Leader>fn <Cmd>enew<CR>
 if s:has_fzf
+  command! -bang -nargs=* RgHidden call fzf#vim#grep("rg --hidden -g '!.git' --column --line-number --no-heading --color=always --smart-case -- ".fzf#shellescape(<q-args>), fzf#vim#with_preview(), <bang>0)
   nnoremap <Leader><Space> <Cmd>Files<CR>
   nnoremap <Leader>, <Cmd>Buffers<CR>
-  nnoremap <Leader>/ <Cmd>Rg<CR>
+  nnoremap <Leader>/ <Cmd>RgHidden<CR>
   nnoremap <Leader>: <Cmd>History:<CR>
 
   nnoremap <Leader>ff <Cmd>Files<CR>
@@ -278,7 +279,8 @@ if s:has_fzf
   nnoremap <Leader>sB <Cmd>Lines<CR>
   nnoremap <Leader>si <Cmd>BTags<CR>
   nnoremap <Leader>sI <Cmd>Tags<CR>
-  nnoremap <Leader>sg <Cmd>Rg<CR>
+  nnoremap <Leader>sg <Cmd>RgHidden<CR>
+  nnoremap <Leader>sw :RgHidden \<<C-R><C-W>\><CR>
   nnoremap <Leader>sm <Cmd>Marks<CR>
   nnoremap <Leader>s/ <Cmd>History/<CR>
   nnoremap <Leader>sc <Cmd>History:<CR>
@@ -289,6 +291,7 @@ if s:has_fzf
 else
   nnoremap <Leader><Space> :<C-u>e <C-z>
   nnoremap <Leader>, <Cmd>ls<CR>:<C-u>b<Space>
+  nnoremap <Leader>sw :grep '\<<C-R><C-W>\>'<CR>
 
   nnoremap <Leader>ff :<C-u>e <C-z>
   nnoremap <Leader>fb <Cmd>ls<CR>:<C-u>b<Space>
