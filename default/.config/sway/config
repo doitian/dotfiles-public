@@ -77,6 +77,7 @@ input type:pointer {
     bindsym $mod+d exec $menu
     bindsym $mod+Shift+d exec $gfwmenu
     bindsym $mod+Shift+p exec "rofi -modi 'Gopass:fpass --rofi' -show Gopass"
+    bindsym Shift+F12 exec "rofi -modi 'Gopass:fpass --rofi' -show Gopass"
     bindsym $mod+g exec "rofi -modi 'window:swaywm' -show window"
     bindsym $mod+Shift+Ctrl+5 exec "swaygrim grab"
     bindsym $mod+v exec "clipman pick -t rofi"
