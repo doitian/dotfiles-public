@@ -310,7 +310,7 @@ return {
           desc = "Flash",
         },
         { "ys", "gsa", desc = "Add surrounding", remap = true },
-        { "S", "gsd", desc = "Add surrounding", mode = "x", remap = true },
+        { "S", "gsa", desc = "Add surrounding", mode = "x", remap = true },
         { "ds", "gsd", desc = "Delete surrounding", remap = true },
         { "cs", "gsr", desc = "Replace surrounding", remap = true },
       })
