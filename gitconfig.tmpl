@@ -9,6 +9,8 @@
 
 	cm = commit
 	ca = commit --amend
+	# resume the last failed comit
+	commit-resume = commit -e -F .git/COMMIT_EDITMSG
 	wip = commit -n -m WIP
 
 	co = checkout
