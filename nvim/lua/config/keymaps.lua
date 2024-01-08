@@ -26,6 +26,10 @@ map("x", "&", ":&&<CR>", { desc = "Repeat search on selected lines" })
 vim.F.npcall(unmap, { "s" }, ">")
 vim.F.npcall(unmap, { "s" }, "<")
 
+-- disable flash and enable very magic for normal mode search
+map("n", "/", "/\\v", { desc = "Search Forward Very Magic" })
+map("n", "?", "?\\v", { desc = "Search Backward Very Magic" })
+
 -- navigation {{{1
 map(
   "n",
