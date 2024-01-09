@@ -6,6 +6,7 @@ git:
   paging:
     pager: delta --paging=never
   autoFetch: false
+  parseEmoji: true
 gui:
   commandLogSize: 2
   expandFocusedSidePanel: true
