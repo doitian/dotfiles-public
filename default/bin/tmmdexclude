@@ -1,0 +1,130 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+list-files() {
+  echo "$HOME/.cargo"
+  echo "$HOME/.ckb-cli"
+  echo "$HOME/.dirsenv"
+  echo "$HOME/.local"
+  echo "$HOME/.npm"
+  echo "$HOME/.node-packages"
+  echo "$HOME/.node-gyp"
+  echo "$HOME/.rustup"
+  echo "$HOME/.vscode"
+  echo "$HOME/Applications/lina"
+  echo "$HOME/Applications/testnet"
+
+  fd -c never -H -I -d 4 --prune -g node_modules "$HOME/codebase" | sed "s;/$;;"
+  fd -c never -H -I -d 3 --prune -g "{.direnv,__pycache__}" "$HOME/codebase" | sed "s;/$;;"
+  fd -c never -H -I -d 4 --prune -g Cargo.lock "$HOME/codebase" | sed "s;Cargo.lock$;target;"
+  fd -c never -H -I -d 4 --prune -g Gemfile.lock "$HOME/codebase" | sed "s;Gemfile.lock$;vendor/bundle;"
+
+  case "$1" in
+  tm)
+    echo "$HOME/Downloads"
+    echo "$HOME/Offline/Volatile"
+    ;;
+  md)
+    echo "$HOME/Documents/Backups"
+    echo "$HOME/Dropbox/Backups"
+    ;;
+  esac
+}
+
+md-exclude() {
+  local line
+  local NEED_CLEANUP=
+  local PLIST="/System/Volumes/Data/.Spotlight-V100/VolumeConfiguration.plist"
+  local BUDDY="/usr/libexec/PlistBuddy"
+
+  # cleanup
+  touch "$HOME/.mdexcluded"
+  : >"$HOME/.mdexcluded.tmp"
+  while IFS= read -r line; do
+    if [ -e "$line" ]; then
+      echo "$line" >>"$HOME/.mdexcluded.tmp"
+    else
+      NEED_CLEANUP=true
+      echo "md> GONE $line"
+    fi
+  done <"$HOME/.mdexcluded"
+  if [ -n "$NEED_CLEANUP" ]; then
+    ${BUDDY} -c "Delete :Exclusions" ${PLIST}
+    ${BUDDY} -c "Add :Exclusions array" ${PLIST}
+    while IFS= read -r line; do
+      ${BUDDY} -c "Add :Exclusions: string ${line}" ${PLIST}
+    done <"$HOME/.mdexcluded.tmp"
+  fi
+  mv -f "$HOME/.mdexcluded.tmp" "$HOME/.mdexcluded"
+
+  list-files md | sort -u >"$HOME/.mdexcluded.tmp"
+  comm -13 "$HOME/.mdexcluded" "$HOME/.mdexcluded.tmp" >"$HOME/.mdexcluded.new"
+  cp -f "$HOME/.mdexcluded" "$HOME/.mdexcluded.tmp"
+  while IFS= read -r line; do
+    if [ -e "$line" ]; then
+      ${BUDDY} -c "Add :Exclusions: string ${line}" ${PLIST}
+      echo "$line" >>"$HOME/.mdexcluded.tmp"
+      echo "md> NEW  $line"
+    fi
+  done <"$HOME/.mdexcluded.new"
+
+  rm -f "$HOME/.mdexcluded.new"
+  sort -u "$HOME/.mdexcluded.tmp" >"$HOME/.mdexcluded"
+  launchctl stop com.apple.metadata.mds
+  launchctl start com.apple.metadata.mds
+}
+
+tm-exclude() {
+  local line
+
+  # cleanup
+  touch "$HOME/.tmexcluded"
+  : >"$HOME/.tmexcluded.tmp"
+  while IFS= read -r line; do
+    if [ -e "$line" ]; then
+      tmutil addexclusion -p "$line"
+      echo "$line" >>"$HOME/.tmexcluded.tmp"
+    else
+      tmutil removeexclusion -p "$line"
+      echo "tm> GONE $line"
+    fi
+  done <"$HOME/.tmexcluded"
+  mv -f "$HOME/.tmexcluded.tmp" "$HOME/.tmexcluded"
+
+  list-files tm | sort -u >"$HOME/.tmexcluded.tmp"
+  comm -13 "$HOME/.tmexcluded" "$HOME/.tmexcluded.tmp" >"$HOME/.tmexcluded.new"
+  cp -f "$HOME/.tmexcluded" "$HOME/.tmexcluded.tmp"
+  while IFS= read -r line; do
+    if [ -e "$line" ]; then
+      tmutil addexclusion -p "$line"
+      echo "$line" >>"$HOME/.tmexcluded.tmp"
+      echo "tm> NEW  $line"
+    fi
+  done <"$HOME/.tmexcluded.new"
+
+  rm -f "$HOME/.tmexcluded.new"
+  sort -u "$HOME/.tmexcluded.tmp" >"$HOME/.tmexcluded"
+}
+
+dry-run() {
+  echo "Time Machine ==>"
+  list-files tm
+  echo "Spotlight ==>"
+  list-files md
+}
+
+if [ "${1:-}" = "-n" ]; then
+  dry-run
+  exit 0
+fi
+
+if [ "$UID" = 0 ]; then
+  tm-exclude
+  md-exclude
+else
+  echo "require sudo" >&2
+  exit 1
+fi
