@@ -10,7 +10,7 @@
 	cm = commit
 	ca = commit --amend
 	# resume the last failed comit
-	commit-resume = commit -e -F .git/COMMIT_EDITMSG
+	commit-resume = "!f() { git commit -e -F \"$(git rev-parse --git-dir)/COMMIT_EDITMSG\" \"$@\"; }; f"
 	wip = commit -n -m WIP
 
 	co = checkout
@@ -74,7 +74,7 @@
 	assumed = "!git ls-files -v | grep '^h' | cut -c 3-"
 	unassumeall = "!git assumed | xargs git update-index --no-assume-unchanged"
 	assumeall = "!git status -s | awk {'print $2'} | xargs git assume"
-	exclude = "!f() { dir=$(git rev-parse --show-toplevel 2> /dev/null); [ -n \"$dir\" ] || return 1; for i in \"$@\"; do echo \"$i\" >> \"$dir\"/.git/info/exclude; done; }; f"
+	exclude = "!f() { dir=$(git rev-parse --git-dir 2> /dev/null); [ -n \"$dir\" ] || return 1; for i in \"$@\"; do echo \"$i\" >> \"$dir\"/info/exclude; done; }; f"
 
 	lasttag = describe --tags --abbrev=0
 
