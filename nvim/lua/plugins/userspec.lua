@@ -73,4 +73,9 @@ return {
       { "cx", mode = { "n", "x" }, desc = "Exchange" },
     },
   },
+
+  {
+    "doitian/molecule-vim",
+    ft = "mol",
+  },
 }
