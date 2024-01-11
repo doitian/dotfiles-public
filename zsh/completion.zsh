@@ -54,6 +54,25 @@ function _fzf_complete_g() {
   _fzf_complete_git "$@"
 }
 
+# auto load git sub commands
+function _git-machete() {
+  unfunction _git-machete
+  autoload +X -Uz git-machete.completion.zsh
+  git-machete.completion.zsh
+  _git-machete "$@"
+}
+function _git-flow() {
+  unfunction _git-flow
+  autoload +X -Uz git-flow-completion.zsh
+  git-flow-completion.zsh
+  _git-machete "$@"
+}
+compdef _git-machete git-machete
+compdef _git-flow git-flow
+zstyle ':completion:*:*:git:*' user-commands \
+  machete:'organize your repo, instantly rebase/merge/push/pull and more' \
+  flow:'provide high-level repository operations'
+
 # some quick completion functions
 compdef _precommand ts
 compdef _dirs d
