@@ -63,7 +63,7 @@ return dynamic({
         "~/codebase/gopath/bin",
         "~/.cargo/bin",
         "~/.asdf/bin",
-        "~/.node-packages/bin",
+        "~/.local/share/pnpm",
         "~/.local/share/nvim/mason/bin",
       }, ":")
       :gsub("%~", wezterm.home_dir),

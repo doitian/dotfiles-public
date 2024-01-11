@@ -10,7 +10,6 @@ list-files() {
   echo "$HOME/.dirsenv"
   echo "$HOME/.local"
   echo "$HOME/.npm"
-  echo "$HOME/.node-packages"
   echo "$HOME/.node-gyp"
   echo "$HOME/.rustup"
   echo "$HOME/.vscode"

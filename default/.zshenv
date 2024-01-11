@@ -10,7 +10,8 @@ fi
 
 # path
 export GOPATH="$HOME/codebase/gopath"
-export PATH="${PATH:-/bin:/usr/bin:/usr/local/bin}:$HOME/bin:$HOME/.cargo/bin:$HOME/.asdf/bin:$GOPATH/bin:$HOME/.node-packages/bin:$HOME/.local/share/nvim/mason/bin"
+export PNPM_HOME="$HOME/.local/share/pnpm"
+export PATH="${PATH:-/bin:/usr/bin:/usr/local/bin}:$HOME/bin:$HOME/.cargo/bin:$HOME/.asdf/bin:$GOPATH/bin:$PNPM_HOME:$HOME/.local/share/nvim/mason/bin"
 
 # lang
 export LANG=en_US.UTF-8
