@@ -1,7 +1,7 @@
 # vim: ft=gitconfig noexpandtab
 [alias]
 	snapshot = "!f() { git stash push -u -m \"snapshot-$(date '+%Y%m%d%H%M%S')\" && git stash apply \"stash@{0}\"; }; f"
-	# git ls-remote origin refs/stashes
+	# git ls-remote origin "refs/stashes/**"
 	pushsnap = "!f() { git push origin \"stash@{0}:refs/stashes/$(git stash list --pretty='%s' -1 \"$@\" | sed -e 's/^On //' -e 's/^WIP on/wip/' -e 's/: /\\//' -e 's/[^\\/a-zA-Z0-9_-]/-/g')\"; }; f"
 
 	br = branch
