@@ -15,6 +15,7 @@ return dynamic({
   -- required by vim clipboard editor
   quit_when_all_windows_are_closed = true,
   send_composed_key_when_right_alt_is_pressed = true,
+  check_for_updates = false,
 
   color_scheme = "Catppuccin Latte",
   colors = {
