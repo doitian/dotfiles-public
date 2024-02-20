@@ -137,7 +137,7 @@ set smartcase
 set smartindent
 set smarttab
 set spellfile=$HOME/.vim-spell-en.utf-8.add,.vim-spell-en.utf-8.add
-set spelllang=en
+set spelllang=en,cjk
 set splitbelow
 set splitright
 set switchbuf=useopen
