@@ -41,14 +41,15 @@ data = res.read()
 
 item = json.loads(data.decode("utf-8"))[0]
 authors = [f"{a["given"]} {a["family"]}" for a in item["author"]]
-author_etal = item["author"][0]["family"] if len(authors) == 1 else f"{item['author'][0]['family']} et al."
+first_author = safe_file_name(item["author"][0]["family"])
+author_etal =  first_author if len(authors) == 1 else f"{first_author} et al."
 date = parse_date(item["issued"]["date-parts"][0])
 now = datetime.now().isoformat()[:10]
 
 print("---")
 print(f"aliases: [{item['id']}]")
 print("---")
-print(f"# {safe_file_name(author_etal)} - {safe_file_name(item['title'])} (Annotations)\n")
+print(f"# {author_etal} - {safe_file_name(item['title'])} (Annotations)\n")
 print("## Metadata\n")
 print("**Source**:: #from/zotero")
 print("**Zettel**:: #zettel/fleeting")
