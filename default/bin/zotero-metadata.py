@@ -41,7 +41,7 @@ data = res.read()
 
 item = json.loads(data.decode("utf-8"))[0]
 authors = [f"{a["given"]} {a["family"]}" for a in item["author"]]
-author_etal = authors[0] if len(authors) == 1 else f"{authors[0]} et al."
+author_etal = item["author"][0]["family"] if len(authors) == 1 else f"{item['author'][0]['family']} et al."
 date = parse_date(item["issued"]["date-parts"][0])
 now = datetime.now().isoformat()[:10]
 
@@ -77,7 +77,10 @@ print(f"**Zotero App Link**:: [Open in Zotero](zotero://select/library/items/{it
 print(f"**Zotero Web Link**:: [zotero.org](https://www.zotero.org/users/8290186/items/{item['item-key']})")
 
 print()
-print("## Abstract\n")
-print(item["abstract"])
-print()
+
+if "abstract" in item:
+    print("## Abstract\n")
+    print(item["abstract"])
+    print()
+
 print("## Annotations\n")
