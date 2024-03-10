@@ -7,22 +7,23 @@ import re
 import subprocess
 import tempfile
 import urllib.request
+import unicodedata
 from pathlib import Path
 
 # ruff: noqa: E501
 
-BIB_ENTRY_RE = re.compile(r'\s+([\S]+)\s*=\s*{(.*)},?')
-BIB_DOUBLE_QUOTE_RE = re.compile(r'{{([^}]+)}}')
-BIB_SINGLE_QUOTE_RE = re.compile(r'{([^}]+)}')
-BIB_ESCAPE_RE = re.compile(r'\\([&_#])')
-WHITESPACE_RE = re.compile(r'\s+')
-LINK_RE = re.compile(r'¡(.*?)¿')
+BIB_ENTRY_RE = re.compile(r"\s+([\S]+)\s*=\s*{(.*)},?")
+BIB_DOUBLE_QUOTE_RE = re.compile(r"{{([^}]+)}}")
+BIB_SINGLE_QUOTE_RE = re.compile(r"{([^}]+)}")
+BIB_ESCAPE_RE = re.compile(r"\\([&_#])")
+WHITESPACE_RE = re.compile(r"\s+")
+LINK_RE = re.compile(r"¡(.*?)¿")
 
 
 def unquote(text):
-    text = BIB_DOUBLE_QUOTE_RE.sub(r'\1', text)
-    text = BIB_SINGLE_QUOTE_RE.sub(r'\1', text)
-    text = BIB_ESCAPE_RE.sub(r'\1', text)
+    text = BIB_DOUBLE_QUOTE_RE.sub(r"\1", text)
+    text = BIB_SINGLE_QUOTE_RE.sub(r"\1", text)
+    text = BIB_ESCAPE_RE.sub(r"\1", text)
     return text
 
 
@@ -52,28 +53,31 @@ def int_formatter(text, _):
 
 
 def ignore_whitespaces_formatter(text, _):
-    return WHITESPACE_RE.sub(' ', text).strip()
+    return WHITESPACE_RE.sub(" ", text).strip()
 
 
 def rich_text_formatter(text, is_zotero):
-    if text.startswith('\\section{Annotations'):
-        return ''
+    if text.startswith("\\section{Annotations"):
+        return ""
     text = ignore_whitespaces_formatter(text, is_zotero)
-    text = text.replace('–', '--')
-    text = LINK_RE.sub(r'<\1>', text)
+    text = text.replace("–", "--")
+    text = LINK_RE.sub(r"<\1>", text)
     return text
 
 
 def size_formatter(text, _):
-    return text.split(' ')[0]
+    return text.split(" ")[0]
 
 
 def timestamp_formatter(text, is_zotero):
     if is_zotero:
         return text
 
-    return datetime.datetime.fromisoformat(text).astimezone(
-        datetime.timezone.utc).strftime('%Y-%m-%d')
+    return (
+        datetime.datetime.fromisoformat(text)
+        .astimezone(datetime.timezone.utc)
+        .strftime("%Y-%m-%d")
+    )
 
 
 def date_formatter(text, _):
@@ -81,112 +85,119 @@ def date_formatter(text, _):
 
 
 def isbn_formatter(text, _):
-    return text.replace('-', '')
+    return text.replace("-", "")
 
 
 def author_formatter(text, is_zotero):
     if is_zotero:
         authors = []
-        for author in text.split(' and '):
-            if 'useprefix=true' in author:
+        for author in text.split(" and "):
+            if "useprefix=true" in author:
                 fields = {}
-                for kv in author.split(', '):
-                    k, v = kv.split('=', maxsplit=1)
+                for kv in author.split(", "):
+                    k, v = kv.split("=", maxsplit=1)
                     fields[k] = v
                 authors.append(
-                    f'{fields["given"]} {fields["prefix"]} {fields["family"]}')
+                    f'{fields["given"]} {fields["prefix"]} {fields["family"]}'
+                )
             else:
-                parts = author.split(', ', maxsplit=1)
-                authors.append(f'{parts[1]} {parts[0]}' if len(
-                    parts) == 2 else author)
-        return ' & '.join(authors)
+                parts = author.split(", ", maxsplit=1)
+                authors.append(f"{parts[1]} {parts[0]}" if len(parts) == 2 else author)
+        return " & ".join(authors)
 
     return text
 
 
 def ignore_case_formatter(text, _):
-    return text.lower()
+    return unicodedata.normalize("NFD", text.lower())
 
 
 def join_lines_formatter(text, _):
-    return text.replace('\n', ' ').replace('\\textasciitilde ', '~')
+    return (
+        text.replace("\n", " ")
+        .replace("\\textasciitilde ", "~")
+        .replace("$<$", "<")
+        .replace("$>$", ">")
+    )
 
 
 def langid_formatter(text, _):
-    if text == 'eng' or text == 'american':
-        return 'en-US'
-    elif text == 'zho' or text == 'chinese' or text == 'och':
-        return 'zh-CN'
+    if text == "eng" or text == "american":
+        return "en-US"
+    elif text == "zho" or text == "chinese" or text == "och":
+        return "zh-CN"
     else:
         return text
 
 
 def keywords_formatter(text, _):
-    keywords = sorted(text.replace(', ', ',').split(','))
+    keywords = sorted(text.replace(", ", ",").split(","))
     try:
-        keywords.remove('x')
+        keywords.remove("x")
     except ValueError:
         pass
     try:
-        keywords.remove('_tablet')
+        keywords.remove("_tablet")
     except ValueError:
         pass
     try:
-        keywords.remove('_tablet_modified')
+        keywords.remove("_tablet_modified")
     except ValueError:
         pass
-    keywords = [k for k in keywords if not k.startswith('action/')]
+    keywords = [k for k in keywords if not k.startswith("action/")]
     return keywords
 
 
 ALIASES = {
-    'calibreid': 'id',
-    'custom_progress': '#progress',
-    'pagetotal': '#pages',
-    'keywords': 'tags',
-    'custom_topic': '#topic',
-    'note': 'comments',
-    'author': 'authors',
-    'volume': 'series_index',
-    'date': 'pubdate',
-    'langid': 'languages',
-    'custom_metadata': '#metadata',
-    'custom_mdnotes': '#mdnotes',
-    'custom_date_read': '#date_read',
+    "calibreid": "id",
+    "custom_progress": "#progress",
+    "pagetotal": "#pages",
+    "keywords": "tags",
+    "custom_topic": "#topic",
+    "note": "comments",
+    "author": "authors",
+    "volume": "series_index",
+    "date": "pubdate",
+    "langid": "languages",
+    "custom_metadata": "#metadata",
+    "custom_mdnotes": "#mdnotes",
+    "custom_date_read": "#date_read",
 }
 
 
 FORMATTERS = {
-    'rating': rating_formatter,
-    'note': rich_text_formatter,
-    'size': ignore_formatter,
-    'cover': ignore_formatter,
-    'timestamp': timestamp_formatter,
-    'date': date_formatter,
-    'volume': int_formatter,
-    'file': ignore_formatter,
-    'isbn': isbn_formatter,
-    'author': author_formatter,
-    'options': ignore_formatter,
-    'title': ignore_case_formatter,
-    'langid': langid_formatter,
-    'keywords': keywords_formatter,
-    'custom_mdnotes': join_lines_formatter,
-    'custom_metadata': join_lines_formatter,
-    'custom_date_read': date_formatter,
+    "rating": rating_formatter,
+    "note": rich_text_formatter,
+    "size": ignore_formatter,
+    "cover": ignore_formatter,
+    "timestamp": timestamp_formatter,
+    "date": date_formatter,
+    "volume": int_formatter,
+    "file": ignore_formatter,
+    "isbn": isbn_formatter,
+    "author": author_formatter,
+    "options": ignore_formatter,
+    "title": ignore_case_formatter,
+    "title_sort": ignore_case_formatter,
+    "langid": langid_formatter,
+    "keywords": keywords_formatter,
+    "custom_mdnotes": join_lines_formatter,
+    "custom_metadata": join_lines_formatter,
+    "custom_date_read": date_formatter,
+    "identifiers": ignore_formatter,
 }
 
 
-csv_fd, csv_path = tempfile.mkstemp(suffix='.csv', text=True)
+csv_fd, csv_path = tempfile.mkstemp(suffix=".csv", text=True)
 csv_path = Path(csv_path)
 
 calibredb = {}
 try:
-    subprocess.check_call(['calibredb', 'catalog', str(csv_path)])
-    csv_io = os.fdopen(csv_fd, encoding='utf-8-sig')
+    subprocess.check_call(["calibredb", "catalog", str(csv_path)])
+    csv_io = os.fdopen(csv_fd, encoding="utf-8-sig")
     csv_reader = csv.DictReader(csv_io)
     for row in csv_reader:
-        calibredb[row['id']] = row
+        calibredb[row["id"]] = row
 finally:
     csv_path.unlink()
 
@@ -220,40 +231,40 @@ URL = "http://127.0.0.1:23119/better-bibtex/export/collection?/1/4%20Archive/Cal
 
 def default_book():
     return {
-        'keywords': '',
-        'custom_mdnotes': '',
-        'custom_progress': '',
-        'custom_topic': '',
-        'custom_metadata': ''
+        "keywords": "",
+        "custom_mdnotes": "",
+        "custom_progress": "",
+        "custom_topic": "",
+        "custom_metadata": "",
     }
 
 
 book = default_book()
-for line in urllib.request.urlopen(URL).read().decode('utf-8').splitlines():
-    if line.startswith('@book{'):
+for line in urllib.request.urlopen(URL).read().decode("utf-8").splitlines():
+    if line.startswith("@book{"):
         book = default_book()
-    elif line.startswith('}'):
-        id = book.get('calibreid')
+    elif line.startswith("}"):
+        id = book.get("calibreid")
         calibre_entry = calibredb.get(id)
         if calibre_entry is None:
             print(f'---Z-- {book["title"]}')
         else:
             del calibredb[id]
-            if calibre_entry['rating'] != '':
-                calibre_entry['tags'] += ',' + \
-                    ('⭐️' * int(calibre_entry['rating']))
-                if calibre_entry['tags'].startswith(','):
-                    calibre_entry['tags'] = calibre_entry['tags'][1:]
+            if calibre_entry["rating"] != "":
+                calibre_entry["tags"] += "," + ("⭐️" * int(calibre_entry["rating"]))
+                if calibre_entry["tags"].startswith(","):
+                    calibre_entry["tags"] = calibre_entry["tags"][1:]
             for zotero_key, zotero_value in book.items():
                 calibre_key = ALIASES.get(zotero_key, zotero_key)
                 formatter = FORMATTERS.get(zotero_key, default_formatter)
                 zotero_value = formatter(zotero_value, True)
-                calibre_value = formatter(
-                    calibre_entry.get(calibre_key, ""), False)
-                if zotero_value != calibre_value and \
-                        not (zotero_key == "note" and calibre_value == ""):
+                calibre_value = formatter(calibre_entry.get(calibre_key, ""), False)
+                if zotero_value != calibre_value and not (
+                    zotero_key == "note" and calibre_value == ""
+                ):
                     print(
-                        f'±±CZ±± {book["title"]}\n<<<<<<< zotero[{zotero_key}]\n{zotero_value}\n=======\n{calibre_value}\n>>>>>>> calibre[{calibre_key}]')
+                        f'±±CZ±± {book["title"]}\n<<<<<<< zotero[{zotero_key}]\n{zotero_value}\n=======\n{calibre_value}\n>>>>>>> calibre[{calibre_key}]'
+                    )
     else:
         entry = parse_bib_entry(line)
         if entry:
