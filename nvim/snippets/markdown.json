@@ -10,6 +10,19 @@
     "description": "Insert fenced code block"
   },
 
+  "Markdown ➤ Pandoc Metadata": {
+    "prefix": "pandocmeta",
+    "body": [
+      "---",
+      "title: ${1:$TM_FILENAME_BASE}",
+      "author: $2",
+      "date: $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE",
+      "---",
+      "$0"
+    ],
+    "description": "Insert fenced code block"
+  },
+
   "Obsidian ➤ Docklet": {
     "prefix": "docklet",
     "body": [
