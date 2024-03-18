@@ -22,7 +22,7 @@ case "${1:-list}" in
 list) on_list ;;
 pick) on_pick ;;
 grab)
-  on_pick | {
+  on_pick | sed 's/^\[.*\]/ws/' | {
     read -r ws anchor size name
     if [ -z "$anchor" ]; then
       grim
