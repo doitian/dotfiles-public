@@ -14,7 +14,7 @@ if [ -f "$OPENAI_PROMPTS_FILE_ALTERNATIVE" ] && ! [ -f "$OPENAI_PROMPTS_FILE" ];
 fi
 
 : ${AZURE_API_VERSION:=2024-02-15-preview}
-: ${AZURE_RESOURCE_NAME:=doitian-chatgpt}
+: ${AZURE_RESOURCE_NAME:=doitian-chatgpt-jp}
 : ${AZURE_MODEL:=gpt-35-turbo-16k}
 
 : ${OPENAI_BACKEND:=azure}
@@ -40,7 +40,7 @@ call_api() {
     echo
   else
     if [ -z "${AZURE_API_KEY:-}" ]; then
-      local credentials="$(gopass show key/azure.com/doitian-chatgpt)"
+      local credentials="$(gopass show key/azure.com/doitian-chatgpt-jp)"
       export AZURE_API_KEY="$(echo "$credentials" | head -1)"
     fi
 
