@@ -1,12 +1,12 @@
 {
   "Shell ➤ Shebang": {
     "prefix": "shebang",
-    "body": ["#!/usr/bin/env ${1:bash}", "$0"]
+    "body": ["#!/usr/bin/env ${1|bash,zsh|}", "$0"]
   },
   "Shell ➤ Shebang with Debug": {
     "prefix": "shebangbang",
     "body": [
-      "#!/usr/bin/env ${1:bash}",
+      "#!/usr/bin/env ${1|bash,zsh|}",
       "",
       "set -e",
       "set -u",

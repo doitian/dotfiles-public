@@ -247,6 +247,15 @@ return {
         end,
         desc = "Edit Snippets",
       },
+      {
+        "<C-E>",
+        function()
+          return require("luasnip").choice_active() and "<Plug>luasnip-next-choice" or "<C-E>"
+        end,
+        expr = true,
+        silent = true,
+        mode = { "i", "s" },
+      },
     },
     config = function(_, opts)
       require("luasnip").setup(opts)
