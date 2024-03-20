@@ -18,7 +18,7 @@ main() {
   local CHANGES="$(git diff --staged --ignore-all-space --diff-algorithm=minimal --function-context --no-ext-diff --no-color)"
   local WORDS_COUNT="$(echo "$CHANGES" | wc -w)"
 
-  if (( $WORDS_COUNT > 2048 )); then
+  if (($WORDS_COUNT > 12000)); then
     if command -v gptcommit &>/dev/null; then
       run_gptcommit
       exit 0
@@ -29,7 +29,7 @@ main() {
   fi
 
   local MESSAGE="$(echo "$CHANGES" | ai-chat preset "Git Commit" | grep -v '^Co-authored-by: ' | sed -e :a -e '/^\n*$/{$d;N;};/\n$/ba')"
-  MESSAGE="$(tr '[:upper:]' '[:lower:]' <<< ${MESSAGE:0:1})$(sed -e '1s/[.!?]$//' <<< "${MESSAGE:1}")"
+  MESSAGE="$(tr '[:upper:]' '[:lower:]' <<<${MESSAGE:0:1})$(sed -e '1s/[.!?]$//' <<<"${MESSAGE:1}")"
   git commit -m "$MESSAGE" -e
 }
 
