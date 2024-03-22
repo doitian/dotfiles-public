@@ -231,6 +231,18 @@ return {
     end,
   },
 
+  {
+    "folke/todo-comments.nvim",
+    opts = {
+      highlight = {
+        pattern = [[.*<(KEYWORDS)(\([^)]+\))?:]],
+      },
+      search = {
+        pattern = [[\b(KEYWORDS)(\([^)]+\))?:]],
+      },
+    },
+  },
+
   -- coding {{{1
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/coding.lua
   {
