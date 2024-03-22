@@ -16,6 +16,7 @@ autocmd("CmdwinEnter", "*", function()
   vim.keymap.set("n", "<C-W><C-W>", "<CR>q:dd", { buffer = true })
 end)
 
+-- edit qf: set ma | ... | cgetb
 autocmd("FileType", { "qf" }, function()
   vim.opt_local.errorformat = "%f|%l col %c|%m"
 
