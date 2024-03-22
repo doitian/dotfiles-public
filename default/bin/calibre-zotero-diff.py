@@ -122,7 +122,7 @@ def join_lines_formatter(text, _):
 
 
 def langid_formatter(text, _):
-    if text == "eng" or text == "american":
+    if text == "eng" or text == "english" or text == "american":
         return "en-US"
     elif text == "zho" or text == "chinese" or text == "och":
         return "zh-CN"
