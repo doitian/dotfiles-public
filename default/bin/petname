@@ -11,7 +11,7 @@ pick_from() {
   mkdir -p "$HOME/.cache/petname"
   local NAMES_FILE="$1"
   local CACHE_FILE="$HOME/.cache/petname/$NAMES_FILE"
-  if [ -z "$(find "$CACHE_FILE" -mtime -1 -print 2>/dev/null || true)" ]; then
+  if [ -z "$(find "$CACHE_FILE" -mtime -7 -print 2>/dev/null || true)" ]; then
     curl -sL -o "$CACHE_FILE" "https://github.com/canonical/multipass/raw/main/src/petname/${NAMES_FILE}"
   fi
 
