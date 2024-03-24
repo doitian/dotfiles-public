@@ -130,22 +130,21 @@ def langid_formatter(text, _):
         return text
 
 
+def should_ignore_keyword(keyword):
+    return (
+        keyword == ""
+        or keyword == "x"
+        or keyword == "_tablet"
+        or keyword == "_tablet_modified"
+        or keyword == "gave-up-on"
+        or keyword.startswith("action/")
+        or keyword.startswith("⭐️")
+    )
+
+
 def keywords_formatter(text, _):
     keywords = sorted(text.replace(", ", ",").split(","))
-    try:
-        keywords.remove("x")
-    except ValueError:
-        pass
-    try:
-        keywords.remove("_tablet")
-    except ValueError:
-        pass
-    try:
-        keywords.remove("_tablet_modified")
-    except ValueError:
-        pass
-    keywords = [k for k in keywords if not k.startswith("action/")]
-    return keywords
+    return [k for k in keywords if not should_ignore_keyword(k)]
 
 
 ALIASES = {
@@ -185,6 +184,7 @@ FORMATTERS = {
     "custom_metadata": join_lines_formatter,
     "custom_date_read": date_formatter,
     "identifiers": ignore_formatter,
+    "custom_progress": ignore_formatter,
 }
 
 
@@ -251,7 +251,6 @@ for line in urllib.request.urlopen(URL).read().decode("utf-8").splitlines():
         else:
             del calibredb[id]
             if calibre_entry["rating"] != "":
-                calibre_entry["tags"] += "," + ("⭐️" * int(calibre_entry["rating"]))
                 if calibre_entry["tags"].startswith(","):
                     calibre_entry["tags"] = calibre_entry["tags"][1:]
             for zotero_key, zotero_value in book.items():
