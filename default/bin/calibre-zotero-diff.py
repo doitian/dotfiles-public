@@ -137,6 +137,10 @@ def should_ignore_keyword(keyword):
         or keyword == "_tablet"
         or keyword == "_tablet_modified"
         or keyword == "gave-up-on"
+        or keyword == "reading"
+        or keyword == "now"
+        or keyword == "later"
+        or keyword == "someday"
         or keyword.startswith("action/")
         or keyword.startswith("⭐️")
     )
