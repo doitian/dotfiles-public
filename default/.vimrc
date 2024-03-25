@@ -317,6 +317,7 @@ nnoremap <Leader>ws <C-w>s
 nnoremap <Leader>w<Bar> <C-w>v
 nnoremap <Leader>wv <C-w>v
 nnoremap <Leader>- <C-w>s
+nnoremap <Leader>wk <Cmd>Close<CR>
 nnoremap <Leader><Bar> <C-w>v
 nnoremap <C-H> <C-W>h
 nnoremap <C-L> <C-W>l

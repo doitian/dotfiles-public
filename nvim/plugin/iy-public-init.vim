@@ -66,6 +66,22 @@ if has('win32')
   cnoreabbrev <expr> cmd <SID>ExpandAlias(":", "cmd", "set shell=cmd.exe shellcmdflag=/c noshellslash guioptions-=!")
 endif
 
+let s:DisturbingFiletypes = { 'help': 1, 'netrw': 1, 'vim-': 1,
+      \ 'godoc': 1, 'git': 1, 'man': 1, 'neo-tree': 1 }
+function! s:CloseDisturbingWin()
+  if ((&filetype ==# '' && &diff !=# 1) || has_key(s:DisturbingFiletypes, &filetype)) && !&modified
+    let l:currentWindow = winnr()
+    if s:currentWindow > l:currentWindow
+      let s:currentWindow = s:currentWindow - 1
+    endif
+    if winnr('$') ==# 1 | enew | else | close | endif
+  endif
+endfunction
+command! Close :pclose | :cclose | :lclose |
+      \ let s:currentWindow = winnr() |
+      \ :windo call s:CloseDisturbingWin() |
+      \ exe s:currentWindow . 'wincmd w'
+
 " Lazy Load Commands {{{1
 augroup lazyload_au
   autocmd CmdUndefined Bm packadd iy-bm.vim

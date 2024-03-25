@@ -14,10 +14,10 @@ map({ "n", "x" }, "<Leader>p", [["0p]], { desc = "Paste from yanked" })
 map({ "n", "x" }, "<Leader>P", [["0P]], { desc = "Paste from yanked above" })
 map({ "n", "x" }, "<Leader>y", [["+y]], { desc = "Yank into system clipboard" })
 map({ "n", "x" }, "<Leader>Y", [["+Y]], { desc = "Yank into system clipboard" })
-map({ "n" }, ">p", "<Cmd>exec 'put '.v:register.\"<Bar>keepjump norm '[\"<CR>", { desc = "Paste below" })
-map({ "n" }, "<p", "<Cmd>exec 'put! '.v:register.\"<Bar>keepjump norm '[\"<CR>", { desc = "Paste above" })
-map({ "n" }, ">gp", "<Cmd>exec 'put '.v:register<CR>j", { desc = "Paste below" })
-map({ "n" }, "<gp", "<Cmd>exec 'put! '.v:register<CR>j", { desc = "Paste above" })
+map("n", ">p", "<Cmd>exec 'put '.v:register.\"<Bar>keepjump norm '[\"<CR>", { desc = "Paste below" })
+map("n", "<p", "<Cmd>exec 'put! '.v:register.\"<Bar>keepjump norm '[\"<CR>", { desc = "Paste above" })
+map("n", ">gp", "<Cmd>exec 'put '.v:register<CR>j", { desc = "Paste below" })
+map("n", "<gp", "<Cmd>exec 'put! '.v:register<CR>j", { desc = "Paste above" })
 map("n", "]<Space>", "<Cmd>call append(line('.'), repeat([''], v:count1))<CR>", { desc = "Insert lines below" })
 map("n", "[<Space>", "<Cmd>call append(line('.')-1, repeat([''], v:count1))<CR>", { desc = "Insert lines above" })
 map("n", "gx", "<Cmd>call jobstart(['open',expand('<cfile>')])<CR>", { desc = "Open file under cursor", silent = true })
@@ -29,6 +29,9 @@ vim.F.npcall(unmap, { "s" }, "<")
 -- disable flash and enable very magic for normal mode search
 map("n", "/", "/\\v", { desc = "Search Forward Very Magic" })
 map("n", "?", "?\\v", { desc = "Search Backward Very Magic" })
+
+-- windows {{{1
+map("n", "<Leader>wk", "<Cmd>Close<CR>", { desc = "Close disturbing windows" })
 
 -- navigation {{{1
 map(
