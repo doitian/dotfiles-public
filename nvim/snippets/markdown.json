@@ -23,6 +23,17 @@
     "description": "Insert fenced code block"
   },
 
+  "Review Legend": {
+    "prefix": "reviewlegend",
+    "body": [
+      "I use following tags to categorize review comments:",
+      "",
+      "- :thought_balloon: Discussing: No strong opinion, just for discussion.",
+      "- :information_source: Informing: Information for reviewers.",
+      "- :no_entry: Blocking: Issue requiring immediate attention."
+    ]
+  },
+
   "Obsidian ➤ Docklet": {
     "prefix": "docklet",
     "body": [

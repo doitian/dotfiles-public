@@ -5,5 +5,17 @@
       "${CURRENT_YEAR}${CURRENT_MONTH}${CURRENT_DATE}${CURRENT_HOUR}${CURRENT_MINUTE}"
     ],
     "description": "Use timestamp as prefix for zettelkasten note"
+  },
+  "Review Discussing": {
+    "prefix": "reviewd",
+    "body": ["💭 Discussing: $0"]
+  },
+  "Review Informing": {
+    "prefix": "reviewi",
+    "body": ["ℹ️ Informing: $0"]
+  },
+  "Review Blocking": {
+    "prefix": "reviewb",
+    "body": ["⛔️ Blocking: $0"]
   }
 }
