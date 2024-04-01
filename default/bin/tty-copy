@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Copy text using Ansi OSC52 escaping sequence on supported terminals.
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+encoded="$(cat | base64 | tr -d '\n')"
+
+if [ -n "${TMUX:-}" ]; then
+  echo -en "\033Ptmux;\033\033]52;c;$encoded\007\033\\"
+else
+  echo -en "\033]52;c;$encoded\007"
+fi
