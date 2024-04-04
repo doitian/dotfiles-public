@@ -8,6 +8,7 @@ git:
   autoFetch: false
   parseEmoji: true
 gui:
+  language: "en"
   commandLogSize: 2
   expandFocusedSidePanel: true
   scrollHeight: 20
