@@ -395,7 +395,6 @@ return {
         "ninja",
         "python",
         "regex",
-        "rst",
         "toml",
         "yaml",
       })
