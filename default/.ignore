@@ -8,6 +8,7 @@
 .direnv
 .env
 .envrc
+.envrc.ps1
 .git
 .index.md
 .tags.in
