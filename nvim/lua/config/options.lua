@@ -20,7 +20,7 @@ opt.wildignore = "*.swp,*.bak,*.pyc,*.class,*.beam"
 opt.winwidth = 78
 
 if vim.fn.exists("g:GuiLoaded") then
-  vim.opt.guifont = "CartographCF Nerd Font:h14"
+  vim.opt.guifont = "CartographCF Nerd Font:h12"
 end
 
 vim.g.netrw_winsize = -40
