@@ -201,7 +201,7 @@ return {
       pickers = {
         find_files = {
           -- stylua: ignore
-          find_command = { "fd", "--type", "f", "--hidden", "--follow", "--exclude", ".git" },
+          find_command = { "fd", "--type", "f", "--hidden", "--follow", "--exclude", ".git", "--path-separator", "/" },
         },
       },
       extensions = {
