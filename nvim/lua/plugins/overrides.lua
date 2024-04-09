@@ -171,7 +171,7 @@ return {
   },
 
   -- editor {{{1
-  -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazy/vim/plugins/editor.lua
+  -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/editor.lua
 
   { "folke/which-key.nvim", optional = true, opts = { defaults = { ["<Leader>bn"] = { name = "+sort" } } } },
 
