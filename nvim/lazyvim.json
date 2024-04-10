@@ -1,13 +1,14 @@
 {
   "extras": [
     "lazyvim.plugins.extras.coding.copilot",
-    "lazyvim.plugins.extras.editor.aerial",
     "lazyvim.plugins.extras.lang.go",
     "lazyvim.plugins.extras.lang.rust",
-    "lazyvim.plugins.extras.util.mini-hipatterns"
+    "lazyvim.plugins.extras.util.mini-hipatterns",
+    "lazyvim.plugins.extras.editor.aerial"
   ],
   "news": {
-    "NEWS.md": "2123"
+    "NEWS.md": "3314"
   },
   "version": 3
 }
+
