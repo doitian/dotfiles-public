@@ -173,6 +173,18 @@ return {
   -- editor {{{1
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/editor.lua
 
+  {
+    "nvim-neo-tree/neo-tree.nvim",
+    branch = "v3.x",
+    cmd = "Neotree",
+    optional = true,
+    opts = {
+      window = {
+        position = "right",
+      },
+    },
+  },
+
   { "folke/which-key.nvim", optional = true, opts = { defaults = { ["<Leader>bn"] = { name = "+sort" } } } },
 
   {
