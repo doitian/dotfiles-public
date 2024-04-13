@@ -418,7 +418,6 @@ return {
     optional = true,
     opts = {
       formatters_by_ft = {
-        ["beancount"] = { "bean-format" },
         ["c"] = { "clang_format" },
         ["css"] = { "prettier" },
         ["graphql"] = { "prettier" },
@@ -436,9 +435,6 @@ return {
         ["typescriptreact"] = { "prettier" },
         ["vue"] = { "prettier" },
         ["yaml"] = { "prettier" },
-      },
-      formatters = {
-        ["bean-format"] = { command = "bean-format" },
       },
     },
   },
