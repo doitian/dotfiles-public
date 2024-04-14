@@ -67,7 +67,7 @@ if has('win32')
 endif
 
 let s:DisturbingFiletypes = { 'help': 1, 'netrw': 1, 'vim-': 1,
-      \ 'godoc': 1, 'git': 1, 'man': 1, 'neo-tree': 1 }
+      \ 'godoc': 1, 'git': 1, 'man': 1, 'neo-tree': 1, 'aerial': 1 }
 function! s:CloseDisturbingWin()
   if ((&filetype ==# '' && &diff !=# 1) || has_key(s:DisturbingFiletypes, &filetype)) && !&modified
     let l:currentWindow = winnr()
