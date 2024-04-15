@@ -236,7 +236,7 @@ xnoremap & :&&<CR>
 " ui {{{2
 nnoremap <Leader>qq <Cmd>qa<CR>
 nnoremap <Leader>ur <Cmd>noh<Bar>diffupdate<Bar>normal! <C-L><CR>
-nnoremap <silent> <Leader>e <Cmd>Lexplore!<CR>
+nnoremap <silent> <Leader>e <Cmd>Lexplore<CR>
 
 nnoremap <Leader>xq <Cmd>copen<CR>
 nnoremap <Leader>xl <Cmd>lopen<CR>
