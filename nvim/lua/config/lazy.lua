@@ -24,6 +24,8 @@ require("lazy").setup({
       opts = {
         highlight_overrides = {
           -- stylua: ignore
+          all = function(c) return { WinSeparator = { fg = c.surface2 } } end,
+          -- stylua: ignore
           latte = function(latte) return { NeoTreeCursorLine = { bg = latte.base } } end,
         },
       },
