@@ -330,7 +330,7 @@ return {
     opts = {
       servers = {
         tsserver = {},
-        ruff_lsp = {
+        ruff = {
           keys = {
             {
               "<leader>co",
