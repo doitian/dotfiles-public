@@ -1,5 +1,4 @@
 -- vim: foldmethod=marker
-local Util = require("lazyvim.util")
 local function autozv(func)
   return function(...)
     func(...)
@@ -25,9 +24,6 @@ return {
     optional = true,
     opts = function(_, opts)
       return vim.tbl_deep_extend("force", opts, {
-        messages = {
-          enabled = false,
-        },
         views = {
           mini = { position = { row = -2 } },
         },
@@ -165,16 +161,14 @@ return {
     cmd = "Telescope",
     keys = {
       -- always use find_files instead of git_files
-      { "<Leader><Space>", Util.telescope("find_files"), desc = "Find Files (root dir)" },
-      { "<Leader>ff", Util.telescope("find_files"), desc = "Find Files (root dir)" },
-      { "<Leader>fF", Util.telescope("find_files", { cwd = false }), desc = "Find Files (cwd)" },
-      { "<Leader>fh", Util.telescope("find_files", { cwd = "%:h" }), desc = "Find Files Here" },
+      { "<Leader><Space>", LazyVim.pick("files"), desc = "Find Files (root dir)" },
+      { "<Leader>ff", LazyVim.pick("files"), desc = "Find Files (root dir)" },
+      { "<Leader>fF", LazyVim.pick("files", { root = false }), desc = "Find Files (cwd)" },
+      { "<Leader>fh", LazyVim.pick("files", { cwd = "%:h" }), desc = "Find Files Here" },
       { "<Leader>sB", "<Cmd>Telescope live_grep grep_open_files=true<CR>", desc = "All Buffers" },
       { "<Leader>si", "<Cmd>Telescope current_buffer_ctags<CR>", desc = "BTags" },
       { "<Leader>s<C-I>", "<Cmd>Telescope current_buffer_tags<CR>", desc = "Tags (Buffer)" },
       { "<Leader>sI", "<Cmd>Telescope tags<CR>", desc = "Tags" },
-      { "<Leader>sq", "<Cmd>Telescope quickfix<CR>", desc = "Quickfix" },
-      { "<Leader>sl", "<Cmd>Telescope loclist<CR>", desc = "Loclist" },
       { "<Leader>s/", "<Cmd>Telescope search_history<CR>", desc = "Loclist" },
     },
     opts = {
