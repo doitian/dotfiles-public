@@ -58,7 +58,7 @@ style = "bold yellow"
 format = '󰚻 '
 
 [env_var.WSL_DISTRO_NAME]
-format = 'in 🪟[$env_value]($style) '
+format = 'in 🪟 [$env_value]($style) '
 
 # [nodejs]
 # symbol = '🤖 '
