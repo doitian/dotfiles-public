@@ -27,6 +27,7 @@ modified = '[!](bright-yellow bold)'
 renamed = '[»](bright-yellow bold)'
 staged = '[+](green bold)'
 up_to_date = '[≡](green bold)'
+windows_starship = "starship.exe"
 
 [status]
 disabled = false
@@ -55,6 +56,9 @@ style = "bold yellow"
 
 [env_var.http_proxy]
 format = '󰚻 '
+
+[env_var.WSL_DISTRO_NAME]
+format = 'in 🪟[$env_value]($style) '
 
 # [nodejs]
 # symbol = '🤖 '
