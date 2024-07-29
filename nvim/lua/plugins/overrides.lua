@@ -156,46 +156,15 @@ return {
   { "folke/which-key.nvim", optional = true, opts = { spec = { ["<Leader>bn"] = { name = "+sort" } } } },
 
   {
-    "nvim-telescope/telescope.nvim",
+    "ibhagwan/fzf-lua",
     optional = true,
-    cmd = "Telescope",
+    cmd = "FzfLua",
     keys = {
-      -- always use find_files instead of git_files
-      { "<Leader><Space>", LazyVim.pick("files"), desc = "Find Files (root dir)" },
-      { "<Leader>ff", LazyVim.pick("files"), desc = "Find Files (root dir)" },
-      { "<Leader>fF", LazyVim.pick("files", { root = false }), desc = "Find Files (cwd)" },
       { "<Leader>fh", LazyVim.pick("files", { cwd = "%:h" }), desc = "Find Files Here" },
-      { "<Leader>sB", "<Cmd>Telescope live_grep grep_open_files=true<CR>", desc = "All Buffers" },
-      { "<Leader>si", "<Cmd>Telescope current_buffer_ctags<CR>", desc = "BTags" },
-      { "<Leader>s<C-I>", "<Cmd>Telescope current_buffer_tags<CR>", desc = "Tags (Buffer)" },
+      { "<Leader>si", "<Cmd>Telescope btags<CR>", desc = "BTags" },
       { "<Leader>sI", "<Cmd>Telescope tags<CR>", desc = "Tags" },
-      { "<Leader>s/", "<Cmd>Telescope search_history<CR>", desc = "Loclist" },
+      { "<Leader>s/", "<Cmd>FzfLua search_history<CR>", desc = "Search History" },
     },
-    opts = {
-      defaults = {
-        -- stylua: ignore
-        vimgrep_arguments = { "rg", "--color=never", "--no-heading", "--with-filename", "--line-number", "--column", "--smart-case", "--hidden", "--glob", "!**/.git/*" },
-      },
-      pickers = {
-        find_files = {
-          -- stylua: ignore
-          find_command = { "fd", "--type", "f", "--hidden", "--follow", "--exclude", ".git", "--path-separator", "/" },
-        },
-      },
-      extensions = {
-        fzf = {
-          fuzzy = true,
-          override_generic_sorter = true,
-          override_file_sorter = true,
-          case_mode = "smart_case", -- or "ignore_case" or "respect_case"
-        },
-      },
-    },
-    config = function(_, opts)
-      local telescope = require("telescope")
-      telescope.setup(opts)
-      telescope.load_extension("current_buffer_ctags")
-    end,
   },
 
   {
@@ -225,7 +194,7 @@ return {
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/coding.lua
   {
     "L3MON4D3/LuaSnip",
-    optional = true,
+    lazy = true,
     opts = {
       store_selection_keys = "<Tab>",
     },

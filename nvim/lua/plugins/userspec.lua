@@ -26,36 +26,6 @@ return {
   },
 
   {
-    "jvgrootveld/telescope-zoxide",
-    dependencies = {
-      { "nvim-telescope/telescope.nvim" },
-    },
-    cond = function()
-      return vim.fn.executable("zoxide") == 1
-    end,
-    keys = {
-      { "<Leader>fz", "<Cmd>Telescope zoxide list<CR>", desc = "Zoxide" },
-    },
-    config = function()
-      require("telescope").load_extension("zoxide")
-    end,
-  },
-
-  {
-    "benfowler/telescope-luasnip.nvim",
-    dependencies = {
-      { "nvim-telescope/telescope.nvim" },
-      { "L3MON4D3/LuaSnip" },
-    },
-    keys = {
-      { "<Leader>fs", "<Cmd>Telescope luasnip<CR>", desc = "Insert snippet" },
-    },
-    config = function()
-      require("telescope").load_extension("luasnip")
-    end,
-  },
-
-  {
     "folke/zen-mode.nvim",
     cmd = { "ZenMode" },
     opts = { window = { backdrop = 1, options = { signcolumn = "no", number = false, relativenumber = false } } },
