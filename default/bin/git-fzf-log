@@ -5,7 +5,7 @@ set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
 GIT_LOG_FORMAT='tformat:%C(auto)%h %s %C(blue dim)<%aN %ad>%C(auto)%d'
-PREVIEW='git -c color.ui=always show -p {1} | delta --paging=never'
+PREVIEW='git -c color.ui=always show -p {1}'
 git -c color.ui=always log --pretty="$GIT_LOG_FORMAT" --date=relative "$@" |
   fzf --ansi --preview="$PREVIEW" \
     --bind='enter:abort+become(echo {1})' \
