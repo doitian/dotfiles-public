@@ -11,6 +11,7 @@ opt.completeopt = { "menu" }
 opt.grepprg = "rg --hidden -g '!.git' --vimgrep"
 opt.laststatus = 2
 opt.listchars = { tab = "▸ ", trail = "·", extends = "»", precedes = "«", nbsp = "␣" }
+opt.report = 99
 opt.spellfile = { vim.env.HOME .. "/.vim-spell-en.utf-8.add", ".vim-spell-en.utf-8.add" }
 opt.spelllang = { "en", "cjk" }
 opt.timeoutlen = 700
