@@ -161,9 +161,14 @@ return {
     cmd = "FzfLua",
     keys = {
       { "<Leader>fh", LazyVim.pick("files", { cwd = "%:h" }), desc = "Find Files Here" },
-      { "<Leader>si", "<Cmd>Telescope btags<CR>", desc = "BTags" },
-      { "<Leader>sI", "<Cmd>Telescope tags<CR>", desc = "Tags" },
+      { "<Leader>si", "<Cmd>FzfLua btags<CR>", desc = "BTags" },
+      { "<Leader>sI", "<Cmd>FzfLua tags<CR>", desc = "Tags" },
       { "<Leader>s/", "<Cmd>FzfLua search_history<CR>", desc = "Search History" },
+    },
+    opts = {
+      files = {
+        fd_opts = [[--color=never --type f --hidden --follow --exclude .git --path-separator /]],
+      },
     },
   },
 
