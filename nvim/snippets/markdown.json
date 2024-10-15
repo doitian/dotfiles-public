@@ -10,6 +10,12 @@
     "description": "Insert fenced code block"
   },
 
+  "Markdown ➤ Insert code block (Readwise)": {
+    "prefix": "rwcb",
+    "body": ["↩︎", "```${1:language}", "$0", "```"],
+    "description": "Insert fenced code block for Readwise"
+  },
+
   "Markdown ➤ Pandoc Metadata": {
     "prefix": "pandocmeta",
     "body": [
