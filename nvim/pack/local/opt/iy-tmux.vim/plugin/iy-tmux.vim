@@ -14,3 +14,7 @@ endif
 if !exists(':TmuxSetBuffer')
   command! -nargs=* -complete=shellcmd TmuxSetBuffer call iy#tmux#SetBuffer(<q-args>)
 endif
+
+" packadd iy-tmux.vim
+" xmap <Leader>y <Plug>(TmuxYank)
+xnoremap <silent> <Plug>(TmuxYank) y:call iy#tmux#SetBuffer(getreg('"'))<CR>
