@@ -11,8 +11,8 @@ if [ -z "${http_proxy:-}" ]; then
 
   if nc -z "$PROXY_HOST" "$PROXY_PORT" &>/dev/null; then
     :
-  elif nc -z 192.168.2.6 "$PROXY_PORT" &>/dev/null; then
-    PROXY_HOST="192.168.2.6"
+  elif nc -z 10.31.0.6 "$PROXY_PORT" &>/dev/null; then
+    PROXY_HOST="10.31.0.6"
   elif nc -z 192.168.2.5 "$PROXY_PORT" &>/dev/null; then
     PROXY_HOST="192.168.2.5"
   elif command -v powershell.exe &>/dev/null; then
