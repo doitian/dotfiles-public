@@ -11,13 +11,13 @@ if [ -z "${http_proxy:-}" ]; then
 
   if nc -z "$PROXY_HOST" "$PROXY_PORT" &>/dev/null; then
     :
-  elif nc -z 10.31.0.6 "$PROXY_PORT" &>/dev/null; then
+  elif ping -c1 -w1 10.31.0.6 &> /dev/null && nc -z 10.31.0.6 "$PROXY_PORT" &>/dev/null; then
     PROXY_HOST="10.31.0.6"
   elif command -v powershell.exe &>/dev/null; then
-    PROXY_HOST="$(powershell.exe -NoProfile -Command "(Get-NetIPAddress -InterfaceAlias Wi-Fi -AddressFamily IPv4).IPAddress | Write-Host -NoNewLine")"
+    PROXY_HOST="$(powershell.exe -NoProfile -Command "(Get-NetIPAddress -InterfaceAlias WLAN -AddressFamily IPv4).IPAddress | Write-Host -NoNewLine")"
   elif [ -f "/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe" ]; then
     PS="/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe"
-    PROXY_HOST="$($PS -NoProfile -Command "(Get-NetIPAddress -InterfaceAlias Wi-Fi -AddressFamily IPv4).IPAddress | Write-Host -NoNewLine")"
+    PROXY_HOST="$($PS -NoProfile -Command "(Get-NetIPAddress -InterfaceAlias WLAN -AddressFamily IPv4).IPAddress | Write-Host -NoNewLine")"
   fi
 
   export http_proxy="${PROXY_PROTOCOL}://${PROXY_HOST}:${PROXY_PORT}"
