@@ -369,6 +369,7 @@ return {
         ["jsonc"] = { "prettier" },
         ["less"] = { "prettier" },
         ["markdown"] = { "markdownlint" },
+        ["ruby"] = { "rubocop" },
         ["python"] = { "black" },
         ["scss"] = { "prettier" },
         ["typescript"] = { "prettier" },
