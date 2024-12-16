@@ -37,10 +37,10 @@ map("n", "?", "?\\v", { desc = "Search Backward Very Magic" })
 
 -- windows {{{1
 map("n", "<Leader>wk", "<Cmd>Close<CR>", { desc = "Close disturbing windows" })
-unmap("t", "<C-h>")
-unmap("t", "<C-j>")
-unmap("t", "<C-k>")
-unmap("t", "<C-l>")
+-- unmap("t", "<C-h>")
+-- unmap("t", "<C-j>")
+-- unmap("t", "<C-k>")
+-- unmap("t", "<C-l>")
 
 -- navigation {{{1
 map(
