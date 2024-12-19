@@ -5,8 +5,8 @@
 	pushsnap = "!f() { git push origin \"stash@{0}:refs/stashes/$(git stash list --pretty='%s' -1 \"$@\" | sed -e 's/^On //' -e 's/^WIP on/wip/' -e 's/: /\\//' -e 's/[^\\/a-zA-Z0-9_-]/-/g')\"; }; f"
 
 	br = branch
-	current-branch = "!f() { local branch=\"$(git symbolic-ref --quiet HEAD)\"; echo \"${branch#refs/heads/}\"; }; f"
-	publish = "!git push origin -u \"$(git current-branch)\""
+	bl = branch --format "%(refname:short)"
+	publish = "!git push origin -u \"$(git branch --show-current)\""
 
 	cm = commit
 	ca = commit --amend
