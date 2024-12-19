@@ -167,6 +167,7 @@ return {
     },
     opts = {
       files = {
+        git_icons = false,
         fd_opts = [[--color=never --type f --hidden --follow --exclude .git --path-separator /]],
       },
     },
