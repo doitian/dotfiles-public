@@ -23,7 +23,7 @@ See https://github.com/doitian/dotfiles
 
 -   [cvim]: edit clipboard using vim
 -   [fpass]: copy password from pass via fzf
--   [fzf-finder]: a file explorer built based on fzf, bat, exa
+-   [fzf-finder]: a file explorer built based on fzf, bat, eza
 -   [gfw]: a shell proxy manager
 -   [git-fzf-log]: pick git log via fzf, using ctrl-l to show commit and open file before changes in neovim
 -   [git-multistatus]: quickly check git status of multiple repos using fzf, starship, and lazygit

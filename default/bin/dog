@@ -29,7 +29,7 @@ function preview() {
   fi
 
   if [ -d "$arg" ]; then
-    exa -1 --color always --icons "$arg"
+    eza -1 --color always --icons "$arg"
   else
     if [ -e "$arg" ]; then
       local MIME="$(file --mime "$resolved" 2>/dev/null || true)"
@@ -47,7 +47,7 @@ function preview() {
         ;;
       esac
 
-      exa --color always --icons -ld --header "$arg"
+      eza --color always --icons -ld --header "$arg"
       if [ -n "$MIME" ]; then
         echo "${MIME#*: }"
       fi
