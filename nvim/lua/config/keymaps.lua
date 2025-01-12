@@ -69,3 +69,15 @@ map("n", "<Leader>fj", "<Cmd>drop `jrnl -p`<CR>", { desc = "Edit journal" })
 
 -- coding {{{1
 map("n", "<Leader>cw", "<Cmd>ru macros/buffer/whitespace.vim<CR>", { desc = "Fix whitespace issues" })
+
+map("i", "<C-L>", function()
+  local cmp = require("blink.cmp")
+  local luasnip = require("luasnip")
+  if luasnip.expandable() then
+    luasnip.expand()
+  elseif cmp.is_visible() then
+    cmp.select_and_accept()
+  else
+    cmp.show()
+  end
+end)

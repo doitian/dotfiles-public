@@ -234,38 +234,22 @@ return {
   },
 
   {
-    "hrsh7th/nvim-cmp",
+    "saghen/blink.cmp",
     optional = true,
+    event = "InsertEnter",
     opts = {
+      snippets = {
+        preset = "luasnip",
+      },
       completion = {
-        autocomplete = false,
+        menu = {
+          auto_show = false,
+        },
+        ghost_text = {
+          enabled = false,
+        },
       },
     },
-    config = function(_, opts)
-      local cmp = require("cmp")
-      local luasnip = require("luasnip")
-
-      local complete = opts.mapping["<C-Space>"]
-      opts.mapping["<C-L>"] = function(fallback)
-        if luasnip.expandable() then
-          luasnip.expand()
-        else
-          complete(fallback)
-        end
-      end
-
-      cmp.setup(opts)
-      -- delay autocompletion using updatetime
-      vim.api.nvim_create_autocmd("CursorHoldI", {
-        group = vim.api.nvim_create_augroup("cmp_delay", { clear = true }),
-        pattern = "*",
-        callback = function()
-          if not cmp.visible() then
-            cmp.complete({ reason = cmp.ContextReason.Auto })
-          end
-        end,
-      })
-    end,
   },
 
   -- compatible mappings with surround
