@@ -3,8 +3,12 @@
     "prefix": "proxyssh",
     "body": ["ProxyCommand ssh -q ${1:n1.iany.me} nc -q0 %h %p"]
   },
-  "SSH ➤ ProxyCommand ➤ nc": {
+  "SSH ➤ ProxyCommand ➤ nc (Linux)": {
     "prefix": "proxync",
-    "body": ["ProxyCommand nc -X connect -x ${2:10.31.0.6}:7890 %h %p"]
+    "body": ["ProxyCommand nc -X connect -x ${1:10.31.0.6}:7890 %h %p"]
+  },
+  "SSH ➤ ProxyCommand ➤ ncat (Windows)": {
+    "prefix": "proxync",
+    "body": ["ProxyCommand ncat --proxy ${1:10.31.0.6}:7890 %h %p"]
   }
 }
