@@ -201,8 +201,9 @@ return {
   {
     "L3MON4D3/LuaSnip",
     lazy = true,
+    optional = true,
     opts = {
-      store_selection_keys = "<Tab>",
+      cut_selection_keys = "<Tab>",
     },
     keys = {
       {
@@ -238,9 +239,6 @@ return {
     optional = true,
     event = "InsertEnter",
     opts = {
-      snippets = {
-        preset = "luasnip",
-      },
       completion = {
         menu = {
           auto_show = false,
@@ -249,7 +247,53 @@ return {
           enabled = false,
         },
       },
+      keymap = {
+        preset = "enter",
+        ["<Tab>"] = { "snippet_forward", "fallback" },
+        ["<S-Tab>"] = { "snippet_backward", "fallback" },
+      },
     },
+    dependencies = {
+      {
+        "L3MON4D3/LuaSnip",
+        optional = true,
+        keys = {
+          {
+            "<C-L>",
+            function()
+              local cmp = require("blink.cmp")
+              local luasnip = require("luasnip")
+              if luasnip.expandable() then
+                luasnip.expand()
+              elseif cmp.is_visible() then
+                cmp.select_and_accept()
+              else
+                cmp.show()
+              end
+            end,
+            mode = "i",
+          },
+        },
+      },
+    },
+  },
+
+  {
+    "saghen/blink.cmp",
+    optional = true,
+    opts = function()
+      local blink_user_au = vim.api.nvim_create_augroup("blink_user_au", { clear = true })
+      vim.api.nvim_create_autocmd("CursorHoldI", {
+        group = blink_user_au,
+        pattern = "*",
+        callback = function()
+          local cmp = require("blink.cmp")
+          if not cmp.is_visible() then
+            cmp.show()
+          end
+        end,
+      })
+    end,
   },
 
   -- compatible mappings with surround

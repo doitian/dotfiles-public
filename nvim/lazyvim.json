@@ -1,6 +1,7 @@
 {
   "extras": [
     "lazyvim.plugins.extras.ai.copilot",
+    "lazyvim.plugins.extras.coding.luasnip",
     "lazyvim.plugins.extras.coding.mini-surround",
     "lazyvim.plugins.extras.lang.go",
     "lazyvim.plugins.extras.lang.rust",
@@ -11,3 +12,4 @@
   },
   "version": 7
 }
+

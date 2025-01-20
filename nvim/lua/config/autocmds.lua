@@ -11,13 +11,6 @@ local function autocmd(event, pattern, callback)
   })
 end
 
-autocmd("CursorHoldI", "*", function()
-  local cmp = require("blink.cmp")
-  if not cmp.is_visible() then
-    cmp.show()
-  end
-end)
-
 -- run the command and keep the window open
 autocmd("CmdwinEnter", "*", function()
   vim.keymap.set("n", "<C-W><C-W>", "<CR>q:dd", { buffer = true })
