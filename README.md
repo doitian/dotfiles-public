@@ -6,7 +6,6 @@ See https://github.com/doitian/dotfiles
 
 -   Obsidian: note taking
 -   WezTerm: terminal emulator
--   asdf: version manager
 -   btop: top alternative
 -   direnv: per directory env
 -   fd: find alternative
