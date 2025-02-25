@@ -29,7 +29,7 @@ vim.g.netrw_banner = 0
 vim.g.netrw_liststyle = 3
 vim.g.markdown_folding = 1
 
-if vim.fn.has("win32") then
+if vim.fn.has("win32") == 1 then
   opt.shell = vim.fn.executable("pwsh") and "pwsh" or "powershell"
   opt.shellcmdflag =
     "-NoLogo -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new();$PSDefaultParameterValues['Out-File:Encoding']='utf8';"
