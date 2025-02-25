@@ -26,7 +26,7 @@ set $browser 'gfw /usr/bin/microsoft-edge-stable --high-dpi-support=1 --force-de
 
 include /etc/sway/config-vars.d/*
 
-font pango:Noto Sans CJK SC 13
+font pango:Noto Sans CJK SC 14
 
 ### Output configuration
 #
