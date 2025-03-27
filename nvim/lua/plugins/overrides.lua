@@ -199,37 +199,6 @@ return {
   -- coding {{{1
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/coding.lua
   {
-    "L3MON4D3/LuaSnip",
-    lazy = true,
-    optional = true,
-    opts = {
-      cut_selection_keys = "<Tab>",
-    },
-    keys = {
-      {
-        "<Leader>fS",
-        function()
-          require("functions.edit_snippet_files")()
-        end,
-        desc = "Edit Snippets",
-      },
-      {
-        "<C-E>",
-        function()
-          return require("luasnip").choice_active() and "<Plug>luasnip-next-choice" or "<C-E>"
-        end,
-        expr = true,
-        silent = true,
-        mode = { "i", "s" },
-      },
-    },
-    config = function(_, opts)
-      require("luasnip").setup(opts)
-      require("luasnip.loaders.from_vscode").lazy_load()
-    end,
-  },
-
-  {
     "rafamadriz/friendly-snippets",
     enabled = false,
   },
@@ -237,7 +206,6 @@ return {
   {
     "saghen/blink.cmp",
     optional = true,
-    event = "InsertEnter",
     opts = {
       completion = {
         menu = {
@@ -247,32 +215,32 @@ return {
           enabled = false,
         },
       },
+      sources = {
+        providers = {
+          snippets = {
+            opts = {
+              friendly_snippets = false,
+              search_paths = {
+                vim.fn.stdpath("config") .. "/snippets",
+                vim.fn.expand("~/.dotfiles/repos/private/nvim/snippets"),
+              },
+            },
+          },
+        },
+      },
       keymap = {
         preset = "enter",
         ["<Tab>"] = { "snippet_forward", "fallback" },
         ["<S-Tab>"] = { "snippet_backward", "fallback" },
-      },
-    },
-    dependencies = {
-      {
-        "L3MON4D3/LuaSnip",
-        optional = true,
-        keys = {
-          {
-            "<C-L>",
-            function()
-              local cmp = require("blink.cmp")
-              local luasnip = require("luasnip")
-              if luasnip.expandable() then
-                luasnip.expand()
-              elseif cmp.is_visible() then
-                cmp.select_and_accept()
-              else
-                cmp.show()
-              end
-            end,
-            mode = "i",
-          },
+        ["<C-L>"] = {
+          function(cmp)
+            if cmp.snippet_active() then
+              return cmp.accept()
+            else
+              return cmp.select_and_accept()
+            end
+          end,
+          "show",
         },
       },
     },

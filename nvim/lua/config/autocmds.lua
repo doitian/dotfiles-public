@@ -36,7 +36,7 @@ autocmd("SwapExists", "*", function()
   ---@diagnostic disable-next-line: undefined-field
   vim.v.swapchoice = vim.F.if_nil(vim.b.swapchoice, "o")
   if vim.v.swapchoice ~= "" then
-    require("notify")("auto select: " .. vim.v.swapchoice, "warn", { title = "SwapExists" })
+    vim.notify("auto select: " .. vim.v.swapchoice, "warn", { title = "SwapExists" })
   end
 end)
 
