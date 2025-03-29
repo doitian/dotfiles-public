@@ -18,8 +18,6 @@ map("n", ">p", "<Cmd>exec 'put '.v:register.\"<Bar>keepjump norm '[\"<CR>", { de
 map("n", "<p", "<Cmd>exec 'put! '.v:register.\"<Bar>keepjump norm '[\"<CR>", { desc = "Paste above" })
 map("n", ">gp", "<Cmd>exec 'put '.v:register<CR>j", { desc = "Paste below" })
 map("n", "<gp", "<Cmd>exec 'put! '.v:register<CR>j", { desc = "Paste above" })
-map("n", "]<Space>", "<Cmd>call append(line('.'), repeat([''], v:count1))<CR>", { desc = "Insert lines below" })
-map("n", "[<Space>", "<Cmd>call append(line('.')-1, repeat([''], v:count1))<CR>", { desc = "Insert lines above" })
 map("n", "gx", "<Cmd>call jobstart(['open',expand('<cfile>')])<CR>", { desc = "Open file under cursor", silent = true })
 map("x", "gx", "y<Cmd>call jobstart(['open',@*])<CR>", { desc = "Open selected file", silent = true })
 map("x", "&", ":&&<CR>", { desc = "Repeat search on selected lines" })
@@ -55,12 +53,6 @@ map(
   "v:count == 0 ? '<Cmd>BufferLineCycleNext<CR>' : '<S-L>'",
   { expr = true, replace_keycodes = false, silent = true, desc = "Prev tab" }
 )
--- stylua: ignore
-map("n", "]b", function() require("bufferline").cycle(vim.v.count1) end, { desc = "Next tab" })
--- stylua: ignore
-map("n", "[b", function() require("bufferline").cycle(-vim.v.count1) end, { desc = "Next tab" })
-map("n", "]a", "<Cmd>exec v:count1.'next'<CR>", { desc = "Next arg" })
-map("n", "[a", "<Cmd>exec v:count1.'previous'<CR>", { desc = "Previous arg" })
 
 map("n", "<leader>ws", "<C-W>s", { desc = "Split window below", remap = true })
 map("n", "<leader>wv", "<C-W>v", { desc = "Split window right", remap = true })

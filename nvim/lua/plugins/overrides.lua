@@ -230,8 +230,6 @@ return {
       },
       keymap = {
         preset = "enter",
-        ["<Tab>"] = { "snippet_forward", "fallback" },
-        ["<S-Tab>"] = { "snippet_backward", "fallback" },
         ["<C-L>"] = {
           function(cmp)
             if cmp.snippet_active() then
