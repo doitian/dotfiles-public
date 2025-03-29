@@ -153,25 +153,7 @@ return {
   -- editor {{{1
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/editor.lua
 
-  { "folke/which-key.nvim", optional = true, opts = { spec = { ["<Leader>bn"] = { name = "+sort" } } } },
-
-  {
-    "ibhagwan/fzf-lua",
-    optional = true,
-    cmd = "FzfLua",
-    keys = {
-      { "<Leader>fh", LazyVim.pick("files", { cwd = "%:h" }), desc = "Find Files Here" },
-      { "<Leader>si", "<Cmd>FzfLua btags<CR>", desc = "BTags" },
-      { "<Leader>sI", "<Cmd>FzfLua tags<CR>", desc = "Tags" },
-      { "<Leader>s/", "<Cmd>FzfLua search_history<CR>", desc = "Search History" },
-    },
-    opts = {
-      files = {
-        git_icons = false,
-        fd_opts = [[--color=never --type f --hidden --follow --exclude .git --path-separator /]],
-      },
-    },
-  },
+  { "folke/which-key.nvim", optional = true, opts = { spec = { { "<Leader>bn", group = "sort" } } } },
 
   {
     "folke/trouble.nvim",
@@ -196,13 +178,56 @@ return {
     },
   },
 
+  -- compatible mappings with surround
+  {
+    "folke/flash.nvim",
+    optional = true,
+    keys = function(_, keys)
+      return vim.list_extend(keys, {
+        -- use z becasue s is used by surround
+        {
+          "z",
+          function()
+            require("flash").jump()
+          end,
+          mode = { "n", "x", "o" },
+          desc = "Flash",
+        },
+        { "ys", "gsa", desc = "Add surrounding", remap = true },
+        { "S", "gsa", desc = "Add surrounding", mode = "x", remap = true },
+        { "ds", "gsd", desc = "Delete surrounding", remap = true },
+        { "cs", "gsr", desc = "Replace surrounding", remap = true },
+      })
+    end,
+  },
+
+  -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/extras/editor/fzf.lua
+  {
+    "ibhagwan/fzf-lua",
+    optional = true,
+    cmd = "FzfLua",
+    keys = {
+      { "<Leader>fh", LazyVim.pick("files", { cwd = "%:h" }), desc = "Find Files Here" },
+      { "<Leader>si", "<Cmd>FzfLua btags<CR>", desc = "BTags" },
+      { "<Leader>sI", "<Cmd>FzfLua tags<CR>", desc = "Tags" },
+      { "<Leader>s/", "<Cmd>FzfLua search_history<CR>", desc = "Search History" },
+    },
+    opts = {
+      files = {
+        git_icons = false,
+        fd_opts = [[--color=never --type f --hidden --follow --exclude .git --path-separator /]],
+      },
+    },
+  },
+
   -- coding {{{1
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/coding.lua
+
+  -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/extras/coding/blink.lua
   {
     "rafamadriz/friendly-snippets",
     enabled = false,
   },
-
   {
     "saghen/blink.cmp",
     optional = true,
@@ -243,7 +268,6 @@ return {
       },
     },
   },
-
   {
     "saghen/blink.cmp",
     optional = true,
@@ -258,29 +282,6 @@ return {
             cmp.show()
           end
         end,
-      })
-    end,
-  },
-
-  -- compatible mappings with surround
-  {
-    "folke/flash.nvim",
-    optional = true,
-    keys = function(_, keys)
-      return vim.list_extend(keys, {
-        -- use z becasue s is used by surround
-        {
-          "z",
-          function()
-            require("flash").jump()
-          end,
-          mode = { "o" },
-          desc = "Flash",
-        },
-        { "ys", "gsa", desc = "Add surrounding", remap = true },
-        { "S", "gsa", desc = "Add surrounding", mode = "x", remap = true },
-        { "ds", "gsd", desc = "Delete surrounding", remap = true },
-        { "cs", "gsr", desc = "Replace surrounding", remap = true },
       })
     end,
   },
