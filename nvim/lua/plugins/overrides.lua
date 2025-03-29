@@ -190,7 +190,7 @@ return {
           function()
             require("flash").jump()
           end,
-          mode = { "n", "x", "o" },
+          mode = { "o" },
           desc = "Flash",
         },
         { "ys", "gsa", desc = "Add surrounding", remap = true },
@@ -205,17 +205,29 @@ return {
   {
     "ibhagwan/fzf-lua",
     optional = true,
-    cmd = "FzfLua",
     keys = {
       { "<Leader>fh", LazyVim.pick("files", { cwd = "%:h" }), desc = "Find Files Here" },
-      { "<Leader>si", "<Cmd>FzfLua btags<CR>", desc = "BTags" },
-      { "<Leader>sI", "<Cmd>FzfLua tags<CR>", desc = "Tags" },
       { "<Leader>s/", "<Cmd>FzfLua search_history<CR>", desc = "Search History" },
     },
     opts = {
       files = {
         git_icons = false,
         fd_opts = [[--color=never --type f --hidden --follow --exclude .git --path-separator /]],
+      },
+    },
+  },
+
+  -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/extras/editor/snacks_picker.lua
+  {
+    "folke/snacks.nvim",
+    optional = true,
+    keys = {
+      {
+        "<Leader>fh",
+        function()
+          LazyVim.pick("files", { cwd = vim.fn.expand("%:h") })()
+        end,
+        desc = "Find Files Here",
       },
     },
   },
@@ -288,6 +300,7 @@ return {
 
   -- lsp {{{1
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/lsp/init.lua
+
   {
     "neovim/nvim-lspconfig",
     optional = true,
@@ -328,26 +341,22 @@ return {
   },
 
   {
-    "nvim-treesitter/nvim-treesitter",
+    "williamboman/mason.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = vim.list_extend(opts.ensure_installed or {}, {
-        "bash",
-        "c",
-        "cpp",
-        "json",
-        "json5",
-        "jsonc",
-        "markdown",
-        "markdown_inline",
-        "ninja",
-        "python",
-        "regex",
-        "toml",
-        "yaml",
+      vim.list_extend(opts.ensure_installed, {
+        "black",
+        "clang-format",
+        "markdownlint",
+        "prettier",
       })
     end,
   },
+
+  { "udalov/kotlin-vim", ft = "kotlin" },
+
+  -- formatting {{{1
+  -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/formatting.lua
 
   {
     "stevearc/conform.nvim",
@@ -376,32 +385,28 @@ return {
     },
   },
 
-  {
-    "williamboman/mason.nvim",
-    optional = true,
-    opts = function(_, opts)
-      vim.list_extend(opts.ensure_installed, {
-        "black",
-        "clang-format",
-        "markdownlint",
-        "prettier",
-      })
-    end,
-  },
-
-  { "udalov/kotlin-vim", ft = "kotlin" },
-
   -- treesitter {{{1
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/treesitter.lua
+
   {
-    "RRethy/vim-illuminate",
+    "nvim-treesitter/nvim-treesitter",
     optional = true,
-    config = function(_, opts)
-      -- Use default <M-n> <M-p>
-      require("illuminate").configure(opts)
-    end,
-    keys = function()
-      return {}
+    opts = function(_, opts)
+      opts.ensure_installed = vim.list_extend(opts.ensure_installed or {}, {
+        "bash",
+        "c",
+        "cpp",
+        "json",
+        "json5",
+        "jsonc",
+        "markdown",
+        "markdown_inline",
+        "ninja",
+        "python",
+        "regex",
+        "toml",
+        "yaml",
+      })
     end,
   },
 
