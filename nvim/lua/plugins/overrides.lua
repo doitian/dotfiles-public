@@ -225,11 +225,22 @@ return {
       {
         "<Leader>fh",
         function()
-          LazyVim.pick("files", { cwd = vim.fn.expand("%:h") })()
+          LazyVim.pick.open("files", { cwd = vim.fn.expand("%:h") })
         end,
         desc = "Find Files Here",
       },
     },
+    opts = function()
+      local open = LazyVim.pick.open
+      LazyVim.pick.open = function(command, opts)
+        if command == "files" then
+          opts = vim.deepcopy(opts or {})
+          opts.args = opts.args or {}
+          vim.list_extend(opts.args, { "--path-separator", "/" })
+        end
+        open(command, opts)
+      end
+    end,
   },
 
   -- coding {{{1
