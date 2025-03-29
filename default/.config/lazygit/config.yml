@@ -3,8 +3,6 @@ promptToReturnFromSubprocess: false
 os:
   editPreset: nvim
 git:
-  paging:
-    pager: delta --paging=never
   autoFetch: false
   parseEmoji: true
 gui:
