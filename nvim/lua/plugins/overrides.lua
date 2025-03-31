@@ -232,6 +232,7 @@ return {
     },
     opts = function()
       local open = LazyVim.pick.open
+      ---@param opts table
       LazyVim.pick.open = function(command, opts)
         if command == "files" then
           opts = vim.deepcopy(opts or {})
