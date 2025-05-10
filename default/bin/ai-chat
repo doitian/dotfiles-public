@@ -1,242 +1,183 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
+# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
 
-set -e
-set -u
-[ -n "${DEBUG:-}" ] && set -x || true
+import argparse
+import os
+import re
+import sys
+from pathlib import Path
+from functools import partial
 
-OPTION_VERBOSE=
-OPTION_DRY_RUN=
-: ${OPENAI_MODEL:=gpt-3.5-turbo}
-: ${OPENAI_PROMPTS_FILE:="$HOME/Dropbox/Brain/para/lets/c/ChatGPT Sessions/ChatGPT Prompts.md"}
-OPENAI_PROMPTS_FILE_ALTERNATIVE="$HOME/Brain/para/lets/c/ChatGPT Sessions/ChatGPT Prompts.md"
-if [ -f "$OPENAI_PROMPTS_FILE_ALTERNATIVE" ] && ! [ -f "$OPENAI_PROMPTS_FILE" ]; then
-  OPENAI_PROMPTS_FILE="$OPENAI_PROMPTS_FILE_ALTERNATIVE"
-fi
+from openai import OpenAI
 
-: ${AZURE_API_VERSION:=2024-02-15-preview}
-: ${AZURE_RESOURCE_NAME:=doitian-chatgpt-jp}
-: ${AZURE_MODEL:=gpt-35-turbo-16k}
+brain_dir = Path.home() / "Dropbox" / "Brain"
+if not brain_dir.exists():
+    brain_dir = Path.home() / "Brain"
+OPENAI_PROMPTS_FILE = (
+    brain_dir / "para" / "lets" / "c" / "ChatGPT Sessions" / "ChatGPT Prompts.md"
+)
 
-: ${OPENAI_BACKEND:=azure}
 
-jsonize_messages() {
-  while [ "$#" != 0 ]; do
-    jq --null-input --compact-output --arg role "$2" --arg content "$3" \
-      '{"role": $role, "content": $content}'
-    shift
-    shift
-    shift
-  done | jq --slurp --compact-output '{messages: .}'
-}
+def get_preset_name(line):
+    return line[3:].split(" !")[0].strip()
 
-call_api() {
-  if [ "$OPENAI_BACKEND" = "openai" ]; then
-    if [ -z "${OPENAI_API_KEY:-}" ]; then
-      local credentials="$(gopass show key/openai.com/personal)"
-      export OPENAI_API_KEY="$(echo "$credentials" | head -1)"
-      eval "$(echo "$credentials" | tail -n '+2' | sed -e 's/^\([^:]*\): /export \1=/')"
-    fi
-    openai api chat_completions.create -m "${OPENAI_MODEL}" "$@"
-    echo
-  else
-    if [ -z "${AZURE_API_KEY:-}" ]; then
-      local credentials="$(gopass show key/azure.com/doitian-chatgpt-jp)"
-      export AZURE_API_KEY="$(echo "$credentials" | head -1)"
-    fi
 
-    local endpoint="https://${AZURE_RESOURCE_NAME}.openai.azure.com/openai/deployments/${AZURE_MODEL}/chat/completions?api-version=${AZURE_API_VERSION}"
-    curl -s -X POST -H "api-key: ${AZURE_API_KEY}" -H "Content-Type: application/json" -d "$(jsonize_messages "$@")" "$endpoint" | jq -r ".choices[0].message.content"
-  fi
-}
+def list_presets():
+    """List all available presets."""
+    with open(OPENAI_PROMPTS_FILE, "r") as f:
+        for line in f:
+            if line.startswith("## "):
+                # Strip any tags after the preset name
+                yield get_preset_name(line)
 
-send_session() {
-  local args=()
-  local content_lines=()
-  local line role content
-  while read -r line; do
-    case "$line" in
-    \*\*model\*\*::\ *)
-      OPENAI_MODEL="${line##*:: }"
-      AZURE_MODEL="${OPENAI_MODEL}"
-      ;;
-    \*\**\*\*::\ *)
-      local parameter_name="${line#\*\*}"
-      parameter_name="${parameter_name%%\*\*::*}"
-      args+=("--${parameter_name}" "${line##*:: }")
-      ;;
-    "### .System" | "### .User" | "### .Assistant" | "### .x"*)
-      if [ -n "${role:=}" ] && ! [[ $role == x* ]]; then
-        content="$(printf "%s\n" "${content_lines[@]}" | sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba')"
-        if [ -n "$content" ]; then
-          args+=(-g "$role" "$content")
-        fi
-      fi
-      role="$(echo "${line#* .}" | tr 'A-Z' 'a-z')"
-      content_lines=()
-      ;;
-    *)
-      content_lines+=("$line")
-      ;;
-    esac
-  done <<<"$1"
-  if [ "${#args[@]}" = 0 ]; then
-    role=user
-  fi
-  if [ -n "$role" ] && ! [[ $role == x* ]]; then
-    content="$(printf "%s\n" "${content_lines[@]}" | sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba')"
-    if [ -n "$content" ]; then
-      args+=(-g "$role" "$content")
-    fi
-  fi
-  if [ -z "${http_proxy:-}" ]; then
-    eval $(gfw)
-  fi
-  if [ "${#args[@]}" != 0 ]; then
-    call_api "${args[@]}" | sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba'
-  fi
-}
 
-get_preset() {
-  local name="$1"
-  sed -n -E "/^## ${name}( !.*)?$/I,/^## /{/^## /!p;}" "$OPENAI_PROMPTS_FILE" | sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba'
-}
+def get_preset(name):
+    lines = []
+    is_preset_line = False
+    with open(OPENAI_PROMPTS_FILE, "r") as f:
+        for line in f:
+            if is_preset_line:
+                if line.startswith("## "):
+                    break
+                else:
+                    lines.append(line)
+            elif line.startswith("## ") and get_preset_name(line) == name:
+                is_preset_line = True
 
-handle_usage() {
-  echo "ai-chat [-s] [-n] [session|p|present|show|list|search]"
-}
+    if len(lines) > 0:
+        return "".join(lines).strip()
 
-handle_list() {
-  sed -n -e s'/ !.*//' -e 's/^## //p' "$OPENAI_PROMPTS_FILE" | tail +2
-}
 
-handle_show() {
-  local name="${1:-}"
-  if [ -z "$name" ]; then
-    name="$(handle_list | fzf --preview 'ai-chat show {}')"
-  fi
-  if [ -z "$name" ]; then
-    echo "ai-chat preset name"
-    exit 1
-  fi
-  get_preset "$name"
-}
+PARAMETER_LINE_RE = re.compile(r"^\*\*(\w+)\*\*:: (.+)")
+ROLE_LINE_RE = re.compile(r"^### \.(System|User|Assistant)")
 
-handle_session() {
-  if [ -t 0 ]; then
-    echo "Session (Ctrl-D to Finish) >"
-  fi
-  local input="$(cat)"
-  if ! grep -q '^### \.\(User\|System\|Assistant\)$' <<<"$input"; then
-    input="### .User
 
-$input"
-  fi
+def build_request_for_session(session, **kwargs):
+    req = kwargs
 
-  if [ -n "$OPTION_VERBOSE" ]; then
-    echo "#chatgpt-session"
-    echo
-    echo "$input"
-    if [ -z "$OPTION_DRY_RUN" ]; then
-      echo
-      echo "## Assistant"
-      echo
-    fi
-  fi
-  if [ -z "$OPTION_DRY_RUN" ]; then
-    send_session "$input"
-  fi
-}
+    if "model" not in req:
+        url = os.environ.get("OPENAI_BASE_URL")
+        if "deepseek" in url:
+            req["model"] = "deepseek-chat"
+        elif "perplexity" in url:
+            req["model"] = "sonar-pro"
+    req["messages"] = req.get("messages", [])
 
-handle_preset() {
-  local preset="$(handle_show "$*")"
-  if grep -q '{input}' <<<"$preset"; then
-    if [ -t 0 ]; then
-      echo "Input (Ctrl-D to Finish) >"
-    fi
-    local input="$(cat)"
-    export input
-  fi
-  preset="$(envsubst <<<"$preset")"
+    role = None
+    content = []
+    for line in session.splitlines(keepends=True):
+        match = PARAMETER_LINE_RE.match(line)
+        if match:
+            req[match[1]] = match[2]
+            continue
 
-  local HIST="$HOME/.chatgpt_history"
-  echo "#chatgpt-session" >"$HIST.$$"
-  echo >>"$HIST.$$"
-  echo "$preset" >>"$HIST.$$"
-  if [ -z "$OPTION_DRY_RUN" ]; then
-    echo >>"$HIST.$$"
-    echo "## Assistant" >>"$HIST.$$"
-    echo >>"$HIST.$$"
-  fi
+        match = ROLE_LINE_RE.match(line)
+        if match:
+            if role is not None:
+                req["messages"].append(
+                    {"role": role, "content": "".join(content).strip()}
+                )
+                content = []
+            role = match[1].lower()
+            continue
 
-  if [ -n "$OPTION_VERBOSE" ]; then
-    cat "$HIST.$$"
-  fi
+        content.append(line)
 
-  if [ -z "$OPTION_DRY_RUN" ]; then
-    send_session "$preset" | tee -a "$HIST.$$"
-  fi
+    if (len(req["messages"]) == 0 or role is not None) and len(content) > 0:
+        req["messages"].append(
+            {"role": (role or "user"), "content": "".join(content).strip()}
+        )
 
-  rm -f "$HIST"
-  mv -f "$HIST.$$" "$HIST"
-}
+    return req
 
-handle_search() {
-  chatgpt-prompts | fzf -m --preview 'jq -C <<< {}' | jq -r .description
-}
 
-main() {
-  while [[ "${1:-}" = -* ]]; do
-    case "$1" in
-    -v | --verbose)
-      OPTION_VERBOSE=yes
-      shift
-      ;;
-    -n | --dry-run)
-      OPTION_DRY_RUN=yes
-      shift
-      ;;
-    -h | --help)
-      handle_usage
-      exit 0
-      ;;
-    *)
-      handle_usage
-      echo 1
-      ;;
-    esac
-  done
+def get_variable(name):
+    if name == "input":
+        return sys.stdin.read()
+    else:
+        os.environ.get(name)
 
-  local action=
-  if (($# > 0)); then
-    action="$1"
-    shift
-  fi
 
-  case "x$action" in
-  x | xsession)
-    handle_session
-    ;;
-  xp | xpreset)
-    handle_preset "$*"
-    ;;
-  xshow)
-    handle_show "$*"
-    ;;
-  xlist)
-    handle_list
-    ;;
-  xsearch)
-    handle_search
-    ;;
-  help)
-    handle_usage
-    exit 0
-    ;;
-  *)
-    handle_usage
-    exit 1
-    ;;
-  esac
-}
+def substitute_variables(session):
+    return re.sub(
+        r"\${([a-zA-Z][a-zA-Z0-9_]*)}",
+        lambda m: get_variable(m[1]),
+        session,
+    )
 
-main "$@"
+
+def handle_list():
+    for p in list_presets():
+        print(p)
+
+
+def handle_show(name):
+    preset = get_preset(name)
+    if preset is not None:
+        print(preset)
+    else:
+        print(f"preset {name} not found", file=sys.stderr)
+        sys.exit(-1)
+
+
+def handle_preset(args):
+    preset = get_preset(args.name)
+    session = substitute_variables(preset)
+    kwargs = {}
+    if args.model is not None:
+        kwargs["model"] = args.model
+    req = build_request_for_session(session, **kwargs)
+
+    client = OpenAI()
+    completion = client.chat.completions.create(**req)
+    print(completion.choices[0].message.content)
+
+
+def handle_not_implemented():
+    raise NotImplementedError
+
+
+def build_argument_parser():
+    parser = argparse.ArgumentParser(description="ai-chat")
+    parser.add_argument(
+        "-v", "--verbose", action="store_true", help="Enable verbose output"
+    )
+    parser.add_argument(
+        "-n",
+        "--dry-run",
+        action="store_true",
+        help="Don't actually send requests to API",
+    )
+
+    subparsers = parser.add_subparsers(help="action", dest="action")
+
+    subparsers.add_parser("list", help="list prompts")
+    show_parser = subparsers.add_parser("show", help="print the promopt")
+    show_parser.add_argument("name")
+    preset_parser = subparsers.add_parser(
+        "preset", aliases=["p"], help="use the preset"
+    )
+    preset_parser.add_argument("-m", "--model", help="choose the AI model")
+    preset_parser.add_argument("name")
+
+    subparsers.add_parser("help", help="show this help message")
+
+    return parser
+
+
+def main():
+    parser = build_argument_parser()
+    args = parser.parse_args()
+    handlers = {
+        "help": lambda: parser.print_help(),
+        "list": handle_list,
+        "show": partial(handle_show, args.name),
+        "preset": partial(handle_preset, args),
+    }
+    handlers["p"] = handlers["preset"]
+
+    handler = handlers.get(args.action, handle_not_implemented)
+    handler()
+
+
+main()
