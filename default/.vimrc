@@ -243,7 +243,7 @@ nnoremap <Leader>xl <Cmd>lopen<CR>
 nnoremap <silent> ]q <Cmd>exe v:count1.'cnext'<CR>zv
 nnoremap <silent> [q <Cmd>exe v:count1.'cprevious'<CR>zv
 
-nnoremap <C-W>z <Cmd>Goyo<CR>
+nnoremap <Leader>uz <Cmd>Goyo<CR>
 
 " coding {{{2
 nnoremap <silent> g<CR> <Cmd>Dispatch!<CR>

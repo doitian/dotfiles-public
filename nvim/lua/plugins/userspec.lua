@@ -26,13 +26,6 @@ return {
   },
 
   {
-    "folke/zen-mode.nvim",
-    cmd = { "ZenMode" },
-    opts = { window = { backdrop = 1, options = { signcolumn = "no", number = false, relativenumber = false } } },
-    keys = { { "<C-W>z", "<Cmd>ZenMode<CR>", desc = "ZenMode" } },
-  },
-
-  {
     "nathangrigg/vim-beancount",
     ft = "beancount",
   },
