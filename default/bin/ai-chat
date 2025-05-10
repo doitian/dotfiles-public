@@ -6,7 +6,6 @@ import os
 import re
 import sys
 from pathlib import Path
-from functools import partial
 
 from openai import OpenAI
 
@@ -168,11 +167,15 @@ def build_argument_parser():
 def main():
     parser = build_argument_parser()
     args = parser.parse_args()
+    if args.action is None:
+        parser.print_help()
+        sys.exit(0)
+
     handlers = {
         "help": lambda: parser.print_help(),
         "list": handle_list,
-        "show": partial(handle_show, args.name),
-        "preset": partial(handle_preset, args),
+        "show": lambda: handle_show(args.name),
+        "preset": lambda: handle_preset(args),
     }
     handlers["p"] = handlers["preset"]
 
