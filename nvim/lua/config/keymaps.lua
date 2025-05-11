@@ -20,7 +20,7 @@ map("n", ">gp", "<Cmd>exec 'put '.v:register<CR>j", { desc = "Paste below" })
 map("n", "<gp", "<Cmd>exec 'put! '.v:register<CR>j", { desc = "Paste above" })
 map("n", "gx", "<Cmd>call jobstart(['open',expand('<cfile>')])<CR>", { desc = "Open file under cursor", silent = true })
 map("x", "gx", "y<Cmd>call jobstart(['open',@*])<CR>", { desc = "Open selected file", silent = true })
-map("x", "&", ":&&<CR>", { desc = "Repeat search on selected lines" })
+map("x", "&", ":&&<CR>", { desc = "Repeat substitution on selected lines" })
 vim.F.npcall(unmap, { "s" }, ">")
 vim.F.npcall(unmap, { "s" }, "<")
 
@@ -29,16 +29,8 @@ if vim.fn.exists("g:GuiLoaded") and vim.fn.has("win32") == 1 then
   map("i", "<C-S-V>", "<C-R>+", { desc = "Paste from system clipboard" })
 end
 
--- disable flash and enable very magic for normal mode search
-map("n", "/", "/\\v", { desc = "Search Forward Very Magic" })
-map("n", "?", "?\\v", { desc = "Search Backward Very Magic" })
-
 -- windows {{{1
 map("n", "<Leader>wk", "<Cmd>Close<CR>", { desc = "Close disturbing windows" })
--- unmap("t", "<C-h>")
--- unmap("t", "<C-j>")
--- unmap("t", "<C-k>")
--- unmap("t", "<C-l>")
 
 -- navigation {{{1
 map(
