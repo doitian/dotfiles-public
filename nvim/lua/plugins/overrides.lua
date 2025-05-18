@@ -16,10 +16,6 @@ local format = function()
 end
 
 return {
-  -- https://github.com/LazyVim/LazyVim/issues/6039
-  { "mason-org/mason.nvim", version = "^1.0.0" },
-  { "mason-org/mason-lspconfig.nvim", version = "^1.0.0" },
-
   -- ui {{{1
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/ui.lua
 
@@ -357,7 +353,7 @@ return {
   },
 
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     optional = true,
     opts = function(_, opts)
       vim.list_extend(opts.ensure_installed, {

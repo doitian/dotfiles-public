@@ -185,7 +185,6 @@ let mapleader = ' '
 let g:mapleader = ' '
 let maplocalleader = '\\'
 let g:maplocalleader = '\\'
-set pastetoggle=<F2>
 set wildcharm=<C-Z>
 
 " editor {{{2
