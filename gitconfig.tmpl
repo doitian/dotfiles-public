@@ -90,6 +90,11 @@
 	whatsup = diff @{u}
 	giveup = reset --hard @{u}
 
+	wt = worktree
+	wta = worktree add
+	wtl = worktree list
+	fwt = "!f() { git worktree list | fzf --accept-nth 1; }; f"
+
 	me = "!f() { git config user.email __EMAIL__; git config user.signingkey FD7051CE32E62CE7; git config commit.gpgSign true; }; f"
 
 	# stage files via fzf
