@@ -17,4 +17,11 @@ endif
 
 " packadd iy-tmux.vim
 " xmap <Leader>y <Plug>(TmuxYank)
+" nmap <Leader>y <Plug>(TmuxYank)
+" xmap <Leader>Y <Plug>(TmuxYankLine)
+" nmap <Leader>Y <Plug>(TmuxYankLine)
+" nmap <Leader>yy <Plug>(TmuxYankLine)
 xnoremap <silent> <Plug>(TmuxYank) y:call iy#tmux#SetBuffer(getreg('"'))<CR>
+xnoremap <silent> <Plug>(TmuxYankLine) Y:call iy#tmux#SetBuffer(getreg('"'))<CR>
+nnoremap <expr> <Plug>(TmuxYank) iy#tmux#Yank()
+nnoremap <silent> <Plug>(TmuxYankLine) Y:call iy#tmux#SetBuffer(getreg('"'))<CR>

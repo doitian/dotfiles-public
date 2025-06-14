@@ -23,5 +23,27 @@ function! iy#tmux#SendKeys(...) abort
 endfunction
 
 function! iy#tmux#SetBuffer(data) abort
-  call s:System(['tmux', 'set-buffer', a:data])
+  call s:System(['tmux', 'set-buffer', '--', a:data])
+endfunction
+
+function! iy#tmux#Yank(type = '') abort
+  if a:type == ''
+    let &operatorfunc = function('iy#tmux#Yank')
+    return 'g@'
+  endif
+
+  let save = #{
+    \ register: getreginfo('"'),
+    \ }
+  let commands = #{
+        \ line: "'[V']y",
+        \ char: "`[v`]y",
+        \ block: "`[\<C-V>`]y",
+        \ }[a:type]
+  try
+    execute 'silent noautocmd keepjumps normal! ' . commands
+    call s:System(['tmux', 'set-buffer', getreg('"')])
+  finally
+    call setreg('"', save.register)
+  endtry
 endfunction

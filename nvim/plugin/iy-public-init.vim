@@ -89,7 +89,7 @@ augroup lazyload_au
   autocmd CmdUndefined Delete,Move packadd iy-nano-fs.vim
   autocmd CmdUndefined TmuxSendKeys,TmuxSendLine,TmuxSetBuffer packadd iy-tmux.vim
   autocmd CmdUndefined VSnippets packadd fzf-vsnip
-  autocmd FuncUndefined iy#tmux#SendKeys packadd iy-tmux.vim
+  autocmd FuncUndefined iy#tmux#SendKeys,iy#tmux#SetBuffer packadd iy-tmux.vim
   if !exists(':Explore')
     autocmd CmdUndefined Lexplore,Explore sil! unlet g:loaded_netrwPlugin | runtime plugin/netrwPlugin.vim | do FileExplorer VimEnter *
   endif
