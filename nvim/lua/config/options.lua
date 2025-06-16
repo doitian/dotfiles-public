@@ -29,6 +29,34 @@ vim.g.netrw_banner = 0
 vim.g.netrw_liststyle = 3
 vim.g.markdown_folding = 1
 
+local my_clipboard = nil
+if vim.env.TMUX and vim.env.SSH_TTY then
+  my_clipboard = "tmux"
+end
+if vim.env.WSLENV then
+  local wsl_copy = "clip.exe"
+  local wsl_paste =
+    'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))'
+  my_clipboard = {
+    name = "wsl",
+    copy = {
+      ["+"] = wsl_copy,
+      ["*"] = wsl_copy,
+    },
+    paste = {
+      ["+"] = wsl_paste,
+      ["*"] = wsl_paste,
+    },
+  }
+end
+if my_clipboard then
+  vim.g.clipboard = my_clipboard
+  if vim.fn.exists("g:loaded_clipboard_provider") then
+    vim.g.loaded_clipboard_provider = nil
+    vim.cmd.runtime("autoload/provider/clipboard.vim")
+  end
+end
+
 if vim.fn.has("win32") == 1 then
   opt.shell = vim.fn.executable("pwsh") and "pwsh" or "powershell"
   opt.shellcmdflag =
