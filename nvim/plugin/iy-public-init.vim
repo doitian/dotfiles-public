@@ -57,7 +57,9 @@ endfunction
 cnoreabbrev <expr> e/ <SID>ExpandAlias(':', 'e/', 'e <C-R>=expand("%:h")<CR>') " :e//
 cnoreabbrev <expr> ru/ <SID>ExpandAlias(':', "ru/", "ru macros/buffer") " :ru//
 cnoreabbrev <expr> mapcr <SID>ExpandAlias(':', 'mapcr', 'nnoremap <buffer> <lt>CR> <lt>Cmd>:up<lt>Bar>!<lt>CR><Left><Left><Left><Left>')
-cnoreabbrev <expr> xmapcr <SID>ExpandAlias(':', 'xmapcr', 'xnoremap <buffer> <lt>CR> y<lt>Cmd>call iy#tmux#SendKeys("-l", @")<lt>CR><Left><Left><Left><Left><Left>')
+cnoreabbrev <expr> xmapcr <SID>ExpandAlias(':', 'xmapcr', 'xnoremap <buffer> <lt>CR> y<lt>Cmd>call system("", @")<lt>CR><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>')
+cnoreabbrev <expr> xmaptsk <SID>ExpandAlias(':', 'xmaptsk', 'xnoremap <buffer> <lt>CR> y<lt>Cmd>call iy#tmux#SendKeys("-l", @")<lt>CR><Left><Left><Left><Left><Left>')
+cnoreabbrev <expr> xmaptsb <SID>ExpandAlias(':', 'xmaptsb', 'xnoremap <buffer> <lt>CR> y<lt>Cmd>call iy#tmux#SetBuffer(@")<lt>CR><Left><Left><Left><Left><Left>')
 cnoreabbrev <expr> xmapai <SID>ExpandAlias(':', 'xmapai', "xnoremap <buffer> <lt>CR> y<lt>Cmd>\'>put =system(['ai-chat', 'p', 'Polish'], @\\\")<lt>CR>")
 cnoreabbrev <expr> ycd <SID>ExpandAlias(':', 'ycd', 'let @* = 'cd ' . shellescape(getcwd())')
 cnoreabbrev <expr> y' <SID>ExpandAlias(':', "y'", "let @* = '<Left>") " :y''
