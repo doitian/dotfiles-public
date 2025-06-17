@@ -108,6 +108,9 @@ alias psug="psu | rg"
 alias psag="psa | rg"
 alias mx="mise x --"
 alias mr="mise run"
+function mact() {
+  eval "$(mise activate)"
+}
 
 ##################################################
 # Skip History
