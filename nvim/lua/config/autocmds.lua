@@ -43,7 +43,6 @@ end)
 local ft_maps = {
   PULLREQ_EDITMSG = "gitcommit",
   ["*.qf"] = "qf",
-  [".envrc"] = "envrc.sh",
   ["*.bats"] = "bats.sh",
   ["*.wiki"] = "wiki.text",
   ["*.anki"] = "anki.html",
