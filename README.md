@@ -7,7 +7,7 @@ See https://github.com/doitian/dotfiles
 -   Obsidian: note taking
 -   WezTerm: terminal emulator
 -   btop: top alternative
--   direnv: per directory env
+-   mise: tools version manager and per directory env
 -   fd: find alternative
 -   fzf: fuzzy finder
 -   lazygit: git TUI

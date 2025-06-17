@@ -17,7 +17,7 @@ list-files() {
   echo "$HOME/Applications/testnet"
 
   fd -c never -H -I -d 4 --prune -g node_modules "$HOME/codebase" | sed "s;/$;;"
-  fd -c never -H -I -d 3 --prune -g "{.direnv,__pycache__}" "$HOME/codebase" | sed "s;/$;;"
+  fd -c never -H -I -d 3 --prune -g mise.toml "$HOME/codebase" | sed "s;/$;;"
   fd -c never -H -I -d 4 --prune -g Cargo.lock "$HOME/codebase" | sed "s;Cargo.lock$;target;"
   fd -c never -H -I -d 4 --prune -g Gemfile.lock "$HOME/codebase" | sed "s;Gemfile.lock$;vendor/bundle;"
 
