@@ -106,6 +106,8 @@ alias psa="ps -A -o pid,user,time,%cpu,%mem,args -w -w"
 alias pstg="pst | rg"
 alias psug="psu | rg"
 alias psag="psa | rg"
+alias mx="mise x --"
+alias mr="mise run"
 
 ##################################################
 # Skip History
