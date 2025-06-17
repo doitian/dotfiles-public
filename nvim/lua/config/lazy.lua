@@ -7,6 +7,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
+  concurrency = jit.os:find("Windows") and 4 or nil,
   spec = {
     -- add LazyVim and import its plugins
     {
