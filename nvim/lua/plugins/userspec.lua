@@ -38,6 +38,14 @@ return {
   },
 
   {
+    "sindrets/diffview.nvim",
+    cmd = {
+      "DiffviewOpen",
+      "DiffviewFileHistory",
+    },
+  },
+
+  {
     "doitian/molecule-vim",
     ft = "mol",
   },
