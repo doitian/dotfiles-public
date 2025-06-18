@@ -230,7 +230,7 @@ return {
         desc = "Find Files Here",
       },
     },
-    opts = function()
+    opts = function(_, opts)
       local open = LazyVim.pick.open
       ---@param opts table
       LazyVim.pick.open = function(command, opts)
@@ -241,6 +241,9 @@ return {
         end
         open(command, opts)
       end
+
+      -- Use <C-k> for kill-line
+      opts.terminal.win.keys = nil
     end,
   },
 
@@ -295,7 +298,7 @@ return {
   {
     "saghen/blink.cmp",
     optional = true,
-    opts = function()
+    opts = function(_, opts)
       local blink_user_au = vim.api.nvim_create_augroup("blink_user_au", { clear = true })
       vim.api.nvim_create_autocmd("CursorHoldI", {
         group = blink_user_au,
