@@ -230,21 +230,22 @@ return {
         desc = "Find Files Here",
       },
     },
-    opts = function(_, opts)
-      local open = LazyVim.pick.open
-      ---@param opts table
-      LazyVim.pick.open = function(command, opts)
-        if command == "files" then
-          opts = vim.deepcopy(opts or {})
-          opts.args = opts.args or {}
-          vim.list_extend(opts.args, { "--path-separator", "/" })
-        end
-        open(command, opts)
-      end
-
-      -- Use <C-k> for kill-line
-      opts.terminal.win.keys = nil
-    end,
+    opts = {
+      terminal = {
+        win = {
+          -- clear keys
+          keys = { [1] = nil },
+        },
+      },
+      picker = {
+        sources = {
+          files = {
+            hidden = true,
+            args = { "--path-separator", "/" },
+          },
+        },
+      },
+    },
   },
 
   -- coding {{{1
