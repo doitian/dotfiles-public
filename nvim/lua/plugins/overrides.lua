@@ -248,6 +248,15 @@ return {
     },
   },
 
+  -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/extras/editor/overseer.lua
+  {
+    "stevearc/overseer.nvim",
+    optional = true,
+    opts = {
+      templates = { "builtin", "mise" },
+    },
+  },
+
   -- coding {{{1
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/coding.lua
 
