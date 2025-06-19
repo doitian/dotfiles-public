@@ -308,7 +308,7 @@ return {
   {
     "saghen/blink.cmp",
     optional = true,
-    opts = function(_, opts)
+    opts = function()
       local blink_user_au = vim.api.nvim_create_augroup("blink_user_au", { clear = true })
       vim.api.nvim_create_autocmd("CursorHoldI", {
         group = blink_user_au,
