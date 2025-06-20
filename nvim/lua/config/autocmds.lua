@@ -44,7 +44,6 @@ local ft_maps = {
   PULLREQ_EDITMSG = "gitcommit",
   ["*.qf"] = "qf",
   ["*.bats"] = "bats.sh",
-  ["*.wiki"] = "wiki.text",
   ["*.anki"] = "anki.html",
 }
 for pattern, ft in pairs(ft_maps) do

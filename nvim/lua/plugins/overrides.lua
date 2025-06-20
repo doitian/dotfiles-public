@@ -380,10 +380,8 @@ return {
     optional = true,
     opts = function(_, opts)
       vim.list_extend(opts.ensure_installed, {
-        "black",
-        "clang-format",
         "markdownlint",
-        "prettier",
+        "ruff",
       })
     end,
   },
@@ -398,24 +396,8 @@ return {
     optional = true,
     opts = {
       formatters_by_ft = {
-        ["c"] = { "clang_format" },
-        ["css"] = { "prettier" },
-        ["graphql"] = { "prettier" },
-        ["handlebars"] = { "prettier" },
-        ["html"] = { "prettier" },
-        ["javascript"] = { "prettier" },
-        ["javascriptreact"] = { "prettier" },
-        ["json"] = { "prettier" },
-        ["jsonc"] = { "prettier" },
-        ["less"] = { "prettier" },
         ["markdown"] = { "markdownlint" },
-        ["ruby"] = { "rubocop" },
-        ["python"] = { "black" },
-        ["scss"] = { "prettier" },
-        ["typescript"] = { "prettier" },
-        ["typescriptreact"] = { "prettier" },
-        ["vue"] = { "prettier" },
-        ["yaml"] = { "prettier" },
+        ["python"] = { "ruff_format" },
       },
     },
   },
