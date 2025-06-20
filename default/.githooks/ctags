@@ -2,7 +2,7 @@
 set -e
 PATH="/usr/local/bin:$PATH"
 trap 'rm -f "$$.tags"' EXIT
-CTAGS_COMM="$(git config --get user.ctagsComm &>/dev/null || echo ctags)"
+CTAGS_COMM="$(git config --get user.ctagsComm >/dev/null 2>/dev/null || echo ctags)"
 if [ -f .tags.files ]; then
   $CTAGS_COMM --tag-relative -L .tags.files -f"$$.tags"
 else

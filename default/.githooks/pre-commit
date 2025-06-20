@@ -13,7 +13,7 @@ SKIPPED="${YELLOW}SKIPPED${NC}"
 SUCCESS="${GREEN}ok${NC}"
 FAILED=0
 
-if git rev-parse --verify HEAD &>/dev/null; then
+if git rev-parse --verify HEAD >/dev/null 2>/dev/null; then
   AGAINST_SHA=HEAD
 else
   AGAINST_SHA=4b825dc642cb6eb9a060e54bf8d69288fbee4904
@@ -31,7 +31,7 @@ check_git() {
 
 check_whitespace() {
   printf "${PREFIX} Checking for bad whitespace ... "
-  if git diff-index --check --cached $AGAINST_SHA &>/dev/null; then
+  if git diff-index --check --cached $AGAINST_SHA >/dev/null 2>/dev/null; then
     printf "${SUCCESS}\n"
   else
     git diff-index --check --cached $AGAINST_SHA -- || true
@@ -41,7 +41,7 @@ check_whitespace() {
 }
 
 run_mise_task() {
-  if command -v mise &>/dev/null && mise tasks info pre-commit --silent &>/dev/null; then
+  if mise tasks info pre-commit --silent >/dev/null 2>/dev/null; then
     printf "${PREFIX} Running mise pre-commit:\n"
     mise run pre-commit
   fi

@@ -8,7 +8,7 @@ if [ -f tags ]; then
 fi
 
 if command -v git-lfs >/dev/null 2>&1; then
-  if [ "$(git config --get lfs.enabled &>/dev/null || true)" = true ]; then
+  if [ "$(git config --get lfs.enabled >/dev/null 2>/dev/null || true)" = true ]; then
     git lfs post-commit "$@"
   fi
 fi
