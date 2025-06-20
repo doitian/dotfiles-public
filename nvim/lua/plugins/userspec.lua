@@ -8,11 +8,6 @@ return {
   },
 
   {
-    "nathangrigg/vim-beancount",
-    ft = "beancount",
-  },
-
-  {
     "tommcdo/vim-exchange",
     keys = {
       { "cx", mode = { "n", "x" }, desc = "Exchange" },
@@ -27,8 +22,9 @@ return {
     },
   },
 
-  {
-    "doitian/molecule-vim",
-    ft = "mol",
-  },
+  { "nathangrigg/vim-beancount", ft = "beancount" },
+
+  { "udalov/kotlin-vim", ft = "kotlin" },
+
+  { "doitian/molecule-vim", ft = "mol" },
 }

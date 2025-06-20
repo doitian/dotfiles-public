@@ -1,10 +1,4 @@
 -- vim: foldmethod=marker
-local function autozv(func)
-  return function(...)
-    func(...)
-    vim.cmd.norm("zv")
-  end
-end
 local format = function()
   local lazy_format = require("lazyvim.util.format")
   if vim.b.autoformat == false or not lazy_format.enabled() then
@@ -156,17 +150,6 @@ return {
   { "folke/which-key.nvim", optional = true, opts = { spec = { { "<Leader>bn", group = "sort" } } } },
 
   {
-    "folke/trouble.nvim",
-    keys = function(_, keys)
-      for _, key in ipairs(keys) do
-        if key[1] == "[q" or key[1] == "]q" then
-          key[2] = autozv(key[2])
-        end
-      end
-    end,
-  },
-
-  {
     "folke/todo-comments.nvim",
     opts = {
       highlight = {
@@ -183,7 +166,7 @@ return {
     "folke/flash.nvim",
     optional = true,
     keys = {
-      -- use z becasue s is used by surround
+      -- use z because s is used by surround
       {
         "z",
         function()
@@ -342,23 +325,7 @@ return {
     opts = {
       servers = {
         tsserver = {},
-        ruff = {
-          keys = {
-            {
-              "<leader>co",
-              function()
-                vim.lsp.buf.code_action({
-                  apply = true,
-                  context = {
-                    only = { "source.organizeImports" },
-                    diagnostics = {},
-                  },
-                })
-              end,
-              desc = "Organize Imports",
-            },
-          },
-        },
+        ruff = {},
         yamlls = {},
         jsonls = {},
         rust_analyzer = {
@@ -386,11 +353,8 @@ return {
     end,
   },
 
-  { "udalov/kotlin-vim", ft = "kotlin" },
-
   -- formatting {{{1
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/formatting.lua
-
   {
     "stevearc/conform.nvim",
     optional = true,
@@ -400,6 +364,25 @@ return {
         ["python"] = { "ruff_format" },
       },
     },
+  },
+
+  -- linting {{{1
+  -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/linting.lua
+  {
+    "mfussenegger/nvim-lint",
+    optional = true,
+    opts = {
+      linters_by_ft = { ["*"] = { "typos" } },
+    },
+    init = function()
+      vim.api.nvim_create_user_command("LintRun", function(opts)
+        require("lint").try_lint(opts.fargs)
+      end, { nargs = "*", desc = "Run linters" })
+      vim.api.nvim_create_user_command("LintSet", function(opts)
+        local ft = table.remove(opts.fargs, 1)
+        require("lint").linters_by_ft[ft] = opts.fargs
+      end, { nargs = "+", desc = "Set linters for a filetype" })
+    end,
   },
 
   -- treesitter {{{1
