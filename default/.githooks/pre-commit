@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
 DIR="$(git config --get core.hooksPath 2>/dev/null || echo .git/hooks)"
@@ -40,28 +40,13 @@ check_whitespace() {
   fi
 }
 
-check_cargo_fmt() {
-  if ! [[ -f Cargo.toml ]]; then
-    return
-  fi
-
-  printf "${PREFIX} Checking for cargo ... "
-  if command -v cargo &>/dev/null; then
-    printf "${SUCCESS}\n"
-  else
-    printf "${FAILURE}\n"
-    return 1
-  fi
-
-  printf "${PREFIX} Checking formatting ... "
-  if cargo fmt -- --check; then
-    printf "${SUCCESS}\n"
-  else
-    printf "${FAILURE}\n"
-    return 1
+run_mise_task() {
+  if command -v mise &>/dev/null && mise tasks info pre-commit --silent &>/dev/null; then
+    printf "${PREFIX} Running mise pre-commit:\n"
+    mise run pre-commit
   fi
 }
 
 check_git
 check_whitespace
-check_cargo_fmt
+run_mise_task
