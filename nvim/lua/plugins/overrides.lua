@@ -182,23 +182,21 @@ return {
   {
     "folke/flash.nvim",
     optional = true,
-    keys = function(_, keys)
-      return vim.list_extend(keys, {
-        -- use z becasue s is used by surround
-        {
-          "z",
-          function()
-            require("flash").jump()
-          end,
-          mode = { "o" },
-          desc = "Flash",
-        },
-        { "ys", "gsa", desc = "Add surrounding", remap = true },
-        { "S", "gsa", desc = "Add surrounding", mode = "x", remap = true },
-        { "ds", "gsd", desc = "Delete surrounding", remap = true },
-        { "cs", "gsr", desc = "Replace surrounding", remap = true },
-      })
-    end,
+    keys = {
+      -- use z becasue s is used by surround
+      {
+        "z",
+        function()
+          require("flash").jump()
+        end,
+        mode = { "o" },
+        desc = "Flash",
+      },
+      { "ys", "gsa", desc = "Add surrounding", remap = true },
+      { "S", "gsa", desc = "Add surrounding", mode = "x", remap = true },
+      { "ds", "gsd", desc = "Delete surrounding", remap = true },
+      { "cs", "gsr", desc = "Replace surrounding", remap = true },
+    },
   },
 
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/extras/editor/fzf.lua
@@ -230,22 +228,19 @@ return {
         desc = "Find Files Here",
       },
     },
-    opts = {
-      terminal = {
-        win = {
-          -- clear keys
-          keys = { [1] = nil },
-        },
-      },
-      picker = {
-        sources = {
-          files = {
-            hidden = true,
-            args = { "--path-separator", "/" },
+    opts = function(_, opts)
+      opts.terminal.win.keys = nil
+      return vim.tbl_deep_extend("force", opts, {
+        picker = {
+          sources = {
+            files = {
+              hidden = true,
+              args = { "--path-separator", "/" },
+            },
           },
         },
-      },
-    },
+      })
+    end,
   },
 
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/extras/editor/overseer.lua
