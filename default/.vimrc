@@ -389,8 +389,3 @@ augroup vimrc_au
   " auto save session
   autocmd VimLeavePre * if v:this_session !=# '' | exec 'sil! mks! '.v:this_session | endif
 augroup END
-
-" Direnv {{{1
-if exists('$DIRENV_EXTRA_VIMRC')
-  source $DIRENV_EXTRA_VIMRC
-endif
