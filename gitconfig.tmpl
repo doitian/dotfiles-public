@@ -1,7 +1,7 @@
 # vim: ft=gitconfig noexpandtab
 [alias]
 	snapshot = "!f() { git stash push -u -m \"snapshot-$(date '+%Y%m%d%H%M%S')\" && git stash apply \"stash@{0}\"; }; f"
-	# git ls-remote origin "refs/stashes/**"
+	# git fetch origin "refs/stashes/*:refs/stashes/*" | ls-remote | update-ref -d
 	pushsnap = "!f() { git push origin \"stash@{0}:refs/stashes/$(git stash list --pretty='%s' -1 \"$@\" | sed -e 's/^On //' -e 's/^WIP on/wip/' -e 's/: /\\//' -e 's/[^\\/a-zA-Z0-9_-]/-/g')\"; }; f"
 
 	br = branch
@@ -10,7 +10,7 @@
 
 	cm = commit
 	ca = commit --amend
-	# resume the last failed comit
+	# resume the last failed commit
 	commit-resume = "!f() { git commit -e -F \"$(git rev-parse --git-dir)/COMMIT_EDITMSG\" \"$@\"; }; f"
 	wip = commit -n -m WIP
 	print-commit-message = log --pretty="format:%B"
