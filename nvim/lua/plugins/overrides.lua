@@ -166,7 +166,7 @@ return {
     "folke/flash.nvim",
     optional = true,
     keys = {
-      -- use z because s is used by surround
+      -- Use `z` because `s` is used by surround
       {
         "z",
         function()
@@ -335,6 +335,20 @@ return {
             },
           },
         },
+        harper_ls = {
+          -- stylua: ignore
+          filetypes = {
+            "c", "cpp", "cs", "gitcommit", "go", "html", "java", "javascript", "lua", "markdown", "nix", "python", "ruby", "rust", "swift", "toml", "typescript", "typescriptreact", "haskell", "cmake", "typst", "php", "dart",
+            "text",
+          },
+          autostart = false,
+        },
+      },
+      setup = {
+        harper_ls = function(_, opts)
+          -- when autstart is false, the opts is not configured
+          vim.lsp.config("harper_ls", opts)
+        end,
       },
     },
     keys = {
