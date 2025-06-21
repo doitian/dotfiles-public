@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+DICT_FILES=(
+  "$HOME/.config/harper-ls/dictionary.txt"
+  "$HOME/Dropbox/Apps/Harper/dictionary.txt"
+)
+
+# Create a temporary file securely
+TMP_MERGED=$(mktemp)
+
+# Define cleanup function to remove temp files
+cleanup() {
+  rm -f "$TMP_MERGED" "${TMP_MERGED}.sorted"
+}
+
+# Register cleanup function to run on script exit (normal or interrupted)
+trap cleanup EXIT
+
+# Clear temporary file
+> "$TMP_MERGED"
+
+# Append non-empty lines from existing files
+for file in "${DICT_FILES[@]}"; do
+  if [[ -f "$file" ]]; then
+    grep -v '^[[:space:]]*$' "$file" >> "$TMP_MERGED"
+  else
+    echo "Warning: File '$file' does not exist. Ignoring."
+  fi
+done
+
+# Sort, remove duplicates and empty lines, write to sorted temp file
+sort -u "$TMP_MERGED" | grep -v '^[[:space:]]*$' > "${TMP_MERGED}.sorted"
+
+# Overwrite existing files with merged content
+for file in "${DICT_FILES[@]}"; do
+  if [[ -f "$file" ]]; then
+    cp "${TMP_MERGED}.sorted" "$file"
+    echo "Synchronized $file"
+  fi
+done
+
+echo "Synchronization complete."
