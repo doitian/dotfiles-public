@@ -23,6 +23,7 @@ if [[ "$OSTYPE" = darwin* ]]; then
   # OS X's $HOST changes with dhcp, etc. Use ComputerName if possible.
   CLOUDIFY_HOST=$(scutil --get ComputerName 2>/dev/null) || CLOUDIFY_HOST=${HOST/.*/}
 else
+  : ${HOST="$(hostname)"}
   CLOUDIFY_HOST=${HOST/.*/}
 fi
 if [ -z "$CLOUDIFY_HOST" ]; then
@@ -52,6 +53,22 @@ function cloudify() {
       debug "cloudify $path to $target"
       cp -f "$path" "$target"
       ln -snf "$target" "$path"
+    fi
+  done
+}
+
+function copy() {
+  debug "target: $CLOUDIFY_TARGET_DIRECTORY/$CLOUDIFY_HOST"
+  mkdir -p "$CLOUDIFY_TARGET_DIRECTORY/$CLOUDIFY_HOST"
+  local path target
+  for f; do
+    path="$(realpath "$f")"
+    target="$(cloudify_path "$path")"
+    if [ -f "$target" ] && [ -z "$CLOUDIFY_FORCE" ]; then
+      echo "$f is already in the cloud, use -f to force overwriting" >&2
+    else
+      debug "cloudify $path to $target"
+      cp -f "$path" "$target"
     fi
   done
 }
@@ -121,6 +138,10 @@ function main() {
       CLOUDIFY_COMMAND=restore
       shift
       ;;
+    -c | --copy)
+      CLOUDIFY_COMMAND=copy
+      shift
+      ;;
     -u | --uncloudify)
       CLOUDIFY_COMMAND=uncloudify
       shift
@@ -131,6 +152,7 @@ function main() {
       echo "Move file to directory synced to cloud and replace original one with a symbol link. The file can be restored using -r and delete from cloud using -u."
       echo ""
       echo -e "\t-r|--restore restores a file from cloud, a.k.a, makes symbol link to cloud file."
+      echo -e "\t-c|--copy copies the file to cloud."
       echo -e "\t-u|--uncloudify replaces symbol link with the real file, and delete it from cloud."
       echo -e "\t-t|--target TARGET selects dropbox (default), icloud, gdrive, onedrive"
       echo -e "\t-f|--force forces overwriting files"
