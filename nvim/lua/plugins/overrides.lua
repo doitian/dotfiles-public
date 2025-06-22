@@ -376,8 +376,15 @@ return {
       formatters_by_ft = {
         ["markdown"] = { "markdownlint" },
         ["python"] = { "ruff_format" },
+        ["beancount"] = { "bean-format" },
       },
     },
+    init = function()
+      vim.api.nvim_create_user_command("FormatterSet", function(opts)
+        local ft = table.remove(opts.fargs, 1)
+        require("conform").formatters_by_ft[ft] = opts.fargs
+      end, { nargs = "+", desc = "Set linters for a filetype" })
+    end,
   },
 
   -- linting {{{1

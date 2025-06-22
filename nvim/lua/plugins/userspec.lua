@@ -24,7 +24,5 @@ return {
 
   { "nathangrigg/vim-beancount", ft = "beancount" },
 
-  { "udalov/kotlin-vim", ft = "kotlin" },
-
   { "doitian/molecule-vim", ft = "mol" },
 }
