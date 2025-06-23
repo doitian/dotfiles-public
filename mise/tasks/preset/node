@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE dir="{{cwd}}"
+
+touch mise.toml
+mise config set env._.path './node_modules/.bin' -t list
