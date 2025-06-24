@@ -379,6 +379,7 @@ return {
         ["markdown"] = { "markdownlint" },
         ["python"] = { "ruff_format" },
         ["beancount"] = { "bean-format" },
+        ["toml"] = { "taplo" }
       },
     },
     init = function()
