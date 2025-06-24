@@ -75,6 +75,18 @@ function d() {
 alias ll='ls -lh'
 alias la='ls -lah'
 
+function j {
+  local selected="$(fzf -0 -1 -q "$*" <"$HOME/.j.path")"
+  if [ -n "$selected" ]; then
+    cd "$selected"
+  else
+    echo "no matched directory found" >&2
+  fi
+}
+function jadd {
+  pwd >> "$HOME/.j.path"
+}
+
 ##################################################
 # File
 alias cp='cp -i'
