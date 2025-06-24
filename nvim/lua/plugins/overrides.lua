@@ -214,7 +214,8 @@ return {
     },
     opts = function(_, opts)
       opts.terminal.win.keys = nil
-      return vim.tbl_deep_extend("force", opts, {
+
+      local new_opts = {
         picker = {
           sources = {
             files = {
@@ -223,7 +224,11 @@ return {
             },
           },
         },
-      })
+      }
+      if vim.fn.has("win32") == 1 then
+        new_opts.picker.sources.explorer = { git_status = false }
+      end
+      return vim.tbl_deep_extend("force", opts, new_opts)
     end,
   },
 
