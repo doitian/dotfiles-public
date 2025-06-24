@@ -8,6 +8,7 @@ opt.background = vim.env.TERM_BACKGROUND or "light"
 
 opt.clipboard = ""
 opt.completeopt = { "menu" }
+opt.formatexpr = ""
 opt.grepprg = "rg --hidden -g '!.git' --vimgrep"
 opt.laststatus = 2
 opt.listchars = { tab = "▸ ", trail = "·", extends = "»", precedes = "«", nbsp = "␣" }
@@ -36,7 +37,7 @@ end
 if vim.env.WSLENV then
   local wsl_copy = "clip.exe"
   local wsl_paste =
-    'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))'
+  'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))'
   my_clipboard = {
     name = "wsl",
     copy = {
@@ -60,7 +61,7 @@ end
 if vim.fn.has("win32") == 1 then
   opt.shell = vim.fn.executable("pwsh") and "pwsh" or "powershell"
   opt.shellcmdflag =
-    "-NoLogo -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new();$PSDefaultParameterValues['Out-File:Encoding']='utf8';"
+  "-NoLogo -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new();$PSDefaultParameterValues['Out-File:Encoding']='utf8';"
   opt.shellredir = '2>&1 | %%{ "$_" } | Out-File %s; exit $LastExitCode'
   opt.shellpipe = '2>&1 | %%{ "$_" } | Tee-Object %s; exit $LastExitCode'
   opt.shellquote = ""
