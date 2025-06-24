@@ -92,10 +92,6 @@ let g:loaded_netrwPlugin = 1
 command! -nargs=+ -complete=shellcmd Man delc Man | runtime ftplugin/man.vim | Man <args>
 command! Viper setlocal bin noeol noswapfile ft=markdown buftype=nofile |
       \ silent file __viper__
-if s:has_fzf
-  command! -bang Zoxide call fzf#run(fzf#wrap('zoxide',
-        \ {'source': 'zoxide query -l', 'sink': 'cd'}, <bang>0))
-endif
 
 command! PackUpdate call <SID>PackInit() | call minpac#update()
 command! PackClean  call <SID>PackInit() | call minpac#clean()
@@ -281,7 +277,6 @@ if s:has_fzf
   nnoremap <Leader>fr <Cmd>History<<CR>
   nnoremap <Leader>fS <Cmd>exe 'Files '.g:vsnip_snippet_dir<CR>
   nnoremap <Leader>fs <Cmd>VSnippets<CR>
-  nnoremap <Leader>fz <Cmd>Zoxide<CR>
   nnoremap <Leader>sm <Cmd>Marks<CR>
   nnoremap <Leader>sb <Cmd>BLines<CR>
   nnoremap <Leader>sB <Cmd>Lines<CR>

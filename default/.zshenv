@@ -56,9 +56,6 @@ export VISUAL="$EDITOR"
 export ALTERNATE_EDITOR="$EDITOR"
 export PAGER="${PAGER:=less}"
 
-# zoxide
-export _ZO_EXCLUDE_DIRS="$HOME:$HOME/Public:$HOME/public:/tmp/*:/private/*"
-
 # homebrew
 HOMEBREW_PREFIX=/home/linuxbrew/.linuxbrew
 if [[ "$OSTYPE" == "linux"* && -O "$HOMEBREW_PREFIX/bin/brew" ]]; then

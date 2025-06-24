@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-(
-  zoxide query -l | sed 's|$|/.git|' | xargs ls -d 2>/dev/null | sed 's|.git$||'
-  ls -d "$HOME/codebase/"*/ 2>/dev/null
-) | sort -u | grep -v '/nvim/lazy/\|/\(gopath\|playground\)/$' | xargs git multistatus

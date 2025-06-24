@@ -15,7 +15,6 @@ See https://github.com/doitian/dotfiles
 -   rg: grep alternative
 -   starship: shell prompt
 -   tmux: terminal multiplexer
--   zoxide: quick cd
 -   zsh
 
 ## Interesting Widgets I Built
