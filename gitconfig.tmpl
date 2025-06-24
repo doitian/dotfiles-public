@@ -26,6 +26,7 @@
 	clone-blobless = clone --filter=blob:none
 	clone-treeless = clone --filter=tree:0
 	clone-shallow = clone --depth=1
+	fsmonitor = "!f() { git config core.fsmonitor true; git config core.untrackedCache true; }; f"
 
 	# show difference between working tree and the index
 	di = diff --stat -p
@@ -131,13 +132,16 @@
 	name = __NAME__
 	useConfigOnly = true
 [core]
-	excludesfile = "__HOME__/.ignore"
+	excludesFile = "__HOME__/.ignore"
 	attributesFile = "__HOME__/.gitattributes"
 	autocrlf = false
 	safecrlf = true
-	quotepath = off
+	quotePath = off
+	preloadIndex = true
 [init]
 	defaultBranch = main
+[gc]
+	auto = 256
 
 [log]
 	date = iso
@@ -157,7 +161,7 @@
 	prompt = false
 	trustExitCode = true
 [merge]
-	conflictstyle = diff3
+	conflictStyle = diff3
 	defaultToUpstream = true
 [mergetool]
 	prompt = false
