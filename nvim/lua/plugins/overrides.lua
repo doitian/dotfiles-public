@@ -58,7 +58,6 @@ return {
           return vim.env.http_proxy ~= nil
         end,
       })
-      table.insert(opts.sections.lualine_x, "overseer")
       opts.sections.lualine_z = {}
     end,
   },
