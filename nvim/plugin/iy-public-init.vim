@@ -68,7 +68,7 @@ if has('win32')
   cnoreabbrev <expr> cmd <SID>ExpandAlias(":", "cmd", "set shell=cmd.exe shellcmdflag=/c noshellslash guioptions-=!")
 endif
 
-let s:DisturbingFiletypes = { 'OverseerList': 1, 'aerial': 1, 'git': 1, 'godoc': 1, 'help': 1, 'man': 1, 'neo-tree': 1, 'netrw': 1, 'trouble': 1, 'vim-': 1 }
+let s:DisturbingFiletypes = { 'OverseerList': 1, 'aerial': 1, 'git': 1, 'godoc': 1, 'help': 1, 'man': 1, 'neo-tree': 1, 'netrw': 1, 'trouble': 1, 'vim-': 1, 'snacks_terminal': 1 }
 function! s:CloseDisturbingWin()
   if ((&filetype ==# '' && &diff !=# 1) || has_key(s:DisturbingFiletypes, &filetype)) && !&modified
     let l:currentWindow = winnr()
