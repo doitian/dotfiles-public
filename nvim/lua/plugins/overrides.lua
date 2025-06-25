@@ -147,7 +147,8 @@ return {
   -- editor {{{1
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/editor.lua
 
-  { "folke/which-key.nvim", optional = true, opts = { spec = { { "<Leader>bn", group = "sort" } } } },
+  -- Use <Space>sk instead
+  { "folke/which-key.nvim", enabled = false, optional = true, opts = { spec = { { "<Leader>bn", group = "sort" } } } },
 
   {
     "folke/todo-comments.nvim",
