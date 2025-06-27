@@ -1,6 +1,5 @@
 [[plugin.prepend_fetchers]]
-id   = "mime"
-if   = "!(mime|dummy)"
+id = "mime"
 name = "*"
-run  = "mime-ext"
+run = "mime-ext"
 prio = "high"
