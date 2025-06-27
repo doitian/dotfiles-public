@@ -1,0 +1,4 @@
+patch:
+  switches:
+    - name: simplification
+      reset: 1
