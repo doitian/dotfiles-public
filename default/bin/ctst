@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+CHEATSHEETS_DIR="$HOME/Dropbox/Brain/para/lets/c/Cheatsheets"
+ls "$CHEATSHEETS_DIR" | grep -v '^♯ ' | fzf -d '/' --with-nth -1 -1 -q "$*" | xargs -I '{}' cat "$CHEATSHEETS_DIR/{}"
