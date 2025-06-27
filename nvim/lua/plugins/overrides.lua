@@ -337,7 +337,7 @@ return {
         rust_analyzer = {
           settings = {
             ["rust-analyzer"] = {
-              files = { excludeDirs = { "bin/test", "bin/main", "node_modules", "var", "run" } },
+              files = { watcher = "client" },
             },
           },
         },
