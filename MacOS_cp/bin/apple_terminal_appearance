@@ -5,7 +5,7 @@ if [[ "$TERM_BACKGROUND" != dark ]]; then
   TERM_BACKGROUND=light
 fi
 
-CACHE_TERM_BACKGROUND_FILE="$HOME/.apple_terminal_appereance_is_dark"
+CACHE_TERM_BACKGROUND_FILE="$HOME/.apple_terminal_appearance_is_dark"
 CACHED_TERM_BACKGROUND=light
 if [[ -e "$CACHE_TERM_BACKGROUND_FILE" ]]; then
   CACHED_TERM_BACKGROUND=dark

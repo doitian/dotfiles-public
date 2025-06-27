@@ -11,7 +11,7 @@ fi
 # path
 export GOPATH="$HOME/codebase/gopath"
 export PNPM_HOME="$HOME/.local/share/pnpm"
-export PATH="${PATH:-/bin:/usr/bin:/usr/local/bin}:$HOME/bin:$HOME/.cargo/bin:$HOME/.asdf/bin:$GOPATH/bin:$PNPM_HOME:$HOME/.local/share/nvim/mason/bin"
+export PATH="${PATH:-/bin:/usr/bin:/usr/local/bin}:$HOME/bin:$HOME/.cargo/bin:$GOPATH/bin:$HOME/.local/bin:$PNPM_HOME:$HOME/.local/share/nvim/mason/bin"
 
 # lang
 export LANG=en_US.UTF-8
@@ -30,7 +30,7 @@ export LESS='--RAW-CONTROL-CHARS --quiet --HILITE-UNREAD --ignore-case --long-pr
 # also edit tmux.*.conf set-background
 if [[ -z "${TERM_BACKGROUND-}" && "$TERM_PROGRAM" == Apple_Terminal ]]; then
   TERM_BACKGROUND="$(defaults read -g AppleInterfaceStyle 2>/dev/null | tr 'A-Z' 'a-z')"
-  apple_terminal_appereance
+  apple_terminal_appearance
 fi
 export TERM_BACKGROUND="${TERM_BACKGROUND:-light}"
 export FZF_DEFAULT_OPTS="--prompt='❯ ' --color light"
