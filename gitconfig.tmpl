@@ -11,10 +11,10 @@
 	cm = commit
 	ca = commit --amend
 	# resume the last failed commit
-	commit-resume = "!f() { git commit -e -F \"$(git rev-parse --git-dir)/COMMIT_EDITMSG\" \"$@\"; }; f"
+	cresume = "!f() { git commit -e -F \"$(git rev-parse --git-dir)/COMMIT_EDITMSG\" \"$@\"; }; f"
 	wip = commit -n -m WIP
 	print-commit-message = log --pretty="format:%B"
-	commit-llm = "!f() { git diff --stat -p --cached | llm -t git-commit \"$@\" | git commit -F - -e; }; f"
+	cllm = "!f() { git diff --stat -p --cached | llm -t git-commit \"$@\" | git commit -F - -e; }; f"
 
 	co = checkout
 	cb = checkout -b
