@@ -338,6 +338,11 @@ return {
           settings = {
             ["rust-analyzer"] = {
               files = { watcher = "client" },
+              procMacro = {
+                ignored = {
+                  ["async-trait"] = vim.NIL,
+                },
+              },
             },
           },
         },
