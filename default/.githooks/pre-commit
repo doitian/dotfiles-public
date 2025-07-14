@@ -41,7 +41,7 @@ check_whitespace() {
 }
 
 run_mise_task() {
-  if mise tasks info pre-commit --silent >/dev/null 2>/dev/null; then
+  if command -v mise >/dev/null 2>/dev/null && [ -f mise.toml ] && mise tasks info pre-commit --silent >/dev/null 2>/dev/null; then
     printf "${PREFIX} Running mise pre-commit:\n"
     mise run pre-commit
   fi
