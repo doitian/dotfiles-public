@@ -76,8 +76,8 @@
 	assume = update-index --assume-unchanged
 	unassume = update-index --no-assume-unchanged
 	assumed = "!git ls-files -v | grep '^h' | cut -c 3-"
-	unassumeall = "!git assumed | xargs -I {} git update-index --no-assume-unchanged '{}'"
-	assumeall = "!git status -s | awk {'print $2'} | xargs -I {} git update-index --assume-unchanged '{}'"
+	unassumeall = "!git assumed | tr '\\n' '\\0' | xargs -0 git update-index --no-assume-unchanged"
+	assumeall = "!git status -s | awk {'print $2'} | tr '\\n' '\\0' | xargs -0 git update-index --assume-unchanged"
 	exclude = "!f() { dir=$(git rev-parse --git-dir 2> /dev/null); [ -n \"$dir\" ] || return 1; for i in \"$@\"; do echo \"$i\" >> \"$dir\"/info/exclude; done; }; f"
 
 	lasttag = describe --tags --abbrev=0
