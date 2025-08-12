@@ -23,7 +23,7 @@
           "sh",
           "zsh"
         ],
-        "path": "./snippets/shell.json"
+        "path": "./snippets/sh.json"
       },
       {
         "language": "tmux",
