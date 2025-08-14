@@ -216,6 +216,7 @@ return {
       opts.terminal.win.keys = nil
 
       local new_opts = {
+        dashboard = { enabled = false },
         picker = {
           sources = {
             files = {
