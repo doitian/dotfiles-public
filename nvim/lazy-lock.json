@@ -41,6 +41,5 @@
   "ts-comments.nvim": { "branch": "main", "commit": "1bd9d0ba1d8b336c3db50692ffd0955fe1bb9f0c" },
   "vim-beancount": { "branch": "master", "commit": "589a4f06f3b2fd7cd2356c2ef1dafadf6b7a97cf" },
   "vim-exchange": { "branch": "master", "commit": "d6c1e9790bcb8df27c483a37167459bbebe0112e" },
-  "vim-titlecase": { "branch": "master", "commit": "69a697c54a08ca5603cb757b4d4f78cd4b567549" },
-  "which-key.nvim": { "branch": "main", "commit": "370ec46f710e058c9c1646273e6b225acf47cbed" }
+  "vim-titlecase": { "branch": "master", "commit": "69a697c54a08ca5603cb757b4d4f78cd4b567549" }
 }
