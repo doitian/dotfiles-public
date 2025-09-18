@@ -43,7 +43,6 @@ if [ "$TERM_BACKGROUND" = dark ]; then
   export DELTA_FEATURES='+zebra-dark'
 fi
 
-export DIRENV_LOG_FORMAT=$'\001\e[30m\002.- %s\001\e[0m\002'
 if [[ "$COLORTERM" =~ ^(truecolor|24bit)$ ]]; then
   export LAZY=1
 fi
