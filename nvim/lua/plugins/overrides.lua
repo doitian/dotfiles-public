@@ -355,11 +355,18 @@ return {
             "text",
           },
           autostart = false,
+          settings = {
+            ["harper-ls"] = {
+              linters = {
+                ToDoHyphen = false,
+              }
+            }
+          }
         },
       },
       setup = {
         harper_ls = function(_, opts)
-          -- when autstart is false, the opts is not configured
+          -- when `autostart` is false, the opts is not configured
           vim.lsp.config("harper_ls", opts)
         end,
       },
