@@ -25,14 +25,9 @@ function twn() {
 ##################################################
 # Git
 alias g='git'
-alias gf='git flow'
-alias gfb='git flow bugfix'
-alias gff='git flow feature'
-alias gfh='git flow hotfix'
-alias gfr='git flow release'
-alias gfs='git flow support'
-alias gm='git machete'
-alias gms='git machete status'
+alias gt='git town'
+alias gtb='git town branch'
+alias gts='git town status'
 alias lg='lazygit -g "$(git rev-parse --git-dir)"'
 
 ##################################################

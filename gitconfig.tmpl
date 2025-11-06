@@ -182,14 +182,13 @@
 [pager]
 	branch = false
 
-[gitflow "branch"]
-	master = main
-
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
 
-[machete "github"]
-	forceDescriptionFromCommitMessage = true
+[git-town]
+	forge-type = github
+	github-connector = gh
+	sync-feature-strategy = rebase
