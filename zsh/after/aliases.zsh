@@ -27,7 +27,6 @@ function twn() {
 alias g='git'
 alias gt='git town'
 alias gtb='git town branch'
-alias gts='git town status'
 alias lg='lazygit -g "$(git rev-parse --git-dir)"'
 
 ##################################################
