@@ -5,7 +5,6 @@ See https://github.com/doitian/dotfiles
 ## Tools I Used
 
 -   Obsidian: note taking
--   WezTerm: terminal emulator
 -   btop: top alternative
 -   mise: tools version manager and per directory env
 -   fd: find alternative
@@ -23,7 +22,6 @@ See https://github.com/doitian/dotfiles
 -   [fpass]: copy password from pass via fzf
 -   [fzf-finder]: a file explorer built based on fzf, bat, eza
 -   [gfw]: a shell proxy manager
--   [git-fzf-log]: pick git log via fzf, using ctrl-l to show commit and open file before changes in neovim
 -   [git-multistatus]: quickly check git status of multiple repos using fzf, starship, and lazygit
 -   [tmux-up]: a tmux session manager
 -   [tt]: a wrap script which sends keys to tmux panes
@@ -32,7 +30,6 @@ See https://github.com/doitian/dotfiles
 [fpass]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/fpass
 [fzf-finder]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/fzf-finder
 [gfw]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/gfw
-[git-fzf-log]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/gig-fzf-log
 [git-multistatus]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/git-multistatus
 [tmux-up]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/tmux-up
 [tt]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/tt
@@ -48,7 +45,7 @@ See https://github.com/doitian/dotfiles
     -   Packed: Download vimfiles-packed from the latest job in the [workflow]. See README in it to setup.
 
 The Minimal/Unpacked version requires running `:PackUpdate` to install dependencies.
-I build the packed version so I can copy it to iPad and use it in [iVim].
+I build the packed version so I can copy it anywhere and start to use Vim directly.
 
 ### Zsh
 
@@ -57,4 +54,3 @@ I use the shell script [manage.sh](https://github.com/doitian/dotfiles/blob/mast
 [nvim]: https://github.com/doitian/dotfiles-public/tree/master/nvim
 [vimrc]: https://github.com/doitian/dotfiles-public/blob/master/default/.vimrc
 [workflow]: https://github.com/doitian/dotfiles-public/actions/workflows/package-vimfiles.yml
-[iVim]: https://apps.apple.com/us/app/ivim/id1266544660
