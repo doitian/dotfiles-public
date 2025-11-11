@@ -1,2 +1,0 @@
-#!/usr/bin/env bash
-exec osascript -l JavaScript -e 'Application("Google Chrome").windows[0].activeTab.reload()'

@@ -2,6 +2,8 @@
 
 # ruff: noqa: E501
 
+# Parse zotero citations, replace them with human friendly format, and add bibliography
+
 import argparse
 import urllib.request
 import json
@@ -41,7 +43,7 @@ def mla_resolve_conflicts(citations, conflicts):
                         and "family" in author
                         and "literal" not in author
                     ):
-                        author["literal"] = f'{author["given"][0]}. {author["family"]}'
+                        author["literal"] = f"{author['given'][0]}. {author['family']}"
 
                 new_citation = mla_citation(item)
                 if new_citation != citation and new_citation not in conflicts:
