@@ -11,58 +11,14 @@ insert_final_newline = true
 trim_trailing_whitespace = false
 charset = utf-8
 indent_style = space
-indent_size = 2
-tab_width = 2
-
-[*.erl]
-indent_style = space
-indent_size = 4
-tab_width = 4
-
-[*.cs]
-indent_style = space
-indent_size = 4
-tab_width = 4
-
-[*.{md,markdown}]
-indent_style = space
 indent_size = 4
 tab_width = 4
 
 [Makefile]
 indent_style = tab
-indent_size = 4
-tab_width = 4
 
 [*.mk]
 indent_style = tab
-indent_size = 4
-tab_width = 4
-
-[*.taskpaper]
-indent_style = tab
-indent_size = 4
-tab_width = 4
 
 [*.go]
 indent_style = tab
-tab_width = 2
-
-[*.lua]
-indent_style = space
-indent_size = 2
-
-[*.py]
-indent_style = space
-indent_size = 4
-tab_width = 4
-
-[*.rs]
-indent_style = space
-indent_size = 4
-tab_width = 4
-
-[*.mol]
-indent_style = space
-indent_size = 4
-tab_width = 4
