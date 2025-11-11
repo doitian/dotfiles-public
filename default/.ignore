@@ -4,7 +4,6 @@
 *~
 .*.sw?
 .DS_Store
-.Ulysses*
 .direnv
 .env
 .envrc
@@ -16,7 +15,6 @@
 .vim-spell-en.utf-8.add
 .vim-spell-en.utf-8.add.spl
 .vimrc.local
-.wtup.ps1
 Session.vim
 TAGS
 desktop.ini
@@ -24,3 +22,4 @@ lmake.mk
 mise.local.toml
 mise.toml
 tags
+.specify
