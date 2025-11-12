@@ -52,6 +52,7 @@
 	l1 = !git --no-pager log -1 --decorate --date=relative
 	lp = log -p
 	stat = log --stat
+	log-me = "!git log --author \"$(git config user.email)\" --pretty=format:\"%h|%ad|%s\" --date=short --all --no-merges"
 
 	# search commits that has changed the string occurrences number
 	log-search-changed = log -S
