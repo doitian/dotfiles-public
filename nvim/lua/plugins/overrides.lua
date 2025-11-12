@@ -213,7 +213,9 @@ return {
       },
     },
     opts = function(_, opts)
-      opts.terminal.win.keys = nil
+      -- for _, key in { "nav_h", "nav_j", "nav_k", "nav_l" } do
+      --   opts.terminal.win.keys[key] = nil
+      -- end
 
       local new_opts = {
         dashboard = { enabled = false },
