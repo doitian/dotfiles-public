@@ -1,0 +1,35 @@
+#!/bin/bash
+# Bash script to extract OWNER/REPO from a given Git remote name
+# Usage: ./git-extract-owner-repo.sh origin
+# Or: ./git-extract-owner-repo.sh upstream
+
+REMOTE_NAME="${1:-origin}"
+
+# Get the remote URL
+REMOTE_URL=$(git config --get "remote.$REMOTE_NAME.url")
+
+if [ -z "$REMOTE_URL" ]; then
+    echo "Error: Remote '$REMOTE_NAME' not found or has no URL configured." >&2
+    exit 1
+fi
+
+# Extract OWNER/REPO from various Git URL formats
+# Supports: https://github.com/OWNER/REPO.git, git@github.com:OWNER/REPO.git, etc.
+
+OWNER_REPO=""
+
+# Pattern for HTTPS URLs: https://github.com/OWNER/REPO.git or https://github.com/OWNER/REPO
+if [[ $REMOTE_URL =~ https?://[^/]+/([^/]+)/([^/]+) ]]; then
+    OWNER_REPO="${BASH_REMATCH[1]}/${BASH_REMATCH[2]}"
+# Pattern for SSH URLs: git@github.com:OWNER/REPO.git
+elif [[ $REMOTE_URL =~ git@[^:]+:([^/]+)/([^/]+) ]]; then
+    OWNER_REPO="${BASH_REMATCH[1]}/${BASH_REMATCH[2]}"
+fi
+OWNER_REPO="${OWNER_REPO%.git}"
+
+if [ -n "$OWNER_REPO" ]; then
+    echo "$OWNER_REPO"
+else
+    echo "Error: Could not parse OWNER/REPO from URL: $REMOTE_URL" >&2
+    exit 1
+fi
