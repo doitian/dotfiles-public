@@ -22,3 +22,7 @@ indent_style = tab
 
 [*.go]
 indent_style = tab
+
+[*.lua]
+indent_size = 2
+tab_width = 2
