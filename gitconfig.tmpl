@@ -114,6 +114,7 @@
 	fda = "!f() { git diff --name-only HEAD | fzf -m --print0 --preview 'git diff --color HEAD -- {}' | xargs -0 git diff -p --stat HEAD; }; f"
 
 	dt = difftool
+	dtall = difftool --dir-diff
 	mt = mergetool
 	lazy = "!lazygit -g \"$(git rev-parse --git-dir)\""
 
@@ -145,15 +146,21 @@
 [diff]
 	algorithm = patience
 	colorMoved = default
+	guitool = vscode
+	tool = vimdiff
 [difftool]
 	prompt = false
 	trustExitCode = true
+	guiDefault = auto
 [merge]
 	conflictStyle = diff3
 	defaultToUpstream = true
+	guitool = vscode
+	tool = vimdiff
 [mergetool]
 	prompt = false
 	trustExitCode = true
+	guiDefault = auto
 
 [color "diff"]
 	meta = blue
