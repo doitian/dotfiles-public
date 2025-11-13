@@ -112,22 +112,9 @@
 	fdc = "!f() { git diff --name-only --cached | fzf -m --print0 --preview 'git diff --color --cached -- {}' | xargs -0 git diff --cached -p --stat; }; f"
 	# show what would be committed with "git commit -a" via fzf
 	fda = "!f() { git diff --name-only HEAD | fzf -m --print0 --preview 'git diff --color HEAD -- {}' | xargs -0 git diff -p --stat HEAD; }; f"
-	# fzf log
-	fl = fzf-log
-	# fzf show commit
-	fsc = fzf-show-commit
 
 	dt = difftool
 	mt = mergetool
-	nvim-diff = difftool --tool nvimdiff
-	# Use Neovim with a 4 panes layout
-	nvim-merge = mergetool --tool nvimdiff
-	# Use Neovim with a 2 panes layout (LOCAL and REMOTE)
-	nvim-merge1 = mergetool --tool nvimdiff
-	# Use Neovim with a 3 panes layout (LOCAL, MERGED and REMOTE)
-	nvim-merge2 = mergetool --tool nvimdiff
-  # Use Neovim where only the MERGED file is shown
-	nvim-merge3 = mergetool --tool nvimdiff
 	lazy = "!lazygit -g \"$(git rev-parse --git-dir)\""
 
 [user]
@@ -167,11 +154,6 @@
 [mergetool]
 	prompt = false
 	trustExitCode = true
-
-[difftool "vscode"]
-	cmd = code --wait --diff $LOCAL $REMOTE
-[mergetool "vscode"]
-	cmd = code --wait $MERGED
 
 [color "diff"]
 	meta = blue
