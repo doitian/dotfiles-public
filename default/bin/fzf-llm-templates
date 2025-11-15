@@ -1,0 +1,4 @@
+#!/bin/bash
+# fzf script to select a template from a text file and return its name
+
+llm templates list | fzf | awk '{print $1}'
