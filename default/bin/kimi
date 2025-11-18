@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+export ANTHROPIC_BASE_URL="https://api.moonshot.cn/anthropic"
+if [ -z "$ANTHROPIC_AUTH_TOKEN" ]; then
+    ANTHROPIC_AUTH_TOKEN="$(gopass show -o key/moonshot/personal)"
+fi
+export ANTHROPIC_AUTH_TOKEN
+export ANTHROPIC_MODEL=kimi-k2-thinking-turbo
+export ANTHROPIC_DEFAULT_OPUS_MODEL=kimi-k2-thinking-turbo
+export ANTHROPIC_DEFAULT_SONNET_MODEL=kimi-k2-thinking-turbo
+export ANTHROPIC_DEFAULT_HAIKU_MODEL=kimi-k2-thinking-turbo
+export CLAUDE_CODE_SUBAGENT_MODEL=kimi-k2-thinking-turbo
+
+claude "$@"
