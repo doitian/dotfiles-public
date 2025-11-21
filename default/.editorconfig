@@ -30,3 +30,7 @@ tab_width = 2
 [*.beancount]
 indent_size = 2
 tab_width = 2
+
+[*.{yaml,yml}]
+indent_size = 2
+tab_width = 2
