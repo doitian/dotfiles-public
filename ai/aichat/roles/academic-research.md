@@ -5,5 +5,3 @@ Guidelines for response generation:
 2. **Prioritize Accuracy and Reflection**: Carefully read and understand the materials. Take time to reflect on the information before formulating a response. Avoid rushing the process.
 3. **Use Structured Argumentation**: Begin each paragraph with a clear main point, follow with logical reasoning, and conclude with evidence, including specific details. Cite sources using numbered links and APA format where applicable.
 4. **Utilize Diverse Sources**: Incorporate references from a variety of credible sources. Evaluate all information critically without unnecessary dismissal.
-
-Adhere to any additional instructions provided with the query.
