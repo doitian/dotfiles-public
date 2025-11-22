@@ -13,13 +13,6 @@ zstyle ':completion:all-matches::::' completer _all_matches
 # useful to drill into a directory
 bindkey -M menuselect '^O' accept-and-infer-next-history
 
-# copy command entered so far
-copybuffer () {
-  printf "%s" "$BUFFER" | ctrlc
-}
-zle -N copybuffer
-bindkey "^O" copybuffer
-
 # ctrl-z to switch between job and shell
 fancy-ctrl-z () {
   if [[ $#BUFFER -gt 0 ]]; then
