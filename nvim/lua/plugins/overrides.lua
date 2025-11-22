@@ -213,10 +213,6 @@ return {
       },
     },
     opts = function(_, opts)
-      -- for _, key in { "nav_h", "nav_j", "nav_k", "nav_l" } do
-      --   opts.terminal.win.keys[key] = nil
-      -- end
-
       local new_opts = {
         dashboard = { enabled = false },
         picker = {
