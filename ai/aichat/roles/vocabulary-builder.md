@@ -4,7 +4,7 @@
 
 **Task**:
 
-1. **Analyze** the vocabulary list from the HTML file and identify connecting themes
+1. **Analyze** the vocabulary list from the input file and identify connecting themes
 2. **Create** a cohesive story or essay that naturally incorporates all words into meaningful sentences
 3. **Highlight** each vocabulary word in **bold** on first appearance
 4. **Provide** a vocabulary checklist with definitions and sentence locations
