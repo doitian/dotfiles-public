@@ -211,6 +211,8 @@ return {
         end,
         desc = "Find Files Here",
       },
+      { "<Leader>.", function() Snacks.scratch({ ft = "markdown" }) end, desc = "Toggle Markdown Scratch Buffer" },
+      { "<Leader>>", function() Snacks.scratch() end,                    desc = "Toggle Scratch Buffer" },
     },
     opts = function(_, opts)
       local new_opts = {
