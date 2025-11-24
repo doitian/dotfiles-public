@@ -238,14 +238,27 @@ return {
     "stevearc/overseer.nvim",
     optional = true,
     opts = {
-      templates = { "builtin", "mise" },
+      task_list = {
+        keymaps = {
+          ["<C-k>"] = false,
+          ["<C-j>"] = false,
+        }
+      }
     },
     keys = {
       {
         "g<CR>",
         function()
           local overseer = require("overseer")
-          local tasks = overseer.list_tasks({ recent_first = true })
+          local task_list = require("overseer.task_list")
+          local tasks = overseer.list_tasks({
+            status = {
+              overseer.STATUS.SUCCESS,
+              overseer.STATUS.FAILURE,
+              overseer.STATUS.CANCELED,
+            },
+            sort = task_list.sort_finished_recently
+          })
           if vim.tbl_isempty(tasks) then
             vim.notify("No tasks found", vim.log.levels.WARN)
           else
@@ -254,7 +267,25 @@ return {
         end,
         desc = "Rerun Last Task",
       },
+      { "<leader>ob", "<cmd>OverseerShell<cr>", desc = "Run shell command" },
     },
+    cmd = {
+      "OverseerOpen",
+      "OverseerClose",
+      "OverseerToggle",
+      "OverseerRun",
+      "OverseerShell",
+      "OverseerTaskAction",
+      "OverseerClearCache",
+    },
+    config = function(_, opts)
+      local overseer = require("overseer")
+      overseer.setup(opts)
+      overseer.add_template_hook(nil, function(task_defn, util)
+        util.add_component(task_defn, { "on_output_quickfix", open_on_exit = "failure", set_diagnostics = true })
+        util.add_component(task_defn, { "on_result_diagnostics" })
+      end)
+    end,
   },
 
   -- coding {{{1

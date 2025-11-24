@@ -5,10 +5,6 @@ local overseer = require("overseer")
 ---@type overseer.TemplateFileDefinition
 local tmpl = {
   priority = 60,
-  params = {
-    args = { type = "list", delimiter = " " },
-    cwd = { optional = true },
-  },
   builder = function(params)
     local cmd = { "mise", "run" }
     return {
@@ -60,13 +56,14 @@ local provider = {
         for _, value in pairs(data) do
           table.insert(
             ret,
-            overseer.wrap_template(tmpl, {
+            vim.tbl_deep_extend("keep", {
               name = string.format("mise %s", value.name),
               desc = value.description ~= "" and value.description or nil,
-            }, {
-              args = { value.name },
-              cwd = opts.dir,
-            })
+              params = {
+                args = { type = "list", default = { value.name } },
+                cwd = { optional = true, default = opts.dir },
+              },
+            }, tmpl)
           )
         end
         cb(ret)
