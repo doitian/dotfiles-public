@@ -16,7 +16,7 @@ _date() {
     date --date="$1" +'%a, %b %d, %Y'
   fi
 }
-_tommorow() {
+_tomorrow() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
     date -j -v +1d -f '%Y-%m-%d' "$1" +'%Y-%m-%d'
   else
@@ -41,7 +41,7 @@ ensure_journal_file() {
 ## Metadata
 
 **Date**:: [[$date]]
-**Next**:: [[Journal $(_tommorow $date)]]
+**Next**:: [[Journal $(_tomorrow $date)]]
 **Prev**:: [[Journal $(_yesterday $date)]]
 **Kind**:: #journal
 

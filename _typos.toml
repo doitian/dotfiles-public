@@ -1,0 +1,18 @@
+[files]
+extend-exclude = [
+    "zsh/after/omz.*.zsh",
+    "zsh/functions/_git",
+    "pandoc/filters/zotero.lua",
+]
+
+[default]
+extend-ignore-re = ['(?m)^\s*"prefix": "[^"]*",?$']
+
+[default.extend-identifiers]
+kend = "kend"
+noice = "noice"
+inex = "inex"
+enew = "enew"
+
+[default.extend-words]
+iy = "iy"

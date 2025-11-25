@@ -67,7 +67,7 @@ if [[ -d "$OPT_DIRECTORY" ]]; then
   cd "$OPT_DIRECTORY"
 else
   dog "$OPT_DIRECTORY"
-  echo "Enter to contine"
+  echo "Enter to continue"
   read
   exec "fzf-finder"
 fi
