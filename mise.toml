@@ -1,0 +1,5 @@
+[tasks."pre-commit:typos"]
+run = "typos"
+
+[tasks.pre-commit]
+depends = ["pre-commit:*"]
