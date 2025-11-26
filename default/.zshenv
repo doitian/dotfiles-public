@@ -1,4 +1,9 @@
-[ -n "${SHELL_ENV_LOADED:-}" ] && return
+if [[ -n "${CURSOR_AGENT:-}" ]]; then
+    export AI_AGENT=true
+fi
+if [[ -z "${AI_AGENT:-}" && "${SHELL_ENV_LOADED:-}" ]] then
+    return
+fi
 export SHELL_ENV_LOADED=1
 [ -z "$HOME" ] && HOME="$(cd ~ && pwd)"
 if [[ -n "$BASH_VERSION" && -f "$HOME/.bashrc" ]]; then
@@ -66,3 +71,7 @@ else
 fi
 export HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK=1
 export HOMEBREW_AUTO_UPDATE_SECS=86400
+
+if [[ -n "${AI_AGENT:-}" ]] && command -v mise &> /dev/null; then
+  eval "$(mise activate zsh)"
+fi
