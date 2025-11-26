@@ -31,6 +31,7 @@ end
 
 -- windows {{{1
 map("n", "<Leader>wk", "<Cmd>Close<CR>", { desc = "Close disturbing windows" })
+map("n", "<C-A-I>", "<Leader>aa", { desc = "Toggle (CopilotChat)", remap = true })
 
 -- navigation {{{1
 map(
