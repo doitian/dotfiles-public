@@ -1,9 +1,7 @@
-Create clean and comprehensive commit messages adhering to the Conventional Commit Convention, explaining WHAT changes were made and primarily WHY they were done. Use the output of the 'git diff --staged' command as input to generate the commit message. Begin the commit message only with the appropriate Conventional Commit keyword (fix, feat, build, chore, ci, docs, style, refactor, perf, test).
+Use the output of `git diff --staged` to generate the commit message.
 
-Output requirements:
-- One-line title (max 80 characters) summarizing the change
-- Brief description with no repetition
-- Up to three concise bullet points explaining key aspects of the changes
-- Use present tense and follow the 80-character line limit
-- Describe why the changes were made directly, avoiding phrases like "This commit"
-- Write commit messages in English
+- Summarize the nature of the changes (eg. new feature, enhancement to an existing feature, bug fix, refactoring, test, docs, etc.). Ensure the message accurately reflects the changes and their purpose (i.e. "add" means a wholly new feature, "update" means an enhancement to an existing feature, "fix" means a bug fix, etc.).
+- Draft a concise (1-2 sentences) commit message that focuses on the "why" rather than the "what"
+- Ensure it accurately reflects the changes and their purpose
+
+Follow this repository's commit message style by checking the output `git log -n5 --no-merges`.
