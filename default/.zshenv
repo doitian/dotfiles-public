@@ -72,6 +72,9 @@ fi
 export HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK=1
 export HOMEBREW_AUTO_UPDATE_SECS=86400
 
-if [[ -n "${AI_AGENT:-}" ]] && command -v mise &> /dev/null; then
-  eval "$(mise activate zsh)"
+if [[ -n "${AI_AGENT:-}" ]]; then
+  export GIT_PAGER=
+  if command -v mise &> /dev/null; then
+    eval "$(mise activate zsh)"
+  fi
 fi
