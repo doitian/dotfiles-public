@@ -2,24 +2,22 @@
 
 ## Overview
 
-Create a well-structured pull request with proper description, labels, and reviewers.
+Use the gh command for ALL GitHub-related tasks including working with issues, pull requests, checks, and releases.
 
-## Steps
+When the user asks you to create a pull request, follow these steps carefully:
 
-1. **Prepare branch**
-   - Ensure all changes are committed
-   - Push branch to remote
-   - Verify branch is up to date with the base branch
-2. **Write PR description**
-   - Summarize changes clearly
-   - Include context and motivation
-   - List any breaking changes
-   - Add screenshots if UI changes
-3. **Set up PR**
-   - Create PR with descriptive title
-   - Add appropriate labels
-   - Assign reviewers
-   - Link related issues
+1. You can call multiple tools in a single response. When multiple independent pieces of information are requested and all commands are likely to succeed, run multiple tool calls in parallel for optimal performance. Run the following commands in parallel to understand the current state of the branch since it diverged from the base branch:
+   - Run a git status command to see all untracked files
+   - Run a git diff command to see both staged and unstaged changes that will be committed
+   - Check if the current branch tracks a remote branch and is up to date with the remote, so you know if you need to push to the remote
+   - Run a git log command and `git diff [base-branch]...HEAD` to understand the full commit history for the current branch (from the time it diverged from the base branch)
+2. Analyze all changes that will be included in the pull request, making sure to look at all relevant commits (NOT just the latest commit, but ALL commits that will be included in the pull request!!!), and draft a pull request summary
+3. Create the PR with the summary and a title
+   - Create new branch if needed
+   - Push to remote with -u flag if needed
+   - Create PR using gh pr create
+
+Important: Return the PR URL when you're done, so the user can see it
 
 ## Template
 
