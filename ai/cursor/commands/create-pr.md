@@ -14,8 +14,8 @@ When the user asks you to create a pull request, follow these steps carefully:
 2. Analyze all changes that will be included in the pull request, making sure to look at all relevant commits (NOT just the latest commit, but ALL commits that will be included in the pull request!!!), and draft a pull request summary
 3. Create the PR with the summary and a title
    - Create new branch if needed
-   - Push to remote with -u flag if needed
-   - Create PR using gh pr create
+   - Push to remote with `-u` flag if needed
+   - Create PR using `gh pr create`. Use a temp file for the body to ensure correct format.
 
 Important: Return the PR URL when you're done, so the user can see it
 

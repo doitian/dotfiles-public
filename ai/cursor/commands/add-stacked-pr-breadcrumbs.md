@@ -14,7 +14,7 @@ Use `git town branch` to figure out the branch hierarchy and lookup correspondin
 >         - #<child_pr>
 ```
 
-Use `gh` to add the generated breadcrumbs block to the PR. If the PR already has a breadcrumbs block, replace it with the new one.
+Use `gh` to add the generated breadcrumbs block to the PR. If the PR already has a breadcrumbs block, replace it with the new one. Use a temp file for the PR body to ensure correct format.
 
 ### Rules:
 
