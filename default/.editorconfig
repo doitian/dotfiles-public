@@ -6,7 +6,8 @@ root = true
 # Default settings for all files
 [*]
 end_of_line = lf
-insert_final_newline = false
+# Ignore this
+# insert_final_newline = false
 trim_trailing_whitespace = true
 charset = utf-8
 indent_style = space
