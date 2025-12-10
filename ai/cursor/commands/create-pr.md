@@ -15,7 +15,7 @@ When the user asks you to create a pull request, follow these steps carefully:
 3. Create the PR with the summary and a title
    - Create new branch if needed
    - Push to remote with `-u` flag if needed
-   - Create PR using `gh pr create`. Use a temp file for the body to ensure correct format.
+   - Create PR using `gh pr create`. Use a temp file for the body to ensure correct format. Ensure the temp file name is unique.
 
 Important: Return the PR URL when you're done, so the user can see it
 
