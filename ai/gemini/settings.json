@@ -1,0 +1,16 @@
+{
+  "context": {
+    "fileName": "AGENTS.md"
+  },
+  "security": {
+    "auth": {
+      "selectedType": "gemini-api-key"
+    }
+  },
+  "ui": {
+    "theme": "Ayu Light"
+  },
+  "general": {
+    "previewFeatures": true
+  }
+}
