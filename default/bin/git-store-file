@@ -1,0 +1,309 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+status_subcommand() {
+    local branch="$1"
+    local remote="$2"
+    shift 2
+    local show_diff=false
+
+    # Parse options for status subcommand
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+        -d | --diff)
+            show_diff=true
+            shift
+            ;;
+        -h | --help)
+            echo "Usage: $0 status [OPTIONS]"
+            echo ""
+            echo "Show git status for files in the remote branch."
+            echo ""
+            echo "Options:"
+            echo "  -d, --diff             Show diff for modified files"
+            echo "  -h, --help             Show this help message"
+            exit 0
+            ;;
+        *)
+            echo "Error: Unknown option for status: $1" >&2
+            echo "Use '$0 status --help' for usage information" >&2
+            exit 1
+            ;;
+        esac
+    done
+
+    # Check if branch exists
+    if ! git rev-parse --verify "$remote/$branch" >/dev/null 2>&1; then
+        echo "Branch $remote/$branch does not exist." >&2
+        exit 1
+    fi
+
+    # Get list of files in the branch
+    local branch_files
+    branch_files=$(git ls-tree -r --name-only "$remote/$branch" 2>/dev/null)
+
+    if [ -z "$branch_files" ]; then
+        echo "No files in branch $remote/$branch"
+        return 0
+    fi
+
+    # Convert to array for easier processing
+    local files_array=()
+    while IFS= read -r file; do
+        [ -n "$file" ] && files_array+=("$file")
+    done <<<"$branch_files"
+
+    # Check status of each file compared to branch
+    local modified_files=()
+    local deleted_files=()
+
+    for file in "${files_array[@]}"; do
+        # Check if file exists in working directory
+        if [ ! -e "$file" ]; then
+            deleted_files+=("$file")
+            continue
+        fi
+
+        # Check if staged version differs from branch version
+        if ! git --no-pager diff --quiet "$remote/$branch:$file" "$file" 2>/dev/null; then
+            modified_files+=("$file")
+        fi
+    done
+
+    # Show status output similar to git status
+    local has_output=false
+
+    if [ ${#modified_files[@]} -gt 0 ]; then
+        for file in "${modified_files[@]}"; do
+            echo "  modified:   $file"
+        done
+        has_output=true
+    fi
+
+    if [ ${#deleted_files[@]} -gt 0 ]; then
+        for file in "${deleted_files[@]}"; do
+            echo "  deleted:    $file"
+        done
+        has_output=true
+    fi
+
+    if [ "$has_output" = false ]; then
+        echo "Files in $remote/$branch are up to date."
+    fi
+
+    # Show diff if requested
+    if [ "$show_diff" = true ] && [ ${#modified_files[@]} -gt 0 ]; then
+        for file in "${modified_files[@]}"; do
+            echo "--- $remote/$branch:$file"
+            echo "+++ $file"
+            git --no-pager diff "$remote/$branch:$file" "$file" 2>/dev/null || true
+        done
+    fi
+}
+
+restore_subcommand() {
+    local branch="$1"
+    local remote="$2"
+    shift 2
+    local positional_args=("$@")
+
+    # Check if branch exists
+    if ! git rev-parse --verify "$remote/$branch" >/dev/null 2>&1; then
+        echo "Branch $remote/$branch does not exist." >&2
+        exit 1
+    fi
+
+    # Use a temporary index to restore files
+    export GIT_INDEX_FILE=.git/temp_restore_index
+
+    # Load the branch's tree into the temporary index
+    git read-tree "$remote/$branch" 2>/dev/null || git read-tree --empty
+
+    # Restore files from the temporary index to working directory
+    # git checkout-index extracts files from index to working directory without staging
+    git restore --worktree "${positional_args[@]}"
+
+    # Cleanup
+    rm -f "$GIT_INDEX_FILE"
+    unset GIT_INDEX_FILE
+}
+
+ls_subcommand() {
+    local branch="$1"
+    local remote="$2"
+    shift 2
+
+    # Check if branch exists
+    if ! git rev-parse --verify "$remote/$branch" >/dev/null 2>&1; then
+        echo "Branch $remote/$branch does not exist." >&2
+        exit 1
+    fi
+
+    # List all files in the branch
+    local branch_files
+    branch_files=$(git ls-tree -r --name-only "$remote/$branch" 2>/dev/null)
+
+    if [ -z "$branch_files" ]; then
+        echo "No files in branch $remote/$branch"
+        return 0
+    fi
+
+    # Print files
+    echo "$branch_files"
+}
+
+store_subcommand() {
+    local branch="$1"
+    local remote="$2"
+    shift 2
+    local positional_args=("$@")
+
+    # 1. Use a temporary index to avoid messing with your current files
+    export GIT_INDEX_FILE=.git/temp_backup_index
+
+    # 2. Load the target branch's current state
+    git read-tree "$remote/$branch" 2>/dev/null || git read-tree --empty
+
+    # 3. Add all files (forced, in case they are ignored)
+    git add -f "${positional_args[@]}"
+
+    # 4. Create a commit object
+    local tree=$(git write-tree)
+    local parent=$(git rev-parse --verify "$remote/$branch" 2>/dev/null)
+    local commit_hash
+
+    # Create commit message listing all files
+    local commit_msg="Backup git add -f ${positional_args[*]}"
+
+    if [ -n "$parent" ]; then
+        commit_hash=$(echo "$commit_msg" | git commit-tree "$tree" -p "$parent")
+    else
+        commit_hash=$(echo "$commit_msg" | git commit-tree "$tree")
+    fi
+
+    # 5. Show stats of the commit before pushing
+    echo "Commit stats:"
+    if [ -n "$parent" ]; then
+        git --no-pager show --format= --stat "$commit_hash" 2>/dev/null || git --no-pager diff-tree --stat "$parent" "$commit_hash" 2>/dev/null || true
+    else
+        git --no-pager show --format= --stat "$commit_hash" 2>/dev/null || true
+    fi
+    echo ""
+
+    # 6. Ask for confirmation before pushing
+    echo -n "Push to $remote/$branch? [y/N] "
+    read -r response
+    if [[ ! "$response" =~ ^[Yy]$ ]]; then
+        echo "Push cancelled."
+        rm "$GIT_INDEX_FILE"
+        unset GIT_INDEX_FILE
+        exit 1
+    fi
+
+    # 7. Update the remote branch to point to the new commit
+    git push "$remote" "$commit_hash:refs/heads/$branch"
+
+    # 8. Cleanup
+    rm "$GIT_INDEX_FILE"
+    unset GIT_INDEX_FILE
+
+    echo "✅ Saved git add -f ${positional_args[*]} to remote branch '$remote/$branch'"
+}
+
+main() {
+    local subcommand=
+    local branch="_store" # Default to '_store' if not specified
+    local remote="origin" # Default to 'origin' if not specified
+    local positional_args=()
+
+    # Parse global options first
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+        -b | --branch)
+            if [ $# -lt 2 ]; then
+                echo "Error: Option $1 requires an argument" >&2
+                exit 1
+            fi
+            branch="$2"
+            shift 2
+            ;;
+        -r | --remote)
+            if [ $# -lt 2 ]; then
+                echo "Error: Option $1 requires an argument" >&2
+                exit 1
+            fi
+            remote="$2"
+            shift 2
+            ;;
+        -h | --help)
+            echo "Usage: $0 [OPTIONS] [COMMAND] [ARGS...]"
+            echo ""
+            echo "Commands:"
+            echo "  store [FILE...]        Store files to remote branch (default)"
+            echo "  status [OPTIONS]       Show git status for files in the remote branch"
+            echo "    -d, --diff           Show diff for modified files"
+            echo "  restore [FILE...]      Restore files from remote branch to working directory"
+            echo "                         (restores all files if none specified)"
+            echo "  ls                     List all files in the remote branch"
+            echo ""
+            echo "Options:"
+            echo "  -b, --branch BRANCH    Branch name (default: _store)"
+            echo "  -r, --remote REMOTE    Remote name (default: origin)"
+            echo "  -h, --help             Show this help message"
+            echo ""
+            echo "Examples:"
+            echo "  $0 config.txt                    # store file (default command)"
+            echo "  $0 file1.txt file2.txt           # store multiple files"
+            echo "  $0 --branch backup config.txt    # store with custom branch"
+            echo "  $0 status                        # check status"
+            echo "  $0 status -d                     # check status with diff"
+            echo "  $0 restore config.txt            # restore specific file"
+            echo "  $0 restore                       # restore all files from branch"
+            echo "  $0 ls                            # list all files in branch"
+            exit 0
+            ;;
+        --)
+            shift
+            positional_args+=("$@")
+            break
+            ;;
+        store | status | restore | ls)
+            if [ -z "$subcommand" ]; then
+                subcommand="$1"
+            else
+                positional_args+=("$1")
+            fi
+            shift
+            ;;
+        *)
+            positional_args+=("$1")
+            shift
+            ;;
+        esac
+    done
+
+    # Execute subcommand
+    case "${subcommand:-store}" in
+    store)
+        store_subcommand "$branch" "$remote" "${positional_args[@]}"
+        ;;
+    status)
+        status_subcommand "$branch" "$remote" "${positional_args[@]}"
+        ;;
+    restore)
+        restore_subcommand "$branch" "$remote" "${positional_args[@]}"
+        ;;
+    ls)
+        ls_subcommand "$branch" "$remote" "${positional_args[@]}"
+        ;;
+    *)
+        echo "Error: Unknown subcommand: $subcommand" >&2
+        exit 1
+        ;;
+    esac
+}
+
+main "$@"
