@@ -4,6 +4,7 @@
 *~
 .*.sw?
 .DS_Store
+.cursor
 .direnv
 .env
 .envrc
@@ -11,15 +12,13 @@
 .git
 .harper-dictionary.txt
 .index.md
+.specify
 .tags.in
 .venv
 .vim-spell-en.utf-8.add
 .vim-spell-en.utf-8.add.spl
 .vimrc.local
-/.cursor
-/.specify
-/.vscode
-GEMINI.md
+.vscode
 Session.vim
 TAGS
 desktop.ini
