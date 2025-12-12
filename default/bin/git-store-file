@@ -124,7 +124,11 @@ restore_subcommand() {
 
     # Restore files from the temporary index to working directory
     # git checkout-index extracts files from index to working directory without staging
-    git restore --worktree "${positional_args[@]}"
+    if [ "${#positional_args[*]}" = 0 ]; then
+        git restore --worktree .
+    else
+        git restore --worktree "${positional_args[@]}"
+    fi
 
     # Cleanup
     rm -f "$GIT_INDEX_FILE"
