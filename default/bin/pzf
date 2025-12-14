@@ -1,0 +1,136 @@
+#!/bin/sh
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+usage() {
+  cat >&2 <<EOF
+Usage: pzf <subcommand> [fzf-options...]
+
+Subcommands:
+  git-branch          Select a git branch
+  git-staged-file     Select a staged file from git diff --cached
+  git-modified-file   Select a modified file from git diff HEAD
+  git-unstaged-file   Select an unstaged file from git diff
+  git-untracked-file  Select an untracked file
+
+Examples:
+  pzf git-branch
+  pzf git-branch --multi
+  pzf git-staged-file --preview 'git diff --cached {1}'
+EOF
+}
+
+# Check if --preview is already in the arguments
+has_preview() {
+  for arg in "$@"; do
+    case "$arg" in
+      --preview|--preview=*)
+        return 0
+        ;;
+    esac
+  done
+  return 1
+}
+
+git_branch() {
+  if ! has_preview "$@"; then
+    set -- "$@" --preview 'git -c color.ui=always log --oneline --graph -10 {1}'
+  fi
+
+  git branch --all --format='%(refname:short)' | \
+    grep -v HEAD | \
+    sed 's#^remotes/[^/]*/##' | \
+    sort | uniq | \
+    fzf "$@"
+}
+
+git_staged_file() {
+  if ! has_preview "$@"; then
+    set -- "$@" --preview 'git -c color.ui=always diff --cached {1}'
+  fi
+
+  git diff --name-only --cached | \
+    fzf "$@"
+}
+
+git_modified_file() {
+  if ! has_preview "$@"; then
+    set -- "$@" --preview 'git -c color.ui=always diff HEAD {1}'
+  fi
+
+  git diff --name-only HEAD | \
+    fzf "$@"
+}
+
+git_unstaged_file() {
+  if ! has_preview "$@"; then
+    set -- "$@" --preview 'git -c color.ui=always diff {1}'
+  fi
+
+  git diff --name-only | \
+    fzf "$@"
+}
+
+git_untracked_file() {
+  if ! has_preview "$@"; then
+    set -- "$@" --preview 'bat -n 50 {1} 2>/dev/null || echo "Binary or empty file"'
+  fi
+
+  git ls-files --others --exclude-standard | \
+    fzf "$@"
+}
+
+pzf_subcommand() {
+  _script="$0"
+  _selected=$(printf '%s\n' \
+    'git-branch' \
+    'git-staged-file' \
+    'git-modified-file' \
+    'git-unstaged-file' \
+    'git-untracked-file' | \
+    fzf)
+
+  if [ -n "$_selected" ]; then
+    exec "$_script" "$_selected" "$@"
+  fi
+}
+
+if [ "$#" -eq 0 ]; then
+  pzf_subcommand
+  exit 0
+fi
+
+subcommand="$1"
+shift
+
+case "$subcommand" in
+  git-branch)
+    git_branch "$@"
+    ;;
+  git-staged-file)
+    git_staged_file "$@"
+    ;;
+  git-modified-file)
+    git_modified_file "$@"
+    ;;
+  git-unstaged-file)
+    git_unstaged_file "$@"
+    ;;
+  git-untracked-file)
+    git_untracked_file "$@"
+    ;;
+  pzf)
+    pzf_subcommand "$@"
+    ;;
+  -h|--help)
+    usage
+    exit 0
+    ;;
+  *)
+    echo "Unknown subcommand: $subcommand" >&2
+    usage
+    exit 1
+    ;;
+esac
