@@ -16,7 +16,20 @@ fi
 # path
 export GOPATH="$HOME/codebase/gopath"
 export PNPM_HOME="$HOME/.local/share/pnpm"
-export PATH="${PATH:-/bin:/usr/bin:/usr/local/bin}:$HOME/bin:$HOME/.cargo/bin:$GOPATH/bin:$HOME/.local/bin:$PNPM_HOME:$HOME/.local/share/nvim/mason/bin"
+HOMEBREW_PREFIX=/home/linuxbrew/.linuxbrew
+COMMON_PATH_AFTER="$HOME/.cargo/bin:$GOPATH/bin:$HOME/.local/bin:$PNPM_HOME:$HOME/.local/share/nvim/mason/bin"
+if [[ "$OSTYPE" == "linux"* && -O "$HOMEBREW_PREFIX/bin/brew" ]]; then
+  export HOMEBREW_CELLAR="$HOMEBREW_PREFIX/Cellar"
+  export HOMEBREW_REPOSITORY="$HOMEBREW_PREFIX/Homebrew"
+  export HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK=1
+  export HOMEBREW_AUTO_UPDATE_SECS=86400
+
+  export PATH="$HOME/bin:$HOMEBREW_PREFIX/bin:$HOMEBREW_PREFIX/sbin:${PATH:-/bin:/usr/bin:/usr/local/bin}:$COMMON_PATH_AFTER"
+else
+  export PATH="${PATH:-/bin:/usr/bin:/usr/local/bin}:$HOME/bin:$COMMON_PATH_AFTER"
+  unset HOMEBREW_PREFIX
+fi
+unset COMMON_PATH_AFTER
 
 # lang
 export LANG=en_US.UTF-8
@@ -60,18 +73,7 @@ export VISUAL="$EDITOR"
 export ALTERNATE_EDITOR="$EDITOR"
 export PAGER="${PAGER:=less}"
 
-# homebrew
-HOMEBREW_PREFIX=/home/linuxbrew/.linuxbrew
-if [[ "$OSTYPE" == "linux"* && -O "$HOMEBREW_PREFIX/bin/brew" ]]; then
-  export HOMEBREW_CELLAR="$HOMEBREW_PREFIX/Cellar"
-  export HOMEBREW_REPOSITORY="$HOMEBREW_PREFIX/Homebrew"
-  export PATH="$HOMEBREW_PREFIX/bin:$HOMEBREW_PREFIX/sbin:$PATH"
-else
-  unset HOMEBREW_PREFIX
-fi
-export HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK=1
-export HOMEBREW_AUTO_UPDATE_SECS=86400
-
+# mise for AI
 if [[ -n "${AI_AGENT:-}" ]]; then
   export GIT_PAGER=
   if command -v mise &> /dev/null; then
