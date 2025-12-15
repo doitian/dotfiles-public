@@ -82,24 +82,13 @@ git_untracked_file() {
     fzf "$@"
 }
 
-pzf_subcommand() {
-  _script="$0"
-  _selected=$(printf '%s\n' \
-    'git-branch' \
-    'git-staged-file' \
-    'git-modified-file' \
-    'git-unstaged-file' \
-    'git-untracked-file' | \
-    fzf)
-
-  if [ -n "$_selected" ]; then
-    exec "$_script" "$_selected" "$@"
-  fi
+list_subcommands() {
+  usage 2>&1 | grep '^  ' | grep -v '  pzf' | awk '{print $1}'
 }
 
 if [ "$#" -eq 0 ]; then
-  pzf_subcommand
-  exit 0
+  usage
+  exit 1
 fi
 
 subcommand="$1"
@@ -121,8 +110,8 @@ case "$subcommand" in
   git-untracked-file)
     git_untracked_file "$@"
     ;;
-  pzf)
-    pzf_subcommand "$@"
+  -l|--list)
+    list_subcommands "$@"
     ;;
   -h|--help)
     usage
