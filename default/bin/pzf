@@ -9,7 +9,8 @@ usage() {
 Usage: pzf <subcommand> [fzf-options...]
 
 Subcommands:
-  git-branch          Select a git branch
+  git-branch          Select a local git branch
+  git-remote-branch   Select a remote git branch
   git-staged-file     Select a staged file from git diff --cached
   git-modified-file   Select a modified file from git diff HEAD
   git-unstaged-file   Select an unstaged file from git diff
@@ -39,11 +40,19 @@ git_branch() {
     set -- "$@" --preview 'git -c color.ui=always log --oneline --graph -10 {1}'
   fi
 
-  git branch --all --format='%(refname:short)' | \
-    grep -v HEAD | \
-    sed 's#^remotes/[^/]*/##' | \
-    sort | uniq | \
+  git branch --format='%(refname:short)' | \
     fzf "$@"
+}
+
+git_remote_branch() {
+  if ! has_preview "$@"; then
+    set -- "$@" --preview 'git -c color.ui=always log --oneline --graph -10 {1}'
+  fi
+
+  git for-each-ref --format='%(refname:short)' refs/remotes/ | \
+    grep -v HEAD | \
+    grep '/' | \
+    fzf --delimiter='/' --accept-nth='2..' "$@"
 }
 
 git_staged_file() {
@@ -97,6 +106,9 @@ shift
 case "$subcommand" in
   git-branch)
     git_branch "$@"
+    ;;
+  git-remote-branch)
+    git_remote_branch "$@"
     ;;
   git-staged-file)
     git_staged_file "$@"
