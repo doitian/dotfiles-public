@@ -21,7 +21,7 @@ autocmd("FileType", { "qf" }, function()
   vim.opt_local.errorformat = "%f|%l col %c|%m"
 
   if vim.o.buftype ~= "quickfix" then
-    vim.keymap.del("n", "q", { buffer = true })
+    pcall(vim.keymap.del, "n", "q", { buffer = true })
   end
 end)
 
