@@ -1,0 +1,5 @@
+{
+    "$schema": "https://opencode.ai/config.json",
+    "theme": "catppuccin",
+    "model": "alibaba-cn/qwen3-max",
+}
