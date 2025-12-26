@@ -2,7 +2,7 @@ Create a git commit using the message format below.
 
 ## Commit Message
 
-Analyze following to generate the commit message:
+Analyze outputs of following commands to generate the commit message:
 
 - `git status --short` (change overview)
 - `git diff --staged` (primary input). If the diff lacks sufficient context to understand intent, examine the full file.
