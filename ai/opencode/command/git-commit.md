@@ -2,10 +2,8 @@
 
 This slash command is a Git commit helper that:
 
-1. Runs pre-commit checks by default (linting, building, generating docs)
-2. Automatically stages files if none are staged
-3. Analyzes code changes to suggest potential commit splits
-4. Creates commits using the message format below.
+1. Analyzes code changes to suggest potential commit splits
+2. Creates commits using the message format below.
 
 ## Commit Messages
 
