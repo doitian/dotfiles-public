@@ -1,5 +1,3 @@
-# Gemini Configuration
-
 ## Shell Instructions
 - Use PowerShell for all shell commands.
 - Avoid common PowerShell gotchas:
