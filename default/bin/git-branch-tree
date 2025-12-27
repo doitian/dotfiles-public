@@ -4,20 +4,19 @@ set -e
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
-# Get indentation for a branch based on merge depth
-get_indent() {
-  branch="$1"
-  depth=$(git branch --merged "$branch" | wc -l)
-  spaces=$((($depth - 1) * 4))
-  printf "%${spaces}s" ""
-}
-
-# Print branch with indentation
 print_branch() {
   branch="$1"
   current="$2"
-  indent=$(get_indent "$branch")
-  if [ "$branch" = "$current" ]; then
+  level="$3"
+  indent=""
+  i=0
+  while [ "$i" -lt "$level" ]; do
+    indent="${indent}    "
+    i=$((i + 1))
+  done
+  # Check if this is the current branch (strip any suffix like " (stalled)")
+  branch_name=$(echo "$branch" | sed 's/ (stalled)$//')
+  if [ "$branch_name" = "$current" ]; then
     printf "%s* %s\n" "$indent" "$branch"
   else
     printf "%s  %s\n" "$indent" "$branch"
@@ -25,35 +24,100 @@ print_branch() {
 }
 
 main() {
-  # Get current branch name
-  current=$(git branch --show-current)
-  if [ -z "$current" ]; then
-    current=$(git rev-parse --short HEAD)
+  merge_base_ref=$(git symbolic-ref refs/remotes/upstream/HEAD 2>/dev/null || git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null || echo "refs/heads/main")
+  merge_base_ref="${merge_base_ref#refs/remotes/*/}"
+  merge_base_ref="${merge_base_ref#refs/heads/}"
+
+  current=$(git branch --show-current 2>/dev/null || git rev-parse --short HEAD)
+
+  # Get git log output
+  log_output=$(git log --graph --simplify-by-decoration --pretty=format:'%d' --branches --decorate-refs "refs/heads/*" "${merge_base_ref}~.." 2>/dev/null || true)
+
+  if [ -z "$log_output" ]; then
+    echo "No branches found"
+    exit 0
   fi
 
-  # Get ancestors (branches merged into HEAD), excluding current
-  ancestors=$(git branch --merged HEAD --format='%(refname:short)' | grep -v "^${current}$" || true)
+  # Extract branches on main line (start with *) and fresh branches (start with | *)
+  echo "$log_output" | while read -r line; do
+    # Extract branch name from (branch-name)
+    branch=$(echo "$line" | sed -n 's/.*(\([^)]*\)).*/\1/p')
+    [ -z "$branch" ] && continue
 
-  # Get descendants (branches containing HEAD), excluding current
-  descendants=$(git branch --contains HEAD --format='%(refname:short)' | grep -v "^${current}$" || true)
+    case "$line" in
+      '* '*)
+        # Main line branch
+        echo "MAIN:$branch"
+        ;;
+      '| * '*)
+        # Fresh branch (off main line)
+        echo "FRESH:$branch"
+        ;;
+    esac
+  done | {
+    last_leaf=""
+    merge_base=""
+    fresh_branches=""
+    stalled_branches=""
 
-  # Print ancestors
-  if [ -n "$ancestors" ]; then
-    echo "$ancestors" | while read -r branch; do
-      print_branch "$branch" "$current"
+    while read -r entry; do
+      type="${entry%%:*}"
+      branch="${entry#*:}"
+
+      if [ "$type" = "MAIN" ]; then
+        if [ -z "$last_leaf" ]; then
+          last_leaf="$branch"
+        elif [ -z "$merge_base" ]; then
+          merge_base="$branch"
+        else
+          # After merge base = stalled
+          if [ -z "$stalled_branches" ]; then
+            stalled_branches="$branch"
+          else
+            stalled_branches="$stalled_branches
+$branch"
+          fi
+        fi
+      elif [ "$type" = "FRESH" ]; then
+        if [ -z "$fresh_branches" ]; then
+          fresh_branches="$branch"
+        else
+          fresh_branches="$fresh_branches
+$branch"
+        fi
+      fi
     done
-  fi
 
-  # Print current branch
-  print_branch "$current" "$current"
+    # Print merge base as root
+    if [ -n "$merge_base" ]; then
+      print_branch "$merge_base" "$current" 0
+    fi
 
-  # Print descendants
-  if [ -n "$descendants" ]; then
-    echo "$descendants" | while read -r branch; do
-      print_branch "$branch" "$current"
-    done
-  fi
+    # Print stalled branches
+    if [ -n "$stalled_branches" ]; then
+      echo "$stalled_branches" | while read -r branch; do
+        [ -n "$branch" ] && print_branch "$branch (stalled)" "$current" 1
+      done
+    fi
+
+    # Print fresh branches (reverse order: oldest first)
+    if [ -n "$fresh_branches" ]; then
+      # Reverse the order
+      reversed=$(echo "$fresh_branches" | awk '{a[NR]=$0} END{for(i=NR;i>=1;i--)print a[i]}')
+      echo "$reversed" | while read -r branch; do
+        [ -n "$branch" ] && print_branch "$branch" "$current" 1
+      done
+    fi
+
+    # Print last leaf
+    if [ -n "$last_leaf" ]; then
+      if [ -z "$merge_base" ]; then
+        print_branch "$last_leaf" "$current" 0
+      else
+        print_branch "$last_leaf" "$current" 1
+      fi
+    fi
+  }
 }
 
 main "$@"
-
