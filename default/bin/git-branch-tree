@@ -47,7 +47,7 @@ def parse_branch_name(line):
 
 def is_root_candidate(line):
     """Check if line is a root candidate: starts with '* ' and has no '|'."""
-    return line.startswith("* ") and "(" in line
+    return line.startswith("* ") and "|" not in line
 
 
 def is_merge_line(line):
@@ -169,11 +169,12 @@ def process_git_log(log_output, current, debug=False):
 
         if is_root_candidate(line):
             root_candidate_count += 1
-            if root_candidate_count == 1:
-                merge_base = branch
-                merge_base_line_idx = i
+            merge_base = branch
+            merge_base_line_idx = i
+            if root_candidate_count == 0:
+                break
         else:
-            root_candidate_count = 0
+            root_candidate_count = -1
 
     if debug:
         print(f"  DEBUG: merge_base={merge_base}, merge_base_line_idx={merge_base_line_idx}")
