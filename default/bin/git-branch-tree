@@ -4,6 +4,8 @@
 import re
 import subprocess
 import sys
+from collections import defaultdict
+from io import StringIO
 
 
 def run_git(*args):
@@ -24,8 +26,7 @@ def get_merge_base_ref():
     ]:
         ref = run_git(*cmd)
         if ref:
-            ref = re.sub(r"^refs/remotes/[^/]+/", "", ref)
-            ref = re.sub(r"^refs/heads/", "", ref)
+            ref = re.sub(r"^refs/remotes/", "", ref)
             return ref
 
     # Fallback to develop, main, or master
@@ -46,7 +47,6 @@ def get_current_branch():
 
 def get_git_log(merge_base_ref):
     """Get git log graph output."""
-    # Try with ref~.. first, then ref.., then no constraint
     for rev_range in [f"{merge_base_ref}^..", f"{merge_base_ref}.."]:
         output = run_git(
             "log", "--graph", "--simplify-by-decoration",
@@ -57,7 +57,6 @@ def get_git_log(merge_base_ref):
         if output:
             return output
 
-    # Final fallback: no range constraint
     return run_git(
         "log", "--graph", "--simplify-by-decoration",
         "--pretty=format:%d", "--branches",
@@ -65,13 +64,9 @@ def get_git_log(merge_base_ref):
     )
 
 
-def count_pipes(line):
-    """Count the number of '| ' before '*' to determine column depth."""
-    match = re.match(r"^([\| ]*)\*", line)
-    if match:
-        prefix = match.group(1)
-        return prefix.count("| ")
-    return -1
+def get_star_column(line):
+    """Get the column (string position) of '*'."""
+    return line.find('*')
 
 
 def parse_branch_name(line):
@@ -86,99 +81,112 @@ def is_root_candidate(line):
 
 
 def is_merge_line(line):
-    """Check if line is a merge marker (contains /)."""
-    return "/" in line
+    """Check if line is a merge marker (contains / but no branch name)."""
+    # Merge lines look like |/ or | |/ - they have / but no (branch)
+    return "/" in line and "(" not in line
 
 
-def get_merge_column(line):
-    """Get the column where merge happens."""
-    prefix = re.sub(r"/.*", "", line)
-    return prefix.count("| ") + 1
+def get_slash_column(line):
+    """Get the column (string position) of '/'."""
+    return line.find('/')
 
 
-def print_branch(branch, current, level, is_stalled=False):
-    """Print a branch with indentation."""
+def format_branch(branch, current, level, is_stalled=False):
+    """Format a branch line with indentation."""
     indent = "    " * level
     suffix = " (stalled)" if is_stalled else ""
-    marker = "*" if branch == current else " "
-    print(f"{indent}{marker} {branch}{suffix}")
+    if branch == current:
+        return f"{indent}* {branch}{suffix}"
+    else:
+        return f"{indent}  {branch}{suffix}"
 
 
-def parse_branches(lines, current, skip_branches=None):
-    """Parse branch tree from git log lines.
+def parse_branches(lines, skip_branches=None, debug=False):
+    """Parse branch tree from git log lines in a single pass.
 
-    Returns: (branches, parent_of, children)
-    - branches: list of branch names
-    - parent_of: dict mapping child_idx -> parent_idx
-    - children: dict mapping parent_idx -> list of child_idx
+    Algorithm:
+    - children_at_col[col] = list of (branch_idx, children_list) awaiting parent at column col
+    - For each branch at column col:
+      - All items in children_at_col[col] become its children
+      - Clear children_at_col[col] and append this branch
+    - For each merge '/' at column col:
+      - Move last item from children_at_col[col+1] to children_at_col[col-1]
+
+    Returns: (branches, children)
     """
     if skip_branches is None:
         skip_branches = set()
 
     branches = []
-    parent_of = {}
-    stack = {}
+    children = defaultdict(list)
+    children_at_col = defaultdict(list)
 
     for line in lines:
-        # Handle merge markers
         if is_merge_line(line):
-            merge_col = get_merge_column(line)
-            stack = {c: idx for c, idx in stack.items() if c < merge_col}
+            col = get_slash_column(line)
+            if children_at_col[col + 1]:
+                child_idx = children_at_col[col + 1].pop()
+                if col - 1 >= 0:
+                    children_at_col[col - 1].append(child_idx)
+            if debug:
+                print(f"    MERGE: col={col}, children_at_col[{col+1}]={children_at_col[col+1]}, children_at_col[{col-1}]={children_at_col[col-1]}")
             continue
 
         branch = parse_branch_name(line)
         if not branch or branch in skip_branches:
             continue
 
-        col = count_pipes(line)
+        col = get_star_column(line)
         idx = len(branches)
         branches.append(branch)
 
-        # Parent is the branch at col-1 (if exists)
-        if col - 1 in stack:
-            parent_of[idx] = stack[col - 1]
-
-        # If there's a pending branch at same column, its parent is this one
-        if col in stack:
-            pending_child = stack[col]
-            parent_of[pending_child] = idx
-
-        # This branch is now pending at its column
-        stack[col] = idx
-
-    # Build children map
-    children = {}
-    for child_idx, parent_idx in parent_of.items():
-        if parent_idx not in children:
-            children[parent_idx] = []
-        children[parent_idx].append(child_idx)
-
-    return branches, parent_of, children
+        if debug:
+            print(f"    BRANCH: {branch} col={col}, children={children_at_col[col]}")
+        for child_idx in children_at_col[col]:
+            children[idx].append(child_idx)
+        children_at_col[col].clear()
+        children_at_col[col].append(idx)
 
 
-def print_tree(branches, children, idx, level, current, is_stalled=False):
-    """Recursively print branch tree."""
-    branch = branches[idx]
-    print_branch(branch, current, level, is_stalled)
+    return branches, children
+
+
+def find_roots(branches, children):
+    """Find root branches (not children of any other branch)."""
+    all_children = set()
+    for child_list in children.values():
+        all_children.update(child_list)
+    return [i for i in range(len(branches)) if i not in all_children]
+
+
+def format_tree(branches, children, idx, level, current, is_stalled=False):
+    """Recursively format branch tree, returning list of lines."""
+    lines = [format_branch(branches[idx], current, level, is_stalled)]
     if idx in children:
-        # Print children in reverse order (oldest first)
         for child_idx in reversed(children[idx]):
-            print_tree(branches, children, child_idx, level + 1, current, is_stalled)
+            lines.extend(format_tree(branches, children, child_idx, level + 1, current, is_stalled))
+    return lines
 
 
-def main():
-    merge_base_ref = get_merge_base_ref()
-    current = get_current_branch()
-    log_output = get_git_log(merge_base_ref)
+def process_git_log(log_output, current, debug=False):
+    """Process git log output and return formatted tree lines.
 
+    Args:
+        log_output: Git log graph output string
+        current: Current branch name
+        debug: Print debug info
+
+    Returns:
+        List of formatted output lines
+    """
     if not log_output:
-        print("No branches found")
-        return
+        return ["No branches found"]
 
     lines = log_output.split("\n")
+    output = []
 
-    # First pass: find last_leaf and merge_base (root)
-    last_leaf = None
+    # Find merge_base (root) - second branch that starts with '* ' and has no '|'
+    root_candidate_count = 0
     merge_base = None
     merge_base_line_idx = None
 
@@ -188,12 +196,14 @@ def main():
             continue
 
         if is_root_candidate(line):
-            if last_leaf is None:
-                last_leaf = branch
-            elif merge_base is None:
-                merge_base = branch
-                merge_base_line_idx = i
+            merge_base = branch
+            merge_base_line_idx = i
+            root_candidate_count += 1
+            if root_candidate_count == 2:
                 break
+
+    if debug:
+        print(f"  DEBUG: merge_base={merge_base}, merge_base_line_idx={merge_base_line_idx}")
 
     # Split lines into fresh (before merge_base) and stalled (after merge_base)
     if merge_base_line_idx is not None:
@@ -203,33 +213,191 @@ def main():
         fresh_lines = lines
         stalled_lines = []
 
-    # Parse fresh branches (skip last_leaf, will be printed at end)
-    skip = {last_leaf} if last_leaf else set()
-    fresh_branches, fresh_parent_of, fresh_children = parse_branches(fresh_lines, current, skip)
+    if debug:
+        print(f"  DEBUG: fresh_lines count={len(fresh_lines)}")
 
-    # Parse stalled branches (skip main/master)
+    # Parse branches
+    fresh_branches, fresh_children = parse_branches(fresh_lines, debug=debug)
     skip_stalled = {"main", "master"}
-    stalled_branches, stalled_parent_of, stalled_children = parse_branches(stalled_lines, current, skip_stalled)
+    stalled_branches, stalled_children = parse_branches(stalled_lines, skip_stalled)
 
-    # Print merge base as root
+    if debug:
+        print(f"  DEBUG: fresh_branches={fresh_branches}")
+        print(f"  DEBUG: fresh_children={dict(fresh_children)}")
+
+    # Format output
     if merge_base:
-        print_branch(merge_base, current, 0)
+        output.append(format_branch(merge_base, current, 0))
 
-    # Print stalled branches tree (with +1 depth offset, marked as stalled)
-    stalled_roots = [i for i in range(len(stalled_branches)) if i not in stalled_parent_of]
+    # Stalled branches
+    stalled_roots = find_roots(stalled_branches, stalled_children)
     for idx in reversed(stalled_roots):
-        print_tree(stalled_branches, stalled_children, idx, 1, current, is_stalled=True)
+        output.extend(format_tree(stalled_branches, stalled_children, idx, 1, current, is_stalled=True))
 
-    # Print fresh branches tree
-    fresh_roots = [i for i in range(len(fresh_branches)) if i not in fresh_parent_of]
+    # Fresh branches
+    fresh_roots = find_roots(fresh_branches, fresh_children)
+    if debug:
+        print(f"  DEBUG: fresh_roots={fresh_roots}")
     for idx in reversed(fresh_roots):
-        print_tree(fresh_branches, fresh_children, idx, 1, current, is_stalled=False)
+        output.extend(format_tree(fresh_branches, fresh_children, idx, 1, current, is_stalled=False))
 
-    # Print last leaf
-    if last_leaf:
-        level = 0 if merge_base is None else 1
-        print_branch(last_leaf, current, level)
+    return output
+
+
+def main():
+    merge_base_ref = get_merge_base_ref()
+    current = get_current_branch()
+    log_output = get_git_log(merge_base_ref)
+
+    for line in process_git_log(log_output, current):
+        print(line)
+
+
+# =============================================================================
+# Tests
+# =============================================================================
+
+# def run_tests(debug=False):
+#     """Run embedded tests."""
+#     import textwrap
+
+#     def test(name, log_input, current, expected):
+#         log = textwrap.dedent(log_input).strip()
+#         expected_lines = textwrap.dedent(expected).strip()
+#         if not expected_lines.startswith("* "):
+#             expected_lines = textwrap.indent(expected_lines, "  ")
+#         expected_lines = expected_lines.split("\n")
+#         actual_lines = process_git_log(log, current, debug=debug)
+
+#         if actual_lines == expected_lines:
+#             print(f"✓ {name}")
+#             return True
+#         else:
+#             print(f"✗ {name}")
+#             print(f"  Expected lines:")
+#             for i, line in enumerate(expected_lines):
+#                 print(f"    {i}: {repr(line)}")
+#             print(f"  Actual lines:")
+#             for i, line in enumerate(actual_lines):
+#                 print(f"    {i}: {repr(line)}")
+#             return False
+
+#     results = []
+
+#     # Test 1: Simple branch hierarchy
+#     results.append(test(
+#         "Simple hierarchy",
+#         """
+#         *  (fix-over-paid-invoice)
+#         | *  (feature/auto-accept-log)
+#         |/
+#         | *  (feature/cch-verifications)
+#         | *  (feature/cch-order-fsm)
+#         |/
+#         *  (develop)
+#         *  (main)
+#         """,
+#         "develop",
+#         """
+#         * develop
+#               feature/cch-order-fsm
+#                   feature/cch-verifications
+#               feature/auto-accept-log
+#               fix-over-paid-invoice
+#         """
+#     ))
+
+#     # Test 2: Nested children
+#     results.append(test(
+#         "Nested children (grandchild)",
+#         """
+#         *  (fix-over-paid-invoice)
+#         | *  (feature/auto-accept-log)
+#         |/
+#         | *  (feature/cch-verifications)
+#         | | *  (feature/new-grandson)
+#         | |/
+#         | *  (feature/cch-order-fsm)
+#         |/
+#         *  (develop)
+#         """,
+#         "develop",
+#         """
+#         * develop
+#               feature/cch-order-fsm
+#                   feature/new-grandson
+#                   feature/cch-verifications
+#               feature/auto-accept-log
+#               fix-over-paid-invoice
+#         """
+#     ))
+
+#     # Test 3: Current branch marker
+#     results.append(test(
+#         "Current branch marker",
+#         """
+#         *  (fix-over-paid-invoice)
+#         | *  (feature/auto-accept-log)
+#         |/
+#         *  (develop)
+#         """,
+#         "feature/auto-accept-log",
+#         """
+#           develop
+#             * feature/auto-accept-log
+#               fix-over-paid-invoice
+#         """
+#     ))
+
+#     # Test 4: Complex hierarchy with multiple children
+#     # Note: The git graph has complex patterns like * | and |/| which result in
+#     # auto-accept-log becoming a child of cch-verifications in the parsed tree
+#     results.append(test(
+#         "Complex hierarchy",
+#         """
+#         *  (feature/extra-child-2)
+#         | *  (feature/grandchild-1b)
+#         | | *  (feature/grandchild-1a)
+#         | |/
+#         | *  (feature/extra-child-1)
+#         |/
+#         | *  (feature/auto-accept-log)
+#         | | *  (fix-over-paid-invoice)
+#         | |/
+#         | | *  (feature/new-grandson)
+#         | |/
+#         |/|
+#         * |  (feature/cch-verifications)
+#         * |  (feature/cch-order-fsm)
+#         |/
+#         *  (develop)
+#         """,
+#         "develop",
+#         """
+#         * develop
+#               feature/cch-order-fsm
+#                   feature/cch-verifications
+#                       feature/new-grandson
+#                       feature/extra-child-1
+#                           feature/grandchild-1a
+#                           feature/grandchild-1b
+#                       feature/extra-child-2
+#               fix-over-paid-invoice
+#               feature/auto-accept-log
+#         """
+#     ))
+
+#     # Summary
+#     passed = sum(results)
+#     total = len(results)
+#     print(f"\n{passed}/{total} tests passed")
+#     return passed == total
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1 and sys.argv[1] == "--test":
+        debug = len(sys.argv) > 2 and sys.argv[2] == "--debug"
+        success = run_tests(debug=debug)
+        sys.exit(0 if success else 1)
+    else:
+        main()
