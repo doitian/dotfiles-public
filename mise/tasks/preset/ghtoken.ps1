@@ -1,3 +1,4 @@
 #MISE dir="{{cwd}}"
 
-mise set GITHUB_TOKEN="{{ exec(command='gh auth token') }}"
+mise config set env.GITHUB_TOKEN.value "{{ exec(command='gh auth token') }}"
+mise config set env.GITHUB_TOKEN.redact true
