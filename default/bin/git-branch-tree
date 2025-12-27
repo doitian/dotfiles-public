@@ -18,25 +18,6 @@ def run_git(*args):
     return result.stdout.strip() if result.returncode == 0 else ""
 
 
-def get_merge_base_ref():
-    """Get the merge base reference (upstream/HEAD, origin/HEAD, or develop/main/master)."""
-    for cmd in [
-        ["symbolic-ref", "refs/remotes/upstream/HEAD"],
-        ["symbolic-ref", "refs/remotes/origin/HEAD"],
-    ]:
-        ref = run_git(*cmd)
-        if ref:
-            ref = re.sub(r"^refs/remotes/", "", ref)
-            return ref
-
-    # Fallback to develop, main, or master
-    for branch in ["main", "master", "develop"]:
-        if run_git("rev-parse", "--verify", branch):
-            return branch
-
-    return "main"
-
-
 def get_current_branch():
     """Get the current branch name."""
     branch = run_git("branch", "--show-current")
@@ -45,18 +26,7 @@ def get_current_branch():
     return run_git("rev-parse", "--short", "HEAD")
 
 
-def get_git_log(merge_base_ref):
-    """Get git log graph output."""
-    for rev_range in [f"{merge_base_ref}^..", f"{merge_base_ref}.."]:
-        output = run_git(
-            "log", "--graph", "--simplify-by-decoration",
-            "--pretty=format:%d", "--branches",
-            "--decorate-refs", "refs/heads/*",
-            rev_range,
-        )
-        if output:
-            return output
-
+def get_git_log():
     return run_git(
         "log", "--graph", "--simplify-by-decoration",
         "--pretty=format:%d", "--branches",
@@ -77,7 +47,7 @@ def parse_branch_name(line):
 
 def is_root_candidate(line):
     """Check if line is a root candidate: starts with '* ' and has no '|'."""
-    return line.startswith("* ") and "|" not in line
+    return line.startswith("* ") and "(" in line
 
 
 def is_merge_line(line):
@@ -133,8 +103,10 @@ def parse_branches(lines, skip_branches=None, debug=False):
             continue
 
         branch = parse_branch_name(line)
-        if not branch or branch in skip_branches:
+        if not branch:
             continue
+        if branch in skip_branches:
+            break
 
         col = get_star_column(line)
         idx = len(branches)
@@ -196,11 +168,12 @@ def process_git_log(log_output, current, debug=False):
             continue
 
         if is_root_candidate(line):
-            merge_base = branch
-            merge_base_line_idx = i
             root_candidate_count += 1
-            if root_candidate_count == 2:
-                break
+            if root_candidate_count == 1:
+                merge_base = branch
+                merge_base_line_idx = i
+        else:
+            root_candidate_count = 0
 
     if debug:
         print(f"  DEBUG: merge_base={merge_base}, merge_base_line_idx={merge_base_line_idx}")
@@ -245,9 +218,8 @@ def process_git_log(log_output, current, debug=False):
 
 
 def main():
-    merge_base_ref = get_merge_base_ref()
     current = get_current_branch()
-    log_output = get_git_log(merge_base_ref)
+    log_output = get_git_log()
 
     for line in process_git_log(log_output, current):
         print(line)
