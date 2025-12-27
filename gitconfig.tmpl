@@ -8,6 +8,7 @@
 	bl = branch --format "%(refname:short)"
 	bt = branch-tree
     bg = log --graph --oneline --simplify-by-decoration --branches --decorate-refs "refs/heads/*"
+    bgr = log --graph --oneline --simplify-by-decoration --branches --decorate-refs "refs/heads/*" --decorate-refs "refs/remotes/*"
 	publish = "!git push origin -u \"$(git branch --show-current)\""
 
 	cm = commit
