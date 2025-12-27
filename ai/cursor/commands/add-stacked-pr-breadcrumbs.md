@@ -4,7 +4,7 @@ Generate a stacked PR breadcrumbs block to add at the beginning of a PR body.
 
 ## Instructions
 
-Use `git town branch` to figure out the branch hierarchy and lookup corresponding PR numbers for each branch. Then generate the breadcrumbs in this exact format:
+Use `git branch-tree` to figure out the branch hierarchy. Then lookup corresponding PR numbers for each branch and generate the breadcrumbs in this exact format:
 
 ```markdown
 > [!IMPORTANT]

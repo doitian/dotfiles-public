@@ -1,0 +1,59 @@
+#!/usr/bin/env sh
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+# Get indentation for a branch based on merge depth
+get_indent() {
+  branch="$1"
+  depth=$(git branch --merged "$branch" | wc -l)
+  spaces=$((($depth - 1) * 4))
+  printf "%${spaces}s" ""
+}
+
+# Print branch with indentation
+print_branch() {
+  branch="$1"
+  current="$2"
+  indent=$(get_indent "$branch")
+  if [ "$branch" = "$current" ]; then
+    printf "%s* %s\n" "$indent" "$branch"
+  else
+    printf "%s  %s\n" "$indent" "$branch"
+  fi
+}
+
+main() {
+  # Get current branch name
+  current=$(git branch --show-current)
+  if [ -z "$current" ]; then
+    current=$(git rev-parse --short HEAD)
+  fi
+
+  # Get ancestors (branches merged into HEAD), excluding current
+  ancestors=$(git branch --merged HEAD --format='%(refname:short)' | grep -v "^${current}$" || true)
+
+  # Get descendants (branches containing HEAD), excluding current
+  descendants=$(git branch --contains HEAD --format='%(refname:short)' | grep -v "^${current}$" || true)
+
+  # Print ancestors
+  if [ -n "$ancestors" ]; then
+    echo "$ancestors" | while read -r branch; do
+      print_branch "$branch" "$current"
+    done
+  fi
+
+  # Print current branch
+  print_branch "$current" "$current"
+
+  # Print descendants
+  if [ -n "$descendants" ]; then
+    echo "$descendants" | while read -r branch; do
+      print_branch "$branch" "$current"
+    done
+  fi
+}
+
+main "$@"
+
