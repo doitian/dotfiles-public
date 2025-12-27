@@ -6,72 +6,63 @@ import subprocess
 import sys
 
 
+def run_git(*args):
+    """Run a git command and return stdout."""
+    result = subprocess.run(
+        ["git"] + list(args),
+        capture_output=True,
+        text=True,
+    )
+    return result.stdout.strip() if result.returncode == 0 else ""
+
+
 def get_merge_base_ref():
-    """Get the merge base reference (upstream/HEAD, origin/HEAD, or main/master)."""
+    """Get the merge base reference (upstream/HEAD, origin/HEAD, or develop/main/master)."""
     for cmd in [
-        ["git", "symbolic-ref", "refs/remotes/upstream/HEAD"],
-        ["git", "symbolic-ref", "refs/remotes/origin/HEAD"],
+        ["symbolic-ref", "refs/remotes/upstream/HEAD"],
+        ["symbolic-ref", "refs/remotes/origin/HEAD"],
     ]:
-        try:
-            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-            ref = result.stdout.strip()
-            # Strip refs/remotes/*/  or refs/heads/
+        ref = run_git(*cmd)
+        if ref:
             ref = re.sub(r"^refs/remotes/[^/]+/", "", ref)
             ref = re.sub(r"^refs/heads/", "", ref)
             return ref
-        except subprocess.CalledProcessError:
-            continue
 
-    # Fallback to main or master
-    for branch in ["main", "master"]:
-        try:
-            subprocess.run(
-                ["git", "rev-parse", "--verify", branch],
-                capture_output=True,
-                check=True,
-            )
+    # Fallback to develop, main, or master
+    for branch in ["main", "master", "develop"]:
+        if run_git("rev-parse", "--verify", branch):
             return branch
-        except subprocess.CalledProcessError:
-            continue
 
     return "main"
 
 
 def get_current_branch():
     """Get the current branch name."""
-    try:
-        result = subprocess.run(
-            ["git", "branch", "--show-current"], capture_output=True, text=True, check=True
-        )
-        branch = result.stdout.strip()
-        if branch:
-            return branch
-    except subprocess.CalledProcessError:
-        pass
-
-    # Fallback to short HEAD
-    result = subprocess.run(
-        ["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True
-    )
-    return result.stdout.strip()
+    branch = run_git("branch", "--show-current")
+    if branch:
+        return branch
+    return run_git("rev-parse", "--short", "HEAD")
 
 
 def get_git_log(merge_base_ref):
     """Get git log graph output."""
-    try:
-        result = subprocess.run(
-            [
-                "git", "log", "--graph", "--simplify-by-decoration",
-                "--pretty=format:%d", "--branches",
-                "--decorate-refs", "refs/heads/*",
-                f"{merge_base_ref}~..",
-            ],
-            capture_output=True,
-            text=True,
+    # Try with ref~.. first, then ref.., then no constraint
+    for rev_range in [f"{merge_base_ref}^..", f"{merge_base_ref}.."]:
+        output = run_git(
+            "log", "--graph", "--simplify-by-decoration",
+            "--pretty=format:%d", "--branches",
+            "--decorate-refs", "refs/heads/*",
+            rev_range,
         )
-        return result.stdout.strip()
-    except subprocess.CalledProcessError:
-        return ""
+        if output:
+            return output
+
+    # Final fallback: no range constraint
+    return run_git(
+        "log", "--graph", "--simplify-by-decoration",
+        "--pretty=format:%d", "--branches",
+        "--decorate-refs", "refs/heads/*",
+    )
 
 
 def count_pipes(line):
@@ -89,26 +80,90 @@ def parse_branch_name(line):
     return match.group(1) if match else None
 
 
+def is_root_candidate(line):
+    """Check if line is a root candidate: starts with '* ' and has no '|'."""
+    return line.startswith("* ") and "|" not in line
+
+
 def is_merge_line(line):
-    """Check if line is a merge marker (ends with /)."""
-    return line.rstrip().endswith("/")
+    """Check if line is a merge marker (contains /)."""
+    return "/" in line
 
 
 def get_merge_column(line):
-    """Get the column where merge happens (count pipes before /)."""
-    # For |/ -> merge at col 1
-    # For | |/ -> merge at col 2
+    """Get the column where merge happens."""
     prefix = re.sub(r"/.*", "", line)
     return prefix.count("| ") + 1
 
 
-def print_branch(branch, current, level):
+def print_branch(branch, current, level, is_stalled=False):
     """Print a branch with indentation."""
     indent = "    " * level
-    # Strip (stalled) suffix for comparison
-    branch_name = re.sub(r" \(stalled\)$", "", branch)
-    marker = "*" if branch_name == current else " "
-    print(f"{indent}{marker} {branch}")
+    suffix = " (stalled)" if is_stalled else ""
+    marker = "*" if branch == current else " "
+    print(f"{indent}{marker} {branch}{suffix}")
+
+
+def parse_branches(lines, current, skip_branches=None):
+    """Parse branch tree from git log lines.
+
+    Returns: (branches, parent_of, children)
+    - branches: list of branch names
+    - parent_of: dict mapping child_idx -> parent_idx
+    - children: dict mapping parent_idx -> list of child_idx
+    """
+    if skip_branches is None:
+        skip_branches = set()
+
+    branches = []
+    parent_of = {}
+    stack = {}
+
+    for line in lines:
+        # Handle merge markers
+        if is_merge_line(line):
+            merge_col = get_merge_column(line)
+            stack = {c: idx for c, idx in stack.items() if c < merge_col}
+            continue
+
+        branch = parse_branch_name(line)
+        if not branch or branch in skip_branches:
+            continue
+
+        col = count_pipes(line)
+        idx = len(branches)
+        branches.append(branch)
+
+        # Parent is the branch at col-1 (if exists)
+        if col - 1 in stack:
+            parent_of[idx] = stack[col - 1]
+
+        # If there's a pending branch at same column, its parent is this one
+        if col in stack:
+            pending_child = stack[col]
+            parent_of[pending_child] = idx
+
+        # This branch is now pending at its column
+        stack[col] = idx
+
+    # Build children map
+    children = {}
+    for child_idx, parent_idx in parent_of.items():
+        if parent_idx not in children:
+            children[parent_idx] = []
+        children[parent_idx].append(child_idx)
+
+    return branches, parent_of, children
+
+
+def print_tree(branches, children, idx, level, current, is_stalled=False):
+    """Recursively print branch tree."""
+    branch = branches[idx]
+    print_branch(branch, current, level, is_stalled)
+    if idx in children:
+        # Print children in reverse order (oldest first)
+        for child_idx in reversed(children[idx]):
+            print_tree(branches, children, child_idx, level + 1, current, is_stalled)
 
 
 def main():
@@ -120,86 +175,55 @@ def main():
         print("No branches found")
         return
 
-    # Parse log output
+    lines = log_output.split("\n")
+
+    # First pass: find last_leaf and merge_base (root)
     last_leaf = None
     merge_base = None
-    stalled_branches = []
+    merge_base_line_idx = None
 
-    # For building branch tree
-    branches = []  # List of branch names
-    parent_of = {}  # idx -> parent_idx
-    stack = {}  # col -> idx (most recent branch at this column)
-
-    for line in log_output.split("\n"):
-        # Handle merge markers
-        if is_merge_line(line):
-            merge_col = get_merge_column(line)
-            # Clear stack entries at merge_col and deeper
-            stack = {c: idx for c, idx in stack.items() if c < merge_col}
-            continue
-
+    for i, line in enumerate(lines):
         branch = parse_branch_name(line)
         if not branch:
             continue
 
-        col = count_pipes(line)
-
-        if col == 0:
-            # Main line branch
+        if is_root_candidate(line):
             if last_leaf is None:
                 last_leaf = branch
             elif merge_base is None:
                 merge_base = branch
-            else:
-                # After merge base = stalled (ignore main and master)
-                if branch not in ("main", "master"):
-                    stalled_branches.append(branch)
-            # Reset stack for fresh branches
-            stack = {}
-        else:
-            # Fresh branch
-            idx = len(branches)
-            branches.append(branch)
+                merge_base_line_idx = i
+                break
 
-            # Parent is the branch at col-1 (if exists)
-            if col - 1 in stack:
-                parent_of[idx] = stack[col - 1]
+    # Split lines into fresh (before merge_base) and stalled (after merge_base)
+    if merge_base_line_idx is not None:
+        fresh_lines = lines[:merge_base_line_idx]
+        stalled_lines = lines[merge_base_line_idx + 1:]
+    else:
+        fresh_lines = lines
+        stalled_lines = []
 
-            # If there's a pending branch at same column, its parent is this one
-            if col in stack:
-                pending_child = stack[col]
-                parent_of[pending_child] = idx
+    # Parse fresh branches (skip last_leaf, will be printed at end)
+    skip = {last_leaf} if last_leaf else set()
+    fresh_branches, fresh_parent_of, fresh_children = parse_branches(fresh_lines, current, skip)
 
-            # This branch is now pending at its column
-            stack[col] = idx
-
-    # Build children map
-    children = {}  # idx -> list of child indices
-    for child_idx, parent_idx in parent_of.items():
-        if parent_idx not in children:
-            children[parent_idx] = []
-        children[parent_idx].append(child_idx)
-
-    # Print tree
-    def print_tree(idx, level):
-        print_branch(branches[idx], current, level)
-        if idx in children:
-            # Print children in reverse order (oldest first)
-            for child_idx in reversed(children[idx]):
-                print_tree(child_idx, level + 1)
+    # Parse stalled branches (skip main/master)
+    skip_stalled = {"main", "master"}
+    stalled_branches, stalled_parent_of, stalled_children = parse_branches(stalled_lines, current, skip_stalled)
 
     # Print merge base as root
     if merge_base:
         print_branch(merge_base, current, 0)
 
-    # Print stalled branches
-    for branch in stalled_branches:
-        print_branch(f"{branch} (stalled)", current, 1)
+    # Print stalled branches tree (with +1 depth offset, marked as stalled)
+    stalled_roots = [i for i in range(len(stalled_branches)) if i not in stalled_parent_of]
+    for idx in reversed(stalled_roots):
+        print_tree(stalled_branches, stalled_children, idx, 1, current, is_stalled=True)
 
-    # Print fresh branches - find roots and print trees
-    roots = [i for i in range(len(branches)) if i not in parent_of]
-    for idx in reversed(roots):  # Reverse order (oldest first)
-        print_tree(idx, 1)
+    # Print fresh branches tree
+    fresh_roots = [i for i in range(len(fresh_branches)) if i not in fresh_parent_of]
+    for idx in reversed(fresh_roots):
+        print_tree(fresh_branches, fresh_children, idx, 1, current, is_stalled=False)
 
     # Print last leaf
     if last_leaf:
