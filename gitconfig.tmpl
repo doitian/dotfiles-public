@@ -116,6 +116,7 @@
 	fdc = "!f() { git diff --name-only --cached | fzf -m --print0 --preview 'git diff --color --cached -- {}' | xargs -0 git diff --cached -p --stat; }; f"
 	# show what would be committed with "git commit -a" via fzf
 	fda = "!f() { git diff --name-only HEAD | fzf -m --print0 --preview 'git diff --color HEAD -- {}' | xargs -0 git diff -p --stat HEAD; }; f"
+	fsw = "!f() { git branch --format '%(refname:short)' | fzf | xargs -r git switch \"$@\"; }; f"
 
 	dt = difftool
 	dtall = difftool --dir-diff
