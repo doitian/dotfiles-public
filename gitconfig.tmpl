@@ -29,6 +29,7 @@
 	co = checkout
 	cb = checkout -b
 	rs = restore --staged
+	sw = switch
 
 	cp = cherry-pick
 
@@ -122,6 +123,7 @@
 	# show what would be committed with "git commit -a" via fzf
 	fda = "!f() { git diff --name-only HEAD | fzf -m --print0 --preview 'git diff --color HEAD -- {}' | xargs -0 git diff -p --stat HEAD; }; f"
 	fsw = "!f() { git branch --format '%(refname:short)' | fzf | xargs -r git switch \"$@\"; }; f"
+	fst = "!f() { git for-each-ref --format='%(refname:short)' refs/remotes/ | grep '/' | fzf | xargs -r git switch -t \"$@\"; }; f"
 
 	dt = difftool
 	dtall = difftool --dir-diff
