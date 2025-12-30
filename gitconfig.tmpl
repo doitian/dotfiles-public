@@ -13,7 +13,7 @@
 	publish = "!git push origin -u \"$(git branch --show-current)\""
 
 	mbase = "!f() { local mb=\"$(git config \"branch.$(git branch --show-current).vscode-merge-base\" || git symbolic-ref refs/remotes/upstream/HEAD 2>/dev/null || git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null)\"; echo \"${mb#refs/remotes/}\"; }; f"
-	msync = "!f() { local mb=\"$(git mbase)\"; git fetch --all --prune; git fetch . ${mb}:${mb#*/}; if [ \"${mb%%/*}\" = upstream ]; then git push origin ${mb}:${mb#*/}; fi; }; f"
+	msync = "!f() { local mb=\"$(git mbase)\"; git fetch --all --prune; git fetch . ${mb}:${mb#*/} 2>/dev/null || git merge --ff-only; if [ \"${mb%%/*}\" = upstream ]; then git push origin ${mb}:${mb#*/}; fi; }; f"
 	mrebase = "!f() { local mb=\"$(git mbase)\"; git rebase \"$@\" $mb; }; f"
 
 	cm = commit
