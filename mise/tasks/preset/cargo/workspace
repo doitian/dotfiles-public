@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE dir="{{cwd}}"
+#MISE depends=["preset:rust"]
+
+if [ ! -f "Cargo.toml" ]; then
+    printf '[workspace]\nresolver = "3"\n' > Cargo.toml
+fi
