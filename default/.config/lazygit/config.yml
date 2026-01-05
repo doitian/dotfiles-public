@@ -5,6 +5,7 @@ os:
 git:
   autoFetch: false
   parseEmoji: true
+  mainBranches: ["develop", "main", "master"]
 gui:
   language: "en"
   commandLogSize: 2
