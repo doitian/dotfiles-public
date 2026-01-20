@@ -2,3 +2,6 @@
 
 [settings.npm]
 package_manager = "pnpm"
+
+[settings.python]
+uv_venv_auto = true
