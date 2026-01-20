@@ -58,6 +58,14 @@ return {
           return vim.env.http_proxy ~= nil
         end,
       })
+      table.insert(opts.sections.lualine_x, 2, {
+        function()
+          return "𝔐 "
+        end,
+        cond = function()
+          return vim.env.__MISE_SESSION ~= nil
+        end,
+      })
       opts.sections.lualine_z = {}
     end,
   },
