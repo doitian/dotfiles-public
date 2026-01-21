@@ -1,0 +1,12 @@
+{
+  "TLA ➤ module": {
+    "prefix": "module",
+    "body": [
+      "---- MODULE $TM_FILENAME_BASE ----",
+      "$0",
+      "------",
+      "======"
+    ],
+    "description": "Create new module"
+  }
+}
