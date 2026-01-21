@@ -49,6 +49,18 @@ if (-not (Test-Path $settingsFile)) {
     [System.IO.File]::WriteAllText($settingsFile, $jsonContent, [System.Text.UTF8Encoding]::new($false))
 }
 
+# Get mise env variables (excluding PATH and Path)
+$miseEnvJson = $null
+try {
+    $miseEnvOutput = mise env -J 2>$null
+    if ($miseEnvOutput -and ($miseEnvOutput.Trim() -ne '')) {
+        $miseEnvJson = $miseEnvOutput | ConvertFrom-Json
+    }
+} catch {
+    # Fallback to empty object if mise env fails
+    $miseEnvJson = $null
+}
+
 # Read current settings
 $settings = Get-Content $settingsFile -Raw | ConvertFrom-Json
 
@@ -61,10 +73,19 @@ if (-not $settings.'terminal.integrated.env.windows') {
 # Format: "PATH": "C:\path\to\shims;${env:PATH}"
 $settings.'terminal.integrated.env.windows'.PATH = "$miseShimsPath;`${env:PATH}"
 
+# Merge other env vars from mise env (excluding PATH and Path)
+if ($miseEnvJson -and $miseEnvJson.PSObject.Properties) {
+    $miseEnvJson.PSObject.Properties | ForEach-Object {
+        if ($_.Name -ne 'PATH' -and $_.Name -ne 'Path') {
+            $settings.'terminal.integrated.env.windows' | Add-Member -MemberType NoteProperty -Name $_.Name -Value $_.Value -Force
+        }
+    }
+}
+
 # Write back with proper formatting and LF line endings
 $jsonContent = $settings | ConvertTo-Json -Depth 10
 # Ensure LF line endings (replace CRLF with LF)
 $jsonContent = $jsonContent -replace "`r`n", "`n"
 [System.IO.File]::WriteAllText($settingsFile, $jsonContent, [System.Text.UTF8Encoding]::new($false))
 
-Write-Host "Updated $settingsFile with mise shims path for windows: $miseShimsPath"
+Write-Host "Updated $settingsFile with mise shims path and environment variables for windows: $miseShimsPath"
