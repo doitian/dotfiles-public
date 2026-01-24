@@ -215,10 +215,6 @@ nnoremap >gp <Cmd>exec 'put '.v:register<CR>j
 nnoremap <gp <Cmd>exec 'put! '.v:register<CR>j
 nnoremap >p <Cmd>exec 'put '.v:register."<Bar>keepjump norm '["<CR>
 nnoremap <p <Cmd>exec 'put! '.v:register."<Bar>keepjump norm '["<CR>
-nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
-xnoremap <expr> j v:count == 0 ? 'gj' : 'j'
-nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
-xnoremap <expr> k v:count == 0 ? 'gk' : 'k'
 nnoremap <expr> n 'Nn'[v:searchforward].'zv'
 xnoremap <expr> n 'Nn'[v:searchforward]
 onoremap <expr> n 'Nn'[v:searchforward]

@@ -34,6 +34,8 @@ map("n", "<Leader>wk", "<Cmd>Close<CR>", { desc = "Close disturbing windows" })
 map("n", "<C-A-I>", "<Leader>aa", { desc = "Toggle (CopilotChat)", remap = true })
 
 -- navigation {{{1
+unmap({ "n", "x" }, "j")
+unmap({ "n", "x" }, "k")
 map(
   "n",
   "<S-H>",
