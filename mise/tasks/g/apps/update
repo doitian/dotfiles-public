@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+#MISE dir="~"
+
+if command -v apt &>/dev/null; then
+    sudo apt update && sudo apt upgrade
+fi
+
+if command -v brew &>/dev/null; then
+    brew update && brew upgrade
+fi
+
+if command -v paru &>/dev/null; then
+    paru -Syu
+fi
