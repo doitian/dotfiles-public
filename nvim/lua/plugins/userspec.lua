@@ -1,5 +1,23 @@
 return {
   {
+    "tpope/vim-dispatch",
+    cmd = { "Make", "Dispatch", "Start", "FocusDispatch" },
+    keys = {
+      { "g<CR>", "<Cmd>Dispatch<CR>", desc = "Dispatch" },
+
+      { "m<CR>", "<Cmd>Make<CR>", desc = "Make" },
+      { "m!", "<Cmd>Make!", desc = "Make!" },
+      { "`<CR>", "<Cmd>Dispatch<CR>", desc = "Dispatch" },
+      { "`!", "<Cmd>Dispatch!", desc = "Dispatch!" },
+      { "'<CR>", "<Cmd>Start<CR>", desc = "Start" },
+      { "'!", "<Cmd>Start!", desc = "Start!" },
+    },
+    init = function()
+      vim.g.dispatch_no_maps = 1
+    end,
+  },
+
+  {
     "christoomey/vim-titlecase",
     keys = {
       { "<Leader>gz", "<Plug>Titlecase", mode = { "n", "x" }, desc = "Titlecase" },

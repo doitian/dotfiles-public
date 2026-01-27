@@ -116,37 +116,37 @@ return {
           return item[1] ~= "<leader>bp"
         end, keys),
         {
-          { "<Leader>bp",  toggle_pin,                                   desc = "Toggle pin" },
-          { "<leader>bj",  go_to,                                        desc = "Go to buffer" },
-          { "<leader>j",   go_to,                                        desc = "Go to buffer" },
-          { "<Leader>b.",  move_to,                                      desc = "Move buffer" },
-          { "<Leader>bs",  "<Cmd>BufferLinePick<CR>",                    desc = "Pick buffer" },
-          { "<Leader>bx",  "<Cmd>BufferLinePickClose<CR>",               desc = "Pick buffer to close" },
-          { "<Leader>bnn", sort_by_none,                                 desc = "Renumber buffers" },
-          { "<Leader>bnd", "<Cmd>BufferLineSortByDirectory<CR>",         desc = "Sort buffers by directory" },
-          { "<Leader>bne", "<Cmd>BufferLineSortByExtension<CR>",         desc = "Sort buffers by extension" },
+          { "<Leader>bp", toggle_pin, desc = "Toggle pin" },
+          { "<leader>bj", go_to, desc = "Go to buffer" },
+          { "<leader>j", go_to, desc = "Go to buffer" },
+          { "<Leader>b.", move_to, desc = "Move buffer" },
+          { "<Leader>bs", "<Cmd>BufferLinePick<CR>", desc = "Pick buffer" },
+          { "<Leader>bx", "<Cmd>BufferLinePickClose<CR>", desc = "Pick buffer to close" },
+          { "<Leader>bnn", sort_by_none, desc = "Renumber buffers" },
+          { "<Leader>bnd", "<Cmd>BufferLineSortByDirectory<CR>", desc = "Sort buffers by directory" },
+          { "<Leader>bne", "<Cmd>BufferLineSortByExtension<CR>", desc = "Sort buffers by extension" },
           { "<Leader>bnr", "<Cmd>BufferLineSortByRelativeDirectory<CR>", desc = "Sort buffers by relative directory" },
-          { "<Leader>bnt", "<Cmd>BufferLineSortByTabs<CR>",              desc = "Sort buffers by tags" },
-          { "<Leader>1",   nth(1),                                       desc = "which_key_ignore" },
-          { "<Leader>2",   nth(2),                                       desc = "which_key_ignore" },
-          { "<Leader>3",   nth(3),                                       desc = "which_key_ignore" },
-          { "<Leader>4",   nth(4),                                       desc = "which_key_ignore" },
-          { "<Leader>5",   nth(5),                                       desc = "which_key_ignore" },
-          { "<Leader>6",   nth(6),                                       desc = "which_key_ignore" },
-          { "<Leader>7",   nth(7),                                       desc = "which_key_ignore" },
-          { "<Leader>8",   nth(8),                                       desc = "which_key_ignore" },
-          { "<Leader>9",   nth(9),                                       desc = "which_key_ignore" },
-          { "<Leader>0",   nth(-1),                                      desc = "which_key_ignore" },
-          { "<Leader>!",   move_to_nth(1),                               desc = "which_key_ignore" },
-          { "<Leader>@",   move_to_nth(2),                               desc = "which_key_ignore" },
-          { "<Leader>#",   move_to_nth(3),                               desc = "which_key_ignore" },
-          { "<Leader>$",   move_to_nth(4),                               desc = "which_key_ignore" },
-          { "<Leader>%",   move_to_nth(5),                               desc = "which_key_ignore" },
-          { "<Leader>^",   move_to_nth(6),                               desc = "which_key_ignore" },
-          { "<Leader>&",   move_to_nth(7),                               desc = "which_key_ignore" },
-          { "<Leader>*",   move_to_nth(8),                               desc = "which_key_ignore" },
-          { "<Leader>(",   move_to_nth(9),                               desc = "which_key_ignore" },
-          { "<Leader>)",   move_to_nth(-1),                              desc = "which_key_ignore" },
+          { "<Leader>bnt", "<Cmd>BufferLineSortByTabs<CR>", desc = "Sort buffers by tags" },
+          { "<Leader>1", nth(1), desc = "which_key_ignore" },
+          { "<Leader>2", nth(2), desc = "which_key_ignore" },
+          { "<Leader>3", nth(3), desc = "which_key_ignore" },
+          { "<Leader>4", nth(4), desc = "which_key_ignore" },
+          { "<Leader>5", nth(5), desc = "which_key_ignore" },
+          { "<Leader>6", nth(6), desc = "which_key_ignore" },
+          { "<Leader>7", nth(7), desc = "which_key_ignore" },
+          { "<Leader>8", nth(8), desc = "which_key_ignore" },
+          { "<Leader>9", nth(9), desc = "which_key_ignore" },
+          { "<Leader>0", nth(-1), desc = "which_key_ignore" },
+          { "<Leader>!", move_to_nth(1), desc = "which_key_ignore" },
+          { "<Leader>@", move_to_nth(2), desc = "which_key_ignore" },
+          { "<Leader>#", move_to_nth(3), desc = "which_key_ignore" },
+          { "<Leader>$", move_to_nth(4), desc = "which_key_ignore" },
+          { "<Leader>%", move_to_nth(5), desc = "which_key_ignore" },
+          { "<Leader>^", move_to_nth(6), desc = "which_key_ignore" },
+          { "<Leader>&", move_to_nth(7), desc = "which_key_ignore" },
+          { "<Leader>*", move_to_nth(8), desc = "which_key_ignore" },
+          { "<Leader>(", move_to_nth(9), desc = "which_key_ignore" },
+          { "<Leader>)", move_to_nth(-1), desc = "which_key_ignore" },
         }
       )
     end,
@@ -184,9 +184,9 @@ return {
         mode = { "o" },
         desc = "Flash",
       },
-      { "ys", "gsa", desc = "Add surrounding",     remap = true },
-      { "S",  "gsa", desc = "Add surrounding",     mode = "x",  remap = true },
-      { "ds", "gsd", desc = "Delete surrounding",  remap = true },
+      { "ys", "gsa", desc = "Add surrounding", remap = true },
+      { "S", "gsa", desc = "Add surrounding", mode = "x", remap = true },
+      { "ds", "gsd", desc = "Delete surrounding", remap = true },
       { "cs", "gsr", desc = "Replace surrounding", remap = true },
     },
   },
@@ -197,7 +197,7 @@ return {
     optional = true,
     keys = {
       { "<Leader>fh", LazyVim.pick("files", { cwd = "%:h" }), desc = "Find Files Here" },
-      { "<Leader>s/", "<Cmd>FzfLua search_history<CR>",       desc = "Search History" },
+      { "<Leader>s/", "<Cmd>FzfLua search_history<CR>", desc = "Search History" },
     },
     opts = {
       files = {
@@ -219,8 +219,20 @@ return {
         end,
         desc = "Find Files Here",
       },
-      { "<Leader>.", function() Snacks.scratch({ ft = "markdown" }) end, desc = "Toggle Markdown Scratch Buffer" },
-      { "<Leader>>", function() Snacks.scratch() end,                    desc = "Toggle Scratch Buffer" },
+      {
+        "<Leader>.",
+        function()
+          Snacks.scratch({ ft = "markdown" })
+        end,
+        desc = "Toggle Markdown Scratch Buffer",
+      },
+      {
+        "<Leader>>",
+        function()
+          Snacks.scratch()
+        end,
+        desc = "Toggle Scratch Buffer",
+      },
     },
     opts = function(_, opts)
       local new_opts = {
@@ -238,61 +250,6 @@ return {
         new_opts.picker.sources.explorer = { git_status = false }
       end
       return vim.tbl_deep_extend("force", opts, new_opts)
-    end,
-  },
-
-  -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/extras/editor/overseer.lua
-  {
-    "stevearc/overseer.nvim",
-    optional = true,
-    opts = {
-      task_list = {
-        keymaps = {
-          ["<C-k>"] = false,
-          ["<C-j>"] = false,
-        }
-      }
-    },
-    keys = {
-      {
-        "g<CR>",
-        function()
-          local overseer = require("overseer")
-          local task_list = require("overseer.task_list")
-          local tasks = overseer.list_tasks({
-            status = {
-              overseer.STATUS.SUCCESS,
-              overseer.STATUS.FAILURE,
-              overseer.STATUS.CANCELED,
-            },
-            sort = task_list.sort_finished_recently
-          })
-          if vim.tbl_isempty(tasks) then
-            vim.notify("No tasks found", vim.log.levels.WARN)
-          else
-            overseer.run_action(tasks[1], "restart")
-          end
-        end,
-        desc = "Rerun Last Task",
-      },
-      { "<leader>ob", "<cmd>OverseerShell<cr>", desc = "Run shell command" },
-    },
-    cmd = {
-      "OverseerOpen",
-      "OverseerClose",
-      "OverseerToggle",
-      "OverseerRun",
-      "OverseerShell",
-      "OverseerTaskAction",
-      "OverseerClearCache",
-    },
-    config = function(_, opts)
-      local overseer = require("overseer")
-      overseer.setup(opts)
-      overseer.add_template_hook(nil, function(task_defn, util)
-        util.add_component(task_defn, { "on_output_quickfix", open_on_exit = "failure", set_diagnostics = true })
-        util.add_component(task_defn, { "on_result_diagnostics" })
-      end)
     end,
   },
 
@@ -398,9 +355,9 @@ return {
             ["harper-ls"] = {
               linters = {
                 ToDoHyphen = false,
-              }
-            }
-          }
+              },
+            },
+          },
         },
       },
       setup = {
@@ -431,19 +388,19 @@ return {
   {
     "stevearc/conform.nvim",
     optional = true,
-    opts = {
-      formatters_by_ft = {
-        ["markdown"] = { "markdownlint" },
-        ["python"] = { "ruff_format" },
-        ["beancount"] = { "bean-format" },
-        ["toml"] = { "taplo" }
-      },
-    },
-    init = function()
+    opts = function(_, opts)
       vim.api.nvim_create_user_command("FormatterSet", function(opts)
         local ft = table.remove(opts.fargs, 1)
         require("conform").formatters_by_ft[ft] = opts.fargs
       end, { nargs = "+", desc = "Set linters for a filetype" })
+
+      opts.formatters_by_ft = vim.tbl_deep_extend("force", opts.formatters_by_ft or {}, {
+        ["markdown"] = { "markdownlint" },
+        ["python"] = { "ruff_format" },
+        ["beancount"] = { "bean-format" },
+        ["toml"] = { "taplo" },
+        ["haskell"] = { "ormolu" },
+      })
     end,
   },
 
@@ -452,10 +409,7 @@ return {
   {
     "mfussenegger/nvim-lint",
     optional = true,
-    opts = {
-      linters_by_ft = { ["*"] = { "typos" } },
-    },
-    init = function()
+    opts = function(_, opts)
       vim.api.nvim_create_user_command("LintRun", function(opts)
         require("lint").try_lint(opts.fargs)
       end, { nargs = "*", desc = "Run linters" })
@@ -463,6 +417,10 @@ return {
         local ft = table.remove(opts.fargs, 1)
         require("lint").linters_by_ft[ft] = opts.fargs
       end, { nargs = "+", desc = "Set linters for a filetype" })
+
+      opts.linters_by_ft = vim.tbl_deep_extend("force", opts.linters_by_ft or {}, {
+        ["*"] = { "typos" },
+      })
     end,
   },
 
