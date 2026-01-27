@@ -1,3 +1,8 @@
+---
+name: add-stacked-pr-breadcrumbs
+description: Generate a stacked PR breadcrumbs block to add at the beginning of a PR body
+disable-model-invocation: true
+---
 # Add Stacked PR Breadcrumbs
 
 Generate a stacked PR breadcrumbs block to add at the beginning of a PR body.

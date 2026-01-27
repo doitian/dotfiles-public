@@ -1,3 +1,8 @@
+---
+name: create-pr
+description: Create PR
+disable-model-invocation: true
+---
 # Create PR
 
 ## Overview

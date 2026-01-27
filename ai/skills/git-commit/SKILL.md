@@ -1,3 +1,8 @@
+---
+name: git-commit
+description: Create a git commit using the message format below
+disable-model-invocation: true
+---
 Create a git commit using the message format below.
 
 ## Commit Message
