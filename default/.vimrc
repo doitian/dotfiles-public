@@ -246,7 +246,7 @@ nnoremap <silent> [q <Cmd>exe v:count1.'cprevious'<CR>zv
 nnoremap <Leader>uz <Cmd>Goyo<CR>
 
 " coding {{{2
-nnoremap <silent> g<CR> <Cmd>Dispatch<CR>
+nnoremap <silent> g<CR> <Cmd>Dispatch!<CR>
 
 nnoremap <silent> m<CR> <Cmd>Make<CR>
 nnoremap <silent> m! <Cmd>Make!
