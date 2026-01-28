@@ -6,11 +6,11 @@ return {
       { "g<CR>", "<Cmd>Dispatch<CR>", desc = "Dispatch" },
 
       { "m<CR>", "<Cmd>Make<CR>", desc = "Make" },
-      { "m!", "<Cmd>Make!", desc = "Make!" },
+      { "m!", ":Make!", desc = "Make!" },
       { "`<CR>", "<Cmd>Dispatch<CR>", desc = "Dispatch" },
-      { "`!", "<Cmd>Dispatch!", desc = "Dispatch!" },
+      { "`!", ":Dispatch!", desc = "Dispatch!" },
       { "'<CR>", "<Cmd>Start<CR>", desc = "Start" },
-      { "'!", "<Cmd>Start!", desc = "Start!" },
+      { "'!", ":Start!", desc = "Start!" },
       { "<Leader>g<CR>", "<Cmd>Copen<CR>", desc = "Copen" },
     },
     init = function()

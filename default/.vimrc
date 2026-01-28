@@ -254,11 +254,11 @@ nnoremap <Leader>uz <Cmd>Goyo<CR>
 nnoremap <silent> g<CR> <Cmd>Dispatch<CR>
 
 nnoremap <silent> m<CR> <Cmd>Make<CR>
-nnoremap <silent> m! <Cmd>Make!
+nnoremap <silent> m! :Make!
 nnoremap <silent> `<CR> <Cmd>Dispatch<CR>
-nnoremap <silent> `! <Cmd>Dispatch!
+nnoremap <silent> `! :Dispatch!
 nnoremap <silent> '<CR> <Cmd>Start<CR>
-nnoremap <silent> '! <Cmd>Start!
+nnoremap <silent> '! :Start!
 nnoremap <silent> <Leader>g<CR> <Cmd>Copen<CR>
 
 nnoremap f<CR> <Cmd>undojoin<Bar>Neoformat<Bar>up<CR>
