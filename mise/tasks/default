@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+#MISE dir="{{cwd}}"
+
+# Default task: heuristically determine what to run based on project files
+
+if [ -f "Makefile" ] || [ -f "makefile" ] || [ -f "GNUmakefile" ]; then
+    exec make "$@"
+fi
+
+if [ -f "Cargo.toml" ]; then
+    exec cargo build "$@"
+fi
+
+if [ -f "package.json" ]; then
+    if [ -f "pnpm-lock.yaml" ]; then
+        exec pnpm run build "$@"
+    elif [ -f "yarn.lock" ]; then
+        exec yarn build "$@"
+    elif [ -f "bun.lockb" ]; then
+        exec bun run build "$@"
+    else
+        exec npm run build "$@"
+    fi
+fi
+
+if [ -f "go.mod" ]; then
+    exec go build "$@"
+fi
+
+if [ -f "pyproject.toml" ]; then
+    exec python -m build "$@"
+fi
+
+if [ -f "CMakeLists.txt" ]; then
+    mkdir -p build
+    cd build
+    cmake ..
+    exec cmake --build . "$@"
+fi
+
+if [ -f "meson.build" ]; then
+    if [ ! -d "builddir" ]; then
+        meson setup builddir
+    fi
+    exec meson compile -C builddir "$@"
+fi
+
+echo "No recognizable build system found" >&2
+exit 1
