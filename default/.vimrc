@@ -202,19 +202,20 @@ nnoremap <Leader>p "0p
 xnoremap <Leader>p "0p
 nnoremap <Leader>P "0P
 xnoremap <Leader>P "0P
+nnoremap <Leader>y <Cmd>let @+=@"<CR>
 if exists('$TMUX') && exists('$SSH_TTY')
   packadd iy-tmux.vim
-  nmap <Leader>y <Plug>(TmuxYank)
   xmap <Leader>y <Plug>(TmuxYank)
   nmap <Leader>Y <Plug>(TmuxYankLine)
   xmap <Leader>Y <Plug>(TmuxYankLine)
   nmap <Leader>yy <Plug>(TmuxYankLine)
 else
-  nnoremap <Leader>y "+y
   xnoremap <Leader>y "+y
   nnoremap <Leader>Y "+y$
   xnoremap <Leader>Y "+y$
 end
+nnoremap <Leader>cc <Cmd>let @" = '@'.fnamemodify(expand('%'), ':.')<CR>
+xnoremap <Leader>cc <Esc><Cmd>let @" = '@'.fnamemodify(expand('%'), ':.').':'.line("'<").'-'.line("'>")<CR>
 nnoremap >gp <Cmd>exec 'put '.v:register<CR>j
 nnoremap <gp <Cmd>exec 'put! '.v:register<CR>j
 nnoremap >p <Cmd>exec 'put '.v:register."<Bar>keepjump norm '["<CR>

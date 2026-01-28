@@ -12,8 +12,11 @@ map({ "n", "x" }, "<Leader>d", [["_d]], { desc = "Delete without yanking" })
 map({ "n", "x" }, "<Leader>D", [["_D]], { desc = "Delete without yanking" })
 map({ "n", "x" }, "<Leader>p", [["0p]], { desc = "Paste from yanked" })
 map({ "n", "x" }, "<Leader>P", [["0P]], { desc = "Paste from yanked above" })
-map({ "n", "x" }, "<Leader>y", [["+y]], { desc = "Yank into system clipboard" })
+map("n", "<Leader>y", function() vim.fn.setreg("+", vim.fn.getreg('"')) end, { desc = "Duplicate yanked into system clipboard" })
+map("x", "<Leader>y", [["+y]], { desc = "Yank into system clipboard" })
 map({ "n", "x" }, "<Leader>Y", [["+Y]], { desc = "Yank into system clipboard" })
+map("n", "<Leader>cc", [[<Cmd>let @" = '@'.fnamemodify(expand('%'), ':.')<Bar>let @+ = @"<CR>]], { desc = "Yank AI file reference" })
+map("x", "<Leader>cc", [[<Esc><Cmd>let @" = '@'.fnamemodify(expand('%'), ':.').':'.line("'<").'-'.line("'>")<Bar>let @+ = @"<CR>]], { desc = "Yank AI file reference" })
 map("n", ">p", "<Cmd>exec 'put '.v:register.\"<Bar>keepjump norm '[\"<CR>", { desc = "Paste below" })
 map("n", "<p", "<Cmd>exec 'put! '.v:register.\"<Bar>keepjump norm '[\"<CR>", { desc = "Paste above" })
 map("n", ">gp", "<Cmd>exec 'put '.v:register<CR>j", { desc = "Paste below" })
@@ -31,7 +34,6 @@ end
 
 -- windows {{{1
 map("n", "<Leader>wk", "<Cmd>Close<CR>", { desc = "Close disturbing windows" })
-map("n", "<C-A-I>", "<Leader>aa", { desc = "Toggle (CopilotChat)", remap = true })
 
 -- navigation {{{1
 unmap({ "n", "x" }, "j")
