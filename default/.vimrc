@@ -173,6 +173,10 @@ if executable('rg')
   set grepprg=rg\ --hidden\ -g\ '!.git'\ --vimgrep
 endif
 
+if executable('mise')
+  set makeprg=mise\ run
+endif
+
 runtime macros/matchit.vim
 
 " Keymap {{{1

@@ -10,6 +10,9 @@ opt.clipboard = ""
 opt.completeopt = { "menu" }
 opt.formatexpr = ""
 opt.grepprg = "rg --hidden -g '!.git' --vimgrep"
+if vim.fn.executable("mise") == 1 then
+  opt.makeprg = "mise run"
+end
 opt.laststatus = 2
 opt.listchars = { tab = "▸ ", trail = "·", extends = "»", precedes = "«", nbsp = "␣" }
 opt.report = 99
