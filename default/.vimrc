@@ -214,8 +214,8 @@ else
   nnoremap <Leader>Y "+y$
   xnoremap <Leader>Y "+y$
 end
-nnoremap <Leader>cc <Cmd>let @" = '@'.fnamemodify(expand('%'), ':.')<CR>
-xnoremap <Leader>cc <Esc><Cmd>let @" = '@'.fnamemodify(expand('%'), ':.').':'.line("'<").'-'.line("'>")<CR>
+nnoremap <Leader>cy <Cmd>let @" = '@'.fnamemodify(expand('%'), ':.')<CR>
+xnoremap <Leader>cy <Esc><Cmd>let @" = '@'.fnamemodify(expand('%'), ':.').':'.line("'<").'-'.line("'>")<CR>
 nnoremap >gp <Cmd>exec 'put '.v:register<CR>j
 nnoremap <gp <Cmd>exec 'put! '.v:register<CR>j
 nnoremap >p <Cmd>exec 'put '.v:register."<Bar>keepjump norm '["<CR>
