@@ -259,6 +259,7 @@ nnoremap <silent> `<CR> <Cmd>Dispatch<CR>
 nnoremap <silent> `! <Cmd>Dispatch!
 nnoremap <silent> '<CR> <Cmd>Start<CR>
 nnoremap <silent> '! <Cmd>Start!
+nnoremap <silent> <Leader>g<CR> <Cmd>Copen<CR>
 
 nnoremap f<CR> <Cmd>undojoin<Bar>Neoformat<Bar>up<CR>
 nnoremap <Leader>cf <Cmd>undojoin<Bar>Neoformat<CR>

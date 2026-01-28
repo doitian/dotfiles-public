@@ -11,6 +11,7 @@ return {
       { "`!", "<Cmd>Dispatch!", desc = "Dispatch!" },
       { "'<CR>", "<Cmd>Start<CR>", desc = "Start" },
       { "'!", "<Cmd>Start!", desc = "Start!" },
+      { "<Leader>g<CR>", "<Cmd>Copen<CR>", desc = "Copen" },
     },
     init = function()
       vim.g.dispatch_no_maps = 1
