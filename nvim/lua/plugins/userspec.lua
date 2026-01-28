@@ -4,14 +4,17 @@ return {
     cmd = { "Make", "Dispatch", "Start", "FocusDispatch" },
     keys = {
       { "g<CR>", "<Cmd>Dispatch<CR>", desc = "Dispatch" },
+      { "<Leader>g<CR>", "<Cmd>Copen<CR>", desc = "Copen" },
 
       { "m<CR>", "<Cmd>Make<CR>", desc = "Make" },
-      { "m!", ":Make!", desc = "Make!" },
-      { "`<CR>", "<Cmd>Dispatch<CR>", desc = "Dispatch" },
-      { "`!", ":Dispatch!", desc = "Dispatch!" },
+      { "m!", ":Make!", desc = ":Make!" },
+      { "m<Space>", ":Make<Space>", desc = ":Make" },
+      { "`<CR>", "<Cmd>Dispatch!<CR>", desc = "Dispatch!" },
+      { "`!", ":Dispatch!", desc = ":Dispatch!" },
+      { "`<Space>", ":Dispatch<Space>", desc = ":Dispatch" },
       { "'<CR>", "<Cmd>Start<CR>", desc = "Start" },
-      { "'!", ":Start!", desc = "Start!" },
-      { "<Leader>g<CR>", "<Cmd>Copen<CR>", desc = "Copen" },
+      { "'!", ":Start!", desc = ":Start!" },
+      { "'<Space>", ":Start<Space>", desc = ":Start" },
     },
     init = function()
       vim.g.dispatch_no_maps = 1

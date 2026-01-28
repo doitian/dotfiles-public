@@ -251,15 +251,18 @@ nnoremap <silent> [q <Cmd>exe v:count1.'cprevious'<CR>zv
 nnoremap <Leader>uz <Cmd>Goyo<CR>
 
 " coding {{{2
-nnoremap <silent> g<CR> <Cmd>Dispatch<CR>
+nnoremap g<CR> <Cmd>Dispatch<CR>
+nnoremap <Leader>g<CR> <Cmd>Copen<CR>
 
-nnoremap <silent> m<CR> <Cmd>Make<CR>
-nnoremap <silent> m! :Make!
-nnoremap <silent> `<CR> <Cmd>Dispatch<CR>
-nnoremap <silent> `! :Dispatch!
-nnoremap <silent> '<CR> <Cmd>Start<CR>
-nnoremap <silent> '! :Start!
-nnoremap <silent> <Leader>g<CR> <Cmd>Copen<CR>
+nnoremap m<CR> <Cmd>Make<CR>
+nnoremap m! :Make!
+nnoremap m<Space> :Make<Space>
+nnoremap `<CR> <Cmd>Dispatch!<CR>
+nnoremap `<Space> :Dispatch<Space>
+nnoremap `! :Dispatch!
+nnoremap '<CR> <Cmd>Start<CR>
+nnoremap '! :Start!
+nnoremap '<Space> :Start<Space>
 
 nnoremap f<CR> <Cmd>undojoin<Bar>Neoformat<Bar>up<CR>
 nnoremap <Leader>cf <Cmd>undojoin<Bar>Neoformat<CR>
