@@ -3,7 +3,7 @@ return {
     "tpope/vim-dispatch",
     cmd = { "Make", "Dispatch", "Start", "FocusDispatch" },
     keys = {
-      { "g<CR>", "<Cmd>Dispatch!<CR>", desc = "Dispatch!" },
+      { "g<CR>", "<Cmd>Dispatch<CR>", desc = "Dispatch" },
 
       { "m<CR>", "<Cmd>Make<CR>", desc = "Make" },
       { "m!", "<Cmd>Make!", desc = "Make!" },
