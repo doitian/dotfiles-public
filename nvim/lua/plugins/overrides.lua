@@ -248,6 +248,18 @@ return {
       }
       if vim.fn.has("win32") == 1 then
         new_opts.picker.sources.explorer = { git_status = false }
+        new_opts.lazygit = {
+          config = {
+            os = {
+              editPreset = "",
+              edit = [[nvim-remote-lg {{filename}}]],
+              editAtLine = [[nvim-remote-lg {{filename}} {{line}}]],
+              editAtLineAndWait = [[nvim +{{line}} -- {{filename}}]],
+              openDirInEditor = [[nvim-remote-lg {{dir}}]],
+              editInTerminal = false,
+            },
+          },
+        }
       end
       return vim.tbl_deep_extend("force", opts, new_opts)
     end,
