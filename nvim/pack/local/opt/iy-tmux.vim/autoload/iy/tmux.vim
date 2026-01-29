@@ -22,6 +22,13 @@ function! iy#tmux#SendKeys(...) abort
   call s:System(comm)
 endfunction
 
+function! iy#tmux#SendLine(...) abort
+  let chunk1 = ['tmux', 'send-keys', '-t', s:GetTarget(), '-l']
+  let chunk2 = ['\;', 'send-keys', '-t', s:GetTarget(), 'C-m']
+  let comm = flatten([chunk1, a:000, chunk2], 1)
+  call s:System(comm)
+endfunction
+
 function! iy#tmux#SetBuffer(data) abort
   call s:System(['tmux', 'set-buffer', '--', a:data])
 endfunction
