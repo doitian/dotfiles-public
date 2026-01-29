@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+#MISE dir="{{cwd}}"
+#MISE description="Run cursor hooks"
+#USAGE arg "<name>" help="Hook name (e.g., stop, pre-tool-call, post-tool-call)"
+set -euo pipefail
+
+# Read JSON input from stdin
+INPUT=$(cat)
+
+case "${usage_name}" in
+stop)
+    # Parse input
+    STATUS=$(echo "$INPUT" | jq -r '.status // "unknown"')
+
+    # Send pushover notification
+    agent-pushover -t "Cursor Agent Stopped" "status: ${STATUS}"
+
+    # Output JSON response (no followup by default)
+    echo '{}'
+    ;;
+*)
+    echo "Unsupported hook name: ${usage_name}" >&2
+    exit 1
+    ;;
+esac
