@@ -1,4 +1,5 @@
 #MISE dir="{{cwd}}"
+#MISE description="Activate mise in vscode"
 
 # Get mise shims path using mise activate pwsh --shims
 # Extract the shims path from the $Env:PATH assignment

@@ -1,5 +1,6 @@
 #MISE dir="{{cwd}}"
 #MISE depends=["preset:pre-commit"]
+#MISE description="Setup rust project"
 
 mise tasks add pre-commit:cargo-fmt -- cargo fmt --check
 

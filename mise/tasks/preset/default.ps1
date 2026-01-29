@@ -1,6 +1,5 @@
 #MISE dir="{{cwd}}"
-
-# Detect build system and create a simple default task
+#MISE description="Detect build system and create a simple default task"
 
 if (Test-Path "Makefile") {
     mise tasks add default -- make

@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 #MISE dir="{{cwd}}"
-
-# Detect build system and create a simple default task
+#MISE description="Detect build system and create a simple default task"
 
 if [ -f "Makefile" ] || [ -f "makefile" ] || [ -f "GNUmakefile" ]; then
     mise tasks add default -- make
