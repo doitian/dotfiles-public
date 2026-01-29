@@ -14,7 +14,11 @@ require("lazy").setup({
       "LazyVim/LazyVim",
       import = "lazyvim.plugins",
       opts = {
-        colorscheme = "catppuccin",
+        colorscheme = function()
+          vim.schedule(function()
+            vim.cmd("colorscheme catppuccin")
+          end)
+        end,
       },
     },
     {
