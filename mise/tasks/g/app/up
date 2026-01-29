@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 #MISE dir="~"
+#MISE description="Update all apps"
 
 if command -v apt &>/dev/null; then
     sudo apt update && sudo apt upgrade
@@ -11,4 +12,12 @@ fi
 
 if command -v paru &>/dev/null; then
     paru -Syu
+fi
+
+if command -v uv &>/dev/null; then
+    mise run g:app:uv:up
+fi
+
+if command -v pnpm &>/dev/null; then
+    mise run g:app:pnpm:up
 fi
