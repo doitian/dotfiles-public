@@ -21,7 +21,7 @@ map("n", "<Leader>cy", [[<Cmd>let @" = '@'.fnamemodify(expand('%'), ':.')<CR>]],
 map(
   "n",
   "<Leader>ct",
-  [[<Cmd>call iy#tmux#SendKeysAndGo('@'.fnamemodify(expand('%'), ':.'))<CR>]],
+  [[<Cmd>call iy#tmux#SendKeysAndGo('-l', '@'.fnamemodify(expand('%'), ':.'))<CR>]],
   { desc = "Send AI file reference to Tmux" }
 )
 map(
@@ -33,7 +33,7 @@ map(
 map(
   "x",
   "<Leader>ct",
-  [[<Esc><Cmd>call iy#tmux#SendKeysAndGo('@'.fnamemodify(expand('%'), ':.').':'.line("'<").'-'.line("'>"))<CR>]],
+  [[<Esc><Cmd>call iy#tmux#SendKeysAndGo('-l', '@'.fnamemodify(expand('%'), ':.').':'.line("'<").'-'.line("'>"))<CR>]],
   { desc = "Send AI file reference to Tmux" }
 )
 map("n", ">p", "<Cmd>exec 'put '.v:register.\"<Bar>keepjump norm '[\"<CR>", { desc = "Paste below" })
