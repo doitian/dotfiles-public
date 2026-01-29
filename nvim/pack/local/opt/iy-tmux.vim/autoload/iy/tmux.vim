@@ -26,6 +26,15 @@ function! iy#tmux#SetBuffer(data) abort
   call s:System(['tmux', 'set-buffer', '--', a:data])
 endfunction
 
+function! iy#tmux#Go() abort
+  call s:System(['tmux', 'switchc', '-t', s:GetTarget()])
+endfunction
+
+function! iy#tmux#SendKeysAndGo(...) abort
+  call call('iy#tmux#SendKeys', a:000)
+  call iy#tmux#Go()
+endfunction
+
 function! iy#tmux#Yank(type = '') abort
   if a:type == ''
     let &operatorfunc = function('iy#tmux#Yank')
