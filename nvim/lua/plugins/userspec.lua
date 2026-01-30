@@ -44,7 +44,5 @@ return {
     },
   },
 
-  { "nathangrigg/vim-beancount", ft = "beancount" },
-
   { "doitian/molecule-vim", ft = "mol" },
 }

@@ -155,7 +155,7 @@ return {
   -- editor {{{1
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/editor.lua
 
-  -- Use <Space>sk instead
+  -- Use `<Space>sk` instead
   { "folke/which-key.nvim", enabled = false, optional = true, opts = { spec = { { "<Leader>bn", group = "sort" } } } },
 
   {
@@ -356,13 +356,6 @@ return {
           },
         },
         harper_ls = {
-          -- stylua: ignore
-          filetypes = {
-            "c", "cpp", "cs", "gitcommit", "go", "html", "java", "javascript", "lua", "markdown", "nix", "python", "ruby",
-            "rust", "swift", "toml", "typescript", "typescriptreact", "haskell", "cmake", "typst", "php", "dart",
-            "text",
-          },
-          autostart = false,
           settings = {
             ["harper-ls"] = {
               linters = {
@@ -371,12 +364,6 @@ return {
             },
           },
         },
-      },
-      setup = {
-        harper_ls = function(_, opts)
-          -- when `autostart` is false, the opts is not configured
-          vim.lsp.config("harper_ls", opts)
-        end,
       },
     },
     keys = {
@@ -387,12 +374,12 @@ return {
   {
     "mason-org/mason.nvim",
     optional = true,
-    opts = function(_, opts)
-      vim.list_extend(opts.ensure_installed, {
+    opts = {
+      ensure_installed = {
         "markdownlint",
         "ruff",
-      })
-    end,
+      },
+    },
   },
 
   -- formatting {{{1
@@ -400,20 +387,15 @@ return {
   {
     "stevearc/conform.nvim",
     optional = true,
-    opts = function(_, opts)
-      vim.api.nvim_create_user_command("FormatterSet", function(opts)
-        local ft = table.remove(opts.fargs, 1)
-        require("conform").formatters_by_ft[ft] = opts.fargs
-      end, { nargs = "+", desc = "Set linters for a filetype" })
-
-      opts.formatters_by_ft = vim.tbl_deep_extend("force", opts.formatters_by_ft or {}, {
+    opts = {
+      -- use .lazy.lua for project local formatters
+      formatters_by_ft = {
         ["markdown"] = { "markdownlint" },
         ["python"] = { "ruff_format" },
-        ["beancount"] = { "bean-format" },
         ["toml"] = { "taplo" },
         ["haskell"] = { "ormolu" },
-      })
-    end,
+      },
+    },
   },
 
   -- linting {{{1
@@ -421,45 +403,24 @@ return {
   {
     "mfussenegger/nvim-lint",
     optional = true,
-    opts = function(_, opts)
-      vim.api.nvim_create_user_command("LintRun", function(opts)
-        require("lint").try_lint(opts.fargs)
-      end, { nargs = "*", desc = "Run linters" })
-      vim.api.nvim_create_user_command("LintSet", function(opts)
-        local ft = table.remove(opts.fargs, 1)
-        require("lint").linters_by_ft[ft] = opts.fargs
-      end, { nargs = "+", desc = "Set linters for a filetype" })
-
-      opts.linters_by_ft = vim.tbl_deep_extend("force", opts.linters_by_ft or {}, {
+    opts = {
+      -- use .lazy.lua for project local formatters
+      linters_by_ft = {
         ["*"] = { "typos" },
-      })
-    end,
+      },
+    },
   },
 
   -- treesitter {{{1
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/treesitter.lua
-
   {
     "nvim-treesitter/nvim-treesitter",
     optional = true,
-    opts = function(_, opts)
-      opts.ensure_installed = vim.list_extend(opts.ensure_installed or {}, {
-        "bash",
-        "c",
+    opts = {
+      ensure_installed = {
         "cpp",
-        "json",
-        "json5",
-        "jsonc",
-        "markdown",
-        "markdown_inline",
-        "ninja",
-        "python",
-        "regex",
-        "toml",
-        "yaml",
-      })
-    end,
+      },
+    },
   },
-
   -- }}}1
 }
