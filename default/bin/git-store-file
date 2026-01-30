@@ -1,313 +1,288 @@
-#!/bin/sh
+#!/usr/bin/env python3
+"""Store files to a remote git branch without affecting your current working state."""
 
-set -e
-set -u
-[ -n "${DEBUG:-}" ] && set -x || true
+import argparse
+import os
+import subprocess
+import sys
+from pathlib import Path
 
-status_subcommand() {
-    local branch="$1"
-    local remote="$2"
-    shift 2
-    local show_diff=false
 
-    # Parse options for status subcommand
-    while [[ $# -gt 0 ]]; do
-        case "$1" in
-        -d | --diff)
-            show_diff=true
-            shift
-            ;;
-        -h | --help)
-            echo "Usage: $0 status [OPTIONS]"
-            echo ""
-            echo "Show git status for files in the remote branch."
-            echo ""
-            echo "Options:"
-            echo "  -d, --diff             Show diff for modified files"
-            echo "  -h, --help             Show this help message"
-            exit 0
-            ;;
-        *)
-            echo "Error: Unknown option for status: $1" >&2
-            echo "Use '$0 status --help' for usage information" >&2
-            exit 1
-            ;;
-        esac
-    done
+def run(cmd: list[str], *, check: bool = True, capture: bool = False, env: dict | None = None) -> subprocess.CompletedProcess:
+    """Run a command, optionally capturing output."""
+    merged_env = {**os.environ, **(env or {})}
+    return subprocess.run(
+        cmd,
+        check=check,
+        capture_output=capture,
+        text=True,
+        env=merged_env,
+    )
 
-    # Check if branch exists
-    if ! git rev-parse --verify "$remote/$branch" >/dev/null 2>&1; then
-        echo "Branch $remote/$branch does not exist." >&2
-        exit 1
-    fi
 
-    # Get list of files in the branch
-    local branch_files
-    branch_files=$(git ls-tree -r --name-only "$remote/$branch" 2>/dev/null)
+def run_output(cmd: list[str], *, check: bool = True, env: dict | None = None) -> str:
+    """Run a command and return its stdout."""
+    result = run(cmd, check=check, capture=True, env=env)
+    return result.stdout.strip() if result.stdout else ""
 
-    if [ -z "$branch_files" ]; then
-        echo "No files in branch $remote/$branch"
+
+def branch_exists(remote: str, branch: str) -> bool:
+    """Check if a remote branch exists."""
+    result = run(["git", "rev-parse", "--verify", f"{remote}/{branch}"], check=False, capture=True)
+    return result.returncode == 0
+
+
+def get_branch_files(remote: str, branch: str) -> list[str]:
+    """Get list of files in the remote branch."""
+    output = run_output(["git", "ls-tree", "-r", "--name-only", f"{remote}/{branch}"], check=False)
+    return [f for f in output.splitlines() if f]
+
+
+def cmd_status(args: argparse.Namespace) -> int:
+    """Show git status for files in the remote branch."""
+    remote, branch = args.remote, args.branch
+
+    if not branch_exists(remote, branch):
+        print(f"Branch {remote}/{branch} does not exist.", file=sys.stderr)
+        return 1
+
+    branch_files = get_branch_files(remote, branch)
+    if not branch_files:
+        print(f"No files in branch {remote}/{branch}")
         return 0
-    fi
 
-    # Convert to array for easier processing
-    local files_array=()
-    while IFS= read -r file; do
-        [ -n "$file" ] && files_array+=("$file")
-    done <<<"$branch_files"
+    modified_files = []
+    deleted_files = []
 
-    # Check status of each file compared to branch
-    local modified_files=()
-    local deleted_files=()
-
-    for file in "${files_array[@]}"; do
-        # Check if file exists in working directory
-        if [ ! -e "$file" ]; then
-            deleted_files+=("$file")
+    for file in branch_files:
+        if not Path(file).exists():
+            deleted_files.append(file)
             continue
-        fi
 
-        # Check if staged version differs from branch version
-        if ! git --no-pager diff --quiet "$remote/$branch:$file" "$file" 2>/dev/null; then
-            modified_files+=("$file")
-        fi
-    done
+        # Check if file differs from branch version
+        result = run(
+            ["git", "--no-pager", "diff", "--quiet", f"{remote}/{branch}:{file}", file],
+            check=False,
+            capture=True,
+        )
+        if result.returncode != 0:
+            modified_files.append(file)
 
-    # Show status output similar to git status
-    local has_output=false
+    has_output = False
+    for file in modified_files:
+        print(f"  modified:   {file}")
+        has_output = True
+    for file in deleted_files:
+        print(f"  deleted:    {file}")
+        has_output = True
 
-    if [ ${#modified_files[@]} -gt 0 ]; then
-        for file in "${modified_files[@]}"; do
-            echo "  modified:   $file"
-        done
-        has_output=true
-    fi
-
-    if [ ${#deleted_files[@]} -gt 0 ]; then
-        for file in "${deleted_files[@]}"; do
-            echo "  deleted:    $file"
-        done
-        has_output=true
-    fi
-
-    if [ "$has_output" = false ]; then
-        echo "Files in $remote/$branch are up to date."
-    fi
+    if not has_output:
+        print(f"Files in {remote}/{branch} are up to date.")
 
     # Show diff if requested
-    if [ "$show_diff" = true ] && [ ${#modified_files[@]} -gt 0 ]; then
-        for file in "${modified_files[@]}"; do
-            echo "--- $remote/$branch:$file"
-            echo "+++ $file"
-            git --no-pager diff "$remote/$branch:$file" "$file" 2>/dev/null || true
-        done
-    fi
-}
+    if args.diff and modified_files:
+        for file in modified_files:
+            print(f"--- {remote}/{branch}:{file}")
+            print(f"+++ {file}")
+            run(["git", "--no-pager", "diff", f"{remote}/{branch}:{file}", file], check=False)
 
-restore_subcommand() {
-    local branch="$1"
-    local remote="$2"
-    shift 2
-    local positional_args=("$@")
+    return 0
 
-    # Check if branch exists
-    if ! git rev-parse --verify "$remote/$branch" >/dev/null 2>&1; then
-        echo "Branch $remote/$branch does not exist." >&2
-        exit 1
-    fi
 
-    # Use a temporary index to restore files
-    export GIT_INDEX_FILE=.git/temp_restore_index
+def cmd_restore(args: argparse.Namespace) -> int:
+    """Restore files from remote branch to working directory."""
+    remote, branch = args.remote, args.branch
 
-    # Load the branch's tree into the temporary index
-    git read-tree "$remote/$branch" 2>/dev/null || git read-tree --empty
+    if not branch_exists(remote, branch):
+        print(f"Branch {remote}/{branch} does not exist.", file=sys.stderr)
+        return 1
 
-    # Restore files from the temporary index to working directory
-    # git checkout-index extracts files from index to working directory without staging
-    if [ "${#positional_args[*]}" = 0 ]; then
-        git restore --worktree .
-    else
-        git restore --worktree "${positional_args[@]}"
-    fi
+    temp_index = ".git/temp_restore_index"
+    env = {"GIT_INDEX_FILE": temp_index}
 
-    # Cleanup
-    rm -f "$GIT_INDEX_FILE"
-    unset GIT_INDEX_FILE
-}
+    try:
+        # Load the branch's tree into the temporary index
+        result = run(["git", "read-tree", f"{remote}/{branch}"], check=False, capture=True, env=env)
+        if result.returncode != 0:
+            run(["git", "read-tree", "--empty"], env=env)
 
-ls_subcommand() {
-    local branch="$1"
-    local remote="$2"
-    shift 2
+        # Restore files from the temporary index to working directory
+        if args.files:
+            run(["git", "restore", "--worktree", *args.files], env=env)
+        else:
+            run(["git", "restore", "--worktree", "."], env=env)
+    finally:
+        # Cleanup
+        if Path(temp_index).exists():
+            Path(temp_index).unlink()
 
-    # Check if branch exists
-    if ! git rev-parse --verify "$remote/$branch" >/dev/null 2>&1; then
-        echo "Branch $remote/$branch does not exist." >&2
-        exit 1
-    fi
+    return 0
 
-    # List all files in the branch
-    local branch_files
-    branch_files=$(git ls-tree -r --name-only "$remote/$branch" 2>/dev/null)
 
-    if [ -z "$branch_files" ]; then
-        echo "No files in branch $remote/$branch"
+def cmd_ls(args: argparse.Namespace) -> int:
+    """List all files in the remote branch."""
+    remote, branch = args.remote, args.branch
+
+    if not branch_exists(remote, branch):
+        print(f"Branch {remote}/{branch} does not exist.", file=sys.stderr)
+        return 1
+
+    branch_files = get_branch_files(remote, branch)
+    if not branch_files:
+        print(f"No files in branch {remote}/{branch}")
         return 0
-    fi
 
-    # Print files
-    echo "$branch_files"
-}
+    for file in branch_files:
+        print(file)
 
-store_subcommand() {
-    local branch="$1"
-    local remote="$2"
-    shift 2
-    local positional_args=("$@")
+    return 0
 
-    # 1. Use a temporary index to avoid messing with your current files
-    export GIT_INDEX_FILE=.git/temp_backup_index
 
-    # 2. Load the target branch's current state
-    git read-tree "$remote/$branch" 2>/dev/null || git read-tree --empty
+def cmd_store(args: argparse.Namespace) -> int:
+    """Store files to remote branch."""
+    remote, branch = args.remote, args.branch
+    files = args.files
 
-    # 3. Add all files (forced, in case they are ignored)
-    git add -f "${positional_args[@]}"
+    if not files:
+        print("Error: No files specified to store", file=sys.stderr)
+        return 1
 
-    # 4. Create a commit object
-    local tree=$(git write-tree)
-    local parent=$(git rev-parse --verify "$remote/$branch" 2>/dev/null)
-    local commit_hash
+    temp_index = ".git/temp_backup_index"
+    env = {"GIT_INDEX_FILE": temp_index}
 
-    # Create commit message listing all files
-    local commit_msg="Backup git add -f ${positional_args[*]}"
+    try:
+        # Load the target branch's current state
+        result = run(["git", "read-tree", f"{remote}/{branch}"], check=False, capture=True, env=env)
+        if result.returncode != 0:
+            run(["git", "read-tree", "--empty"], env=env)
 
-    if [ -n "$parent" ]; then
-        commit_hash=$(echo "$commit_msg" | git commit-tree "$tree" -p "$parent")
-    else
-        commit_hash=$(echo "$commit_msg" | git commit-tree "$tree")
-    fi
+        # Add all files (forced, in case they are ignored)
+        run(["git", "add", "-f", *files], env=env)
 
-    # 5. Show stats of the commit before pushing
-    echo "Commit stats:"
-    if [ -n "$parent" ]; then
-        git --no-pager show --format= --stat "$commit_hash" 2>/dev/null || git --no-pager diff-tree --stat "$parent" "$commit_hash" 2>/dev/null || true
-    else
-        git --no-pager show --format= --stat "$commit_hash" 2>/dev/null || true
-    fi
-    echo ""
+        # Create a commit object
+        tree = run_output(["git", "write-tree"], env=env)
 
-    # 6. Ask for confirmation before pushing
-    echo -n "Push to $remote/$branch? [y/N] "
-    read -r response
-    if [[ ! "$response" =~ ^[Yy]$ ]]; then
-        echo "Push cancelled."
-        rm "$GIT_INDEX_FILE"
-        unset GIT_INDEX_FILE
-        exit 1
-    fi
+        # Get parent commit if exists
+        parent = run_output(["git", "rev-parse", "--verify", f"{remote}/{branch}"], check=False)
 
-    # 7. Update the remote branch to point to the new commit
-    git push "$remote" "$commit_hash:refs/heads/$branch"
+        # Create commit message listing all files
+        commit_msg = f"Backup git add -f {' '.join(files)}"
 
-    # 8. Cleanup
-    rm "$GIT_INDEX_FILE"
-    unset GIT_INDEX_FILE
+        if parent:
+            commit_hash = run_output(
+                ["git", "commit-tree", tree, "-p", parent, "-m", commit_msg],
+                env=env,
+            )
+        else:
+            commit_hash = run_output(
+                ["git", "commit-tree", tree, "-m", commit_msg],
+                env=env,
+            )
 
-    echo "✅ Saved git add -f ${positional_args[*]} to remote branch '$remote/$branch'"
-}
+        # Show stats of the commit before pushing
+        print("Commit stats:")
+        if parent:
+            result = run(
+                ["git", "--no-pager", "show", "--format=", "--stat", commit_hash],
+                check=False,
+                capture=True,
+            )
+            if result.returncode == 0 and result.stdout:
+                print(result.stdout)
+            else:
+                run(["git", "--no-pager", "diff-tree", "--stat", parent, commit_hash], check=False)
+        else:
+            run(["git", "--no-pager", "show", "--format=", "--stat", commit_hash], check=False)
+        print()
 
-main() {
-    local subcommand=
-    local branch="_store" # Default to '_store' if not specified
-    local remote="origin" # Default to 'origin' if not specified
-    local positional_args=()
+        # Ask for confirmation before pushing
+        try:
+            response = input(f"Push to {remote}/{branch}? [y/N] ")
+        except EOFError:
+            response = ""
 
-    # Parse global options first
-    while [[ $# -gt 0 ]]; do
-        case "$1" in
-        -b | --branch)
-            if [ $# -lt 2 ]; then
-                echo "Error: Option $1 requires an argument" >&2
-                exit 1
-            fi
-            branch="$2"
-            shift 2
-            ;;
-        -r | --remote)
-            if [ $# -lt 2 ]; then
-                echo "Error: Option $1 requires an argument" >&2
-                exit 1
-            fi
-            remote="$2"
-            shift 2
-            ;;
-        -h | --help)
-            echo "Usage: $0 [OPTIONS] [COMMAND] [ARGS...]"
-            echo ""
-            echo "Commands:"
-            echo "  store [FILE...]        Store files to remote branch (default)"
-            echo "  status [OPTIONS]       Show git status for files in the remote branch"
-            echo "    -d, --diff           Show diff for modified files"
-            echo "  restore [FILE...]      Restore files from remote branch to working directory"
-            echo "                         (restores all files if none specified)"
-            echo "  ls                     List all files in the remote branch"
-            echo ""
-            echo "Options:"
-            echo "  -b, --branch BRANCH    Branch name (default: _store)"
-            echo "  -r, --remote REMOTE    Remote name (default: origin)"
-            echo "  -h, --help             Show this help message"
-            echo ""
-            echo "Examples:"
-            echo "  $0 config.txt                    # store file (default command)"
-            echo "  $0 file1.txt file2.txt           # store multiple files"
-            echo "  $0 --branch backup config.txt    # store with custom branch"
-            echo "  $0 status                        # check status"
-            echo "  $0 status -d                     # check status with diff"
-            echo "  $0 restore config.txt            # restore specific file"
-            echo "  $0 restore                       # restore all files from branch"
-            echo "  $0 ls                            # list all files in branch"
-            exit 0
-            ;;
-        --)
-            shift
-            positional_args+=("$@")
-            break
-            ;;
-        store | status | restore | ls)
-            if [ -z "$subcommand" ]; then
-                subcommand="$1"
-            else
-                positional_args+=("$1")
-            fi
-            shift
-            ;;
-        *)
-            positional_args+=("$1")
-            shift
-            ;;
-        esac
-    done
+        if response.lower() != "y":
+            print("Push cancelled.")
+            return 1
 
-    # Execute subcommand
-    case "${subcommand:-store}" in
-    store)
-        store_subcommand "$branch" "$remote" "${positional_args[@]}"
-        ;;
-    status)
-        status_subcommand "$branch" "$remote" "${positional_args[@]}"
-        ;;
-    restore)
-        restore_subcommand "$branch" "$remote" "${positional_args[@]}"
-        ;;
-    ls)
-        ls_subcommand "$branch" "$remote" "${positional_args[@]}"
-        ;;
-    *)
-        echo "Error: Unknown subcommand: $subcommand" >&2
-        exit 1
-        ;;
-    esac
-}
+        # Update the remote branch to point to the new commit
+        run(["git", "push", remote, f"{commit_hash}:refs/heads/{branch}"])
 
-main "$@"
+        print(f"Saved git add -f {' '.join(files)} to remote branch '{remote}/{branch}'")
+
+    finally:
+        # Cleanup
+        if Path(temp_index).exists():
+            Path(temp_index).unlink()
+
+    return 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Store files to a remote git branch without affecting your current working state.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  %(prog)s config.txt                    # store file (default command)
+  %(prog)s file1.txt file2.txt           # store multiple files
+  %(prog)s --branch backup config.txt    # store with custom branch
+  %(prog)s status                        # check status
+  %(prog)s status -d                     # check status with diff
+  %(prog)s restore config.txt            # restore specific file
+  %(prog)s restore                       # restore all files from branch
+  %(prog)s ls                            # list all files in branch
+""",
+    )
+    parser.add_argument("-b", "--branch", default="_store", help="Branch name (default: _store)")
+    parser.add_argument("-r", "--remote", default="origin", help="Remote name (default: origin)")
+
+    subparsers = parser.add_subparsers(dest="command", help="Command to run")
+
+    # store subcommand
+    store_parser = subparsers.add_parser("store", help="Store files to remote branch (default)")
+    store_parser.add_argument("files", nargs="*", help="Files to store")
+
+    # status subcommand
+    status_parser = subparsers.add_parser("status", help="Show git status for files in the remote branch")
+    status_parser.add_argument("-d", "--diff", action="store_true", help="Show diff for modified files")
+
+    # restore subcommand
+    restore_parser = subparsers.add_parser("restore", help="Restore files from remote branch to working directory")
+    restore_parser.add_argument("files", nargs="*", help="Files to restore (all if none specified)")
+
+    # ls subcommand
+    subparsers.add_parser("ls", help="List all files in the remote branch")
+
+    # Parse known args to handle the case where files are passed without 'store' command
+    args, remaining = parser.parse_known_args()
+
+    # If no command specified but there are remaining args, treat as 'store' with files
+    if args.command is None:
+        if remaining:
+            args.command = "store"
+            args.files = remaining
+        else:
+            # No command and no files - default to store (will show error about no files)
+            args.command = "store"
+            args.files = []
+    elif args.command == "store" and remaining:
+        # Handle case where store command has additional files
+        args.files = (getattr(args, "files", None) or []) + remaining
+
+    # Execute command
+    if args.command == "store":
+        return cmd_store(args)
+    elif args.command == "status":
+        return cmd_status(args)
+    elif args.command == "restore":
+        return cmd_restore(args)
+    elif args.command == "ls":
+        return cmd_ls(args)
+    else:
+        parser.print_help()
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
