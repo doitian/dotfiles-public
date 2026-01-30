@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#MISE alias="g:up"
 #MISE dir="~"
 #MISE description="Update all apps"
 
@@ -15,9 +16,9 @@ if command -v paru &>/dev/null; then
 fi
 
 if command -v uv &>/dev/null; then
-    mise run g:app:uv:up
+    mise run g:up:uv
 fi
 
 if command -v pnpm &>/dev/null; then
-    mise run g:app:pnpm:up
+    mise run g:up:pnpm
 fi

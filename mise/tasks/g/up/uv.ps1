@@ -1,0 +1,4 @@
+#MISE dir="~"
+#MISE description="Update all uv tools"
+
+uv tool update --all
