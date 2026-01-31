@@ -74,6 +74,9 @@ map("n", "<leader>ws", "<C-W>s", { desc = "Split window below", remap = true })
 map("n", "<leader>wv", "<C-W>v", { desc = "Split window right", remap = true })
 
 map("n", "<Leader>fj", "<Cmd>drop `jrnl -p`<CR>", { desc = "Edit journal" })
+map("n", "<Leader>fy", function()
+  Snacks.terminal.toggle("yazi")
+end, { desc = "Yazi" })
 
 -- coding {{{1
 map("n", "<Leader>cw", "<Cmd>ru macros/buffer/whitespace.vim<CR>", { desc = "Fix whitespace issues" })
