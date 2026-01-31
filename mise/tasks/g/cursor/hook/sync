@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+#MISE dir="{{cwd}}"
+#MISE description="Sync mise cursor:*:on:* tasks to .cursor/hooks.json"
+set -euo pipefail
+
+HOOKS_FILE=".cursor/hooks.json"
+
+# Create .cursor directory if it doesn't exist
+mkdir -p .cursor
+
+# Get all cursor:*:on:* tasks
+TASKS=$(mise tasks 2>/dev/null | grep -E '^cursor:[^:]+:on:[^[:space:]]+' | awk '{print $1}' || true)
+
+if [ -z "$TASKS" ]; then
+    echo "No cursor:*:on:* tasks found"
+    if [ -f "$HOOKS_FILE" ]; then
+        rm "$HOOKS_FILE"
+        echo "Deleted $HOOKS_FILE"
+    fi
+    exit 0
+fi
+
+# Build hooks JSON structure
+declare -A HOOKS
+
+while IFS= read -r task; do
+    # Parse task name: cursor:<action>:on:<hookName>
+    if [[ "$task" =~ ^cursor:([^:]+):on:([^[:space:]]+)$ ]]; then
+        hook_name="${BASH_REMATCH[2]}"
+        command="mise run $task"
+
+        # Append command to hook array
+        if [ -z "${HOOKS[$hook_name]:-}" ]; then
+            HOOKS[$hook_name]="$command"
+        else
+            HOOKS[$hook_name]="${HOOKS[$hook_name]}"$'\n'"$command"
+        fi
+    fi
+done <<<"$TASKS"
+
+# Generate JSON
+{
+    echo '{'
+    echo '  "version": 1,'
+    echo '  "hooks": {'
+
+    first_hook=true
+    for hook_name in "${!HOOKS[@]}"; do
+        if [ "$first_hook" = true ]; then
+            first_hook=false
+        else
+            echo ','
+        fi
+
+        echo -n "    \"$hook_name\": ["
+
+        first_cmd=true
+        while IFS= read -r cmd; do
+            if [ "$first_cmd" = true ]; then
+                first_cmd=false
+                echo ''
+            else
+                echo ','
+            fi
+            echo -n "      {\"command\": \"$cmd\"}"
+        done <<<"${HOOKS[$hook_name]}"
+
+        echo ''
+        echo -n '    ]'
+    done
+
+    echo ''
+    echo '  }'
+    echo '}'
+} >"$HOOKS_FILE"
+
+echo "Updated $HOOKS_FILE with $(echo "$TASKS" | wc -l) task(s)"
