@@ -1,8 +1,0 @@
-#!/usr/bin/env ruby
-
-require 'csv'
-require 'json'
-
-CSV.read(ARGV.first, headers: true).each do |r|
-  puts JSON.dump(r.to_h)
-end
