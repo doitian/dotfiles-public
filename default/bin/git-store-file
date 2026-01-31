@@ -239,7 +239,7 @@ def cmd_store(args: argparse.Namespace) -> int:
         parent = run_output(["git", "rev-parse", "--verify", f"{remote}/{branch}"], check=False)
 
         # Create commit message listing all files
-        commit_msg = f"Backup git add -f {' '.join(files)}"
+        commit_msg = f"Add to store: {' '.join(files)}"
 
         if parent:
             commit_hash = run_output(
@@ -281,7 +281,7 @@ def cmd_store(args: argparse.Namespace) -> int:
         # Update the remote branch to point to the new commit
         run(["git", "push", remote, f"{commit_hash}:refs/heads/{branch}"])
 
-        print(f"Saved git add -f {' '.join(files)} to remote branch '{remote}/{branch}'")
+        print(f"Added to {remote}/{branch}: {' '.join(files)}")
 
     finally:
         # Cleanup
