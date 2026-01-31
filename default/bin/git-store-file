@@ -119,6 +119,79 @@ def cmd_restore(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_remove(args: argparse.Namespace) -> int:
+    """Remove files from the remote branch (stops tracking them there) without deleting from workspace."""
+    remote, branch = args.remote, args.branch
+    files = args.files
+
+    if not files:
+        print("Error: No files specified to remove", file=sys.stderr)
+        return 1
+
+    if not branch_exists(remote, branch):
+        print(f"Branch {remote}/{branch} does not exist.", file=sys.stderr)
+        return 1
+
+    branch_files = set(get_branch_files(remote, branch))
+    missing = [f for f in files if f not in branch_files]
+    if missing:
+        for f in missing:
+            print(f"Error: '{f}' is not in branch {remote}/{branch}", file=sys.stderr)
+        return 1
+
+    temp_index = ".git/temp_remove_index"
+    env = {"GIT_INDEX_FILE": temp_index}
+
+    try:
+        # Load the target branch's current state
+        run(["git", "read-tree", f"{remote}/{branch}"], env=env)
+
+        # Remove from index only (files stay in workspace); -f avoids staged-content check
+        run(["git", "rm", "--cached", "-f", "--ignore-unmatch", *files], env=env)
+
+        # Create a commit object
+        tree = run_output(["git", "write-tree"], env=env)
+
+        # Get parent commit
+        parent = run_output(["git", "rev-parse", "--verify", f"{remote}/{branch}"], env=env)
+
+        commit_msg = f"Remove from store: {' '.join(files)}"
+
+        commit_hash = run_output(
+            ["git", "commit-tree", tree, "-p", parent, "-m", commit_msg],
+            env=env,
+        )
+
+        # Show stats
+        print("Commit stats:")
+        result = run(
+            ["git", "--no-pager", "diff-tree", "--stat", parent, commit_hash],
+            check=False,
+            capture=True,
+        )
+        if result.returncode == 0 and result.stdout:
+            print(result.stdout)
+        print()
+
+        try:
+            response = input(f"Push to {remote}/{branch}? [y/N] ")
+        except EOFError:
+            response = ""
+
+        if response.lower() != "y":
+            print("Push cancelled.")
+            return 1
+
+        run(["git", "push", remote, f"{commit_hash}:refs/heads/{branch}"])
+        print(f"Removed from {remote}/{branch}: {' '.join(files)}")
+
+    finally:
+        if Path(temp_index).exists():
+            Path(temp_index).unlink()
+
+    return 0
+
+
 def cmd_ls(args: argparse.Namespace) -> int:
     """List all files in the remote branch."""
     remote, branch = args.remote, args.branch
@@ -231,6 +304,7 @@ Examples:
   %(prog)s status -d                     # check status with diff
   %(prog)s restore config.txt            # restore specific file
   %(prog)s restore                       # restore all files from branch
+  %(prog)s remove config.txt             # remove file from branch (keep in workspace)
   %(prog)s ls                            # list all files in branch
 """,
     )
@@ -250,6 +324,10 @@ Examples:
     # restore subcommand
     restore_parser = subparsers.add_parser("restore", help="Restore files from remote branch to working directory")
     restore_parser.add_argument("files", nargs="*", help="Files to restore (all if none specified)")
+
+    # remove subcommand
+    remove_parser = subparsers.add_parser("remove", help="Remove files from remote branch (keep in workspace)")
+    remove_parser.add_argument("files", nargs="+", help="Files to remove from the branch")
 
     # ls subcommand
     subparsers.add_parser("ls", help="List all files in the remote branch")
@@ -277,6 +355,8 @@ Examples:
         return cmd_status(args)
     elif args.command == "restore":
         return cmd_restore(args)
+    elif args.command == "remove":
+        return cmd_remove(args)
     elif args.command == "ls":
         return cmd_ls(args)
     else:
