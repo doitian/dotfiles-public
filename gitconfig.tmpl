@@ -25,6 +25,7 @@
 	wip = commit -n -m WIP
 	print-commit-message = log --pretty="format:%B"
 	cgen = "!f() { (echo '$ git diff --staged'; git diff --staged; echo '$ git log --oneline -n 5 --no-merges'; git log --oneline -n 5 --no-merges) | aichat -r git-commit --code \"$@\" | git commit -F - -e; }; f"
+	mgen = "!f() { (echo '$ git diff --staged'; git diff --staged; echo '$ git log --oneline -n 5 --no-merges'; git log --oneline -n 5 --no-merges) | aichat -r git-commit --code \"$@\"; }; f"
 
 	co = checkout
 	cb = checkout -b
