@@ -9,6 +9,6 @@ if (Get-Command uv -ErrorAction SilentlyContinue) {
     mise run g:up:uv
 }
 
-if (Get-Command pnpm -ErrorAction SilentlyContinue) {
-    mise run g:up:pnpm
+if (Get-Command bun -ErrorAction SilentlyContinue) {
+    mise run g:up:bun
 }

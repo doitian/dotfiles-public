@@ -19,6 +19,6 @@ if command -v uv &>/dev/null; then
     mise run g:up:uv
 fi
 
-if command -v pnpm &>/dev/null; then
-    mise run g:up:pnpm
+if command -v bun &>/dev/null; then
+    mise run g:up:bun
 fi
