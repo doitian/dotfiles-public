@@ -1,6 +1,14 @@
 [vars]
 bash_bin = "{% if os() == 'windows' %}sh.exe{% else %}bash{% endif %}"
 
+[tool_alias]
+process-compose = "github:F1bonacc1/process-compose"
+
+[settings]
+
+[settings.python]
+uv_venv_auto = true
+
 # ============================================================================
 # Global tasks (g:*)
 # ============================================================================
@@ -15,20 +23,20 @@ description = "Update all uv tools"
 dir = "~"
 run = "uv tool update --all"
 
-[tasks."g:up:pnpm"]
-description = "Update all pnpm global packages"
+[tasks."g:up:bun"]
+description = "Update all bun global packages"
 dir = "~"
-run = "pnpm upgrade -g --latest"
+run = "bun update -g --latest"
 
 [tasks."g:add:uv:all"]
 description = "Install uv tools"
 dir = "~"
 run = "uv tool install specify-cli --from git+https://github.com/github/spec-kit.git"
 
-[tasks."g:add:pnpm:all"]
-description = "Install all pnpm global packages"
+[tasks."g:add:bun:all"]
+description = "Install all bun global packages"
 dir = "~"
-run = "pnpm add -g @github/copilot @google/gemini-cli"
+run = "bun install -g @github/copilot @google/gemini-cli"
 
 # ============================================================================
 # Preset tasks (preset:*)
