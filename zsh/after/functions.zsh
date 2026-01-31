@@ -15,14 +15,6 @@ function groot() {
 
 function hs { [ -z "$1" ] && fc -l || (fc -l 1 | grep "$@"); }
 
-function marked() {
-  if [ "$1" ]; then
-    open -a "Marked 2.app" "$1"
-  else
-    open -a "Marked 2.app"
-  fi
-}
-
 function gfw() {
   case "${1:-show}" in
     show)
