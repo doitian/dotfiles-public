@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+if [ $# -eq 0 ]; then
+  set -- x.py
+fi
+
+if [ -f pyproject.toml ] || [ -f uv.lock ]; then
+  exec uv run "$@"
+else
+  exec uv run --script "$@"
+fi
