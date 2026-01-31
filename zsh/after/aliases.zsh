@@ -100,8 +100,6 @@ alias rsync-update='rsync -avu --progress -h'
 ##################################################
 # Utilities
 alias ltail='less +F -R'
-alias mk=make
-alias lmk=lmake
 alias more='less'
 alias ping='ping -c 5'
 # ps tty
