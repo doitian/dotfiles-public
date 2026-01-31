@@ -16,19 +16,24 @@ fi
 # path
 export GOPATH="$HOME/codebase/gopath"
 HOMEBREW_PREFIX=/home/linuxbrew/.linuxbrew
-COMMON_PATH_AFTER="$HOME/.cargo/bin:$GOPATH/bin:$HOME/.local/bin:$HOME/.bun/bin:$HOME/.local/share/nvim/mason/bin"
+PATH_SECTION_A="$HOME/bin"
+PATH_SECTION_B="$HOME/.cargo/bin:$GOPATH/bin:$HOME/.local/bin:$HOME/.bun/bin:$HOME/.local/share/nvim/mason/bin"
 if [[ "$OSTYPE" == "linux"* && -O "$HOMEBREW_PREFIX/bin/brew" ]]; then
   export HOMEBREW_CELLAR="$HOMEBREW_PREFIX/Cellar"
   export HOMEBREW_REPOSITORY="$HOMEBREW_PREFIX/Homebrew"
   export HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK=1
   export HOMEBREW_AUTO_UPDATE_SECS=86400
 
-  export PATH="$HOME/bin:$HOMEBREW_PREFIX/bin:$HOMEBREW_PREFIX/sbin:${PATH:-/bin:/usr/bin:/usr/local/bin}:$COMMON_PATH_AFTER"
-else
-  export PATH="${PATH:-/bin:/usr/bin:/usr/local/bin}:$HOME/bin:$COMMON_PATH_AFTER"
-  unset HOMEBREW_PREFIX
+  PATH_SECTION_A="$PATH_SECTION_A:$HOMEBREW_PREFIX/bin:$HOMEBREW_PREFIX/sbin"
 fi
-unset COMMON_PATH_AFTER
+unset HOMEBREW_PREFIX
+if [ -z "${WSL_DISTRO_NAME:-}" ]; then
+  export PATH="$PATH_SECTION_A:${PATH:-/bin:/usr/bin:/usr/local/bin}:$PATH_SECTION_B"
+else
+  export PATH="$PATH_SECTION_A:/bin:/usr/bin:/usr/local/bin:$PATH_SECTION_B:$PATH"
+fi
+unset PATH_SECTION_A
+unset PATH_SECTION_B
 
 # lang
 export LANG=en_US.UTF-8
