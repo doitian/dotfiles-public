@@ -1,22 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env -S uv run --script
+# /// script
+# dependencies = ["rich"]
+# ///
 
-# Start Python REPL and setup rich
-# https://rich.readthedocs.io/en/latest/introduction.html#rich-in-the-repl
+import code
+from rich import pretty
+from rich import inspect
 
-""":"
-PYTHON=${PYTHON:-python}
-if command -v python3 &>/dev/null; then
-  PYTHON=python3
-fi
-
-exec "$PYTHON" -i "$0"
-: "
-"""
-
-try:
-    from rich import pretty
-    from rich import inspect
-
-    pretty.install()
-except ModuleNotFoundError:
-    pass
+pretty.install()
+code.interact(local=locals())
