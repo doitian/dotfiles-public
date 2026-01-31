@@ -15,9 +15,8 @@ fi
 
 # path
 export GOPATH="$HOME/codebase/gopath"
-export PNPM_HOME="$HOME/.local/share/pnpm"
 HOMEBREW_PREFIX=/home/linuxbrew/.linuxbrew
-COMMON_PATH_AFTER="$HOME/.cargo/bin:$GOPATH/bin:$HOME/.local/bin:$PNPM_HOME:$HOME/.local/share/nvim/mason/bin"
+COMMON_PATH_AFTER="$HOME/.cargo/bin:$GOPATH/bin:$HOME/.local/bin:$HOME/.bun/bin:$HOME/.local/share/nvim/mason/bin"
 if [[ "$OSTYPE" == "linux"* && -O "$HOMEBREW_PREFIX/bin/brew" ]]; then
   export HOMEBREW_CELLAR="$HOMEBREW_PREFIX/Cellar"
   export HOMEBREW_REPOSITORY="$HOMEBREW_PREFIX/Homebrew"
