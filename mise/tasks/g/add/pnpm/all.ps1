@@ -1,4 +1,0 @@
-#MISE dir="~"
-#MISE description="Install all pnpm global packages"
-
-pnpm add -g @github/copilot @google/gemini-cli

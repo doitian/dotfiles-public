@@ -1,4 +1,0 @@
-#MISE dir="~"
-#MISE description="Install uv tools"
-
-uv tool install specify-cli --from git+https://github.com/github/spec-kit.git

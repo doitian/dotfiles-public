@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-#MISE dir="{{cwd}}"
-#MISE depends=["preset:rust"]
-#MISE description="Create a Cargo workspace"
-
-if [ ! -f "Cargo.toml" ]; then
-    printf '[workspace]\nresolver = "3"\n' > Cargo.toml
-fi

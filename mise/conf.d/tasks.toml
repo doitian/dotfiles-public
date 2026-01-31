@@ -1,0 +1,97 @@
+[vars]
+bash_bin = "{% if os() == 'windows' %}sh.exe{% else %}bash{% endif %}"
+
+# ============================================================================
+# Global tasks (g:*)
+# ============================================================================
+
+[tasks."g:cursor:hook:sync"]
+description = "Sync mise cursor:*:on:* tasks to .cursor/hooks.json"
+dir = "{{cwd}}"
+run = "{{ vars.bash_bin }} {{ xdg_config_home }}/mise/scripts/g-cursor-hook-sync.sh"
+
+[tasks."g:up:uv"]
+description = "Update all uv tools"
+dir = "~"
+run = "uv tool update --all"
+
+[tasks."g:up:pnpm"]
+description = "Update all pnpm global packages"
+dir = "~"
+run = "pnpm upgrade -g --latest"
+
+[tasks."g:add:uv:all"]
+description = "Install uv tools"
+dir = "~"
+run = "uv tool install specify-cli --from git+https://github.com/github/spec-kit.git"
+
+[tasks."g:add:pnpm:all"]
+description = "Install all pnpm global packages"
+dir = "~"
+run = "pnpm add -g @github/copilot @google/gemini-cli"
+
+# ============================================================================
+# Preset tasks (preset:*)
+# ============================================================================
+
+[tasks."preset:vscode"]
+description = "Activate mise in vscode"
+dir = "{{cwd}}"
+run = "python {{ xdg_config_home }}/mise/scripts/preset-vscode.py"
+
+[tasks."preset:rust"]
+description = "Setup rust project"
+dir = "{{cwd}}"
+depends = ["preset:pre-commit"]
+run = "{{ vars.bash_bin }} {{ xdg_config_home }}/mise/scripts/preset-rust.sh"
+
+[tasks."preset:python"]
+description = "Setup python project"
+dir = "{{cwd}}"
+run = """
+touch mise.toml
+mise config set env._.python.venv.path .venv
+mise config set env._.python.venv.create true -t bool
+"""
+
+[tasks."preset:pre-commit"]
+description = "Setup git pre-commit hook"
+dir = "{{cwd}}"
+run = """
+mise tasks add pre-commit:typos -- typos
+mise tasks add pre-commit -d 'pre-commit:*'
+"""
+
+[tasks."preset:node"]
+description = "Setup node project"
+dir = "{{cwd}}"
+run = """
+touch mise.toml
+mise config set env._.path '{{config_root}}/node_modules/.bin' -t list
+"""
+
+[tasks."preset:ghtoken"]
+description = "Use gh auth token"
+dir = "{{cwd}}"
+run = """
+touch mise.toml
+mise config set env.GITHUB_TOKEN.value '{{ exec(command='gh auth token') }}'
+mise config set env.GITHUB_TOKEN.redact true
+"""
+
+[tasks."preset:default"]
+description = "Detect build system and create a simple default task"
+dir = "{{cwd}}"
+run = "{{ vars.bash_bin }} {{ xdg_config_home }}/mise/scripts/preset-default.sh"
+
+[tasks."preset:cargo:workspace"]
+description = "Create a Cargo workspace"
+dir = "{{cwd}}"
+depends = ["preset:rust"]
+run = "{{ vars.bash_bin }} {{ xdg_config_home }}/mise/scripts/preset-cargo-workspace.sh"
+
+[tasks."preset:cursor:hook:pushover"]
+description = "Create cursor:pushover:on:stop task for pushover notifications"
+dir = "{{cwd}}"
+depends_post = ["g:cursor:hook:sync"]
+run = "mise tasks add cursor:pushover:on:stop -- '{{ vars.bash_bin }}' '{{ xdg_config_home }}/mise/scripts/cursor-pushover-on-stop'"

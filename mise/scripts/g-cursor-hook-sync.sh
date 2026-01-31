@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-#MISE dir="{{cwd}}"
-#MISE description="Sync mise cursor:*:on:* tasks to .cursor/hooks.json"
 set -euo pipefail
 
 HOOKS_FILE=".cursor/hooks.json"

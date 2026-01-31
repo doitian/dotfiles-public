@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-#MISE dir="{{cwd}}"
-#MISE description="Setup python project"
-
-touch mise.toml
-mise config set env._.python.venv.path .venv
-mise config set env._.python.venv.create true -t bool
