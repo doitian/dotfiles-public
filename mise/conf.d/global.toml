@@ -69,6 +69,7 @@ mise config set env._.python.venv.create true -t bool
 description = "Setup git pre-commit hook"
 dir = "{{cwd}}"
 run = """
+touch mise.toml
 mise tasks add pre-commit:typos -- typos
 mise tasks add pre-commit -d 'pre-commit:*'
 """

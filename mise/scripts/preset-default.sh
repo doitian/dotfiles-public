@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+touch mise.toml
+
 if [ -f "Makefile" ] || [ -f "makefile" ] || [ -f "GNUmakefile" ]; then
     mise tasks add default -- make
     exit 0

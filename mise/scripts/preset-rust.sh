@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+touch mise.toml
+
 mise tasks add pre-commit:cargo-fmt -- cargo fmt --check
 
 if command -v cargo-nextest &>/dev/null; then
