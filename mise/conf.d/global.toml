@@ -39,7 +39,7 @@ run = "uv tool install specify-cli --from git+https://github.com/github/spec-kit
 [tasks."g:add:bun:all"]
 description = "Install all bun global packages"
 dir = "~"
-run = "bun install -g @github/copilot @google/gemini-cli"
+run = "bun install -g @github/copilot opencode-ai"
 
 # ============================================================================
 # Preset tasks (preset:*)
