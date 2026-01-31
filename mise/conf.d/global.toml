@@ -9,6 +9,9 @@ process-compose = "github:F1bonacc1/process-compose"
 [settings.python]
 uv_venv_auto = true
 
+[settings.npm]
+package_manager = "bun"
+
 # ============================================================================
 # Global tasks (g:*)
 # ============================================================================
