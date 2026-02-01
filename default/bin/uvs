@@ -6,6 +6,14 @@ set -u
 
 if [ $# -eq 0 ]; then
   set -- x.py
+  if [ ! -f x.py ]; then
+    cat > x.py << 'EOF'
+#!/usr/bin/env -S uv run --script
+# /// script
+# dependencies = []
+# ///
+EOF
+  fi
 fi
 
 if [ -f pyproject.toml ] || [ -f uv.lock ]; then
