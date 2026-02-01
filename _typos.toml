@@ -1,12 +1,12 @@
 [files]
 extend-exclude = [
-    "zsh/after/omz.*.zsh",
-    "zsh/functions/_git",
-    "pandoc/filters/zotero.lua",
+  "zsh/after/omz.*.zsh",
+  "zsh/functions/_git",
+  "pandoc/filters/zotero.lua",
 ]
 
 [default]
-extend-ignore-re = ['(?m)^\s*"prefix": "[^"]*",?$']
+extend-ignore-re = ['(?m)^\s*"prefix": "[^"]*",?$', 'rm.*-fo']
 
 [default.extend-identifiers]
 kend = "kend"
