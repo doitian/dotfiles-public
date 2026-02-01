@@ -73,7 +73,7 @@ alias la='ls -lah'
 function j {
   local selected="$(fzf -0 -1 -q "$*" <"$HOME/.j.path")"
   if [ -n "$selected" ]; then
-    cd "$selected"
+    pushd "$selected"
   else
     echo "no matched directory found" >&2
   fi
