@@ -113,6 +113,8 @@ alias psug="psu | rg"
 alias psag="psa | rg"
 alias mx="mise x --"
 alias mr="mise run"
+alias zx="bunx zx"
+alias zxx="bunx zx x.mjs"
 function mact() {
   eval "$(mise activate "$@")"
 }
