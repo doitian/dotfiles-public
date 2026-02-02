@@ -45,6 +45,15 @@ run = "bun install -g @github/copilot opencode-ai"
 # Preset tasks (preset:*)
 # ============================================================================
 
+[tasks."preset:ide"]
+description = "Activate mise in IDEs"
+depends = ["preset:neovim", "preset:vscode"]
+
+[tasks."preset:neovim"]
+description = "Activate mise in neovim"
+dir = "{{cwd}}"
+run = "python {{ xdg_config_home }}/mise/scripts/preset-neovim.py"
+
 [tasks."preset:vscode"]
 description = "Activate mise in vscode"
 dir = "{{cwd}}"

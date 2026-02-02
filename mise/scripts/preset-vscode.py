@@ -84,6 +84,10 @@ def main():
         if key not in ("PATH", "Path"):
             settings[env_key][key] = value
 
+    # If Cargo.toml exists, configure rust-analyzer with the same environment
+    if Path("Cargo.toml").exists():
+        settings["rust-analyzer.server.extraEnv"] = settings[env_key]
+
     # Write back
     settings_file.write_text(json.dumps(settings, indent=2) + "\n")
 
