@@ -86,7 +86,8 @@ def main():
 
     # If Cargo.toml exists, configure rust-analyzer with the same environment
     if Path("Cargo.toml").exists():
-        settings["rust-analyzer.server.extraEnv"] = settings[env_key]
+        settings["rust-analyzer.cargo.extraEnv"] = settings[env_key].copy()
+        del settings["rust-analyzer.cargo.extraEnv"]["PATH"]
 
     # Write back
     settings_file.write_text(json.dumps(settings, indent=2) + "\n")
