@@ -120,3 +120,7 @@ run = "mise tasks add cursor:pushover:on:stop -- '{{ vars.bash_bin }}' '{{ xdg_c
 [tasks."preset:opencode:compound-engineering"]
 description = "Install compound-engineering for opencode"
 run = "bunx @every-env/compound-plugin install compound-engineering --to opencode -o ./.opencode"
+
+[tasks."preset:cursor:compound-engineering"]
+description = "Install compound-engineering for Cursor"
+run = "echo 'copy folder `plugins/compound-engineering` of https://github.com/EveryInc/compound-engineering-plugin.git into ./.cursor/ in current directory'"
