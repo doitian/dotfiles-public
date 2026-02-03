@@ -6,7 +6,7 @@ local opt = vim.opt
 
 opt.background = vim.env.TERM_BACKGROUND or "light"
 
-opt.clipboard = ""
+opt.clipboard = vim.env.KITTY_PIPE_DATA and "unnamedplus" or ""
 opt.completeopt = { "menu" }
 opt.formatexpr = ""
 opt.grepprg = "rg --hidden -g '!.git' --vimgrep"

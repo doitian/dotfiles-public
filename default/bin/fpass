@@ -4,24 +4,24 @@ set -e
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
-export GPG_TTY="$(tty)"
-
 function fpass() {
-  local selected
-  selected="$(gopass list -f | fzf)"
-  gopass "$@" "$selected"
 }
 
 case "${1:-}" in
-  "--rofi")
+"--rofi")
     shift
     if [ "$#" = 0 ]; then
-      gopass list -f
+        gopass list -f
     else
-      gopass show -c "$@" > /dev/null &
+        gopass show -c "$@" >/dev/null &
     fi
     ;;
-  *)
-    fpass "$@"
+"--fuzzel")
+    shift
+    gopass list -f | fuzzel -w 50 | xargs -L1 -r gopass -c
+    ;;
+*)
+    export GPG_TTY="$(tty)"
+    gopass list -f | fzf | xargs -L1 -r gopass "$@"
     ;;
 esac

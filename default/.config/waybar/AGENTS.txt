@@ -1,0 +1,3 @@
+After editing waybar config, reload it with:
+
+    killall -SIGUSR2 waybar
