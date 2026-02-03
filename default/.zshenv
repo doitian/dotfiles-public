@@ -1,10 +1,12 @@
-if [[ -n "${CURSOR_AGENT:-}" ]]; then
+if [[ -n "${CURSOR_AGENT:-}${OPENCODE:-}${GEMINI_CLI:-}"  ]]; then
     export AI_AGENT=true
 fi
 if [[ -z "${AI_AGENT:-}" && "${SHELL_ENV_LOADED:-}" ]] then
     return
 fi
 export SHELL_ENV_LOADED=1
+: "${PATH:=/bin:/usr/bin:/usr/local/bin}"
+export REMEMBER_PATH="${REMEMBER_PATH:-$PATH}"
 [ -z "$HOME" ] && HOME="$(cd ~ && pwd)"
 if [[ -n "$BASH_VERSION" && -f "$HOME/.bashrc" ]]; then
   . "$HOME/.bashrc"
@@ -28,9 +30,9 @@ if [[ "$OSTYPE" == "linux"* && -O "$HOMEBREW_PREFIX/bin/brew" ]]; then
 fi
 unset HOMEBREW_PREFIX
 if [ -z "${WSL_DISTRO_NAME:-}" ]; then
-  export PATH="$PATH_SECTION_A:${PATH:-/bin:/usr/bin:/usr/local/bin}:$PATH_SECTION_B"
+  export PATH="$PATH_SECTION_A:$REMEMBER_PATH:$PATH_SECTION_B"
 else
-  export PATH="$PATH_SECTION_A:/bin:/usr/bin:/usr/local/bin:$PATH_SECTION_B:$PATH"
+  export PATH="$PATH_SECTION_A:/bin:/usr/bin:/usr/local/bin:$PATH_SECTION_B:$REMEMBER_PATH"
 fi
 unset PATH_SECTION_A
 unset PATH_SECTION_B
