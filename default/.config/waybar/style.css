@@ -105,7 +105,7 @@ button:hover {
 }
 
 .niri-taskbar button.focused {
-    background: alpha(#9b59d0, 0.4);
+    background: alpha(#9b59d0, 0.5);
 }
 
 .niri-taskbar button.urgent {
