@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-#MISE dir="~"
-#MISE description="Install OpenAgents installer"
-
-mkdir -p ~/.local/bin
-curl -fsSL https://raw.githubusercontent.com/darrenhinde/OpenAgentsControl/main/install.sh -o ~/.local/bin/openagents-installer
-chmod +x ~/.local/bin/openagents-installer
