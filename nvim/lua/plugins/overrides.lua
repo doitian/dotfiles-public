@@ -343,18 +343,6 @@ return {
         ruff = {},
         yamlls = {},
         jsonls = {},
-        rust_analyzer = {
-          settings = {
-            ["rust-analyzer"] = {
-              files = { watcher = "client" },
-              procMacro = {
-                ignored = {
-                  ["async-trait"] = vim.NIL,
-                },
-              },
-            },
-          },
-        },
         harper_ls = {
           settings = {
             ["harper-ls"] = {
