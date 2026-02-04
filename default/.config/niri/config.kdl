@@ -263,6 +263,17 @@ binds {
     Mod+Ctrl+Down { move-window-down-or-to-workspace-down; }
     Mod+Ctrl+Up { move-window-up-or-to-workspace-up; }
 
+    Alt+J { focus-window-or-workspace-down; }
+    Alt+K { focus-window-or-workspace-up; }
+    Alt+H { focus-column-left; }
+    Alt+L { focus-column-right; }
+    Alt+Y { focus-column-first; }
+    Alt+Ctrl+J { move-window-down-or-to-workspace-down; }
+    Alt+Ctrl+K { move-window-up-or-to-workspace-up; }
+    Alt+Ctrl+Down { move-window-down-or-to-workspace-down; }
+    Alt+Ctrl+Up { move-window-up-or-to-workspace-up; }
+    Alt+Ctrl+Y { move-column-to-first; }
+
     Mod+Home { focus-column-first; }
     Mod+End  { focus-column-last; }
     Mod+Ctrl+Home { move-column-to-first; }
