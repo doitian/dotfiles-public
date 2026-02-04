@@ -212,12 +212,32 @@ button:hover {
     padding: 0 8px;
 }
 
+#tray > widget {
+    padding: 2px 4px;
+    margin: 0 2px;
+    background: alpha(@surface1, 0.6);
+    border-radius: 4px;
+}
+
 #tray > .passive {
     -gtk-icon-effect: dim;
 }
 
 #tray > .needs-attention {
     -gtk-icon-effect: highlight;
+    background: alpha(@yellow, 0.2);
+}
+
+#tray menu {
+    background: @surface0;
+    color: @text;
+    border: 1px solid @surface1;
+    border-radius: 8px;
+    padding: 4px;
+}
+
+#tray menu menuitem:hover {
+    background: @surface1;
 }
 
 /* Idle inhibitor */
