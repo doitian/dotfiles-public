@@ -1,6 +1,13 @@
 #!/bin/bash
 
-wlrctl window list |
-    awk -F: '{ printf "%s:%s\0icon\x1f%s\n",$1,$2,$1 }' |
-    fuzzel --dmenu -w 80 | sed 's/:.*//' |
-    xargs -r wlrctl window focus
+niri msg --json windows |
+    jq -r '
+        sort_by(.workspace_id, .layout.pos_in_scrolling_layout[0])[]
+        | .id as $id
+        | .workspace_id as $ws
+        | .layout.pos_in_scrolling_layout[0] as $col
+        | .app_id as $app
+        | "\($id) \($ws):\($col) [\($app)] \(.title)\u0000icon\u001f\($app | ascii_downcase)"
+    ' |
+    fuzzel --dmenu --nth-delimiter ' ' --with-nth '{2..}' --accept-nth 1 -w 78 | sed 's/.*\t//' |
+    xargs -r -I{} niri msg action focus-window --id {}

@@ -33,7 +33,7 @@
 }
 
 window#waybar {
-    background-color: @crust;
+    background-color: alpha(@crust, 0.8);
     color: @text;
 }
 

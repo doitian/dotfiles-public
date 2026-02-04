@@ -37,11 +37,11 @@ input {
     }
 
     // Uncomment this to make the mouse warp to the center of newly focused windows.
-    // warp-mouse-to-focus
+    warp-mouse-to-focus
 
     // Focus windows and outputs automatically when moving the mouse into them.
     // Setting max-scroll-amount="0%" makes it work only on windows already fully on screen.
-    // focus-follows-mouse max-scroll-amount="0%"
+    focus-follows-mouse max-scroll-amount="0%"
 }
 
 output "HDMI-A-1" {
@@ -95,10 +95,16 @@ layout {
         // How many logical pixels the ring extends out from the windows.
         width 4
 
-        active-color "hsl(266deg, 85%, 58%)"
+        // active-color "hsl(266deg, 85%, 58%)"
         inactive-color "hsl(234deg, 16%, 35%)"
         active-gradient from="hsl(266deg, 85%, 58%)" to="hsl(231deg, 97%, 38%)" angle=45
         // inactive-gradient from="#4c4f69" to="#8c8fa1" angle=45 relative-to="workspace-view"
+    }
+
+    tab-indicator {
+        width 4
+        gap 4
+        active-color "hsl(316deg, 73%, 69%)"
     }
 
     struts {
@@ -150,22 +156,38 @@ spawn-at-startup "wl-paste" "-t" "text" "--watch" "clipman" "store"
 spawn-sh-at-startup "killall swaybg; find ~/Pictures/Wallpapers | shuf -n 1 | xargs -r swaybg -m fill -i"
 
 binds {
-    // unused: A D
     Mod+Shift+Slash { show-hotkey-overlay; }
 
-    Mod+Return hotkey-overlay-title="Open a Terminal" { spawn-sh "wlrctl window focus kitty || exec kitty"; }
-    Mod+Shift+Return { spawn "kitty"; }
-    Mod+W hotkey-overlay-title="Run a Browser" { spawn-sh "wlrctl window focus microsoft-edge || exec microsoft-edge-stable"; }
-    Mod+Shift+W { spawn "microsoft-edge-stable"; }
-    Mod+E hotkey-overlay-title="Run a File Explorer" { spawn-sh "wlrctl window focus org.kde.dolphin || exec dolphin"; }
-    Mod+Shift+E { spawn "dolphin"; }
+    Mod+Return hotkey-overlay-title="Open a Terminal" { spawn "kitty"; }
+    Mod+W hotkey-overlay-title="Run a Browser" { spawn "microsoft-edge-stable"; }
+    Mod+E hotkey-overlay-title="Run a File Explorer" { spawn "dolphin"; }
+
+    Mod+1 hotkey-overlay-title=null { focus-column 1; }
+    Mod+2 hotkey-overlay-title=null { focus-column 2; }
+    Mod+3 hotkey-overlay-title=null { focus-column 3; }
+    Mod+4 hotkey-overlay-title=null { focus-column 4; }
+    Mod+5 hotkey-overlay-title=null { focus-column 5; }
+    Mod+6 hotkey-overlay-title=null { focus-column 6; }
+    Mod+7 hotkey-overlay-title=null { focus-column 7; }
+    Mod+8 hotkey-overlay-title=null { focus-column 8; }
+    Mod+9 hotkey-overlay-title=null { focus-column-last; }
+    Mod+Ctrl+1 hotkey-overlay-title=null { move-column-to-index 1; }
+    Mod+Ctrl+2 hotkey-overlay-title=null { move-column-to-index 2; }
+    Mod+Ctrl+3 hotkey-overlay-title=null { move-column-to-index 3; }
+    Mod+Ctrl+4 hotkey-overlay-title=null { move-column-to-index 4; }
+    Mod+Ctrl+5 hotkey-overlay-title=null { move-column-to-index 5; }
+    Mod+Ctrl+6 hotkey-overlay-title=null { move-column-to-index 6; }
+    Mod+Ctrl+7 hotkey-overlay-title=null { move-column-to-index 7; }
+    Mod+Ctrl+8 hotkey-overlay-title=null { move-column-to-index 8; }
+    Mod+Ctrl+9 hotkey-overlay-title=null { move-column-to-last; }
+
     Mod+P hotkey-overlay-title="Run an Application" { spawn "fuzzel"; }
     Mod+Shift+P hotkey-overlay-title="Copy a Password" { spawn "fpass" "--fuzzel"; }
-    Mod+S hotkey-overlay-title="Fuzzel Focus" { spawn "~/.config/niri/scripts/niri-fuzzel-focus.sh"; }
-    Mod+V { spawn "clipman" "pick" "-t" "CUSTOM" "-T" "fuzzel --dmenu"; }
-    Mod+Shift+V { spawn "clipman" "clear" "-a"; }
-    Mod+D { spawn "killall" "-SIGUSR1" "waybar"; }
-    Mod+Shift+D { spawn-sh "killall waybar; exec waybar"; }
+    Mod+Y hotkey-overlay-title="Fuzzel Focus" { spawn "~/.config/niri/scripts/niri-fuzzel-focus.sh"; }
+    Mod+V hotkey-overlay-title="Clipboard History" { spawn "clipman" "pick" "-t" "CUSTOM" "-T" "fuzzel --dmenu -w 78"; }
+    Mod+Shift+V hotkey-overlay-title=null { spawn "clipman" "clear" "-a"; }
+    Mod+D hotkey-overlay-title="Toggle Waybar" { spawn "killall" "-SIGUSR1" "waybar"; }
+    Mod+Shift+D hotkey-overlay-title=null { spawn-sh "killall waybar; exec waybar"; }
 
     XF86AudioRaiseVolume  allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+ -l 1.0"; }
     XF86AudioLowerVolume  allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-"; }
@@ -184,8 +206,8 @@ binds {
     Mod+Backspace repeat=false { close-window; }
 
     Mod+Left  { focus-column-left; }
-    Mod+Down  { focus-window-down; }
-    Mod+Up    { focus-window-up; }
+    // Mod+Down  { focus-window-down; }
+    // Mod+Up    { focus-window-up; }
     Mod+Right { focus-column-right; }
     Mod+H     { focus-column-left; }
     // Mod+J     { focus-window-down; }
@@ -193,8 +215,8 @@ binds {
     Mod+L     { focus-column-right; }
 
     Mod+Ctrl+Left  { move-column-left; }
-    Mod+Ctrl+Down  { move-window-down; }
-    Mod+Ctrl+Up    { move-window-up; }
+    // Mod+Ctrl+Down  { move-window-down; }
+    // Mod+Ctrl+Up    { move-window-up; }
     Mod+Ctrl+Right { move-column-right; }
     Mod+Ctrl+H     { move-column-left; }
     // Mod+Ctrl+J     { move-window-down; }
@@ -207,6 +229,10 @@ binds {
     Mod+K { focus-window-or-workspace-up; }
     Mod+Ctrl+J { move-window-down-or-to-workspace-down; }
     Mod+Ctrl+K { move-window-up-or-to-workspace-up; }
+    Mod+Down { focus-window-or-workspace-down; }
+    Mod+Up { focus-window-or-workspace-up; }
+    Mod+Ctrl+Down { move-window-down-or-to-workspace-down; }
+    Mod+Ctrl+Up { move-window-up-or-to-workspace-up; }
 
     Mod+Home { focus-column-first; }
     Mod+End  { focus-column-last; }
@@ -303,22 +329,29 @@ binds {
     // Expel the bottom window from the focused column to the right.
     Mod+Period { expel-window-from-column; }
 
-    Mod+R { switch-preset-column-width; }
-    // Cycling through the presets in reverse order is also possible.
+    Mod+Semicolon { switch-preset-column-width; }
     // Mod+R { switch-preset-column-width-back; }
-    Mod+Shift+R { switch-preset-window-height; }
-    Mod+Ctrl+R { reset-window-height; }
-    Mod+F { maximize-column; }
-    Mod+Shift+F { fullscreen-window; }
+    Mod+Shift+Semicolon { switch-preset-window-height; }
+    Mod+Ctrl+Semicolon { reset-window-height; }
+    Mod+Apostrophe { maximize-column; }
+    Mod+Shift+Apostrophe { fullscreen-window; }
+    Mod+Ctrl+Apostrophe { expand-column-to-available-width; }
+    Mod+N { center-column; }
+    Mod+Ctrl+N { center-visible-columns; }
 
-    // Expand the focused column to space not taken up by other fully visible columns.
-    // Makes the column "fill the rest of the space".
-    Mod+Ctrl+F { expand-column-to-available-width; }
+    Mod+F hotkey-overlay-title=null { maximize-column; }
+    Mod+Shift+F hotkey-overlay-title=null { fullscreen-window; }
+    Mod+Ctrl+F hotkey-overlay-title=null { expand-column-to-available-width; }
+    Mod+R hotkey-overlay-title=null { switch-preset-column-width; }
+    Mod+Shift+R hotkey-overlay-title=null { switch-preset-window-height; }
+    Mod+Ctrl+R hotkey-overlay-title=null { reset-window-height; }
+    Mod+C hotkey-overlay-title=null { center-column; }
+    Mod+Ctrl+C hotkey-overlay-title=null { center-visible-columns; }
 
-    Mod+C { center-column; }
-
-    // Center all fully visible columns on screen.
-    Mod+Ctrl+C { center-visible-columns; }
+    // Toggle tabbed column display mode.
+    // Windows in this column will appear as vertical tabs,
+    // rather than stacked on top of each other.
+    Mod+M { toggle-column-tabbed-display; }
 
     // Finer width adjustments.
     // This command can also:
@@ -338,11 +371,6 @@ binds {
     // Move the focused window between the floating and the tiling layout.
     Mod+Z       { toggle-window-floating; }
     Mod+Shift+Z { switch-focus-between-floating-and-tiling; }
-
-    // Toggle tabbed column display mode.
-    // Windows in this column will appear as vertical tabs,
-    // rather than stacked on top of each other.
-    Mod+T { toggle-column-tabbed-display; }
 
     // Actions to switch layouts.
     // Note: if you uncomment these, make sure you do NOT have
@@ -369,8 +397,8 @@ binds {
     // The quit action will show a confirmation dialog to avoid accidental exits.
     Mod+Shift+Q { quit; }
 
-    Mod+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
-    Mod+Shift+Backslash { power-off-monitors; }
+    Mod+Alt+L hotkey-overlay-title="Lock the Screen" { spawn-sh "clipman clear -a; swaylock -f"; }
+    Mod+Shift+Backspace hotkey-overlay-title=null { spawn-sh "clipman clear -a; niri msg action power-off-monitors && swaylock -f"; }
     Mod+Backslash { spawn-sh "killall swaybg; find ~/Pictures/Wallpapers | shuf -n 1 | xargs -r swaybg -m fill -i"; }
 }
 

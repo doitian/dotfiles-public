@@ -4,9 +4,6 @@ set -e
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
-function fpass() {
-}
-
 case "${1:-}" in
 "--rofi")
     shift
