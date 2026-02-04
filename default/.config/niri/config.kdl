@@ -109,7 +109,7 @@ layout {
     }
 
     shadow {
-        on
+        off
         softness 15
         color "#1e66f540"
     }
@@ -134,6 +134,7 @@ layer-rule {
     // This is for swaybg; change for other wallpaper tools.
     // Find the right namespace by running niri msg layers.
     match namespace="^wallpaper$"
+    match at-startup=true
     place-within-backdrop true
 }
 
@@ -427,6 +428,20 @@ binds {
     Mod+Alt+L hotkey-overlay-title="Lock the Screen" { spawn-sh "clipman clear -a; swaylock -f"; }
     Mod+Shift+Backspace hotkey-overlay-title=null { spawn-sh "clipman clear -a; niri msg action power-off-monitors && swaylock -f"; }
     Mod+Backslash { spawn-sh "killall swaybg; find ~/Pictures/Wallpapers | shuf -n 1 | xargs -r swaybg -m fill -i"; }
+}
+
+recent-windows {
+    binds {
+        Alt+Tab         { next-window     scope="workspace"; }
+        Alt+Shift+Tab   { previous-window scope="workspace"; }
+        Alt+grave       { next-window     scope="workspace" filter="app-id"; }
+        Alt+Shift+grave { previous-window scope="workspace" filter="app-id"; }
+
+        Mod+Tab         { next-window     scope="all"; }
+        Mod+Shift+Tab   { previous-window scope="all"; }
+        Mod+grave       { next-window     scope="all" filter="app-id"; }
+        Mod+Shift+grave { previous-window scope="all" filter="app-id"; }
+    }
 }
 
 environment {
