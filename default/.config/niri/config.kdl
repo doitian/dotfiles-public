@@ -178,9 +178,10 @@ window-rule {
     }
 }
 
-spawn-at-startup "waybar"
+spawn-at-startup "/usr/lib/pam_kwallet_init"
 spawn-at-startup "swayidle" "-w" "timeout" "600" "clipman clear -a" "timeout" "901" "swaylock -e --grace 10 -f" "timeout" "900" "niri msg action power-off-monitors" "before-sleep" "swaylock -e --grace 10 -f"
 spawn-at-startup "wl-paste" "-t" "text" "--watch" "clipman" "store"
+spawn-at-startup "waybar"
 spawn-at-startup "~/.config/niri/scripts/niri-swaybg.sh"
 
 binds {
