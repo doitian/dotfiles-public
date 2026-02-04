@@ -15,7 +15,7 @@ case "${1:-}" in
     ;;
 "--fuzzel")
     shift
-    gopass list -f | fuzzel -w 50 | xargs -L1 -r gopass -c
+    gopass list -f | fuzzel --dmenu -w 50 | xargs -L1 -r gopass -c
     ;;
 *)
     export GPG_TTY="$(tty)"
