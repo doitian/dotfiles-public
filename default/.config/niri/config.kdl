@@ -93,18 +93,30 @@ layout {
         // off
 
         // How many logical pixels the ring extends out from the windows.
-        width 4
+        width 3
 
-        // active-color "hsl(266deg, 85%, 58%)"
-        inactive-color "hsl(234deg, 16%, 35%)"
-        active-gradient from="hsl(266deg, 85%, 58%)" to="hsl(231deg, 97%, 38%)" angle=45
-        // inactive-gradient from="#4c4f69" to="#8c8fa1" angle=45 relative-to="workspace-view"
+        // Teal to Sky - refreshing, subtle glow
+        active-gradient from="#179299" to="#04a5e5" angle=45
+        inactive-color "#bcc0cc"
+    }
+
+    border {
+        off
+        width 2
+        active-gradient from="#179299" to="#04a5e5" angle=45
+        inactive-color "#bcc0cc"
+    }
+
+    shadow {
+        on
+        softness 15
+        color "#1e66f540"
     }
 
     tab-indicator {
         width 4
         gap 4
-        active-color "hsl(316deg, 73%, 69%)"
+        active-color "#04a5e5"
     }
 
     struts {
