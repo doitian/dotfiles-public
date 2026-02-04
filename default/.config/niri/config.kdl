@@ -179,9 +179,9 @@ window-rule {
 }
 
 spawn-at-startup "waybar"
-spawn-at-startup "swayidle" "-w" "timeout" "600" "clipman clear -a" "timeout" "901" "swaylock -f" "timeout" "900" "niri msg action power-off-monitors" "before-sleep" "swaylock -f"
+spawn-at-startup "swayidle" "-w" "timeout" "600" "clipman clear -a" "timeout" "901" "swaylock -e --grace 10 -f" "timeout" "900" "niri msg action power-off-monitors" "before-sleep" "swaylock -e --grace 10 -f"
 spawn-at-startup "wl-paste" "-t" "text" "--watch" "clipman" "store"
-spawn-sh-at-startup "killall swaybg; find ~/Pictures/Wallpapers | shuf -n 1 | xargs -r swaybg -m fill -i"
+spawn-at-startup "~/.config/niri/scripts/niri-swaybg.sh"
 
 binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
@@ -425,9 +425,9 @@ binds {
     // The quit action will show a confirmation dialog to avoid accidental exits.
     Mod+Shift+Q { quit; }
 
-    Mod+Alt+L hotkey-overlay-title="Lock the Screen" { spawn-sh "clipman clear -a; swaylock -f"; }
-    Mod+Shift+Backspace hotkey-overlay-title=null { spawn-sh "clipman clear -a; niri msg action power-off-monitors && swaylock -f"; }
-    Mod+Backslash { spawn-sh "killall swaybg; find ~/Pictures/Wallpapers | shuf -n 1 | xargs -r swaybg -m fill -i"; }
+    Mod+Alt+L hotkey-overlay-title="Lock the Screen" { spawn-sh "clipman clear -a; swaylock -e --grace 10 -f"; }
+    Mod+Shift+Backspace hotkey-overlay-title=null { spawn-sh "clipman clear -a; niri msg action power-off-monitors && swaylock -e --grace 10 -f"; }
+    Mod+Backslash { spawn "~/.config/niri/scripts/niri-swaybg.sh"; }
 }
 
 recent-windows {
@@ -446,4 +446,6 @@ recent-windows {
 
 environment {
     QT_QPA_PLATFORMTHEME "qt6ct"
+    // Include GNOME so Electron apps (VSCode, Edge, etc.) use gnome-keyring
+    XDG_CURRENT_DESKTOP "GNOME:niri"
 }
