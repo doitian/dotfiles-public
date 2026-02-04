@@ -344,6 +344,13 @@ return {
         yamlls = {},
         jsonls = {},
         harper_ls = {
+          -- Enable when .harper-dictionary.txt is found in the cwd
+          root_dir = function(bufnr, on_dir)
+            local dir = vim.fn.getcwd()
+            if vim.uv.fs_stat(vim.fs.joinpath(dir, ".harper-dictionary.txt")) then
+              on_dir(dir)
+            end
+          end,
           settings = {
             ["harper-ls"] = {
               linters = {
