@@ -162,6 +162,20 @@ window-rule {
     open-floating true
 }
 
+// Temporary windows
+window-rule {
+    match app-id="^$"
+    open-floating true
+    open-focused false
+    default-floating-position x=0 y=20 relative-to="bottom"
+    border {
+        on
+    }
+    shadow {
+        on
+    }
+}
+
 spawn-at-startup "waybar"
 spawn-at-startup "swayidle" "-w" "timeout" "600" "clipman clear -a" "timeout" "901" "swaylock -f" "timeout" "900" "niri msg action power-off-monitors" "before-sleep" "swaylock -f"
 spawn-at-startup "wl-paste" "-t" "text" "--watch" "clipman" "store"
