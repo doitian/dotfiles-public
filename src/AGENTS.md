@@ -30,3 +30,7 @@ Shared patterns were extracted from the CLI scripts so that:
 - Prefer **async APIs** in both scripts and lib.
 - New shared, non-executable helpers belong in `src/lib/` (and optionally new files there if they grow).
 - Executables stay in `src/<name>.js` and import from `./lib/...` as needed.
+
+## JavaScript Formatting
+
+- Use 4-space indentation
