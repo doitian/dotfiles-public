@@ -186,10 +186,11 @@ spawn-at-startup "~/.config/niri/scripts/niri-swaybg.sh"
 
 binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
+    Mod+Slash { spawn "~/.config/niri/scripts/niri-set-workspace-name.sh"; }
 
     Mod+Return hotkey-overlay-title="Open a Terminal" { spawn "kitty"; }
     Mod+B hotkey-overlay-title="Run a Browser" { spawn "microsoft-edge-stable"; }
-    Mod+E hotkey-overlay-title="Run a File Explorer" { spawn "dolphin"; }
+    Mod+E hotkey-overlay-title="Run a File Explorer" { spawn "kitty" "yazi"; }
     Mod+Shift+E hotkey-overlay-title=null { spawn "dolphin"; }
 
     Mod+1 hotkey-overlay-title=null { focus-column 1; }
@@ -210,6 +211,27 @@ binds {
     Mod+Ctrl+7 hotkey-overlay-title=null { move-column-to-index 7; }
     Mod+Ctrl+8 hotkey-overlay-title=null { move-column-to-index 8; }
     Mod+Ctrl+9 hotkey-overlay-title=null { move-column-to-last; }
+
+    Mod+F1 hotkey-overlay-title=null { focus-workspace 1; }
+    Mod+F2 hotkey-overlay-title=null { focus-workspace 2; }
+    Mod+F3 hotkey-overlay-title=null { focus-workspace 3; }
+    Mod+F4 hotkey-overlay-title=null { focus-workspace 4; }
+    Mod+F5 hotkey-overlay-title=null { focus-workspace 5; }
+    Mod+F6 hotkey-overlay-title=null { focus-workspace 6; }
+    Mod+F7 hotkey-overlay-title=null { focus-workspace 7; }
+    Mod+F8 hotkey-overlay-title=null { focus-workspace 8; }
+    Mod+F9 hotkey-overlay-title=null { focus-workspace 9; }
+    Mod+Ctrl+F1 hotkey-overlay-title=null { move-workspace-to-index 1; }
+    Mod+Ctrl+F2 hotkey-overlay-title=null { move-workspace-to-index 2; }
+    Mod+Ctrl+F3 hotkey-overlay-title=null { move-workspace-to-index 3; }
+    Mod+Ctrl+F4 hotkey-overlay-title=null { move-workspace-to-index 4; }
+    Mod+Ctrl+F5 hotkey-overlay-title=null { move-workspace-to-index 5; }
+    Mod+Ctrl+F6 hotkey-overlay-title=null { move-workspace-to-index 6; }
+    Mod+Ctrl+F7 hotkey-overlay-title=null { move-workspace-to-index 7; }
+    Mod+Ctrl+F8 hotkey-overlay-title=null { move-workspace-to-index 8; }
+    Mod+Ctrl+F9 hotkey-overlay-title=null { move-workspace-to-index 9; }
+    Mod+G hotkey-overlay-title=null { focus-workspace 1; }
+    Mod+Ctrl+G hotkey-overlay-title=null { move-workspace-to-index 1; }
 
     Mod+P hotkey-overlay-title="Run an Application" { spawn "fuzzel" "--terminal" "kitty"; }
     Mod+Shift+P hotkey-overlay-title="Copy a Password" { spawn "fpass" "--fuzzel"; }
@@ -289,6 +311,11 @@ binds {
     Mod+Ctrl+Home { move-column-to-first; }
     Mod+Ctrl+End  { move-column-to-last; }
 
+    Mod+X { focus-monitor-previous; }
+    Mod+C { focus-monitor-next; }
+    Mod+Ctrl+X { move-column-to-monitor-previous; }
+    Mod+Ctrl+C { move-column-to-monitor-next; }
+
     Mod+Shift+Left  { focus-monitor-left; }
     Mod+Shift+Down  { focus-monitor-down; }
     Mod+Shift+Up    { focus-monitor-up; }
@@ -306,14 +333,6 @@ binds {
     Mod+Shift+Ctrl+J     { move-column-to-monitor-down; }
     Mod+Shift+Ctrl+K     { move-column-to-monitor-up; }
     Mod+Shift+Ctrl+L     { move-column-to-monitor-right; }
-
-    // Alternatively, there are commands to move just a single window:
-    // Mod+Shift+Ctrl+Left  { move-window-to-monitor-left; }
-    // ...
-
-    // And you can also move a whole workspace to another monitor:
-    // Mod+Shift+Ctrl+Left  { move-workspace-to-monitor-left; }
-    // ...
 
     Mod+Page_Down      { focus-workspace-down; }
     Mod+Page_Up        { focus-workspace-up; }
@@ -395,8 +414,6 @@ binds {
     Mod+R hotkey-overlay-title=null { switch-preset-column-width; }
     Mod+Shift+R hotkey-overlay-title=null { switch-preset-window-height; }
     Mod+Ctrl+R hotkey-overlay-title=null { reset-window-height; }
-    Mod+C hotkey-overlay-title=null { center-column; }
-    Mod+Ctrl+C hotkey-overlay-title=null { center-visible-columns; }
 
     // Toggle tabbed column display mode.
     // Windows in this column will appear as vertical tabs,
