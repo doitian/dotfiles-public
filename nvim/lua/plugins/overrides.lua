@@ -352,8 +352,6 @@ return {
             end
           end,
         },
-        tsserver = {},
-        ruff = {},
         yamlls = {},
         jsonls = {},
         harper_ls = {
@@ -384,8 +382,7 @@ return {
     optional = true,
     opts = {
       ensure_installed = {
-        "markdownlint",
-        "ruff",
+        "markdownlint-cli2",
       },
     },
   },
@@ -398,8 +395,7 @@ return {
     opts = {
       -- use .lazy.lua for project local formatters
       formatters_by_ft = {
-        ["markdown"] = { "markdownlint" },
-        ["python"] = { "ruff_format" },
+        ["markdown"] = { "markdownlint-cli2" },
         ["toml"] = { "taplo" },
         ["haskell"] = { "ormolu" },
       },
