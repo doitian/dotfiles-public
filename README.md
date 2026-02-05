@@ -1,36 +1,34 @@
 # Ian's Configuration Files
 
-See https://github.com/doitian/dotfiles
+See <https://github.com/doitian/dotfiles>
 
 ## Tools I Used
 
--   Obsidian: note taking
--   btop: top alternative
--   mise: tools version manager and per directory env
--   fd: find alternative
--   fzf: fuzzy finder
--   lazygit: git TUI
--   neovim: editor
--   rg: grep alternative
--   starship: shell prompt
--   tmux: terminal multiplexer
--   zsh
+- Obsidian: note taking
+- btop: top alternative
+- mise: tools version manager and per directory env
+- fd: find alternative
+- fzf: fuzzy finder
+- lazygit: git TUI
+- neovim: editor
+- rg: grep alternative
+- starship: shell prompt
+- tmux: terminal multiplexer
+- zsh
 
 ## Interesting Widgets I Built
 
--   [cvim]: edit clipboard using vim
--   [fpass]: copy password from pass via fzf
--   [fzf-finder]: a file explorer built based on fzf, bat, eza
--   [gfw]: a shell proxy manager
--   [git-multistatus]: quickly check git status of multiple repos using fzf, starship, and lazygit
--   [tmux-up]: a tmux session manager
--   [tt]: a wrap script which sends keys to tmux panes
+- [cvim]: edit clipboard using vim
+- [fpass]: copy password from pass via fzf
+- [gfw]: a shell proxy manager
+- [git-multistatus]: quickly check git status of multiple repos using fzf, starship, and lazygit
+- [tmux-up]: a tmux session manager
+- [tt]: a wrap script which sends keys to tmux panes
 
 [cvim]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/cvim
-[fpass]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/fpass
-[fzf-finder]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/fzf-finder
+[fpass]: https://github.com/doitian/dotfiles-public/blob/master/src/fpass.js
 [gfw]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/gfw
-[git-multistatus]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/git-multistatus
+[git-multistatus]: https://github.com/doitian/dotfiles-public/blob/master/src/git-multistatus.js
 [tmux-up]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/tmux-up
 [tt]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/tt
 
@@ -38,11 +36,11 @@ See https://github.com/doitian/dotfiles
 
 ### Vim
 
--   Neovim: Copy the folder [nvim] to `~/.config/nvim`.
--   Vim:
-    -   Minimal: Just copy [default/.vimrc][vimrc] to `~/.vimrc`
-    -   Unpacked: Download vimfiles from the latest job in the [workflow]. See README in it to setup.
-    -   Packed: Download vimfiles-packed from the latest job in the [workflow]. See README in it to setup.
+- Neovim: Copy the folder [nvim] to `~/.config/nvim`.
+- Vim:
+  - Minimal: Just copy [default/.vimrc][vimrc] to `~/.vimrc`
+  - Unpacked: Download vimfiles from the latest job in the [workflow]. See README in it to setup.
+  - Packed: Download vimfiles-packed from the latest job in the [workflow]. See README in it to setup.
 
 The Minimal/Unpacked version requires running `:PackUpdate` to install dependencies.
 I build the packed version so I can copy it anywhere and start to use Vim directly.
