@@ -190,6 +190,7 @@ binds {
     Mod+Return hotkey-overlay-title="Open a Terminal" { spawn "kitty"; }
     Mod+B hotkey-overlay-title="Run a Browser" { spawn "microsoft-edge-stable"; }
     Mod+E hotkey-overlay-title="Run a File Explorer" { spawn "dolphin"; }
+    Mod+Shift+E hotkey-overlay-title=null { spawn "dolphin"; }
 
     Mod+1 hotkey-overlay-title=null { focus-column 1; }
     Mod+2 hotkey-overlay-title=null { focus-column 2; }
@@ -210,7 +211,7 @@ binds {
     Mod+Ctrl+8 hotkey-overlay-title=null { move-column-to-index 8; }
     Mod+Ctrl+9 hotkey-overlay-title=null { move-column-to-last; }
 
-    Mod+P hotkey-overlay-title="Run an Application" { spawn "fuzzel"; }
+    Mod+P hotkey-overlay-title="Run an Application" { spawn "fuzzel" "--terminal" "kitty"; }
     Mod+Shift+P hotkey-overlay-title="Copy a Password" { spawn "fpass" "--fuzzel"; }
     Mod+Y hotkey-overlay-title="Fuzzel Focus" { spawn "~/.config/niri/scripts/niri-fuzzel-focus.sh"; }
     Mod+V hotkey-overlay-title="Clipboard History" { spawn "clipman" "pick" "-t" "CUSTOM" "-T" "fuzzel --dmenu -w 78"; }
@@ -447,8 +448,8 @@ binds {
     Mod+Shift+Q { quit; }
 
     Mod+Alt+L hotkey-overlay-title="Lock the Screen" { spawn-sh "clipman clear -a; swaylock -e --grace 10 -f"; }
-    Mod+Shift+Backspace hotkey-overlay-title=null { spawn-sh "clipman clear -a; niri msg action power-off-monitors && swaylock -e --grace 10 -f"; }
-    Mod+Backslash { spawn "~/.config/niri/scripts/niri-swaybg.sh"; }
+    Mod+Shift+Backspace hotkey-overlay-title="Turn off Monitor" { spawn-sh "clipman clear -a; niri msg action power-off-monitors && swaylock -e --grace 10 -f"; }
+    Mod+Backslash hotkey-overlay-title="Change Wallpaper" { spawn "~/.config/niri/scripts/niri-swaybg.sh"; }
 }
 
 recent-windows {
