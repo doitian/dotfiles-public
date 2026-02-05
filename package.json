@@ -7,6 +7,7 @@
     "build": "bun run build.js"
   },
   "bin": {
+    "agent-pushover": "./dist/agent-pushover",
     "backup-github": "./dist/backup-github",
     "czf": "./dist/czf",
     "dog": "./dist/dog",

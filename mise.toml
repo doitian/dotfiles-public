@@ -2,8 +2,9 @@
 OPENAI_API_KEY = { required = true }
 OPENAI_BASE_URL = { required = true }
 OPENAI_MODEL = { required = true }
-AGENT_PUSHOVER_USER_KEY = { required = true }
-AGENT_PUSHOVER_APP_TOKEN = { required = true }
+PUSHOVER_USER_KEY = { required = true }
+PUSHOVER_AGENT_TOKEN = { required = true }
+PUSHOVER_PERSONAL_TOKEN = { required = true }
 
 [tasks."pre-commit:typos"]
 run = "typos"

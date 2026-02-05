@@ -1,12 +1,27 @@
 #!/usr/bin/env node
 /**
  * Run a command and send a Pushover notification with result and duration.
- * Depends on pushover-send (uses lib/pushover.js). Port of default/bin/pushover-exec.
+ * Port of default/bin/pushover-exec.
  */
 import { spawn } from "node:child_process";
+import {
+  DEFAULT_PUSHOVER_USER_KEY,
+  DEFAULT_PUSHOVER_PERSONAL_TOKEN,
+} from "./lib/config.js";
 import { send } from "./lib/pushover.js";
 
 const HOST = process.env.HOST || process.env.HOSTNAME || "";
+
+function getCredentials() {
+  const userKey = process.env.PUSHOVER_USER_KEY ?? DEFAULT_PUSHOVER_USER_KEY;
+  const appToken =
+    process.env.PUSHOVER_PERSONAL_TOKEN ?? DEFAULT_PUSHOVER_PERSONAL_TOKEN;
+  if (!userKey || !appToken)
+    throw new Error(
+      "Missing Pushover credentials: set PUSHOVER_USER_KEY and PUSHOVER_PERSONAL_TOKEN (or build with defaults)"
+    );
+  return { userKey, appToken };
+}
 
 function runCommand(argv) {
   return new Promise((resolve, reject) => {
@@ -39,11 +54,15 @@ async function main() {
   const times = formatDuration(dtSec);
   const hostSuffix = HOST ? ` on ${HOST}` : "";
 
+  const creds = getCredentials();
   const title = `exec ${argv.join(" ")}`;
   if (exitCode === 0) {
-    await send({ title, message: `Succeeded${hostSuffix} in ${times}` });
+    await send({ title, message: `Succeeded${hostSuffix} in ${times}` }, creds);
   } else {
-    await send({ title, message: `Failed${hostSuffix} in ${times}`, priority: "1" });
+    await send(
+      { title, message: `Failed${hostSuffix} in ${times}`, priority: "1" },
+      creds
+    );
   }
   process.exit(exitCode ?? 0);
 }

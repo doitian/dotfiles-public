@@ -2,8 +2,9 @@
 /**
  * Compile each bin entrypoint to a standalone executable in dist/.
  * Run: bun run build
+ * Skips a target if it is newer than the source entry, mise.local.toml (if present), and all src/lib/*.
  */
-import { readFileSync, mkdirSync, existsSync, readdirSync } from "node:fs";
+import { readFileSync, mkdirSync, existsSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 const pkg = JSON.parse(readFileSync("./package.json", "utf-8"));
@@ -27,8 +28,9 @@ const configVars = [
     ["DEFAULT_OPENAI_API_KEY", "OPENAI_API_KEY"],
     ["DEFAULT_OPENAI_BASE_URL", "OPENAI_BASE_URL"],
     ["DEFAULT_OPENAI_MODEL", "OPENAI_MODEL"],
-    ["AGENT_PUSHOVER_USER_KEY", "AGENT_PUSHOVER_USER_KEY"],
-    ["AGENT_PUSHOVER_APP_TOKEN", "AGENT_PUSHOVER_APP_TOKEN"],
+    ["DEFAULT_PUSHOVER_USER_KEY", "PUSHOVER_USER_KEY"],
+    ["DEFAULT_PUSHOVER_AGENT_TOKEN", "PUSHOVER_AGENT_TOKEN"],
+    ["DEFAULT_PUSHOVER_PERSONAL_TOKEN", "PUSHOVER_PERSONAL_TOKEN"],
 ];
 const configSource = configVars
     .map(
@@ -56,6 +58,40 @@ if (existsSync(privateSrcDir)) {
     }
 }
 
+const libDir = join(process.cwd(), "src", "lib");
+const miseLocalPath = join(process.cwd(), "mise.local.toml");
+
+/** Return the newest mtime among source entry, mise.local.toml (if any), and all files in src/lib. */
+function getNewestInputMtime(sourcePath) {
+    let newest = 0;
+    try {
+        const s = statSync(sourcePath);
+        if (s.mtimeMs > newest) newest = s.mtimeMs;
+    } catch (_) { }
+    if (existsSync(miseLocalPath)) {
+        const m = statSync(miseLocalPath).mtimeMs;
+        if (m > newest) newest = m;
+    }
+    if (existsSync(libDir)) {
+        for (const f of readdirSync(libDir)) {
+            const p = join(libDir, f);
+            try {
+                const st = statSync(p);
+                if (st.mtimeMs > newest) newest = st.mtimeMs;
+            } catch (_) { }
+        }
+    }
+    return newest;
+}
+
+/** Return outfile mtime in ms, or 0 if missing. Handles .exe on Windows. */
+function getOutputMtime(outfile) {
+    for (const p of [outfile, outfile + ".exe"]) {
+        if (existsSync(p)) return statSync(p).mtimeMs;
+    }
+    return 0;
+}
+
 async function buildOne({ sourcePath, outfile }) {
     const options = {
         entrypoints: [sourcePath],
@@ -72,10 +108,16 @@ async function buildOne({ sourcePath, outfile }) {
     return result.outputs[0].path;
 }
 
-for (const { name, sourcePath, configSource } of entries) {
-    const outfile = `${distDir}/${name}`;
+for (const { name, sourcePath } of entries) {
+    const outfile = join(distDir, name);
+    const outMtime = getOutputMtime(outfile);
+    const newestInput = getNewestInputMtime(sourcePath);
+    if (outMtime >= newestInput && outMtime > 0) {
+        console.log(`Skipping ${sourcePath} (up to date)`);
+        continue;
+    }
     console.log(`Building ${sourcePath} -> ${outfile}`);
-    const outPath = await buildOne({ sourcePath, outfile, configSource });
+    const outPath = await buildOne({ sourcePath, outfile });
     console.log(`  -> ${outPath}`);
 }
 
