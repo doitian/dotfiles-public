@@ -70,8 +70,8 @@ description = "Setup python project"
 dir = "{{cwd}}"
 run = [
   "touch mise.toml",
-  "mise config set env._.python.venv.path .venv",
-  "mise config set env._.python.venv.create true -t bool",
+  "mise config set -f mise.toml env._.python.venv.path .venv",
+  "mise config set -f mise.toml env._.python.venv.create true -t bool",
 ]
 
 [tasks."preset:pre-commit"]
@@ -88,7 +88,7 @@ description = "Setup node project"
 dir = "{{cwd}}"
 run = [
   "touch mise.toml",
-  "mise config set env._.path '{{config_root}}/node_modules/.bin' -t list",
+  "{% raw %}mise config set -f mise.toml env._.path '{{config_root}}/node_modules/.bin' -t list{% endraw %}",
 ]
 
 [tasks."preset:ghtoken"]
@@ -96,8 +96,8 @@ description = "Use gh auth token"
 dir = "{{cwd}}"
 run = [
   "touch mise.toml",
-  "mise config set env.GITHUB_TOKEN.value '{{ exec(command='gh auth token') }}'",
-  "mise config set env.GITHUB_TOKEN.redact true",
+  "mise config set -f mise.toml env.GITHUB_TOKEN.value '{{ exec(command='gh auth token') }}'",
+  "mise config set -f mise.toml env.GITHUB_TOKEN.redact true",
 ]
 
 [tasks."preset:default"]

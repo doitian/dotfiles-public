@@ -3,3 +3,4 @@ private-snippets.code-snippets
 /mise/config.toml
 node_modules
 /dist
+/src/lib/config.js

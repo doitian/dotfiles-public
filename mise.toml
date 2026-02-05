@@ -1,3 +1,6 @@
+[env._]
+path = ["{{config_root}}/node_modules/.bin"]
+
 [env]
 OPENAI_API_KEY = { required = true }
 OPENAI_BASE_URL = { required = true }
@@ -16,7 +19,7 @@ depends = ["pre-commit:*"]
 run = "fd -t f -E '*.ps1' . mise/tasks mise/scripts -X git update-index --chmod=+x"
 
 [tasks.build]
-run = "bun run build"
+run = ["bun install", "bun run build"]
 
 [tasks.default]
 depends = ["build", "chmodx"]
