@@ -1,0 +1,32 @@
+{
+  "name": "dotfiles-public",
+  "version": "1.0.0",
+  "description": "Ian's configuration files and scripts",
+  "type": "module",
+  "scripts": {
+    "build": "bun run build.js"
+  },
+  "bin": {
+    "backup-github": "./dist/backup-github",
+    "czf": "./dist/czf",
+    "dog": "./dist/dog",
+    "ctst": "./dist/ctst",
+    "fpass": "./dist/fpass",
+    "git-mgen": "./dist/git-mgen",
+    "gpgpass": "./dist/gpgpass",
+    "jrnl": "./dist/jrnl",
+    "prompt-manager": "./dist/prompt-manager",
+    "pushover-exec": "./dist/pushover-exec",
+    "pushover-send": "./dist/pushover-send",
+    "sync-snippets": "./dist/sync-snippets",
+    "sync-spell": "./dist/sync-spell",
+    "uvs": "./dist/uvs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "openai": "^4.77.0",
+    "zod": "^3.23.0"
+  }
+}

@@ -1,3 +1,5 @@
 private-snippets.code-snippets
 /mise/auto
 /mise/config.toml
+node_modules
+/dist

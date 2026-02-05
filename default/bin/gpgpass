@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-set -e
-set -u
-[ -n "${DEBUG:-}" ] && set -x || true
-
-export GPG_TTY="$(tty)"
-
-gopass show -c ids/ian/gpg/"$(git config user.email)"
