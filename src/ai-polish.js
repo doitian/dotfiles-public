@@ -2,6 +2,9 @@
 /**
  * Polish text from stdin using the prompt in ai/skills/polish/SKILL.md.
  * Sends completion request (OpenAI) and writes the polished text to stdout.
+ *
+ * TTY mode: read lines in a loop, polish each with streaming response.
+ * Pipe mode: read all stdin, polish once, exit.
  */
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -11,7 +14,7 @@ import {
   DEFAULT_OPENAI_MODEL,
 } from "./lib/config.js";
 import { home } from "./lib/env.js";
-import { readStdin } from "./lib/io.js";
+import { readLines, readStdin } from "./lib/io.js";
 import { getOpenAIClient, runOneshot } from "./lib/openai.js";
 
 const SKILL_PATH = join(
@@ -39,22 +42,28 @@ function loadPolishPrompt() {
   }
 }
 
-function main() {
+async function main() {
   const { client, model } = getOpenAIClient({
     apiKey: DEFAULT_OPENAI_API_KEY,
     baseURL: DEFAULT_OPENAI_BASE_URL,
     model: DEFAULT_OPENAI_MODEL,
   });
-  (async () => {
-    const input = await readStdin();
-    await runOneshot(client, model, {
-      systemPrompt: loadPolishPrompt(),
-      input,
+
+  const systemPrompt = loadPolishPrompt();
+
+  if (process.stdin.isTTY) {
+    // Line mode: read lines in a loop
+    await readLines(async (input) => {
+      await runOneshot(client, model, { systemPrompt, input });
     });
-  })().catch((err) => {
-    console.error(err?.message ?? err);
-    process.exit(1);
-  });
+  } else {
+    // Pipe mode: read all stdin, polish once
+    const input = await readStdin();
+    await runOneshot(client, model, { systemPrompt, input });
+  }
 }
 
-main();
+main().catch((err) => {
+  console.error(err?.message ?? err);
+  process.exit(1);
+});

@@ -31,3 +31,37 @@ export function readStdin() {
     process.stdin.resume?.();
   });
 }
+
+/**
+ * Read lines from stdin in a loop, calling onLine for each non-empty line.
+ * Returns when stdin closes (Ctrl-D) or onLine throws.
+ * @param {(line: string) => Promise<void>} onLine - async callback for each line
+ * @param {{ prompt?: string }} [options]
+ */
+export async function readLines(onLine, options = {}) {
+  const { prompt = "> " } = options;
+  const rl = createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    terminal: process.stdin.isTTY,
+    prompt,
+  });
+
+  if (process.stdin.isTTY) {
+    rl.prompt();
+  }
+
+  for await (const line of rl) {
+    const trimmed = line.trim();
+    if (trimmed) {
+      try {
+        await onLine(trimmed);
+      } catch (err) {
+        console.error(err?.message ?? err);
+      }
+    }
+    if (process.stdin.isTTY) {
+      rl.prompt();
+    }
+  }
+}
