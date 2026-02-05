@@ -16,7 +16,8 @@ run = "typos"
 depends = ["pre-commit:*"]
 
 [tasks.build]
+alias = "default"
 run = ["bun install", "bun run build"]
 
 [tasks.clean]
-run = "fd --no-ignore . dist -x rm"
+run = "fd --no-ignore -t f . dist -x rm"
