@@ -188,7 +188,7 @@ binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
     Mod+Return hotkey-overlay-title="Open a Terminal" { spawn "kitty"; }
-    Mod+W hotkey-overlay-title="Run a Browser" { spawn "microsoft-edge-stable"; }
+    Mod+B hotkey-overlay-title="Run a Browser" { spawn "microsoft-edge-stable"; }
     Mod+E hotkey-overlay-title="Run a File Explorer" { spawn "dolphin"; }
 
     Mod+1 hotkey-overlay-title=null { focus-column 1; }
@@ -215,8 +215,8 @@ binds {
     Mod+Y hotkey-overlay-title="Fuzzel Focus" { spawn "~/.config/niri/scripts/niri-fuzzel-focus.sh"; }
     Mod+V hotkey-overlay-title="Clipboard History" { spawn "clipman" "pick" "-t" "CUSTOM" "-T" "fuzzel --dmenu -w 78"; }
     Mod+Shift+V hotkey-overlay-title=null { spawn "clipman" "clear" "-a"; }
-    Mod+D hotkey-overlay-title="Toggle Waybar" { spawn "killall" "-SIGUSR1" "waybar"; }
-    Mod+Shift+D hotkey-overlay-title=null { spawn-sh "killall waybar; exec waybar"; }
+    Mod+T hotkey-overlay-title="Toggle Waybar" { spawn "killall" "-SIGUSR1" "waybar"; }
+    Mod+Shift+T hotkey-overlay-title=null { spawn-sh "killall waybar; exec waybar"; }
 
     XF86AudioRaiseVolume  allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+ -l 1.0"; }
     XF86AudioLowerVolume  allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-"; }
@@ -270,9 +270,18 @@ binds {
     Alt+Y { focus-column-first; }
     Alt+Ctrl+J { move-window-down-or-to-workspace-down; }
     Alt+Ctrl+K { move-window-up-or-to-workspace-up; }
-    Alt+Ctrl+Down { move-window-down-or-to-workspace-down; }
-    Alt+Ctrl+Up { move-window-up-or-to-workspace-up; }
+    Alt+Ctrl+H { move-column-left; }
+    Alt+Ctrl+L { move-column-right; }
     Alt+Ctrl+Y { move-column-to-first; }
+
+    Mod+S { focus-window-or-workspace-down; }
+    Mod+W { focus-window-or-workspace-up; }
+    Mod+A { focus-column-left; }
+    Mod+D { focus-column-right; }
+    Mod+Ctrl+S { move-window-down-or-to-workspace-down; }
+    Mod+Ctrl+W { move-window-up-or-to-workspace-up; }
+    Alt+Ctrl+A { move-column-left; }
+    Alt+Ctrl+D { move-column-right; }
 
     Mod+Home { focus-column-first; }
     Mod+End  { focus-column-last; }
