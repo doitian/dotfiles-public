@@ -4,7 +4,6 @@
  * Uses embedded prompt, Bun.spawn for git commands, and structured output.
  * Uses Chat Completions API
  */
-import { OpenAI } from "openai";
 import { zodResponseFormat } from "openai/helpers/zod";
 import { z } from "zod";
 import {
@@ -12,6 +11,7 @@ import {
   DEFAULT_OPENAI_BASE_URL,
   DEFAULT_OPENAI_MODEL,
 } from "./lib/config.js";
+import { getOpenAIClient } from "./lib/openai.js";
 
 const SYSTEM_PROMPT = `Use the output of \`git diff --staged\` to generate the commit message.
 
@@ -34,18 +34,11 @@ const GitCommitSchema = z.object({
 });
 
 function main() {
-  const apiKey = process.env.OPENAI_API_KEY ?? DEFAULT_OPENAI_API_KEY;
-  const baseURL =
-    process.env.OPENAI_BASE_URL ?? DEFAULT_OPENAI_BASE_URL ?? "https://api.openai.com";
-  if (!apiKey) {
-    console.error(
-      "Missing API key: set OPENAI_API_KEY or build with it set for DEFAULT_OPENAI_API_KEY."
-    );
-    process.exit(1);
-  }
-  const model =
-    process.env.OPENAI_MODEL ?? DEFAULT_OPENAI_MODEL ?? "gpt-4o-mini";
-  const client = new OpenAI({ apiKey, baseURL });
+  const { client, model } = getOpenAIClient({
+    apiKey: DEFAULT_OPENAI_API_KEY,
+    baseURL: DEFAULT_OPENAI_BASE_URL,
+    model: DEFAULT_OPENAI_MODEL,
+  });
   run(client, model).catch((err) => {
     console.error(err?.message ?? err);
     process.exit(1);

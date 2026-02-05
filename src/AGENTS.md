@@ -18,12 +18,15 @@ Shared patterns were extracted from the CLI scripts so that:
 | File | Purpose |
 |------|--------|
 | `config.js` | Defaults for API keys/URLs (overridden at build time for bin builds). |
+| `openai.js` | `getOpenAIClient()`, `streamCompletion()`, `runOneshot()` – oneshot streaming (optional system + user input). |
 | `env.js` | `home()` – user home dir (USERPROFILE / HOME). |
+| `io.js` | `readStdin()` – read all stdin (TTY or pipe). |
 | `fs.js` | `exists(path)` – async “path exists?”. |
 | `run.js` | Async subprocess helpers: `run`, `runInherit`, `runCapture`, `runWithStdin`. |
 
 ## Conventions
 
+- **Files in `src/lib/`** must not import `src/lib/config.js`.
 - Prefer **async APIs** in both scripts and lib.
 - New shared, non-executable helpers belong in `src/lib/` (and optionally new files there if they grow).
 - Executables stay in `src/<name>.js` and import from `./lib/...` as needed.

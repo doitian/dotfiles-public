@@ -8,6 +8,8 @@
   },
   "bin": {
     "agent-pushover": "./dist/agent-pushover",
+    "ai-oneshot": "./dist/ai-oneshot",
+    "ai-polish": "./dist/ai-polish",
     "backup-github": "./dist/backup-github",
     "czf": "./dist/czf",
     "dog": "./dist/dog",

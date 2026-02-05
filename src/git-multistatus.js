@@ -6,6 +6,7 @@
  */
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
+import { spawn } from "node:child_process";
 import { runCapture } from "./lib/run.js";
 
 const CONCURRENCY = 5;
@@ -76,13 +77,16 @@ async function getRepoStatus(dir) {
 
 function formatLine(status) {
   if (!status) return null;
-  const { path, branch, remote, dirty, ahead, behind } = status;
+  const { path, branch, dirty, ahead, behind } = status;
   let part = `  ${branch}`;
-  if (remote) part += `:${remote}`;
   let statusStr = "";
   if (dirty) statusStr += " (dirty)";
-  if (ahead > 0 || behind > 0)
-    statusStr += ` (ahead ${ahead} ↑ behind ${behind} ↓)`;
+  if (ahead > 0 || behind > 0) {
+    const parts = [];
+    if (ahead > 0) parts.push(`ahead ${ahead} ↑`);
+    if (behind > 0) parts.push(`behind ${behind} ↓`);
+    statusStr += ` (${parts.join(" ")})`;
+  }
   if (!statusStr) statusStr = " (≡)";
   part += statusStr;
   return `${path}\t${part}`;
@@ -96,6 +100,27 @@ async function showStatus(dirs) {
 
 async function main() {
   const argv = process.argv.slice(2);
+  const lazygitIdx = argv.indexOf("--lazygit");
+  if (lazygitIdx !== -1) {
+    const dir = argv[lazygitIdx + 1];
+    if (!dir) {
+      console.error("Usage: git-multistatus --lazygit <dir>");
+      process.exit(1);
+    }
+    const cwd = resolve(dir);
+    const child = spawn("lazygit", [], {
+      cwd,
+      stdio: "inherit",
+      shell: true,
+    });
+    child.on("close", (code) => process.exit(code ?? 0));
+    child.on("error", (err) => {
+      console.error(err.message);
+      process.exit(1);
+    });
+    return;
+  }
+
   const hasP = argv.includes("-p");
   const dirs = argv.filter((a) => a !== "-p");
   if (dirs.length === 0) {
@@ -106,11 +131,10 @@ async function main() {
   const output = await showStatus(dirs);
   const isTty = process.stdout.isTTY;
 
-  if (!hasP && isTty && argv.indexOf("-p") === -1) {
+  if (!hasP && isTty) {
     const reloadCmd =
       "git-multistatus " +
       dirs.map((d) => (d.includes(" ") ? `'${d}'` : d)).join(" ");
-    const { spawn } = await import("node:child_process");
     const fzf = spawn(
       "fzf",
       [
@@ -123,7 +147,7 @@ async function main() {
         "--header=^l:lazygit",
         "--header-first",
         "--preview=git -c color.ui=always -C {1} status --short --branch -u {1}",
-        `--bind=ctrl-l:execute(cd {1} && lazygit -g "$(git rev-parse --git-dir)")+reload(${reloadCmd})`,
+        `--bind=ctrl-l:execute(git-multistatus --lazygit {1})+reload(${reloadCmd})`,
         "--bind=ctrl-r:clear-screen",
         "--bind=enter:abort+become(echo {1})",
       ],
