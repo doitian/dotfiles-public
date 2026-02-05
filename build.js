@@ -107,11 +107,10 @@ function getOutputMtime(outfile) {
     return 0;
 }
 
-async function buildOne({ sourcePath, outName }) {
-    // Bun compile ignores directory in outfile, so we use outdir + naming
+async function buildOne({ sourcePath, outName, outdir = distDir }) {
     const result = await Bun.build({
         entrypoints: [sourcePath],
-        outdir: distDir,
+        outdir,
         naming: outName,
         minify: true,
         compile: true,
@@ -123,17 +122,33 @@ async function buildOne({ sourcePath, outName }) {
     return result.outputs[0].path;
 }
 
-for (const { name, sourcePath } of entries) {
-    const outfile = join(distDir, name);
-    const outMtime = getOutputMtime(outfile);
-    const newestInput = getNewestInputMtime(sourcePath);
-    if (outMtime >= newestInput && outMtime > 0) {
-        console.log(`Skipping ${sourcePath} (up to date)`);
-        continue;
+async function buildIfStale(entryList, outDir) {
+    if (!existsSync(outDir)) {
+        mkdirSync(outDir, { recursive: true });
     }
-    console.log(`Building ${sourcePath} -> ${outfile}`);
-    const outPath = await buildOne({ sourcePath, outName: name });
-    console.log(`  -> ${outPath}`);
+    for (const { name, sourcePath } of entryList) {
+        const outfile = join(outDir, name);
+        const outMtime = getOutputMtime(outfile);
+        const newestInput = getNewestInputMtime(sourcePath);
+        if (outMtime >= newestInput && outMtime > 0) {
+            console.log(`Skipping ${sourcePath} (up to date)`);
+            continue;
+        }
+        console.log(`Building ${sourcePath} -> ${outfile}`);
+        const outPath = await buildOne({ sourcePath, outName: name, outdir: outDir });
+        console.log(`  -> ${outPath}`);
+    }
+}
+
+await buildIfStale(entries, distDir);
+
+const miseTasksSrcDir = join(process.cwd(), "src", "mise-tasks");
+const miseTasksDistDir = join(distDir, "mise-tasks");
+if (existsSync(miseTasksSrcDir)) {
+    const miseEntries = readdirSync(miseTasksSrcDir)
+        .filter((f) => f.endsWith(".js"))
+        .map((f) => ({ name: f.slice(0, -3), sourcePath: join(miseTasksSrcDir, f) }));
+    await buildIfStale(miseEntries, miseTasksDistDir);
 }
 
 console.log("Build done.");

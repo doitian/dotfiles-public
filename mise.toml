@@ -15,14 +15,8 @@ run = "typos"
 [tasks.pre-commit]
 depends = ["pre-commit:*"]
 
-[tasks.chmodx]
-run = "fd -t f -E '*.ps1' . mise/tasks mise/scripts -X git update-index --chmod=+x"
-
 [tasks.build]
 run = ["bun install", "bun run build"]
-
-[tasks.default]
-depends = ["build", "chmodx"]
 
 [tasks.clean]
 run = "fd --no-ignore . dist -x rm"

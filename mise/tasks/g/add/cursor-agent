@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-#MISE dir="~"
-#MISE description="Install cursor-agent cli"
-
-curl https://cursor.com/install -fsS | bash

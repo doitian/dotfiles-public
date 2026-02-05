@@ -1,5 +1,5 @@
-[vars]
-bash_bin = "{% if os() == 'windows' %}sh.exe{% else %}bash{% endif %}"
+[env]
+_.path = [".dotfiles/repos/public/dist/mise-tasks"]
 
 [tool_alias]
 process-compose = "github:F1bonacc1/process-compose"
@@ -17,55 +17,88 @@ package_manager = "bun"
 # ============================================================================
 
 [tasks."g:cursor:hook:sync"]
+hide = true
 description = "Sync mise cursor:*:on:* tasks to .cursor/hooks.json"
 dir = "{{cwd}}"
-run = "{{ vars.bash_bin }} {{ xdg_config_home }}/mise/scripts/g-cursor-hook-sync.sh"
+run = "g-cursor-hook-sync"
 
 [tasks."g:up:uv"]
+hide = true
 description = "Update all uv tools"
 dir = "~"
 run = "uv tool update --all"
 
 [tasks."g:up:bun"]
+hide = true
 description = "Update all bun global packages"
 dir = "~"
 run = "bun update -g --latest"
 
 [tasks."g:add:uv:all"]
+hide = true
 description = "Install uv tools"
 dir = "~"
 run = "uv tool install specify-cli --from git+https://github.com/github/spec-kit.git"
 
 [tasks."g:add:bun:all"]
+hide = true
 description = "Install all bun global packages"
 dir = "~"
 run = "bun install -g @github/copilot opencode-ai"
+
+[tasks."g:clean:all"]
+hide = true
+dir = "~"
+description = "Clean up all apps"
+run = "true"
+run_windows = "scoop cleanup -a -k"
+
+[tasks."g:add:cursor-agent"]
+hide = true
+description = "Install cursor-agent cli"
+dir = "~"
+run = "g-add-cursor-agent-linux"
+run_windows = "g-add-cursor-agent-windows"
+
+[tasks."g:up:all"]
+hide = true
+alias = "g:up"
+description = "Update all apps"
+dir = "~"
+depends_post = ["g:clean:all"]
+run = "g-up-all-linux"
+run_windows = "g-up-all-windows"
 
 # ============================================================================
 # Preset tasks (preset:*)
 # ============================================================================
 
 [tasks."preset:ide"]
+hide = true
 description = "Activate mise in IDEs"
 depends = ["preset:neovim", "preset:vscode"]
 
 [tasks."preset:neovim"]
+hide = true
 description = "Activate mise in neovim"
 dir = "{{cwd}}"
-run = "python {{ xdg_config_home }}/mise/scripts/preset-neovim.py"
+run = "preset-neovim"
 
 [tasks."preset:vscode"]
+hide = true
 description = "Activate mise in vscode"
 dir = "{{cwd}}"
-run = "python {{ xdg_config_home }}/mise/scripts/preset-vscode.py"
+run = "preset-vscode"
 
 [tasks."preset:rust"]
+hide = true
 description = "Setup rust project"
 dir = "{{cwd}}"
 depends = ["preset:pre-commit"]
-run = "{{ vars.bash_bin }} {{ xdg_config_home }}/mise/scripts/preset-rust.sh"
+run = "preset-rust"
 
 [tasks."preset:python"]
+hide = true
 description = "Setup python project"
 dir = "{{cwd}}"
 run = [
@@ -75,6 +108,7 @@ run = [
 ]
 
 [tasks."preset:pre-commit"]
+hide = true
 description = "Setup git pre-commit hook"
 dir = "{{cwd}}"
 run = [
@@ -84,6 +118,7 @@ run = [
 ]
 
 [tasks."preset:node"]
+hide = true
 description = "Setup node project"
 dir = "{{cwd}}"
 run = [
@@ -92,6 +127,7 @@ run = [
 ]
 
 [tasks."preset:ghtoken"]
+hide = true
 description = "Use gh auth token"
 dir = "{{cwd}}"
 run = [
@@ -101,18 +137,29 @@ run = [
 ]
 
 [tasks."preset:default"]
+hide = true
 description = "Detect build system and create a simple default task"
 dir = "{{cwd}}"
-run = "{{ vars.bash_bin }} {{ xdg_config_home }}/mise/scripts/preset-default.sh"
+run = "preset-default"
 
 [tasks."preset:cargo:workspace"]
+hide = true
 description = "Create a Cargo workspace"
 dir = "{{cwd}}"
 depends = ["preset:rust"]
-run = "{{ vars.bash_bin }} {{ xdg_config_home }}/mise/scripts/preset-cargo-workspace.sh"
+run = "preset-cargo-workspace"
 
 [tasks."preset:cursor:hook:pushover"]
+hide = true
 description = "Create cursor:pushover:on:stop task for pushover notifications"
 dir = "{{cwd}}"
 depends_post = ["g:cursor:hook:sync"]
-run = "mise tasks add cursor:pushover:on:stop -- '{{ vars.bash_bin }}' '{{ xdg_config_home }}/mise/scripts/cursor-pushover-on-stop'"
+run = "mise tasks add cursor:pushover:on:stop -- cursor-pushover-on-stop"
+
+[tasks."preset:mise:windows:sh"]
+hide = true
+description = "Use sh.exe as mise default shell Git Windows"
+run = [
+  "mise config set -f mise.toml settings.windows_default_inline_shell_args 'sh.exe -c -o errexit'",
+  "mise config set -f mise.toml settings.windows_default_file_shell_args 'sh.exe'",
+]
