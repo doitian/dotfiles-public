@@ -17,23 +17,35 @@ map("n", "<Leader>y", function()
 end, { desc = "Duplicate yanked into system clipboard" })
 map("x", "<Leader>y", [["+y]], { desc = "Yank into system clipboard" })
 map({ "n", "x" }, "<Leader>Y", [["+Y]], { desc = "Yank into system clipboard" })
-map("n", "<Leader>cy", [[<Cmd>let @" = '@'.fnamemodify(expand('%'), ':.')<CR>]], { desc = "Yank AI file reference" })
+map("n", "<Leader>cy", [[<Cmd>let @" = '@'.substitute(fnamemodify(expand('%'), ':.'), '\\', '/', 'g')<CR>]], { desc = "Yank AI file reference" })
+map(
+  "n",
+  "<Leader>cY",
+  [[<Cmd>let @" = '@'.substitute(fnamemodify(expand('%'), ':.'), '\\', '/', 'g').':'.line('.')<CR>]],
+  { desc = "Yank AI file reference" }
+)
 map(
   "n",
   "<Leader>ct",
-  [[<Cmd>call iy#tmux#SendKeysAndGo('-l', '@'.fnamemodify(expand('%'), ':.'))<CR>]],
+  [[<Cmd>call iy#tmux#SendKeysAndGo('-l', '@'.substitute(fnamemodify(expand('%'), ':.'), '\\', '/', 'g'))<CR>]],
+  { desc = "Send AI file reference to Tmux" }
+)
+map(
+  "n",
+  "<Leader>cT",
+  [[<Cmd>call iy#tmux#SendKeysAndGo('-l', '@'.substitute(fnamemodify(expand('%'), ':.'), '\\', '/', 'g').':'.line('.'))<CR>]],
   { desc = "Send AI file reference to Tmux" }
 )
 map(
   "x",
   "<Leader>cy",
-  [[<Esc><Cmd>let @" = '@'.fnamemodify(expand('%'), ':.').':'.line("'<").'-'.line("'>")<CR>]],
+  [[<Esc><Cmd>let @" = '@'.substitute(fnamemodify(expand('%'), ':.'), '\\', '/', 'g').':'.line("'<").'-'.line("'>")<CR>]],
   { desc = "Yank AI file reference" }
 )
 map(
   "x",
   "<Leader>ct",
-  [[<Esc><Cmd>call iy#tmux#SendKeysAndGo('-l', '@'.fnamemodify(expand('%'), ':.').':'.line("'<").'-'.line("'>"))<CR>]],
+  [[<Esc><Cmd>call iy#tmux#SendKeysAndGo('-l', '@'.substitute(fnamemodify(expand('%'), ':.'), '\\', '/', 'g').':'.line("'<").'-'.line("'>"))<CR>]],
   { desc = "Send AI file reference to Tmux" }
 )
 map("n", ">p", "<Cmd>exec 'put '.v:register.\"<Bar>keepjump norm '[\"<CR>", { desc = "Paste below" })
