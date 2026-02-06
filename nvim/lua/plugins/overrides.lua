@@ -248,6 +248,8 @@ return {
         terminal = {
           win = {
             position = "float",
+            backdrop = false,
+            border = "vpad",
             height = 0,
             width = 0,
           },
