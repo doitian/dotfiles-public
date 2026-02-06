@@ -245,8 +245,9 @@ return {
             },
           },
         },
-        styles = {
-          lazygit = {
+        terminal = {
+          win = {
+            position = "float",
             height = 0,
             width = 0,
           },
