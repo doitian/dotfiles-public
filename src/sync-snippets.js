@@ -1,10 +1,9 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 /**
  * Sync snippet dirs (junctions) and merge private snippets. Port of sync-snippets.ps1
  */
 import { cp, rm, mkdir, readdir, readFile, writeFile, lstat, stat } from "node:fs/promises";
 import { join } from "node:path";
-import { spawn } from "node:child_process";
 import { exists } from "./lib/fs.js";
 import { home } from "./lib/env.js";
 
@@ -31,12 +30,14 @@ async function isJunction(p) {
   }
 }
 
-function createJunction(linkPath, targetPath) {
-  return new Promise((resolve, reject) => {
-    const c = spawn("cmd", ["/c", "mklink", "/J", linkPath, targetPath], { shell: true, stdio: "inherit" });
-    c.on("close", (code) => (code === 0 ? resolve() : reject(new Error(`mklink exited ${code}`))));
-    c.on("error", reject);
+async function createJunction(linkPath, targetPath) {
+  const proc = Bun.spawn(["cmd", "/c", "mklink", "/J", linkPath, targetPath], {
+    stdin: "inherit",
+    stdout: "inherit",
+    stderr: "inherit",
   });
+  const code = await proc.exited;
+  if (code !== 0) throw new Error(`mklink exited ${code}`);
 }
 
 async function main() {

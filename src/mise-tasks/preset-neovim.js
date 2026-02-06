@@ -3,11 +3,12 @@
  * Activate mise in neovim: write mise shims and env to .lazy.lua.
  */
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
-import { runCapture } from "../lib/run.js";
+import { $ } from "bun";
 
 async function getMiseShimsPath() {
-    const { code, stdout } = await runCapture("mise", ["activate", "fish", "--shims"]);
-    if (code !== 0 || !stdout) return null;
+    const r = await $`mise activate fish --shims`.quiet().nothrow();
+    const stdout = (r.stdout?.toString() ?? "").trim();
+    if (r.exitCode !== 0 || !stdout) return null;
     const re = /^fish_add_path\s+.*\s+(?:'([^']+)'|(\S+))$/;
     for (const line of stdout.split("\n")) {
         const m = line.match(re);
@@ -21,8 +22,9 @@ async function getMiseShimsPath() {
 
 async function getMiseEnv() {
     try {
-        const { code, stdout } = await runCapture("mise", ["env", "-J"]);
-        if (code !== 0 || !stdout) return {};
+        const r = await $`mise env -J`.quiet().nothrow();
+        const stdout = (r.stdout?.toString() ?? "").trim();
+        if (r.exitCode !== 0 || !stdout) return {};
         return JSON.parse(stdout);
     } catch {
         return {};

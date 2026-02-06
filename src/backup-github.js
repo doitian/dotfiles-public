@@ -1,11 +1,11 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 /**
  * Backup GitHub repos (shallow bare clones). Resumes from backup-github-remaining.txt on failure.
  * Port of backup-github.ps1
  */
 import { readFile, writeFile, unlink } from "node:fs/promises";
+import { $ } from "bun";
 import { exists } from "./lib/fs.js";
-import { run } from "./lib/run.js";
 
 const DUMP_FILE = "backup-github-remaining.txt";
 
@@ -19,9 +19,9 @@ const GH_QUERY = `query($endCursor: String) {
 }`;
 
 async function getReposFromGh() {
-  const r = await run("gh", ["api", "graphql", "--paginate", "-f", `query=${GH_QUERY}`], { capture: true });
-  if (r.status !== 0) throw new Error(`gh api failed: ${r.stderr}`);
-  const chunks = r.stdout.trim().split("\n").filter(Boolean).map((line) => JSON.parse(line));
+  const r = await $`gh api graphql --paginate -f ${`query=${GH_QUERY}`}`.quiet().nothrow();
+  if (r.exitCode !== 0) throw new Error(`gh api failed: ${r.stderr?.toString() ?? ""}`);
+  const chunks = (r.stdout?.toString() ?? "").trim().split("\n").filter(Boolean).map((line) => JSON.parse(line));
   const repos = [];
   for (const chunk of chunks) {
     const nodes = chunk?.data?.viewer?.repositories?.nodes;
@@ -53,13 +53,13 @@ async function main() {
       }
       console.log(`Backing up ${repo}...`);
       if (!(await exists(`${repo}.git`))) {
-        const r = await run("git", ["clone", "--bare", "--depth", "1", repoUrl, `${repo}.git`]);
-        if (r.status !== 0) throw new Error(`git clone failed with exit code ${r.status}`);
+        const r = await $`git clone --bare --depth 1 ${repoUrl} ${repo}.git`.nothrow();
+        if (r.exitCode !== 0) throw new Error(`git clone failed with exit code ${r.exitCode}`);
       } else {
-        let r = await run("git", ["-C", `${repo}.git`, "-c", "safe.directory=*", "fetch", "--depth", "1"]);
-        if (r.status !== 0) throw new Error(`git fetch failed with exit code ${r.status}`);
-        r = await run("git", ["-C", `${repo}.git`, "-c", "safe.directory=*", "update-ref", "HEAD", "FETCH_HEAD"]);
-        if (r.status !== 0) throw new Error(`git update-ref failed with exit code ${r.status}`);
+        let r = await $`git -C ${repo}.git -c safe.directory=* fetch --depth 1`.nothrow();
+        if (r.exitCode !== 0) throw new Error(`git fetch failed with exit code ${r.exitCode}`);
+        r = await $`git -C ${repo}.git -c safe.directory=* update-ref HEAD FETCH_HEAD`.nothrow();
+        if (r.exitCode !== 0) throw new Error(`git update-ref failed with exit code ${r.exitCode}`);
       }
       remaining.delete(repo);
     }

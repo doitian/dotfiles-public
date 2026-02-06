@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 /**
  * Merge spell/dictionary files (Harper, vim, Windows, Obsidian) and sync to all locations.
  * Merged from sync-spell.ps1 and default/bin/sync-spell.

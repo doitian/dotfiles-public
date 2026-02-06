@@ -1,11 +1,11 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 /**
  * Preview files/dirs for fzf (bat, eza, wezterm imgcat). Supports --fzf-enable / --fzf-disable.
  * Port of default/bin/dog.
  */
 import { lstat, realpath } from "node:fs/promises";
 import { exists } from "./lib/fs.js";
-import { runInherit, runCapture } from "./lib/run.js";
+import { $ } from "bun";
 
 function getBatOpts() {
   let opts = (process.env.BAT_OPTS || "").trim().split(/\s+/).filter(Boolean);
@@ -36,14 +36,15 @@ async function preview(path) {
 
   const stat = await lstat(path);
   if (stat.isDirectory()) {
-    await runInherit("eza", ["-1", "--color", "always", "--icons", path]);
+    await $`eza -1 --color always --icons ${path}`.nothrow();
     return;
   }
 
   let mime = "";
   try {
-    const r = await runCapture("file", ["--mime", resolved]);
-    if (r.stdout) mime = r.stdout.replace(/^[^:]+:\s*/, "").trim();
+    const r = await $`file --mime ${resolved}`.quiet().nothrow();
+    const stdout = (r.stdout?.toString() ?? "").trim();
+    if (stdout) mime = stdout.replace(/^[^:]+:\s*/, "").trim();
   } catch (_) {}
 
   const isImage = mime.startsWith("image/");
@@ -53,18 +54,19 @@ async function preview(path) {
     !process.env.FZF_PREVIEW_COLUMNS;
 
   if (isImage && weztermOk) {
-    await runInherit("wezterm", ["imgcat", path]);
+    await $`wezterm imgcat ${path}`.nothrow();
     return;
   }
 
   if (mime.includes("charset=binary")) {
-    await runInherit("eza", ["--color", "always", "--icons", "-ld", "--header", path]);
+    await $`eza --color always --icons -ld --header ${path}`.nothrow();
     if (mime) console.log(mime);
     return;
   }
 
   const batOpts = getBatOpts();
-  await runInherit("bat", [...batOpts, path]);
+  const batArgs = [...batOpts, path];
+  await $`bat ${batArgs}`.nothrow();
 }
 
 async function main() {
@@ -89,7 +91,7 @@ async function main() {
     if (process.stdin.isTTY) {
       await preview(".");
     } else {
-      await runInherit("bat", batOpts);
+      await $`bat ${batOpts}`.nothrow();
     }
     return;
   }

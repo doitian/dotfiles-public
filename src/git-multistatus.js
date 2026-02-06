@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 /**
  * Show git status for multiple repos (branch, dirty, ahead/behind). No starship; uses git directly.
  * Run with up to 5 repos in parallel. With TTY and without -p, runs fzf for selection.
@@ -6,8 +6,7 @@
  */
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
-import { spawn } from "node:child_process";
-import { runCapture } from "./lib/run.js";
+import { $ } from "bun";
 
 const CONCURRENCY = 5;
 
@@ -44,14 +43,9 @@ async function getRepoStatus(dir) {
   const gitDir = path + "/.git";
   if (!existsSync(path) || !existsSync(gitDir)) return null;
 
-  const { code, stdout } = await runCapture("git", [
-    "-C",
-    path,
-    "status",
-    "-b",
-    "--porcelain",
-  ]);
-  if (code !== 0) return null;
+  const r = await $`git -C ${path} status -b --porcelain`.quiet().nothrow();
+  if (r.exitCode !== 0) return null;
+  const stdout = (r.stdout?.toString() ?? "").trim();
 
   const lines = stdout.split(/\r?\n/).filter(Boolean);
   const first = lines[0];
@@ -108,17 +102,14 @@ async function main() {
       process.exit(1);
     }
     const cwd = resolve(dir);
-    const child = spawn("lazygit", [], {
+    const proc = Bun.spawn(["lazygit"], {
       cwd,
-      stdio: "inherit",
-      shell: true,
+      stdin: "inherit",
+      stdout: "inherit",
+      stderr: "inherit",
     });
-    child.on("close", (code) => process.exit(code ?? 0));
-    child.on("error", (err) => {
-      console.error(err.message);
-      process.exit(1);
-    });
-    return;
+    const code = await proc.exited;
+    process.exit(code ?? 0);
   }
 
   const hasP = argv.includes("-p");
@@ -135,31 +126,29 @@ async function main() {
     const reloadCmd =
       "git-multistatus " +
       dirs.map((d) => (d.includes(" ") ? `'${d}'` : d)).join(" ");
-    const fzf = spawn(
+    const fzf = Bun.spawn([
       "fzf",
-      [
-        "--ansi",
-        "--multi",
-        "-q",
-        "'dirty | 'ahead",
-        "-d",
-        "\t",
-        "--header=^l:lazygit",
-        "--header-first",
-        "--preview=git -c color.ui=always -C {1} status --short --branch -u {1}",
-        `--bind=ctrl-l:execute(git-multistatus --lazygit {1})+reload(${reloadCmd})`,
-        "--bind=ctrl-r:clear-screen",
-        "--bind=enter:abort+become(echo {1})",
-      ],
-      { stdio: ["pipe", "inherit", "inherit"] }
-    );
-    fzf.stdin.end(output);
-    fzf.on("close", (code) => process.exit(code ?? 0));
-    fzf.on("error", (err) => {
-      console.error(err.message);
-      process.exit(1);
+      "--ansi",
+      "--multi",
+      "-q",
+      "'dirty | 'ahead",
+      "-d",
+      "\t",
+      "--header=^l:lazygit",
+      "--header-first",
+      "--preview=git -c color.ui=always -C {1} status --short --branch -u {1}",
+      `--bind=ctrl-l:execute(git-multistatus --lazygit {1})+reload(${reloadCmd})`,
+      "--bind=ctrl-r:clear-screen",
+      "--bind=enter:abort+become(echo {1})",
+    ], {
+      stdin: "pipe",
+      stdout: "inherit",
+      stderr: "inherit",
     });
-    return;
+    fzf.stdin.write(output);
+    fzf.stdin.end();
+    const code = await fzf.exited;
+    process.exit(code ?? 0);
   }
 
   console.log(output);

@@ -1,9 +1,7 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 /**
  * fzf over git branches/files. Renamed from pzf. Port of default/bin/pzf (Python).
  */
-import { spawn } from "node:child_process";
-import { createInterface } from "node:readline";
 
 const usage = `Usage: czf <subcommand> [fzf-options...]
 
@@ -24,47 +22,51 @@ function hasPreview(args) {
   return args.some((a) => a === "--preview" || a.startsWith("--preview="));
 }
 
-function runFzf(producerCmd, producerArgs, fzfArgs, options = {}) {
+async function runFzf(producerCmd, producerArgs, fzfArgs, options = {}) {
   const { defaultPreview, filter } = options;
   const fzfArgsCopy = [...fzfArgs];
   if (defaultPreview && !hasPreview(fzfArgsCopy)) fzfArgsCopy.push("--preview", defaultPreview);
 
-  const pProd = spawn(producerCmd, producerArgs, {
-    stdio: ["ignore", "pipe", "inherit"],
-    encoding: "utf8",
+  const pProd = Bun.spawn([producerCmd, ...producerArgs], {
+    stdin: "ignore",
+    stdout: "pipe",
+    stderr: "inherit",
   });
 
-  const fzf = spawn("fzf", fzfArgsCopy, {
-    stdio: ["pipe", "inherit", "inherit"],
-    env: process.env,
-  });
-
-  function pipeLines(reader, writer) {
-    const rl = createInterface({ input: reader, crlfDelay: Infinity });
-    rl.on("line", (line) => {
-      if (filter && !filter(line)) return;
-      writer.write(line + "\n");
-    });
-    rl.on("close", () => writer.end());
-  }
-
-  if (filter) {
-    pipeLines(pProd.stdout, fzf.stdin);
-  } else {
-    pProd.stdout.pipe(fzf.stdin);
-  }
-
-  fzf.on("error", (e) => {
-    if (e.code === "ENOENT") {
+  try {
+    let fzf;
+    if (filter) {
+      const out = await new Response(pProd.stdout).text();
+      const lines = out.split(/\r?\n/).filter((line) => filter(line));
+      const input = lines.join("\n");
+      fzf = Bun.spawn(["fzf", ...fzfArgsCopy], {
+        stdin: "pipe",
+        stdout: "inherit",
+        stderr: "inherit",
+        env: process.env,
+      });
+      fzf.stdin.write(input);
+      fzf.stdin.end();
+    } else {
+      fzf = Bun.spawn(["fzf", ...fzfArgsCopy], {
+        stdin: pProd.stdout,
+        stdout: "inherit",
+        stderr: "inherit",
+        env: process.env,
+      });
+    }
+    const code = await fzf.exited;
+    pProd.kill();
+    const sig = fzf.signalCode;
+    process.exit(sig ? 128 + (sig === "SIGINT" ? 2 : 0) : code);
+  } catch (e) {
+    pProd.kill();
+    if (e?.code === "ENOENT") {
       console.error("Error: fzf not found");
       process.exit(127);
     }
     throw e;
-  });
-  fzf.on("close", (code, sig) => {
-    pProd.kill();
-    process.exit(sig ? 128 + (sig === "SIGINT" ? 2 : 0) : code);
-  });
+  }
 }
 
 function gitBranch(fzfArgs) {
@@ -126,7 +128,7 @@ const dispatch = {
   "git-untracked-file": gitUntrackedFile,
 };
 
-function main() {
+async function main() {
   const arg = process.argv[2];
   const fzfArgs = process.argv.slice(3);
 
@@ -140,7 +142,7 @@ function main() {
   }
 
   const fn = dispatch[arg];
-  if (fn) fn(fzfArgs);
+  if (fn) await fn(fzfArgs);
   else {
     console.error(`Unknown subcommand: ${arg}`);
     console.error(usage);
@@ -148,4 +150,7 @@ function main() {
   }
 }
 
-main();
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

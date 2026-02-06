@@ -3,7 +3,7 @@
  * Sync mise cursor:*:on:* tasks to .cursor/hooks.json.
  */
 import { mkdirSync, writeFileSync, existsSync, unlinkSync } from "node:fs";
-import { runCapture } from "../lib/run.js";
+import { $ } from "bun";
 
 const HOOKS_FILE = ".cursor/hooks.json";
 const TASK_RE = /^cursor:([^:]+):on:([^\s]+)$/;
@@ -11,8 +11,9 @@ const TASK_RE = /^cursor:([^:]+):on:([^\s]+)$/;
 async function main() {
     mkdirSync(".cursor", { recursive: true });
 
-    const { code, stdout } = await runCapture("mise", ["tasks"]);
-    const lines = (stdout || "").split("\n");
+    const r = await $`mise tasks`.quiet().nothrow();
+    const stdout = (r.stdout?.toString() ?? "").trim();
+    const lines = stdout.split("\n");
     const hooks = {};
 
     for (const line of lines) {

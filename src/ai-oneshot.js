@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 /**
  * One-shot OpenAI chat completion: read user content from stdin, optional system
  * prompt from -s/--system, stream response to stdout.

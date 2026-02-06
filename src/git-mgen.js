@@ -62,8 +62,8 @@ async function run(client, model) {
       procs.map(async (proc) => {
         await proc.exited;
         const [out, err] = await Promise.all([
-          proc.stdout.text(),
-          proc.stderr.text(),
+          proc.stdout ? new Response(proc.stdout).text() : "",
+          proc.stderr ? new Response(proc.stderr).text() : "",
         ]);
         return { exitCode: proc.exitCode, out, err };
       }),

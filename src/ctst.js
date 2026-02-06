@@ -1,9 +1,8 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 /**
  * List cheatsheet .cheat.md files and pick one with fzf, then cat it.
  * Port of default/bin/ctst.
  */
-import { spawn } from "node:child_process";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { exists } from "./lib/fs.js";
@@ -11,18 +10,17 @@ import { home } from "./lib/env.js";
 
 const CHEATSHEETS_DIR = join(home(), "Dropbox", "Brain", "para", "lets", "c", "Cheatsheets");
 
-function runFzf(input, query) {
-  return new Promise((resolve, reject) => {
-    const fzf = spawn("fzf", ["-d", "/", "--with-nth", "-1", "-0", "-1", "-q", query], {
-      stdio: ["pipe", "pipe", "inherit"],
-      encoding: "utf8",
-    });
-    let out = "";
-    fzf.stdout.on("data", (d) => (out += d));
-    fzf.stdin.end(input);
-    fzf.on("close", (code) => resolve({ code, out: out.trim() }));
-    fzf.on("error", reject);
+async function runFzf(input, query) {
+  const proc = Bun.spawn(["fzf", "-d", "/", "--with-nth", "-1", "-0", "-1", "-q", query], {
+    stdin: "pipe",
+    stdout: "pipe",
+    stderr: "inherit",
   });
+  proc.stdin.write(input);
+  proc.stdin.end();
+  const code = await proc.exited;
+  const out = proc.stdout ? await new Response(proc.stdout).text() : "";
+  return { code, out: out.trim() };
 }
 
 async function main() {

@@ -3,28 +3,28 @@
  * Update all apps (Linux/macOS): apt, brew, paru, uv, bun.
  * #MISE hide=true alias="g:up" dir="~" description="Update all apps"
  */
-import { runCapture, runInherit } from "../lib/run.js";
+import { $ } from "bun";
 
 async function hasCommand(cmd, args = []) {
-    const { code, stdout } = await runCapture(cmd, args);
-    return code === 0 && (stdout || "").trim().length > 0;
+    const r = await $`${cmd} ${args}`.quiet().nothrow();
+    return r.exitCode === 0 && ((r.stdout?.toString() ?? "").trim().length > 0);
 }
 
 async function main() {
     if (await hasCommand("sh", ["-c", "command -v apt"])) {
-        await runInherit("sh", ["-c", "sudo apt update && sudo apt upgrade -y"]);
+        await $`sh -c "sudo apt update && sudo apt upgrade -y"`.nothrow();
     }
     if (await hasCommand("sh", ["-c", "command -v brew"])) {
-        await runInherit("sh", ["-c", "brew update && brew upgrade"]);
+        await $`sh -c "brew update && brew upgrade"`.nothrow();
     }
     if (await hasCommand("sh", ["-c", "command -v paru"])) {
-        await runInherit("sh", ["-c", "paru -Syu"]);
+        await $`sh -c "paru -Syu"`.nothrow();
     }
     if (await hasCommand("uv", ["--version"])) {
-        await runInherit("mise", ["run", "g:up:uv"]);
+        await $`mise run g:up:uv`.nothrow();
     }
     if (await hasCommand("bun", ["--version"])) {
-        await runInherit("mise", ["run", "g:up:bun"]);
+        await $`mise run g:up:bun`.nothrow();
     }
 }
 

@@ -1,20 +1,21 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 /**
  * Copy GPG key id to clipboard via gopass. Port of default/bin/gpgpass.
  */
-import { runCapture, runInherit } from "./lib/run.js";
+import { $ } from "bun";
 
 process.env.GPG_TTY = process.env.GPG_TTY || (process.platform !== "win32" ? "/dev/tty" : "");
 
 async function main() {
-  const email = await runCapture("git", ["config", "user.email"]);
-  if (email.code !== 0 || !email.stdout.trim()) {
+  const emailR = await $`git config user.email`.quiet().nothrow();
+  const email = { code: emailR.exitCode, stdout: (emailR.stdout?.toString() ?? "").trim() };
+  if (email.code !== 0 || !email.stdout) {
     console.error("git config user.email failed");
     process.exit(1);
   }
-  const path = `ids/ian/gpg/${email.stdout.trim()}`;
-  const code = await runInherit("gopass", ["show", "-c", path]);
-  process.exit(code ?? 0);
+  const path = `ids/ian/gpg/${email.stdout}`;
+  const r = await $`gopass show -c ${path}`.nothrow();
+  process.exit(r.exitCode ?? 0);
 }
 
 main();

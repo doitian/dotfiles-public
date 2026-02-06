@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 /**
  * Append to daily journal or open it. Port of default/bin/jrnl.
  */
@@ -7,7 +7,7 @@ import { createWriteStream } from "node:fs";
 import { join } from "node:path";
 import { exists } from "./lib/fs.js";
 import { home } from "./lib/env.js";
-import { runInherit } from "./lib/run.js";
+import { $ } from "bun";
 
 const JOURNAL_DIRS = [
   join(home(), "Dropbox", "Brain", "journal"),
@@ -77,8 +77,8 @@ async function main() {
   }
   if (sepTitle === "-e") {
     const editor = process.env.EDITOR || "nvim";
-    const code = await runInherit(editor, [JOURNAL_FILE]);
-    process.exit(code ?? 0);
+    const r = await $`${editor} ${JOURNAL_FILE}`.nothrow();
+    process.exit(r.exitCode ?? 0);
   }
 
   const titleSuffix = sepTitle ? ` ${sepTitle}` : "";

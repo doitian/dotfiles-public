@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 /**
  * Polish text from stdin using the prompt in ai/skills/polish/SKILL.md.
  * Sends completion request (OpenAI) and writes the polished text to stdout.

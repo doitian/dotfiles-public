@@ -9,7 +9,7 @@
 
 Shared patterns were extracted from the CLI scripts so that:
 
-1. **Single place for common behavior** – e.g. async `exists(path)`, `home()`, and subprocess helpers (`run`, `runCapture`, `runWithStdin`, `runInherit`) live in `src/lib/` and are reused instead of duplicated.
+1. **Single place for common behavior** – e.g. async `exists(path)`, `home()`, and `readStdin()` live in `src/lib/`. Scripts run subprocesses via [Bun shell](https://bun.com/docs/runtime/shell) (`$` from `"bun"`) directly.
 2. **Clear split** – anything in `src/` that is a `#!/usr/bin/env node` (or bun) entrypoint is an executable; anything in `src/lib/` is a dependency only.
 3. **Config in one place** – `src/lib/config.js` holds build-time defaults (e.g. OpenAI env). The build can override this file when compiling binaries so secrets stay out of the repo.
 
@@ -22,10 +22,11 @@ Shared patterns were extracted from the CLI scripts so that:
 | `env.js` | `home()` – user home dir (USERPROFILE / HOME). |
 | `io.js` | `readStdin()` – read all stdin (TTY or pipe). |
 | `fs.js` | `exists(path)` – async “path exists?”. |
-| `run.js` | Async subprocess helpers: `run`, `runInherit`, `runCapture`, `runWithStdin`. |
+| `pushover.js` | `send(extraForm, credentials)` – send a message via Pushover API (caller supplies user key and app token). |
 
 ## Conventions
 
+- **Bun shell (`$`)** – An array literal inside `${}` is not allowed. Use a variable (e.g. `const args = [...]; $`cmd ${args}`).
 - **Files in `src/lib/`** must not import `src/lib/config.js`.
 - Prefer **async APIs** in both scripts and lib.
 - New shared, non-executable helpers belong in `src/lib/` (and optionally new files there if they grow).

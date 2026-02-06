@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 /**
  * Send Pushover notification using agent app token (PUSHOVER_AGENT_TOKEN).
  * Same CLI as pushover-send but uses different token.

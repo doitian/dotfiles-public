@@ -3,14 +3,10 @@
  * Install cursor-agent cli (Windows): irm | iex
  * #MISE hide=true dir="~" description="Install cursor-agent cli"
  */
-import { runInherit } from "../lib/run.js";
+import { $ } from "bun";
 
 async function main() {
-    await runInherit("powershell", [
-        "-NoProfile",
-        "-Command",
-        "irm 'https://cursor.com/install?win32=true' | iex",
-    ]);
+    await $`powershell -NoProfile -Command ${"irm 'https://cursor.com/install?win32=true' | iex"}`.nothrow();
 }
 
 main().catch((err) => {

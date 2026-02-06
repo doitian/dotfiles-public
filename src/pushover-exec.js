@@ -1,9 +1,8 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 /**
  * Run a command and send a Pushover notification with result and duration.
  * Port of default/bin/pushover-exec.
  */
-import { spawn } from "node:child_process";
 import {
   DEFAULT_PUSHOVER_USER_KEY,
   DEFAULT_PUSHOVER_PERSONAL_TOKEN,
@@ -23,14 +22,15 @@ function getCredentials() {
   return { userKey, appToken };
 }
 
-function runCommand(argv) {
-  return new Promise((resolve, reject) => {
-    const cmd = argv[0];
-    const cargs = argv.slice(1);
-    const c = spawn(cmd, cargs, { stdio: "inherit" });
-    c.on("close", (code, sig) => resolve(sig ? 128 + (sig === "SIGINT" ? 2 : 0) : code));
-    c.on("error", reject);
+async function runCommand(argv) {
+  const proc = Bun.spawn(argv, {
+    stdin: "inherit",
+    stdout: "inherit",
+    stderr: "inherit",
   });
+  const code = await proc.exited;
+  const sig = proc.signalCode;
+  return sig ? 128 + (sig === "SIGINT" ? 2 : 0) : code;
 }
 
 function formatDuration(seconds) {

@@ -1,9 +1,8 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 /**
  * gopass + fzf/rofi/fuzzel. Port of default/bin/fpass.
  */
-import { spawn } from "node:child_process";
-import { runInherit, runCapture, runWithStdin } from "./lib/run.js";
+import { $ } from "bun";
 
 const args = process.argv.slice(2);
 const isRofi = args[0] === "--rofi";
@@ -13,30 +12,40 @@ const rest = isRofi || isFuzzel ? args.slice(1) : args;
 async function main() {
   if (isRofi) {
     if (rest.length === 0) {
-      const code = await runInherit("gopass", ["list", "-f"]);
-      process.exit(code ?? 0);
+      const r = await $`gopass list -f`.nothrow();
+      process.exit(r.exitCode ?? 0);
     }
-    spawn("gopass", ["show", "-c", ...rest], { stdio: "ignore", detached: true }).unref();
+    const proc = Bun.spawn(["gopass", "show", "-c", ...rest], {
+      stdin: "ignore",
+      stdout: "ignore",
+      stderr: "ignore",
+    });
+    proc.unref();
     return;
   }
 
   if (isFuzzel) {
-    const list = await runCapture("gopass", ["list", "-f"]);
-    if (list.code !== 0) process.exit(list.code);
-    const fuzzel = await runWithStdin("fuzzel", ["--dmenu", "-w", "50"], list.stdout);
+    const listR = await $`gopass list -f`.quiet().nothrow();
+    if (listR.exitCode !== 0) process.exit(listR.exitCode);
+    const list = { stdout: (listR.stdout?.toString() ?? "").trim() };
+    const fuzzelR = await $`fuzzel --dmenu -w 50 < ${new Response(list.stdout)}`.quiet().nothrow();
+    const fuzzel = { code: fuzzelR.exitCode, stdout: (fuzzelR.stdout?.toString() ?? "").trim() };
     if (fuzzel.code !== 0 || !fuzzel.stdout) process.exit(fuzzel.code ?? 1);
-    const code = await runInherit("gopass", ["show", "-c", fuzzel.stdout]);
-    process.exit(code ?? 0);
+    const r = await $`gopass show -c ${fuzzel.stdout}`.nothrow();
+    process.exit(r.exitCode ?? 0);
   }
 
   process.env.GPG_TTY = process.env.GPG_TTY || (process.platform !== "win32" ? "/dev/tty" : "");
-  const list = await runCapture("gopass", ["list", "-f"]);
-  if (list.code !== 0) process.exit(list.code);
-  const fzf = await runWithStdin("fzf", [], list.stdout);
+  const listR = await $`gopass list -f`.quiet().nothrow();
+  if (listR.exitCode !== 0) process.exit(listR.exitCode);
+  const list = { stdout: (listR.stdout?.toString() ?? "").trim() };
+  const fzfR = await $`fzf < ${new Response(list.stdout)}`.quiet().nothrow();
+  const fzf = { code: fzfR.exitCode, stdout: (fzfR.stdout?.toString() ?? "").trim() };
   if (fzf.code !== 0 || !fzf.stdout) process.exit(fzf.code ?? 1);
   const entry = fzf.stdout.split("\n")[0];
-  const code = await runInherit("gopass", [...rest, entry].filter(Boolean));
-  process.exit(code ?? 0);
+  const gopassArgs = [...rest, entry].filter(Boolean);
+  const r = await $`gopass ${gopassArgs}`.nothrow();
+  process.exit(r.exitCode ?? 0);
 }
 
 main();

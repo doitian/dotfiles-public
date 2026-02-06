@@ -3,13 +3,10 @@
  * Install cursor-agent cli (Linux/macOS): curl | bash
  * #MISE hide=true dir="~" description="Install cursor-agent cli"
  */
-import { runInherit } from "../lib/run.js";
+import { $ } from "bun";
 
 async function main() {
-    await runInherit("sh", [
-        "-c",
-        "curl https://cursor.com/install -fsS | bash",
-    ]);
+    await $`sh -c "curl https://cursor.com/install -fsS | bash"`.nothrow();
 }
 
 main().catch((err) => {

@@ -4,54 +4,45 @@
  */
 import { writeFileSync } from "node:fs";
 import { exists } from "../lib/fs.js";
-import { runInherit } from "../lib/run.js";
+import { $ } from "bun";
 
 async function main() {
     if (!(await exists("mise.toml"))) writeFileSync("mise.toml", "");
 
     if (await exists("Makefile") || await exists("makefile") || await exists("GNUmakefile")) {
-        await runInherit("mise", ["tasks", "add", "default", "--", "make"]);
+        await $`mise tasks add default -- make`.nothrow();
         return;
     }
     if (await exists("Cargo.toml")) {
-        await runInherit("mise", ["tasks", "add", "default", "--", "cargo", "build"]);
+        await $`mise tasks add default -- cargo build`.nothrow();
         return;
     }
     if (await exists("package.json")) {
         if (await exists("pnpm-lock.yaml")) {
-            await runInherit("mise", ["tasks", "add", "default", "--", "pnpm", "run", "build"]);
+            await $`mise tasks add default -- pnpm run build`.nothrow();
         } else if (await exists("yarn.lock")) {
-            await runInherit("mise", ["tasks", "add", "default", "--", "yarn", "build"]);
+            await $`mise tasks add default -- yarn build`.nothrow();
         } else if (await exists("bun.lockb")) {
-            await runInherit("mise", ["tasks", "add", "default", "--", "bun", "run", "build"]);
+            await $`mise tasks add default -- bun run build`.nothrow();
         } else {
-            await runInherit("mise", ["tasks", "add", "default", "--", "npm", "run", "build"]);
+            await $`mise tasks add default -- npm run build`.nothrow();
         }
         return;
     }
     if (await exists("go.mod")) {
-        await runInherit("mise", ["tasks", "add", "default", "--", "go", "build"]);
+        await $`mise tasks add default -- go build`.nothrow();
         return;
     }
     if (await exists("pyproject.toml")) {
-        await runInherit("mise", ["tasks", "add", "default", "--", "python", "-m", "build"]);
+        await $`mise tasks add default -- python -m build`.nothrow();
         return;
     }
     if (await exists("CMakeLists.txt")) {
-        await runInherit("mise", ["tasks", "add", "default", "--", "cmake", "--build", "build"]);
+        await $`mise tasks add default -- cmake --build build`.nothrow();
         return;
     }
     if (await exists("meson.build")) {
-        await runInherit("mise", [
-            "tasks",
-            "add",
-            "default",
-            "--",
-            "meson",
-            "compile",
-            "-C",
-            "builddir",
-        ]);
+        await $`mise tasks add default -- meson compile -C builddir`.nothrow();
         return;
     }
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 /**
  * Send a Pushover notification. Credentials from PUSHOVER_USER_KEY/PUSHOVER_PERSONAL_TOKEN or injected config.
  * Port of default/bin/pushover-send.
