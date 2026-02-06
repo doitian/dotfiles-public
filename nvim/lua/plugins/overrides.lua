@@ -245,6 +245,12 @@ return {
             },
           },
         },
+        styles = {
+          lazygit = {
+            height = 0,
+            width = 0,
+          },
+        },
       }
       if vim.fn.has("win32") == 1 then
         new_opts.picker.sources.explorer = { git_status = false }
