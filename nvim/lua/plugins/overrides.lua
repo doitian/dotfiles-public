@@ -343,8 +343,9 @@ return {
           on_init = function(client)
             -- Only add Neovim runtime for dotfiles nvim config
             if client.workspace_folders then
-              local path = client.workspace_folders[1].name
-              if path:find(vim.fn.expand("~/.dotfiles"), 1, true) and path:find("/nvim", 1, true) then
+              local path = (client.workspace_folders[1].name or ""):gsub("\\", "/")
+              local dotfiles = (vim.fn.expand("~/.dotfiles") or ""):gsub("\\", "/")
+              if path:find(dotfiles, 1, true) and path:find("/nvim", 1, true) then
                 client.settings.Lua = vim.tbl_deep_extend("force", client.settings.Lua or {}, {
                   workspace = { library = { vim.env.VIMRUNTIME } },
                 })
