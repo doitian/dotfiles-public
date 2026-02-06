@@ -9,20 +9,20 @@ trap "rm -rf $DIR" exit
 
 VIM="${__VIM_PROGRAM__:-nvim}"
 if [ "${1:-}" = "-g" ]; then
-  if command -v wezterm-gui &>/dev/null; then
-    exec &>/dev/null
-    VIM="wezterm-gui start --always-new-process -- $VIM"
-  elif command -v gvim &>/dev/null; then
-    VIM=gvim
-  fi
-  shift
+    if command -v kitty &>/dev/null; then
+        exec &>/dev/null
+        VIM="kitty $VIM"
+    elif command -v gvim &>/dev/null; then
+        VIM=gvim
+    fi
+    shift
 fi
 
 FILENAME="$*"
 if [ -z "$FILENAME" ]; then
-  FILENAME=scratch
+    FILENAME=scratch
 elif [[ $FILENAME == .* ]]; then
-  FILENAME="scratch$FILENAME"
+    FILENAME="scratch$FILENAME"
 fi
 
 $VIM -b -f +"cd $DIR" "$DIR/$FILENAME"
