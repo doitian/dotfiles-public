@@ -1,3 +1,5 @@
+## Tool Mapping
+
 When skills reference tools you don't have, substitute Cursor equivalents:
 
 - `Edit` → `StrReplace`

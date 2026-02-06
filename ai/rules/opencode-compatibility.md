@@ -1,3 +1,5 @@
+## Tool Mapping
+
 When skills reference tools you don't have, substitute OpenCode equivalents:
 
 - `TodoWrite` → `update_plan`
