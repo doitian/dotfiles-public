@@ -75,7 +75,7 @@ map("n", "<Leader>wv", "<C-W>v", { desc = "Split window right", remap = true })
 
 map("n", "<Leader>fj", "<Cmd>drop `jrnl -p`<CR>", { desc = "Edit journal" })
 map("n", "<Leader>fy", function()
-  Snacks.terminal.toggle("yazi")
+  Snacks.terminal.toggle("yazi", { win = { width = 0, height = 0 } })
 end, { desc = "Yazi" })
 
 -- coding {{{1
