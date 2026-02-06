@@ -9,51 +9,22 @@ This script copies:
     - skills/* to .claude/skills/
     - commands/* to .cursor/commands/ and .config/opencode/commands/
     - agents/* to .cursor/agents/ and .config/opencode/agents/
+    - Tool mappings: OpenCode rule to .opencode/rules/, Cursor rule to .cursor/rules/,
+      and ensures opencode.json lists .opencode/rules/* as instructions.
 """
 
 import argparse
-import shutil
 import sys
 from pathlib import Path
+
+# Import from workflow common (parent of superpowers)
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from common import copy_recursive, install_tool_mappings
 
 
 def get_script_dir() -> Path:
     """Get the directory where this script is located."""
     return Path(__file__).parent.resolve()
-
-
-def copy_recursive(src: Path, dst: Path, dry_run: bool = False) -> list[Path]:
-    """
-    Recursively copy contents from src to dst.
-
-    Returns list of copied files.
-    """
-    copied = []
-
-    if not src.exists():
-        print(f"  Warning: Source does not exist: {src}")
-        return copied
-
-    for item in src.rglob("*"):
-        rel_path = item.relative_to(src)
-        dst_path = dst / rel_path
-
-        if item.is_dir():
-            if dry_run:
-                print(f"  Would create dir: {rel_path}/")
-            else:
-                dst_path.mkdir(parents=True, exist_ok=True)
-        elif item.is_file():
-            if dry_run:
-                print(f"  Would copy: {rel_path}")
-            else:
-                dst_path.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(item, dst_path)
-                print(f"  Copied: {rel_path}")
-
-            copied.append(dst_path)
-
-    return copied
 
 
 def install_workflow(target_dir: Path, dry_run: bool = False) -> None:
@@ -109,6 +80,9 @@ def install_workflow(target_dir: Path, dry_run: bool = False) -> None:
         copied = copy_recursive(agents_src, dst, dry_run)
         total_copied += len(copied)
     print()
+
+    # Tool mapping rules (OpenCode + Cursor + opencode.json)
+    total_copied += install_tool_mappings(target_dir, dry_run)
 
     if dry_run:
         print(f"Dry run complete. Would copy {total_copied} files.")
