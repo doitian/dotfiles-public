@@ -35,3 +35,4 @@ Shared patterns were extracted from the CLI scripts so that:
 ## JavaScript Formatting
 
 - Use 4-space indentation
+- Format code using biome
