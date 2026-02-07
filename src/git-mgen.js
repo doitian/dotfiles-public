@@ -6,11 +6,7 @@
  */
 import { zodResponseFormat } from "openai/helpers/zod";
 import { z } from "zod";
-import {
-  DEFAULT_OPENAI_API_KEY,
-  DEFAULT_OPENAI_BASE_URL,
-  DEFAULT_OPENAI_MODEL,
-} from "./lib/config.js";
+import { getSecret } from "./lib/secrets.js";
 import { getOpenAIClient } from "./lib/openai.js";
 
 const SYSTEM_PROMPT = `Use the output of \`git diff --staged\` to generate the commit message.
@@ -33,13 +29,18 @@ const GitCommitSchema = z.object({
   furtherParagraphs: z.string().nullable(),
 });
 
-function main() {
-  const { client, model } = getOpenAIClient({
-    apiKey: DEFAULT_OPENAI_API_KEY,
-    baseURL: DEFAULT_OPENAI_BASE_URL,
-    model: DEFAULT_OPENAI_MODEL,
+async function main() {
+  const apiKey = await getSecret("openai-api-key", "OPENAI_API_KEY");
+  const baseURL =
+    (await getSecret("openai-base-url", "OPENAI_BASE_URL")) ?? "https://api.openai.com";
+  const model =
+    (await getSecret("openai-model", "OPENAI_MODEL")) ?? "gpt-4o-mini";
+  const { client, model: resolvedModel } = getOpenAIClient({
+    apiKey,
+    baseURL,
+    model,
   });
-  run(client, model).catch((err) => {
+  run(client, resolvedModel).catch((err) => {
     console.error(err?.message ?? err);
     process.exit(1);
   });
@@ -126,4 +127,7 @@ async function run(client, model) {
   console.log(message);
 }
 
-main();
+main().catch((err) => {
+  console.error(err?.message ?? err);
+  process.exit(1);
+});

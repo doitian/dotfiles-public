@@ -1,24 +1,20 @@
 #!/usr/bin/env bun
 /**
- * Send a Pushover notification. Credentials from PUSHOVER_USER_KEY/PUSHOVER_PERSONAL_TOKEN or injected config.
+ * Send a Pushover notification. Credentials from env or Bun secrets (getSecret).
  * Port of default/bin/pushover-send.
  */
-import {
-    DEFAULT_PUSHOVER_USER_KEY,
-    DEFAULT_PUSHOVER_PERSONAL_TOKEN,
-} from "./lib/config.js";
+import { getSecret } from "./lib/secrets.js";
 import { send } from "./lib/pushover.js";
 
 const args = process.argv.slice(2);
 
-function getCredentials() {
-    const userKey = process.env.PUSHOVER_USER_KEY ?? DEFAULT_PUSHOVER_USER_KEY;
-    const appToken =
-        process.env.PUSHOVER_PERSONAL_TOKEN ?? process.env.PUSHOVER_APP_TOKEN ?? DEFAULT_PUSHOVER_PERSONAL_TOKEN;
-    if (!userKey || !appToken)
-        throw new Error(
-            "Missing Pushover credentials: set PUSHOVER_USER_KEY and PUSHOVER_PERSONAL_TOKEN (or build with defaults)"
-        );
+async function getCredentials() {
+    const userKey = await getSecret("pushover-user-key", "PUSHOVER_USER_KEY");
+    const appToken = await getSecret(
+        "pushover-personal-token",
+        "PUSHOVER_PERSONAL_TOKEN",
+        "PUSHOVER_APP_TOKEN"
+    );
     return { userKey, appToken };
 }
 
@@ -48,7 +44,8 @@ async function main() {
         args.length === 0 || args[0]?.startsWith("-")
             ? parseFormArgs(args)
             : { message: args.join(" ") };
-    await send(form, getCredentials());
+    const creds = await getCredentials();
+    await send(form, creds);
 }
 
 main().catch((err) => {

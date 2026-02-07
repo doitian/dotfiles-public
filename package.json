@@ -4,7 +4,9 @@
   "description": "Ian's configuration files and scripts",
   "type": "module",
   "scripts": {
-    "build": "bun run build.js"
+    "build": "bun run build.js",
+    "clear-secrets": "bun run scripts/clear-secrets.js",
+    "set-secret": "bun run scripts/set-secret.js"
   },
   "engines": {
     "bun": ">=1.0.0"

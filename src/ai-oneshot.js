@@ -9,13 +9,9 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-    DEFAULT_OPENAI_API_KEY,
-    DEFAULT_OPENAI_BASE_URL,
-    DEFAULT_OPENAI_MODEL,
-} from "./lib/config.js";
 import { readLines, readStdin } from "./lib/io.js";
 import { getOpenAIClient, runOneshot } from "./lib/openai.js";
+import { getSecret } from "./lib/secrets.js";
 
 function parseArgs(argv) {
     let systemPrompt = null;
@@ -63,10 +59,15 @@ async function main() {
     const argv = process.argv.slice(2);
     const { systemPrompt, file } = parseArgs(argv);
 
-    const { client, model } = getOpenAIClient({
-        apiKey: DEFAULT_OPENAI_API_KEY,
-        baseURL: DEFAULT_OPENAI_BASE_URL,
-        model: DEFAULT_OPENAI_MODEL,
+    const apiKey = await getSecret("openai-api-key", "OPENAI_API_KEY");
+    const baseURL =
+        (await getSecret("openai-base-url", "OPENAI_BASE_URL")) ?? "https://api.openai.com";
+    const model =
+        (await getSecret("openai-model", "OPENAI_MODEL")) ?? "gpt-4o-mini";
+    const { client, model: resolvedModel } = getOpenAIClient({
+        apiKey,
+        baseURL,
+        model,
     });
 
     let fileContent = loadFileContent(file);
@@ -79,7 +80,7 @@ async function main() {
                 input = `${fileContent}\n\n${input}`;
                 fileContent = null;
             }
-            await runOneshot(client, model, { systemPrompt, input });
+            await runOneshot(client, resolvedModel, { systemPrompt, input });
         });
     } else {
         // Pipe mode: read all stdin, send once
@@ -87,7 +88,7 @@ async function main() {
         if (fileContent) {
             input = `${fileContent}\n\n${input}`;
         }
-        await runOneshot(client, model, { systemPrompt, input });
+        await runOneshot(client, resolvedModel, { systemPrompt, input });
     }
 }
 

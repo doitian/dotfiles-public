@@ -3,20 +3,15 @@
  * Send Pushover notification using agent app token (PUSHOVER_AGENT_TOKEN).
  * Same CLI as pushover-send but uses different token.
  */
-import {
-  DEFAULT_PUSHOVER_USER_KEY,
-  DEFAULT_PUSHOVER_AGENT_TOKEN,
-} from "./lib/config.js";
+import { getSecret } from "./lib/secrets.js";
 import { send } from "./lib/pushover.js";
 
-function getCredentials() {
-  const userKey = process.env.PUSHOVER_USER_KEY ?? DEFAULT_PUSHOVER_USER_KEY;
-  const appToken =
-    process.env.PUSHOVER_AGENT_TOKEN ?? DEFAULT_PUSHOVER_AGENT_TOKEN;
-  if (!userKey || !appToken)
-    throw new Error(
-      "Missing Pushover credentials: set PUSHOVER_USER_KEY and PUSHOVER_AGENT_TOKEN (or build with defaults)"
-    );
+async function getCredentials() {
+  const userKey = await getSecret("pushover-user-key", "PUSHOVER_USER_KEY");
+  const appToken = await getSecret(
+    "pushover-agent-token",
+    "PUSHOVER_AGENT_TOKEN"
+  );
   return { userKey, appToken };
 }
 
@@ -70,7 +65,10 @@ const form = { message };
 if (title) form.title = title;
 if (priority) form.priority = priority;
 
-send(form, getCredentials()).catch((err) => {
+(async () => {
+  const creds = await getCredentials();
+  await send(form, creds);
+})().catch((err) => {
   console.error(err.message);
   process.exit(1);
 });
