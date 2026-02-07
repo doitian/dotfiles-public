@@ -39,10 +39,19 @@ async function main() {
   const listR = await $`gopass list -f`.quiet().nothrow();
   if (listR.exitCode !== 0) process.exit(listR.exitCode);
   const list = { stdout: (listR.stdout?.toString() ?? "").trim() };
-  const fzfR = await $`fzf < ${new Response(list.stdout)}`.quiet().nothrow();
-  const fzf = { code: fzfR.exitCode, stdout: (fzfR.stdout?.toString() ?? "").trim() };
-  if (fzf.code !== 0 || !fzf.stdout) process.exit(fzf.code ?? 1);
-  const entry = fzf.stdout.split("\n")[0];
+  const fzfProc = Bun.spawn(["fzf"], {
+    stdin: "pipe",
+    stdout: "pipe",
+    stderr: "inherit",
+    env: process.env,
+  });
+  fzfProc.stdin.write(list.stdout);
+  fzfProc.stdin.end();
+  const fzfCode = await fzfProc.exited;
+  const fzfOut = fzfProc.stdout ? await new Response(fzfProc.stdout).text() : "";
+  const fzfSelected = fzfOut.trim();
+  if (fzfCode !== 0 || !fzfSelected) process.exit(fzfCode ?? 1);
+  const entry = fzfSelected.split("\n")[0];
   const gopassArgs = [...rest, entry].filter(Boolean);
   const r = await $`gopass ${gopassArgs}`.nothrow();
   process.exit(r.exitCode ?? 0);
