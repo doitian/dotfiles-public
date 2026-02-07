@@ -6,28 +6,8 @@
   "scripts": {
     "build": "bun run build.js"
   },
-  "bin": {
-    "agent-pushover": "./dist/agent-pushover",
-    "ai-oneshot": "./dist/ai-oneshot",
-    "ai-polish": "./dist/ai-polish",
-    "backup-github": "./dist/backup-github",
-    "czf": "./dist/czf",
-    "dog": "./dist/dog",
-    "ctst": "./dist/ctst",
-    "fpass": "./dist/fpass",
-    "git-mgen": "./dist/git-mgen",
-    "git-multistatus": "./dist/git-multistatus",
-    "gpgpass": "./dist/gpgpass",
-    "jrnl": "./dist/jrnl",
-    "prompt-manager": "./dist/prompt-manager",
-    "pushover-exec": "./dist/pushover-exec",
-    "pushover-send": "./dist/pushover-send",
-    "sync-snippets": "./dist/sync-snippets",
-    "sync-spell": "./dist/sync-spell",
-    "uvs": "./dist/uvs"
-  },
   "engines": {
-    "node": ">=18"
+    "bun": ">=1.0.0"
   },
   "dependencies": {
     "openai": "^4.77.0",
