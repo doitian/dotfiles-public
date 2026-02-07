@@ -60,11 +60,10 @@ for await (const file of glob.scan(srcDir)) {
 }
 const privateSrcDir = join(process.cwd(), "..", "private", "src");
 if (existsSync(privateSrcDir)) {
-    for (const f of readdirSync(privateSrcDir)) {
-        if (!f.endsWith(".js")) continue;
+    for await (const file of glob.scan(privateSrcDir)) {
         entries.push({
-            name: f.slice(0, -3),
-            sourcePath: join(privateSrcDir, f),
+            name: file.slice(0, -3),
+            sourcePath: join(privateSrcDir, file),
         });
     }
 }
@@ -141,9 +140,10 @@ await buildIfStale(entries, distDir);
 const miseTasksSrcDir = join(process.cwd(), "src", "mise-tasks");
 const miseTasksDistDir = join(distDir, "mise-tasks");
 if (existsSync(miseTasksSrcDir)) {
-    const miseEntries = readdirSync(miseTasksSrcDir)
-        .filter((f) => f.endsWith(".js"))
-        .map((f) => ({ name: f.slice(0, -3), sourcePath: join(miseTasksSrcDir, f) }));
+    const miseEntries = [];
+    for await (const file of glob.scan(miseTasksSrcDir)) {
+        miseEntries.push({ name: file.slice(0, -3), sourcePath: join(miseTasksSrcDir, file) });
+    }
     await buildIfStale(miseEntries, miseTasksDistDir);
 }
 
