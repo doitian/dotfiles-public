@@ -1,18 +1,12 @@
 #!/usr/bin/env bun
 /**
- * Compile each bin entrypoint to a standalone executable in dist/.
+ * Compile each direct .js in src/ to a standalone executable in dist/.
  * Run: bun run build
  * Skips a target if it is newer than the source entry, mise.local.toml (if present), and all src/lib/*.
  */
+import { Glob } from "bun";
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
-
-const pkg = JSON.parse(readFileSync("./package.json", "utf-8"));
-const bin = pkg.bin;
-if (!bin || typeof bin !== "object") {
-    console.error("No bin map in package.json");
-    process.exit(1);
-}
 
 const distDir = resolve(process.cwd(), "dist");
 if (!existsSync(distDir)) {
@@ -54,12 +48,14 @@ if (existingConfig !== configSource) {
     console.log("src/lib/config.js unchanged");
 }
 
-// Merge package.json bin and private src into one list: { name, sourcePath, configSource? }
+// Direct .js files under src/ to compile
+const srcDir = join(process.cwd(), "src");
 const entries = [];
-for (const name of Object.keys(bin)) {
+const glob = new Glob("*.js");
+for await (const file of glob.scan(srcDir)) {
     entries.push({
-        name,
-        sourcePath: `./src/${name}.js`,
+        name: file.slice(0, -3),
+        sourcePath: join(srcDir, file),
     });
 }
 const privateSrcDir = join(process.cwd(), "..", "private", "src");
