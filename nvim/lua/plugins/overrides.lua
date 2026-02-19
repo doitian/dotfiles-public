@@ -245,13 +245,16 @@ return {
             },
           },
         },
-        terminal = {
-          win = {
-            position = "float",
+        styles = {
+          terminal = {
             backdrop = false,
-            border = "vpad",
+            position = "float",
             height = 0,
             width = 0,
+            border = true,
+          },
+          lazygit = {
+            border = false,
           },
         },
       }

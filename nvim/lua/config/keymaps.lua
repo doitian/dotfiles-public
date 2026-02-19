@@ -17,7 +17,12 @@ map("n", "<Leader>y", function()
 end, { desc = "Duplicate yanked into system clipboard" })
 map("x", "<Leader>y", [["+y]], { desc = "Yank into system clipboard" })
 map({ "n", "x" }, "<Leader>Y", [["+Y]], { desc = "Yank into system clipboard" })
-map("n", "<Leader>cy", [[<Cmd>let @" = '@'.substitute(fnamemodify(expand('%'), ':.'), '\\', '/', 'g')<CR>]], { desc = "Yank AI file reference" })
+map(
+  "n",
+  "<Leader>cy",
+  [[<Cmd>let @" = '@'.substitute(fnamemodify(expand('%'), ':.'), '\\', '/', 'g')<CR>]],
+  { desc = "Yank AI file reference" }
+)
 map(
   "n",
   "<Leader>cY",
@@ -87,7 +92,7 @@ map("n", "<Leader>wv", "<C-W>v", { desc = "Split window right", remap = true })
 
 map("n", "<Leader>fj", "<Cmd>drop `jrnl -p`<CR>", { desc = "Edit journal" })
 map("n", "<Leader>fy", function()
-  Snacks.terminal.toggle("yazi")
+  Snacks.terminal.toggle("yazi", { win = { style = "lazygit" } })
 end, { desc = "Yazi" })
 
 -- coding {{{1
