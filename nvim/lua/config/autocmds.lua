@@ -51,8 +51,3 @@ for pattern, ft in pairs(ft_maps) do
     vim.opt_local.filetype = ft
   end)
 end
-
-autocmd("StdinReadPre", "*", function()
-  print(1)
-  vim.opt_global.clipboard = vim.env.SSH_CONNECTION and "" or "unnamedplus"
-end)
