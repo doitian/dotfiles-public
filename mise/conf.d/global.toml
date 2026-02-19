@@ -7,7 +7,7 @@ process-compose = "github:F1bonacc1/process-compose"
 [settings]
 
 [settings.python]
-uv_venv_auto = true
+uv_venv_auto = "create|source"
 
 [settings.npm]
 package_manager = "bun"
