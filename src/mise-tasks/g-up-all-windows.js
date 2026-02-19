@@ -1,9 +1,4 @@
 #!/usr/bin/env bun
-/**
- * Update all apps (Windows): scoop, uv, bun. depends_post g:clean:scoop in global.toml.
- * Uses Bun shell ($) for scoop so Windows resolves .cmd in PATH.
- * #MISE hide=true alias="g:up" dir="~" depends_post=["g:clean:scoop"] description="Update all apps"
- */
 import { $ } from "bun";
 
 async function hasCommand(cmd, args = []) {

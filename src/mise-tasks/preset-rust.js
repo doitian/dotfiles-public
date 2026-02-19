@@ -1,7 +1,4 @@
 #!/usr/bin/env bun
-/**
- * Setup rust project: pre-commit:cargo-fmt and test task config.
- */
 import { writeFileSync } from "node:fs";
 import { $ } from "bun";
 

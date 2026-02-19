@@ -1,8 +1,4 @@
 #!/usr/bin/env bun
-/**
- * Update all apps (Linux/macOS): apt, brew, paru, uv, bun.
- * #MISE hide=true alias="g:up" dir="~" description="Update all apps"
- */
 import { $ } from "bun";
 
 async function hasCommand(cmd, args = []) {

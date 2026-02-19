@@ -1,8 +1,4 @@
 #!/usr/bin/env bun
-/**
- * Install cursor-agent cli (Windows): irm | iex
- * #MISE hide=true dir="~" description="Install cursor-agent cli"
- */
 import { $ } from "bun";
 
 async function main() {

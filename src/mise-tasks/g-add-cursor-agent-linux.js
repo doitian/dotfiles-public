@@ -1,8 +1,4 @@
 #!/usr/bin/env bun
-/**
- * Install cursor-agent cli (Linux/macOS): curl | bash
- * #MISE hide=true dir="~" description="Install cursor-agent cli"
- */
 import { $ } from "bun";
 
 async function main() {
