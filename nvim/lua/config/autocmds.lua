@@ -51,3 +51,9 @@ for pattern, ft in pairs(ft_maps) do
     vim.opt_local.filetype = ft
   end)
 end
+
+if vim.fn.has("win32") == 1 then
+  autocmd("FileType", "gitcommit", function()
+    vim.opt_local.shellslash = false
+  end)
+end
