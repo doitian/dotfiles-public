@@ -247,13 +247,33 @@ return {
         },
         styles = {
           terminal = {
+            border = true,
+            keys = {
+              ["<Leader>u/"] = function(win)
+                if win.opts.position == "bottom" then
+                  win.opts.position = "float"
+                  win.opts.height = 0
+                  win.opts.width = 0
+                elseif win.opts.position == "float" then
+                  win.opts.position = "right"
+                  win.opts.height = 0
+                  win.opts.width = 0.4
+                else
+                  win.opts.position = "bottom"
+                  win.opts.height = 0.4
+                  win.opts.width = 0
+                end
+                win:hide()
+                win:show()
+                vim.cmd.stopinsert()
+              end,
+            },
+          },
+          lazygit = {
             backdrop = false,
             position = "float",
             height = 0,
             width = 0,
-            border = true,
-          },
-          lazygit = {
             border = false,
           },
         },
