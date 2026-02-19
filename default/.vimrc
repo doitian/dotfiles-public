@@ -3,7 +3,7 @@
 if &compatible | set nocompatible | endif
 set encoding=utf-8
 if exists("$TERM_BACKGROUND") | let &background=$TERM_BACKGROUND | endif
-if has('win32') | language en | set ff=unix | endif
+if has('win32') | language en | set ff=unix shellslash | endif
 if &term ==? 'win32' | set t_Co=256 | endif
 
 " Plug {{{1
