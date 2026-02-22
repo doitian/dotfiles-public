@@ -17,18 +17,6 @@ async function main() {
         await $`mise tasks add default -- cargo build`.nothrow();
         return;
     }
-    if (await exists("package.json")) {
-        if (await exists("pnpm-lock.yaml")) {
-            await $`mise tasks add default -- pnpm run build`.nothrow();
-        } else if (await exists("yarn.lock")) {
-            await $`mise tasks add default -- yarn build`.nothrow();
-        } else if (await exists("bun.lockb")) {
-            await $`mise tasks add default -- bun run build`.nothrow();
-        } else {
-            await $`mise tasks add default -- npm run build`.nothrow();
-        }
-        return;
-    }
     if (await exists("go.mod")) {
         await $`mise tasks add default -- go build`.nothrow();
         return;
@@ -41,8 +29,20 @@ async function main() {
         await $`mise tasks add default -- cmake --build build`.nothrow();
         return;
     }
-    if (await exists("meson.build")) {
-        await $`mise tasks add default -- meson compile -C builddir`.nothrow();
+    if (await exists("stack.yaml")) {
+        await $`mise tasks add default -- stack build`.nothrow();
+        return;
+    }
+    if (await exists("package.json")) {
+        if (await exists("pnpm-lock.yaml")) {
+            await $`mise tasks add default -- pnpm run build`.nothrow();
+        } else if (await exists("yarn.lock")) {
+            await $`mise tasks add default -- yarn build`.nothrow();
+        } else if (await exists("bun.lockb")) {
+            await $`mise tasks add default -- bun run build`.nothrow();
+        } else {
+            await $`mise tasks add default -- npm run build`.nothrow();
+        }
         return;
     }
 
