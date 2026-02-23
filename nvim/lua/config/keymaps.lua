@@ -74,6 +74,9 @@ map("n", "<Leader>wk", "<Cmd>Close<CR>", { desc = "Close disturbing windows" })
 -- navigation {{{1
 unmap({ "n", "x" }, "j")
 unmap({ "n", "x" }, "k")
+-- The binding nzv does not work when animation is enabled
+unmap({ "n", "o", "x" }, "n")
+unmap({ "n", "o", "x" }, "N")
 map(
   "n",
   "<S-H>",
