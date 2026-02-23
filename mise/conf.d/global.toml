@@ -94,7 +94,7 @@ run = "preset-vscode"
 hide = true
 description = "Setup rust project"
 dir = "{{cwd}}"
-depends = ["preset:pre-commit"]
+depends_post = ["preset:default", "preset:pre-commit"]
 run = "preset-rust"
 
 [tasks."preset:python"]
