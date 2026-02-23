@@ -33,6 +33,7 @@ vim.g.netrw_banner = 0
 vim.g.netrw_liststyle = 3
 vim.g.markdown_folding = 1
 vim.g.snacks_animate = false
+vim.g.snacks_scroll = false
 
 local my_clipboard = nil
 if vim.env.TMUX and vim.env.SSH_TTY then
