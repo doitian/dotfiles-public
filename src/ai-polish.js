@@ -13,7 +13,7 @@ import { parseArgs as parseArgsUtil } from "node:util";
 import { home } from "./lib/env.js";
 import { readLines } from "./lib/io.js";
 import { OpenAI, runOneshot } from "./lib/openai.js";
-import { getOpenAICredentials, getPushoverCredentials } from "./lib/secrets.js";
+import { getOpenAICredentials } from "./lib/secrets.js";
 
 const USAGE = `Usage: ai-polish [options] [instruction...]
 
@@ -21,6 +21,7 @@ Polish text from stdin. Positional arguments are prepended to the text as instru
 
 Options:
   -f, --file <path>   Prepend contents of file to the input
+  -m, --model <name>  Override OpenAI model
   -h, --help          Show this help
 `;
 
@@ -30,6 +31,7 @@ function parseArgs() {
     options: {
       file: { type: "string", short: "f" },
       help: { type: "boolean", short: "h" },
+      model: { type: "string", short: "m" },
     },
   });
   if (values.help) {
@@ -37,7 +39,7 @@ function parseArgs() {
     process.exit(0);
   }
   const prefix = positionals.length ? positionals.join(" ") : "";
-  return { file: values.file ?? null, prefix };
+  return { file: values.file ?? null, model: values.model ?? null, prefix };
 }
 
 async function loadFileContent(filePath) {
@@ -78,9 +80,10 @@ function prependToInput(prefix, fileContent, input) {
 }
 
 async function main() {
-  const { file, prefix } = parseArgs();
+  const { file, model: cliModel, prefix } = parseArgs();
 
   const { apiKey, baseURL, model } = await getOpenAICredentials();
+  const selectedModel = cliModel ?? model;
   const client = new OpenAI({ apiKey, baseURL });
 
   const [systemPrompt, fileContent] = await Promise.all([
@@ -92,10 +95,10 @@ async function main() {
   if (oneshot) {
     const stdinText = process.stdin.isTTY ? "" : await Bun.stdin.text();
     const input = prependToInput(prefix, fileContent, stdinText);
-    await runOneshot(client, model, { systemPrompt, input });
+    await runOneshot(client, selectedModel, { systemPrompt, input });
   } else {
     await readLines(async (input) => {
-      await runOneshot(client, model, { systemPrompt, input });
+      await runOneshot(client, selectedModel, { systemPrompt, input });
     });
   }
 }

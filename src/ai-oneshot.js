@@ -19,6 +19,7 @@ Send stdin (or piped input) to OpenAI, stream response to stdout.
 
 Options:
   -f, --file <path>     Prepend contents of file to the user message
+  -m, --model <name>    Override OpenAI model
   -s, --system <text>  System prompt (instruction for the model)
   -h, --help            Show this help
 `;
@@ -29,6 +30,7 @@ function parseArgs() {
     options: {
       file: { type: "string", short: "f" },
       help: { type: "boolean", short: "h" },
+      model: { type: "string", short: "m" },
       system: { type: "string", short: "s" },
     },
   });
@@ -39,6 +41,7 @@ function parseArgs() {
   const prefix = positionals.length ? positionals.join(" ") : "";
   return {
     file: values.file ?? null,
+    model: values.model ?? null,
     prefix,
     systemPrompt: values.system ?? null,
   };
@@ -60,9 +63,10 @@ function prependToInput(prefix, fileContent, input) {
 }
 
 async function main() {
-  const { file, prefix, systemPrompt } = parseArgs();
+  const { file, model: cliModel, prefix, systemPrompt } = parseArgs();
 
   const { apiKey, baseURL, model } = await getOpenAICredentials();
+  const selectedModel = cliModel ?? model;
   const client = new OpenAI({ apiKey, baseURL });
 
   const fileContent = await loadFileContent(file);
@@ -71,10 +75,10 @@ async function main() {
   if (oneshot) {
     const stdinText = process.stdin.isTTY ? "" : await Bun.stdin.text();
     const input = prependToInput(prefix, fileContent, stdinText);
-    await runOneshot(client, model, { systemPrompt, input });
+    await runOneshot(client, selectedModel, { systemPrompt, input });
   } else {
     await readLines(async (input) => {
-      await runOneshot(client, model, { systemPrompt, input });
+      await runOneshot(client, selectedModel, { systemPrompt, input });
     });
   }
 }
