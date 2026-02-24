@@ -3,20 +3,10 @@
  * Send a Pushover notification. Credentials from env or Bun secrets (getSecret).
  * Port of default/bin/pushover-send.
  */
-import { getSecret } from "./lib/secrets.js";
+import { getPushoverCredentials } from "./lib/secrets.js";
 import { send } from "./lib/pushover.js";
 
 const args = process.argv.slice(2);
-
-async function getCredentials() {
-  const userKey = await getSecret("pushover-user-key", "PUSHOVER_USER_KEY");
-  const appToken = await getSecret(
-    "pushover-personal-token",
-    "PUSHOVER_PERSONAL_TOKEN",
-    "PUSHOVER_APP_TOKEN",
-  );
-  return { userKey, appToken };
-}
 
 /**
  * Parse curl-style -d "key=value" or -d key=value from args into a form object.
@@ -47,7 +37,7 @@ async function main() {
     args.length === 0 || args[0]?.startsWith("-")
       ? parseFormArgs(args)
       : { message: args.join(" ") };
-  const creds = await getCredentials();
+  const creds = await getPushoverCredentials("personal");
   await send(form, creds);
 }
 

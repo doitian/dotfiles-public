@@ -3,20 +3,10 @@
  * Run a command and send a Pushover notification with result and duration.
  * Port of default/bin/pushover-exec.
  */
-import { getSecret } from "./lib/secrets.js";
+import { getPushoverCredentials } from "./lib/secrets.js";
 import { send } from "./lib/pushover.js";
 
 const HOST = process.env.HOST || process.env.HOSTNAME || "";
-
-async function getCredentials() {
-  const userKey = await getSecret("pushover-user-key", "PUSHOVER_USER_KEY");
-  const appToken = await getSecret(
-    "pushover-personal-token",
-    "PUSHOVER_PERSONAL_TOKEN",
-    "PUSHOVER_APP_TOKEN",
-  );
-  return { userKey, appToken };
-}
 
 async function runCommand(argv) {
   const proc = Bun.spawn(argv, {
@@ -50,7 +40,7 @@ async function main() {
   const times = formatDuration(dtSec);
   const hostSuffix = HOST ? ` on ${HOST}` : "";
 
-  const creds = await getCredentials();
+  const creds = await getPushoverCredentials("personal");
   const title = `exec ${argv.join(" ")}`;
   if (exitCode === 0) {
     await send({ title, message: `Succeeded${hostSuffix} in ${times}` }, creds);

@@ -1,27 +1,9 @@
 /**
  * Shared OpenAI client setup and streaming completion for CLI scripts.
- * Reads API key, base URL, and model from environment variables, with optional
- * defaults (e.g. from build-time config) passed by the caller.
  */
 import { OpenAI } from "openai";
 
-/**
- * Create an OpenAI client and resolve model. Exits with code 1 if API key is missing.
- * @param {{ apiKey?: string, baseURL?: string, model?: string }} [defaults] – Optional defaults (env wins when set).
- * @returns {{ client: OpenAI, model: string }}
- */
-export function getOpenAIClient(defaults = {}) {
-  const apiKey = process.env.OPENAI_API_KEY ?? defaults.apiKey;
-  const baseURL =
-    process.env.OPENAI_BASE_URL ?? defaults.baseURL ?? "https://api.openai.com";
-  const model = process.env.OPENAI_MODEL ?? defaults.model ?? "gpt-4o-mini";
-  if (!apiKey) {
-    console.error("Missing API key: set OPENAI_API_KEY.");
-    process.exit(1);
-  }
-  const client = new OpenAI({ apiKey, baseURL });
-  return { client, model };
-}
+export { OpenAI };
 
 /**
  * Run streaming chat completion; write content deltas to output stream.

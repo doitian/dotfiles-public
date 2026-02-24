@@ -2,7 +2,7 @@
  * Credentials via Bun Secrets API (env fallback, optional TTY prompt).
  * Service name used for Bun.secrets get/set/delete.
  */
-import { secrets } from "bun";
+import { secrets, $ } from "bun";
 
 export const SERVICE_NAME = "ian-bin";
 
@@ -38,4 +38,47 @@ export async function getSecret(secretName, ...envVarNames) {
   throw new Error(
     `Missing secret "${secretName}" (set one of: ${envVarNames.join(", ")}, or run interactively to store)`,
   );
+}
+
+export async function getPushoverCredentials(app) {
+  const appUpperCase = app.toUpperCase();
+  const userKey = await getSecret("pushover-user-key", "PUSHOVER_USER_KEY");
+  const appToken = await getSecret(
+    `pushover-${app}-token`,
+    `PUSHOVER_${appUpperCase}_TOKEN`,
+    "PUSHOVER_APP_TOKEN",
+  );
+  return { userKey, appToken };
+}
+
+export async function getOpenAICredentials() {
+  const apiKey = await getSecret("openai-api-key", "OPENAI_API_KEY");
+  const baseURL = await getSecret("openai-base-url", "OPENAI_BASE_URL");
+  const model =
+    (await getSecret("openai-model", "OPENAI_MODEL")) ?? "gpt-4o-mini";
+  return { apiKey, baseURL, model };
+}
+
+export async function gopassPassword(name) {
+  return await $`gopass show -o ${name}`.text()
+}
+
+export async function gopass(name) {
+  let password = null;
+  const fields = new Map();
+  for await (const line of $`gopass show -f ${name}`.lines()) {
+    if (!password) {
+      password = line;
+    } else {
+      const idx = line.indexOf(": ");
+      if (idx !== -1) {
+        fields.set(line.slice(0, idx), line.slice(idx + 2));
+      }
+    }
+  }
+  return { password, fields };
+}
+
+export async function gopassFields(name) {
+  return (await gopass(name)).fields
 }

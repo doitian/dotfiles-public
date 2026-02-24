@@ -12,8 +12,8 @@ import { join } from "node:path";
 import { parseArgs as parseArgsUtil } from "node:util";
 import { home } from "./lib/env.js";
 import { readLines } from "./lib/io.js";
-import { getOpenAIClient, runOneshot } from "./lib/openai.js";
-import { getSecret } from "./lib/secrets.js";
+import { OpenAI, runOneshot } from "./lib/openai.js";
+import { getOpenAICredentials, getPushoverCredentials } from "./lib/secrets.js";
 
 const USAGE = `Usage: ai-polish [options] [instruction...]
 
@@ -80,17 +80,8 @@ function prependToInput(prefix, fileContent, input) {
 async function main() {
   const { file, prefix } = parseArgs();
 
-  const apiKey = await getSecret("openai-api-key", "OPENAI_API_KEY");
-  const baseURL =
-    (await getSecret("openai-base-url", "OPENAI_BASE_URL")) ??
-    "https://api.openai.com";
-  const model =
-    (await getSecret("openai-model", "OPENAI_MODEL")) ?? "gpt-4o-mini";
-  const { client, model: resolvedModel } = getOpenAIClient({
-    apiKey,
-    baseURL,
-    model,
-  });
+  const { apiKey, baseURL, model } = await getOpenAICredentials();
+  const client = new OpenAI({ apiKey, baseURL });
 
   const [systemPrompt, fileContent] = await Promise.all([
     loadPolishPrompt(),
@@ -101,10 +92,10 @@ async function main() {
   if (oneshot) {
     const stdinText = process.stdin.isTTY ? "" : await Bun.stdin.text();
     const input = prependToInput(prefix, fileContent, stdinText);
-    await runOneshot(client, resolvedModel, { systemPrompt, input });
+    await runOneshot(client, model, { systemPrompt, input });
   } else {
     await readLines(async (input) => {
-      await runOneshot(client, resolvedModel, { systemPrompt, input });
+      await runOneshot(client, model, { systemPrompt, input });
     });
   }
 }

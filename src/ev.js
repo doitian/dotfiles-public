@@ -6,17 +6,7 @@
  * 2 args (entry, field): print line starting with "field: " (content after prefix).
  */
 import { $ } from "bun";
-
-async function getFields(entry) {
-  const map = new Map();
-  for await (const line of $`gopass show -f ${entry}`.lines()) {
-    const idx = line.indexOf(": ");
-    if (idx !== -1) {
-      map.set(line.slice(0, idx), line.slice(idx + 2).trim());
-    }
-  }
-  return map;
-}
+import { gopassPassword, gopassFields } from "./lib/secrets.js";
 
 async function main() {
   const args = process.argv.slice(2);
@@ -28,10 +18,12 @@ async function main() {
     const entryChoice = (await $`gopass list -f | fzf`.text()).trim();
     if (!entryChoice) return;
 
-    const fieldNames = new Response(
-      ["PASS", ...(await getFields(entryChoice)).keys()].join("\n"),
-    );
-    const fieldChoice = (await $`fzf < ${fieldNames}`.text()).trim();
+    const fieldChoiceFzf = Bun.spawn(["fzf"], { stdin: "pipe" });
+    fieldChoiceFzf.stdin.write("PASS\n");
+    fieldChoiceFzf.stdin.write(Array.from((await gopassFields(entryChoice)).keys()).join("\n"));
+    fieldChoiceFzf.stdin.end();
+
+    const fieldChoice = (await fieldChoiceFzf.stdout.text()).trim();
 
     if (fieldChoice && fieldChoice !== "PASS") {
       console.log(`ev ${entryChoice} ${$.escape(fieldChoice)}`);
@@ -39,12 +31,12 @@ async function main() {
       console.log(`ev ${entryChoice}`);
     }
   } else if (args.length === 1) {
-    Bun.stdout.write(await $`gopass show -o ${args[0]}`.arrayBuffer());
+    await Bun.stdout.write(await gopassPassword(args[0]));
   } else {
-    const fields = await getFields(args[0]);
+    const fields = await gopassFields(args[0]);
     const fieldValue = fields.get(args[1]);
     if (fieldValue) {
-      Bun.stdout.write(fieldValue);
+      await Bun.stdout.write(fieldValue);
     } else {
       console.error(`Field "${args[1]}" not found in entry`);
       process.exit(1);
