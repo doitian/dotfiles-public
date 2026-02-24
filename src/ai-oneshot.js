@@ -3,61 +3,64 @@
  * One-shot OpenAI chat completion: read user content from stdin, optional system
  * prompt from -s/--system, stream response to stdout.
  *
- * TTY mode: read lines in a loop, send each with streaming response.
- * Pipe mode: read all stdin, send once, exit.
+ * With -f/--file or positional args: read stdin once (or skip on TTY), send, exit.
+ * Otherwise: interactive line mode.
+ *
+ * Positional args are prepended to the user prompt.
  */
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
-import { fileURLToPath } from "node:url";
-import { readLines, readStdin } from "./lib/io.js";
+import { parseArgs as parseArgsUtil } from "node:util";
+import { readLines } from "./lib/io.js";
 import { getOpenAIClient, runOneshot } from "./lib/openai.js";
 import { getSecret } from "./lib/secrets.js";
 
-function parseArgs(argv) {
-    let systemPrompt = null;
-    let file = null;
-    const rest = [];
-    for (let i = 0; i < argv.length; i++) {
-        const arg = argv[i];
-        if (arg === "-s" || arg === "--system") {
-            systemPrompt = argv[i + 1] ?? "";
-            i += 1;
-            continue;
-        }
-        if (arg.startsWith("--system=")) {
-            systemPrompt = arg.slice("--system=".length);
-            continue;
-        }
-        if (arg === "-f" || arg === "--file") {
-            file = argv[i + 1] ?? "";
-            i += 1;
-            continue;
-        }
-        if (arg.startsWith("--file=")) {
-            file = arg.slice("--file=".length);
-            continue;
-        }
-        rest.push(arg);
+const USAGE = `Usage: ai-oneshot [options] [user prompt...]
+
+Send stdin (or piped input) to OpenAI, stream response to stdout.
+
+Options:
+  -f, --file <path>     Prepend contents of file to the user message
+  -s, --system <text>  System prompt (instruction for the model)
+  -h, --help            Show this help
+`;
+
+function parseArgs() {
+    const { values, positionals } = parseArgsUtil({
+        allowPositionals: true,
+        options: {
+            file: { type: "string", short: "f" },
+            help: { type: "boolean", short: "h" },
+            system: { type: "string", short: "s" },
+        },
+    });
+    if (values.help) {
+        console.log(USAGE.trim());
+        process.exit(0);
     }
-    return { systemPrompt, file, rest };
+    const prefix = positionals.length ? positionals.join(" ") : "";
+    return {
+        file: values.file ?? null,
+        prefix,
+        systemPrompt: values.system ?? null,
+    };
 }
 
-function loadFileContent(filePath) {
+async function loadFileContent(filePath) {
     if (!filePath) return null;
-    try {
-        return readFileSync(filePath, "utf8");
-    } catch (err) {
-        if (err?.code === "ENOENT") {
-            console.error(`File not found: ${filePath}`);
-            process.exit(1);
-        }
-        throw err;
+    const file = Bun.file(filePath);
+    if (!(await file.exists())) {
+        console.error(`File not found: ${filePath}`);
+        process.exit(1);
     }
+    return await file.text();
+}
+
+function prependToInput(prefix, fileContent, input) {
+    const parts = [prefix, fileContent, input].filter(Boolean);
+    return parts.join("\n\n");
 }
 
 async function main() {
-    const argv = process.argv.slice(2);
-    const { systemPrompt, file } = parseArgs(argv);
+    const { file, prefix, systemPrompt } = parseArgs();
 
     const apiKey = await getSecret("openai-api-key", "OPENAI_API_KEY");
     const baseURL =
@@ -70,25 +73,17 @@ async function main() {
         model,
     });
 
-    let fileContent = loadFileContent(file);
+    const fileContent = await loadFileContent(file);
 
-    if (process.stdin.isTTY) {
-        // Line mode: read lines in a loop
+    const oneshot = file || prefix;
+    if (oneshot) {
+        const stdinText = process.stdin.isTTY ? "" : await Bun.stdin.text();
+        const input = prependToInput(prefix, fileContent, stdinText);
+        await runOneshot(client, resolvedModel, { systemPrompt, input });
+    } else {
         await readLines(async (input) => {
-            if (fileContent) {
-                // First line: send file content along with input, then clear
-                input = `${fileContent}\n\n${input}`;
-                fileContent = null;
-            }
             await runOneshot(client, resolvedModel, { systemPrompt, input });
         });
-    } else {
-        // Pipe mode: read all stdin, send once
-        let input = await readStdin();
-        if (fileContent) {
-            input = `${fileContent}\n\n${input}`;
-        }
-        await runOneshot(client, resolvedModel, { systemPrompt, input });
     }
 }
 
