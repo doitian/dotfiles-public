@@ -10,7 +10,7 @@ import { join, resolve } from "node:path";
 
 const distDir = resolve(process.cwd(), "dist");
 if (!existsSync(distDir)) {
-    mkdirSync(distDir, { recursive: true });
+  mkdirSync(distDir, { recursive: true });
 }
 
 // Direct .js files under src/ to compile
@@ -18,81 +18,81 @@ const srcDir = join(process.cwd(), "src");
 const entries = [];
 const glob = new Glob("*.js");
 for await (const file of glob.scan(srcDir)) {
-    entries.push({
-        name: file.slice(0, -3),
-        sourcePath: join(srcDir, file),
-    });
+  entries.push({
+    name: file.slice(0, -3),
+    sourcePath: join(srcDir, file),
+  });
 }
 const privateSrcDir = join(process.cwd(), "..", "private", "src");
 if (existsSync(privateSrcDir)) {
-    for await (const file of glob.scan(privateSrcDir)) {
-        entries.push({
-            name: file.slice(0, -3),
-            sourcePath: join(privateSrcDir, file),
-        });
-    }
+  for await (const file of glob.scan(privateSrcDir)) {
+    entries.push({
+      name: file.slice(0, -3),
+      sourcePath: join(privateSrcDir, file),
+    });
+  }
 }
 
 const libDir = join(process.cwd(), "src", "lib");
 
 /** Return the newest mtime among source entry, mise.local.toml (if any), and all files in src/lib. */
 function getNewestInputMtime(sourcePath) {
-    let newest = 0;
-    try {
-        const s = statSync(sourcePath);
-        if (s.mtimeMs > newest) newest = s.mtimeMs;
-    } catch (_) { }
-    if (existsSync(libDir)) {
-        for (const f of readdirSync(libDir)) {
-            const p = join(libDir, f);
-            try {
-                const st = statSync(p);
-                if (st.mtimeMs > newest) newest = st.mtimeMs;
-            } catch (_) { }
-        }
+  let newest = 0;
+  try {
+    const s = statSync(sourcePath);
+    if (s.mtimeMs > newest) newest = s.mtimeMs;
+  } catch (_) { }
+  if (existsSync(libDir)) {
+    for (const f of readdirSync(libDir)) {
+      const p = join(libDir, f);
+      try {
+        const st = statSync(p);
+        if (st.mtimeMs > newest) newest = st.mtimeMs;
+      } catch (_) { }
     }
-    return newest;
+  }
+  return newest;
 }
 
 /** Return outfile mtime in ms, or 0 if missing. Handles .exe on Windows. */
 function getOutputMtime(outfile) {
-    for (const p of [outfile, outfile + ".exe"]) {
-        if (existsSync(p)) return statSync(p).mtimeMs;
-    }
-    return 0;
+  for (const p of [outfile, outfile + ".exe"]) {
+    if (existsSync(p)) return statSync(p).mtimeMs;
+  }
+  return 0;
 }
 
 async function buildOne({ sourcePath, outName, outdir = distDir }) {
-    const result = await Bun.build({
-        entrypoints: [sourcePath],
-        outdir,
-        naming: outName,
-        minify: true,
-        compile: true,
-    });
-    if (!result.success) {
-        console.error(result.logs);
-        process.exit(1);
-    }
-    return result.outputs[0].path;
+  const result = await Bun.build({
+    entrypoints: [sourcePath],
+    outdir,
+    naming: outName,
+    minify: true,
+    compile: true,
+  });
+  if (!result.success) {
+    console.error(result.logs);
+    process.exit(1);
+  }
+  return result.outputs[0].path;
 }
 
 async function buildIfStale(entryList, outDir) {
-    if (!existsSync(outDir)) {
-        mkdirSync(outDir, { recursive: true });
+  if (!existsSync(outDir)) {
+    mkdirSync(outDir, { recursive: true });
+  }
+  for (const { name, sourcePath } of entryList) {
+    const outfile = join(outDir, name);
+    const outMtime = getOutputMtime(outfile);
+    const newestInput = getNewestInputMtime(sourcePath);
+    if (outMtime >= newestInput && outMtime > 0) {
+      console.log(`Skipping ${sourcePath} (up to date)`);
+      continue;
     }
-    for (const { name, sourcePath } of entryList) {
-        const outfile = join(outDir, name);
-        const outMtime = getOutputMtime(outfile);
-        const newestInput = getNewestInputMtime(sourcePath);
-        if (outMtime >= newestInput && outMtime > 0) {
-            console.log(`Skipping ${sourcePath} (up to date)`);
-            continue;
-        }
-        console.log(`Building ${sourcePath} -> ${outfile}`);
-        const outPath = await buildOne({ sourcePath, outName: name, outdir: outDir });
-        console.log(`  -> ${outPath}`);
-    }
+    console.log(`Building ${sourcePath} -> ${outfile}`);
+    const outPath = await buildOne({ sourcePath, outName: name, outdir: outDir });
+    console.log(`  -> ${outPath}`);
+  }
 }
 
 await buildIfStale(entries, distDir);
@@ -100,11 +100,11 @@ await buildIfStale(entries, distDir);
 const miseTasksSrcDir = join(process.cwd(), "src", "mise-tasks");
 const miseTasksDistDir = join(distDir, "mise-tasks");
 if (existsSync(miseTasksSrcDir)) {
-    const miseEntries = [];
-    for await (const file of glob.scan(miseTasksSrcDir)) {
-        miseEntries.push({ name: file.slice(0, -3), sourcePath: join(miseTasksSrcDir, file) });
-    }
-    await buildIfStale(miseEntries, miseTasksDistDir);
+  const miseEntries = [];
+  for await (const file of glob.scan(miseTasksSrcDir)) {
+    miseEntries.push({ name: file.slice(0, -3), sourcePath: join(miseTasksSrcDir, file) });
+  }
+  await buildIfStale(miseEntries, miseTasksDistDir);
 }
 
 console.log("Build done.");
