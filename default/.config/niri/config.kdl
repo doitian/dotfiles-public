@@ -489,3 +489,7 @@ environment {
     // Include GNOME so Electron apps (VSCode, Edge, etc.) use gnome-keyring
     XDG_CURRENT_DESKTOP "GNOME:niri"
 }
+
+debug {
+    honor-xdg-activation-with-invalid-serial
+}
