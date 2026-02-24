@@ -1,3 +1,5 @@
+import { access, constants } from "node:fs/promises";
+
 /**
  * Async filesystem helpers.
  */
@@ -8,18 +10,22 @@
  * @returns {Promise<boolean>}
  */
 export async function exists(path) {
-	return await Bun.file(path).exists();
+    try {
+        await access(path, constants.F_OK);
+        return true;
+    } catch {
+        return false;
+    }
 }
 
 export async function touch(path) {
-	await writeIfNotExists(path, "");
+    await writeIfNotExists(path, "");
 }
 
 export async function writeIfNotExists(path, content) {
-	const file = Bun.file(path);
-	if (await file.exists()) {
-		return 0;
-	} else {
-		return await file.write(content);
-	}
+    if (await exists(path)) {
+        return 0;
+    } else {
+        return await Bun.file(path).write(content);
+    }
 }
