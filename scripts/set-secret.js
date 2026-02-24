@@ -10,17 +10,17 @@ const key = process.argv[2];
 const value = process.argv.slice(3).join(" ");
 
 if (key === undefined || process.argv.length < 4) {
-    process.stderr.write("Usage: bun run set-secret <key> <value>\n");
-    process.stderr.write("Secret names:\n");
-    for (const name of SECRET_NAMES) {
-        process.stderr.write(`  ${name}\n`);
-    }
-    process.exit(1);
+  process.stderr.write("Usage: bun run set-secret <key> <value>\n");
+  process.stderr.write("Secret names:\n");
+  for (const name of SECRET_NAMES) {
+    process.stderr.write(`  ${name}\n`);
+  }
+  process.exit(1);
 }
 
 await secrets.set({
-    service: SERVICE_NAME,
-    name: key,
-    value,
+  service: SERVICE_NAME,
+  name: key,
+  value,
 });
 console.log(`Set: ${key}`);

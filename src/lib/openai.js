@@ -11,16 +11,16 @@ import { OpenAI } from "openai";
  * @returns {{ client: OpenAI, model: string }}
  */
 export function getOpenAIClient(defaults = {}) {
-	const apiKey = process.env.OPENAI_API_KEY ?? defaults.apiKey;
-	const baseURL =
-		process.env.OPENAI_BASE_URL ?? defaults.baseURL ?? "https://api.openai.com";
-	const model = process.env.OPENAI_MODEL ?? defaults.model ?? "gpt-4o-mini";
-	if (!apiKey) {
-		console.error("Missing API key: set OPENAI_API_KEY.");
-		process.exit(1);
-	}
-	const client = new OpenAI({ apiKey, baseURL });
-	return { client, model };
+  const apiKey = process.env.OPENAI_API_KEY ?? defaults.apiKey;
+  const baseURL =
+    process.env.OPENAI_BASE_URL ?? defaults.baseURL ?? "https://api.openai.com";
+  const model = process.env.OPENAI_MODEL ?? defaults.model ?? "gpt-4o-mini";
+  if (!apiKey) {
+    console.error("Missing API key: set OPENAI_API_KEY.");
+    process.exit(1);
+  }
+  const client = new OpenAI({ apiKey, baseURL });
+  return { client, model };
 }
 
 /**
@@ -32,32 +32,32 @@ export function getOpenAIClient(defaults = {}) {
  * @throws {Error} on API error or when finish_reason is content_filter/refusal
  */
 export async function streamCompletion(client, model, messages, options = {}) {
-	const { outputStream = process.stdout, temperature = 0.3 } = options;
-	const stream = await client.chat.completions.create({
-		model,
-		messages,
-		temperature,
-		stream: true,
-	});
+  const { outputStream = process.stdout, temperature = 0.3 } = options;
+  const stream = await client.chat.completions.create({
+    model,
+    messages,
+    temperature,
+    stream: true,
+  });
 
-	let lastChunk = null;
-	let lastChar = "";
-	for await (const chunk of stream) {
-		const delta = chunk.choices?.[0]?.delta?.content;
-		if (delta != null && delta !== "") {
-			outputStream.write(delta);
-			lastChar = delta.slice(-1);
-		}
-		lastChunk = chunk;
-	}
+  let lastChunk = null;
+  let lastChar = "";
+  for await (const chunk of stream) {
+    const delta = chunk.choices?.[0]?.delta?.content;
+    if (delta != null && delta !== "") {
+      outputStream.write(delta);
+      lastChar = delta.slice(-1);
+    }
+    lastChunk = chunk;
+  }
 
-	const finishReason = lastChunk?.choices?.[0]?.finish_reason;
-	if (finishReason === "content_filter" || finishReason === "refusal") {
-		const err = new Error("Model refused or content filtered.");
-		err.finishReason = finishReason;
-		throw err;
-	}
-	if (lastChar !== "\n") outputStream.write("\n");
+  const finishReason = lastChunk?.choices?.[0]?.finish_reason;
+  if (finishReason === "content_filter" || finishReason === "refusal") {
+    const err = new Error("Model refused or content filtered.");
+    err.finishReason = finishReason;
+    throw err;
+  }
+  if (lastChar !== "\n") outputStream.write("\n");
 }
 
 /**
@@ -69,14 +69,14 @@ export async function streamCompletion(client, model, messages, options = {}) {
  * @throws {Error} when input is empty, or on API/refusal from streamCompletion
  */
 export async function runOneshot(client, model, options) {
-	const { systemPrompt, input } = options;
-	if (!input.trim()) {
-		throw new Error("No input on stdin.");
-	}
-	const messages = [];
-	if (systemPrompt != null && systemPrompt.trim() !== "") {
-		messages.push({ role: "system", content: systemPrompt.trim() });
-	}
-	messages.push({ role: "user", content: input });
-	await streamCompletion(client, model, messages);
+  const { systemPrompt, input } = options;
+  if (!input.trim()) {
+    throw new Error("No input on stdin.");
+  }
+  const messages = [];
+  if (systemPrompt != null && systemPrompt.trim() !== "") {
+    messages.push({ role: "system", content: systemPrompt.trim() });
+  }
+  messages.push({ role: "user", content: input });
+  await streamCompletion(client, model, messages);
 }

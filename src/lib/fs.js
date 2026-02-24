@@ -10,22 +10,22 @@ import { access, constants } from "node:fs/promises";
  * @returns {Promise<boolean>}
  */
 export async function exists(path) {
-    try {
-        await access(path, constants.F_OK);
-        return true;
-    } catch {
-        return false;
-    }
+  try {
+    await access(path, constants.F_OK);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export async function touch(path) {
-    await writeIfNotExists(path, "");
+  await writeIfNotExists(path, "");
 }
 
 export async function writeIfNotExists(path, content) {
-    if (await exists(path)) {
-        return 0;
-    } else {
-        return await Bun.file(path).write(content);
-    }
+  if (await exists(path)) {
+    return 0;
+  } else {
+    return await Bun.file(path).write(content);
+  }
 }

@@ -6,76 +6,76 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { $ } from "bun";
 
 async function getMiseShimsPath() {
-	const r = await $`mise activate fish --shims`.quiet().nothrow();
-	const stdout = (r.stdout?.toString() ?? "").trim();
-	if (r.exitCode !== 0 || !stdout) return null;
-	const re = /^fish_add_path\s+.*\s+(?:'([^']+)'|(\S+))$/;
-	for (const line of stdout.split("\n")) {
-		const m = line.match(re);
-		if (m) {
-			const path = m[1] || m[2] || "";
-			if (path.includes("shims")) return path;
-		}
-	}
-	return null;
+  const r = await $`mise activate fish --shims`.quiet().nothrow();
+  const stdout = (r.stdout?.toString() ?? "").trim();
+  if (r.exitCode !== 0 || !stdout) return null;
+  const re = /^fish_add_path\s+.*\s+(?:'([^']+)'|(\S+))$/;
+  for (const line of stdout.split("\n")) {
+    const m = line.match(re);
+    if (m) {
+      const path = m[1] || m[2] || "";
+      if (path.includes("shims")) return path;
+    }
+  }
+  return null;
 }
 
 function detectPlatform() {
-	if (process.platform === "darwin") return "osx";
-	if (process.platform === "win32" || process.platform === "cygwin")
-		return "windows";
-	return "linux";
+  if (process.platform === "darwin") return "osx";
+  if (process.platform === "win32" || process.platform === "cygwin")
+    return "windows";
+  return "linux";
 }
 
 async function getMiseEnv() {
-	try {
-		const r = await $`mise env -J`.quiet().nothrow();
-		const stdout = (r.stdout?.toString() ?? "").trim();
-		if (r.exitCode !== 0 || !stdout) return {};
-		return JSON.parse(stdout);
-	} catch {
-		return {};
-	}
+  try {
+    const r = await $`mise env -J`.quiet().nothrow();
+    const stdout = (r.stdout?.toString() ?? "").trim();
+    if (r.exitCode !== 0 || !stdout) return {};
+    return JSON.parse(stdout);
+  } catch {
+    return {};
+  }
 }
 
 async function main() {
-	const shimsPath = await getMiseShimsPath();
-	if (!shimsPath) {
-		console.error("Error: Could not find mise shims path");
-		process.exit(1);
-	}
-	const platform = detectPlatform();
-	mkdirSync(".vscode", { recursive: true });
-	const settingsPath = ".vscode/settings.json";
+  const shimsPath = await getMiseShimsPath();
+  if (!shimsPath) {
+    console.error("Error: Could not find mise shims path");
+    process.exit(1);
+  }
+  const platform = detectPlatform();
+  mkdirSync(".vscode", { recursive: true });
+  const settingsPath = ".vscode/settings.json";
 
-	let settings = {};
-	if (existsSync(settingsPath)) {
-		try {
-			settings = JSON.parse(readFileSync(settingsPath, "utf8"));
-		} catch (_) {}
-	}
+  let settings = {};
+  if (existsSync(settingsPath)) {
+    try {
+      settings = JSON.parse(readFileSync(settingsPath, "utf8"));
+    } catch (_) {}
+  }
 
-	const envKey = `terminal.integrated.env.${platform}`;
-	if (!settings[envKey]) settings[envKey] = {};
-	settings[envKey].PATH = `${shimsPath}:\${env:PATH}`;
+  const envKey = `terminal.integrated.env.${platform}`;
+  if (!settings[envKey]) settings[envKey] = {};
+  settings[envKey].PATH = `${shimsPath}:\${env:PATH}`;
 
-	const miseEnv = await getMiseEnv();
-	for (const [key, value] of Object.entries(miseEnv)) {
-		if (key !== "PATH" && key !== "Path") settings[envKey][key] = value;
-	}
+  const miseEnv = await getMiseEnv();
+  for (const [key, value] of Object.entries(miseEnv)) {
+    if (key !== "PATH" && key !== "Path") settings[envKey][key] = value;
+  }
 
-	if (existsSync("Cargo.toml")) {
-		settings["rust-analyzer.cargo.extraEnv"] = { ...settings[envKey] };
-		delete settings["rust-analyzer.cargo.extraEnv"].PATH;
-	}
+  if (existsSync("Cargo.toml")) {
+    settings["rust-analyzer.cargo.extraEnv"] = { ...settings[envKey] };
+    delete settings["rust-analyzer.cargo.extraEnv"].PATH;
+  }
 
-	writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + "\n");
-	console.log(
-		`Updated ${settingsPath} with mise shims path and environment variables for ${platform}: ${shimsPath}`,
-	);
+  writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + "\n");
+  console.log(
+    `Updated ${settingsPath} with mise shims path and environment variables for ${platform}: ${shimsPath}`,
+  );
 }
 
 main().catch((err) => {
-	console.error(err);
-	process.exit(1);
+  console.error(err);
+  process.exit(1);
 });

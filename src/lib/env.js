@@ -4,5 +4,5 @@
 
 /** User home directory (USERPROFILE on Windows, HOME otherwise). */
 export function home() {
-	return process.env.USERPROFILE || process.env.HOME || "";
+  return process.env.USERPROFILE || process.env.HOME || "";
 }
