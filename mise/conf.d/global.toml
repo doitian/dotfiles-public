@@ -57,7 +57,7 @@ run_windows = "scoop cleanup -a -k"
 hide = true
 description = "Install cursor-agent cli"
 dir = "~"
-shell = "{% if os() == 'windows' %}pwsh -NoProfile -NoLogo{% else %}bash -c{% endif %}"
+shell = "{% if os() == 'windows' %}pwsh -NoLogo -NoProfile -Command{% else %}bash -c -o errexit{% endif %}"
 run = "curl https://cursor.com/install -fsS | bash"
 run_windows = "irm 'https://cursor.com/install?win32=true' | iex"
 
@@ -115,7 +115,7 @@ dir = "{{cwd}}"
 run = [
   "touch mise.toml",
   "mise tasks add pre-commit:typos -- typos",
-  "mise tasks add pre-commit -d 'pre-commit:*'",
+  "mise tasks add pre-commit -d pre-commit:*",
 ]
 
 [tasks."preset:node"]
@@ -124,13 +124,14 @@ description = "Setup node project"
 dir = "{{cwd}}"
 run = [
   "touch mise.toml",
-  "{% raw %}mise config set -f mise.toml env._.path '{{config_root}}/node_modules/.bin' -t list{% endraw %}",
+  "{% raw %}mise config set -f mise.toml env._.path {{config_root}}/node_modules/.bin -t list{% endraw %}",
 ]
 
 [tasks."preset:ghtoken"]
 hide = true
 description = "Use gh auth token"
 dir = "{{cwd}}"
+shell = "sh -c -o errexit"
 run = [
   "touch mise.toml",
   "mise config set -f mise.toml env.GITHUB_TOKEN.value '{{ exec(command='gh auth token') }}'",
@@ -160,7 +161,17 @@ run = "mise tasks add cursor:pushover:on:stop -- cursor-pushover-on-stop"
 [tasks."preset:mise:windows:sh"]
 hide = true
 description = "Use sh.exe as mise default shell for Windows"
+shell = "sh -c -o errexit"
 run = [
-  "mise config set -f mise.toml settings.windows_default_inline_shell_args 'sh.exe -c -o errexit'",
-  "mise config set -f mise.toml settings.windows_default_file_shell_args 'sh.exe'",
+  'mise config set -f mise.toml settings.windows_default_inline_shell_args "sh.exe -c -o errexit"',
+  'mise config set -f mise.toml settings.windows_default_file_shell_args "sh.exe"',
+]
+
+[tasks."preset:mise:windows:pwsh"]
+hide = true
+description = "Use pwsh as mise default shell for Windows"
+shell = "sh -c -o errexit"
+run = [
+  "mise config set -f mise.toml settings.windows_default_inline_shell_args 'pwsh -NoLogo -NoProfile -Command'",
+  "mise config set -f mise.toml settings.windows_default_file_shell_args 'pwsh -NoLogo -NoProfile'",
 ]
