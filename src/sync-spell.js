@@ -68,7 +68,7 @@ async function main() {
       const arr = obsidianData.userDictionary;
       if (Array.isArray(arr)) for (const w of arr) merged.add(w);
       obsidianLoaded = true;
-    } catch (_) {}
+    } catch (_) { }
   }
 
   const sorted = [...merged].sort((a, b) =>

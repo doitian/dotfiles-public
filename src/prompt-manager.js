@@ -28,7 +28,7 @@ async function discoverSkillsPrompts() {
         prompts[`skill/${name}`] = { type: "markdown", path: skillPath };
       }
     }
-  } catch (_) {}
+  } catch (_) { }
   return prompts;
 }
 

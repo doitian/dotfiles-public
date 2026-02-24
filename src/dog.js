@@ -24,9 +24,9 @@ async function preview(path) {
     if (stat.isSymbolicLink()) {
       try {
         resolved = await realpath(path);
-      } catch (_) {}
+      } catch (_) { }
     }
-  } catch (_) {}
+  } catch (_) { }
 
   const pathExists = await exists(path);
   if (!pathExists) {
@@ -45,7 +45,7 @@ async function preview(path) {
     const r = await $`file --mime ${resolved}`.quiet().nothrow();
     const stdout = (r.stdout?.toString() ?? "").trim();
     if (stdout) mime = stdout.replace(/^[^:]+:\s*/, "").trim();
-  } catch (_) {}
+  } catch (_) { }
 
   const isImage = mime.startsWith("image/");
   const weztermOk =

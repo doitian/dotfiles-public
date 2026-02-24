@@ -52,7 +52,7 @@ async function main() {
   if (existsSync(settingsPath)) {
     try {
       settings = JSON.parse(readFileSync(settingsPath, "utf8"));
-    } catch (_) {}
+    } catch (_) { }
   }
 
   const envKey = `terminal.integrated.env.${platform}`;

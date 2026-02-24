@@ -11,7 +11,7 @@ async function main() {
   try {
     const data = JSON.parse(raw);
     if (data && typeof data.status === "string") status = data.status;
-  } catch (_) {}
+  } catch (_) { }
   const message = `status: ${status}`;
   await $`agent-pushover -t "Cursor Agent Stopped" ${message}`
     .quiet()

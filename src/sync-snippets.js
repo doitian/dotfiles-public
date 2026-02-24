@@ -26,14 +26,14 @@ const PRIVATE_REPO = join(REPOS, "private");
 
 const snippetsDirs = isWin
   ? [
-      join(SCOOP, "persist", "vscode", "data", "user-data", "User", "snippets"),
-      join(SCOOP, "persist", "cursor", "data", "user-data", "User", "snippets"),
-      join(home(), "AppData", "Roaming", "Cursor", "User", "snippets"),
-    ]
+    join(SCOOP, "persist", "vscode", "data", "user-data", "User", "snippets"),
+    join(SCOOP, "persist", "cursor", "data", "user-data", "User", "snippets"),
+    join(home(), "AppData", "Roaming", "Cursor", "User", "snippets"),
+  ]
   : [
-      join(home(), ".config", "Code", "User", "snippets"),
-      join(home(), ".config", "Cursor", "User", "snippets"),
-    ];
+    join(home(), ".config", "Code", "User", "snippets"),
+    join(home(), ".config", "Cursor", "User", "snippets"),
+  ];
 const targetSnippets = join(PUBLIC_REPO, "nvim", "snippets");
 const globalSnippets = join(targetSnippets, "global.code-snippets");
 const allJson = join(targetSnippets, "all.json");
@@ -89,7 +89,7 @@ async function main() {
       const content = await readFile(f, "utf8");
       try {
         Object.assign(merged, JSON.parse(content));
-      } catch (_) {}
+      } catch (_) { }
     }
     await writeFile(privateOut, JSON.stringify(merged, null, 2), "utf8");
   }
