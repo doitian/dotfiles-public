@@ -6,7 +6,8 @@
   "scripts": {
     "build": "bun run build.js",
     "clear-secrets": "bun run scripts/clear-secrets.js",
-    "ev-secrets": "bun run scripts/ev-secrets.js"
+    "ev-secrets": "bun run scripts/ev-secrets.js",
+    "set-secret": "bun run scripts/set-secret.js"
   },
   "engines": {
     "bun": ">=1.0.0"
