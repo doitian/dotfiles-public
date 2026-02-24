@@ -187,7 +187,7 @@ spawn-at-startup "~/.config/niri/scripts/niri-swaybg.sh"
 
 binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
-    Mod+Slash { spawn "~/.config/niri/scripts/niri-set-workspace-name.sh"; }
+    Mod+Slash hotkey-overlay-title="Rename Workspace" { spawn "~/.config/niri/scripts/niri-set-workspace-name.sh"; }
 
     Mod+Return hotkey-overlay-title="Open a Terminal" { spawn "kitty"; }
     Mod+B hotkey-overlay-title="Run a Browser" { spawn "microsoft-edge-stable"; }
