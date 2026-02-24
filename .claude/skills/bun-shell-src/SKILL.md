@@ -31,17 +31,12 @@ if (r.exitCode === 0) { /* use r.stdout */ }
 
 **Capture text or fail:**
 ```js
-const r = await $`gh api ...`.quiet().nothrow();
-if (r.exitCode !== 0) throw new Error(`gh failed: ${r.stderr?.toString() ?? ""}`);
-const out = (r.stdout?.toString() ?? "").trim();
+const out = (await $`gh api ...`.text()).trim();
 ```
 
 **Helper for “command exists”:**
 ```js
-async function hasCommand(cmd, args = []) {
-  const r = await $`${cmd} ${args}`.quiet().nothrow().catch(() => ({ exitCode: 1 }));
-  return r.exitCode === 0;
-}
+Bun.which(cmd)
 ```
 
 ## API summary

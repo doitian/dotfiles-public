@@ -1,37 +1,27 @@
 #!/usr/bin/env bun
-import { $ } from "bun";
 import { spawnSyncOrExit } from "../lib/shell";
 
-async function hasCommand(cmd) {
-  const check = `command -v ${$.escape(cmd)}`;
-  const r = await $`sh -c ${check}`.quiet().nothrow();
-  return r.exitCode === 0;
-}
-
-async function main() {
-  if (await hasCommand("apt")) {
+function main() {
+  if (Bun.which("apt")) {
     spawnSyncOrExit("sudo", "apt", "update");
     spawnSyncOrExit("sudo", "apt", "upgrade", "-y");
   }
-  if (await hasCommand("brew")) {
+  if (Bun.which("brew")) {
     spawnSyncOrExit("brew", "update");
     spawnSyncOrExit("brew", "upgrade");
   }
-  if (await hasCommand("paru")) {
+  if (Bun.which("paru")) {
     spawnSyncOrExit("paru", "-Syu");
-  } else if (await hasCommand("pacman")) {
+  } else if (hasCommand("pacman")) {
     spawnSyncOrExit("sudo", "pacman", "-Syu");
   }
 
-  if (await hasCommand("uv")) {
+  if (Bun.which("uv")) {
     spawnSyncOrExit("mise", "run", "g:up:uv");
   }
-  if (await hasCommand("bun")) {
+  if (Bun.which("bun")) {
     spawnSyncOrExit("mise", "run", "g:up:bun");
   }
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+main();
