@@ -139,6 +139,7 @@ layer-rule {
 }
 
 overview {
+    zoom 0.25
     workspace-shadow {
         off
     }
