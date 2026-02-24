@@ -159,7 +159,7 @@ run = "mise tasks add cursor:pushover:on:stop -- cursor-pushover-on-stop"
 
 [tasks."preset:mise:windows:sh"]
 hide = true
-description = "Use sh.exe as mise default shell Git Windows"
+description = "Use sh.exe as mise default shell for Windows"
 run = [
   "mise config set -f mise.toml settings.windows_default_inline_shell_args 'sh.exe -c -o errexit'",
   "mise config set -f mise.toml settings.windows_default_file_shell_args 'sh.exe'",
