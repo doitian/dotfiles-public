@@ -1,13 +1,11 @@
 #!/usr/bin/env bun
-import { writeFileSync } from "node:fs";
-import { exists } from "../lib/fs.js";
+import { writeIfNotExists } from "../lib/fs";
 
 async function main() {
-    if (await exists("Cargo.toml")) return;
-    writeFileSync("Cargo.toml", '[workspace]\nresolver = "3"\n');
+	await writeIfNotExists("Cargo.toml", '[workspace]\nresolver = "3"\n');
 }
 
 main().catch((err) => {
-    console.error(err);
-    process.exit(1);
+	console.error(err);
+	process.exit(1);
 });

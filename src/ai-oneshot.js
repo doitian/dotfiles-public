@@ -24,70 +24,71 @@ Options:
 `;
 
 function parseArgs() {
-    const { values, positionals } = parseArgsUtil({
-        allowPositionals: true,
-        options: {
-            file: { type: "string", short: "f" },
-            help: { type: "boolean", short: "h" },
-            system: { type: "string", short: "s" },
-        },
-    });
-    if (values.help) {
-        console.log(USAGE.trim());
-        process.exit(0);
-    }
-    const prefix = positionals.length ? positionals.join(" ") : "";
-    return {
-        file: values.file ?? null,
-        prefix,
-        systemPrompt: values.system ?? null,
-    };
+	const { values, positionals } = parseArgsUtil({
+		allowPositionals: true,
+		options: {
+			file: { type: "string", short: "f" },
+			help: { type: "boolean", short: "h" },
+			system: { type: "string", short: "s" },
+		},
+	});
+	if (values.help) {
+		console.log(USAGE.trim());
+		process.exit(0);
+	}
+	const prefix = positionals.length ? positionals.join(" ") : "";
+	return {
+		file: values.file ?? null,
+		prefix,
+		systemPrompt: values.system ?? null,
+	};
 }
 
 async function loadFileContent(filePath) {
-    if (!filePath) return null;
-    const file = Bun.file(filePath);
-    if (!(await file.exists())) {
-        console.error(`File not found: ${filePath}`);
-        process.exit(1);
-    }
-    return await file.text();
+	if (!filePath) return null;
+	const file = Bun.file(filePath);
+	if (!(await file.exists())) {
+		console.error(`File not found: ${filePath}`);
+		process.exit(1);
+	}
+	return await file.text();
 }
 
 function prependToInput(prefix, fileContent, input) {
-    const parts = [prefix, fileContent, input].filter(Boolean);
-    return parts.join("\n\n");
+	const parts = [prefix, fileContent, input].filter(Boolean);
+	return parts.join("\n\n");
 }
 
 async function main() {
-    const { file, prefix, systemPrompt } = parseArgs();
+	const { file, prefix, systemPrompt } = parseArgs();
 
-    const apiKey = await getSecret("openai-api-key", "OPENAI_API_KEY");
-    const baseURL =
-        (await getSecret("openai-base-url", "OPENAI_BASE_URL")) ?? "https://api.openai.com";
-    const model =
-        (await getSecret("openai-model", "OPENAI_MODEL")) ?? "gpt-4o-mini";
-    const { client, model: resolvedModel } = getOpenAIClient({
-        apiKey,
-        baseURL,
-        model,
-    });
+	const apiKey = await getSecret("openai-api-key", "OPENAI_API_KEY");
+	const baseURL =
+		(await getSecret("openai-base-url", "OPENAI_BASE_URL")) ??
+		"https://api.openai.com";
+	const model =
+		(await getSecret("openai-model", "OPENAI_MODEL")) ?? "gpt-4o-mini";
+	const { client, model: resolvedModel } = getOpenAIClient({
+		apiKey,
+		baseURL,
+		model,
+	});
 
-    const fileContent = await loadFileContent(file);
+	const fileContent = await loadFileContent(file);
 
-    const oneshot = file || prefix;
-    if (oneshot) {
-        const stdinText = process.stdin.isTTY ? "" : await Bun.stdin.text();
-        const input = prependToInput(prefix, fileContent, stdinText);
-        await runOneshot(client, resolvedModel, { systemPrompt, input });
-    } else {
-        await readLines(async (input) => {
-            await runOneshot(client, resolvedModel, { systemPrompt, input });
-        });
-    }
+	const oneshot = file || prefix;
+	if (oneshot) {
+		const stdinText = process.stdin.isTTY ? "" : await Bun.stdin.text();
+		const input = prependToInput(prefix, fileContent, stdinText);
+		await runOneshot(client, resolvedModel, { systemPrompt, input });
+	} else {
+		await readLines(async (input) => {
+			await runOneshot(client, resolvedModel, { systemPrompt, input });
+		});
+	}
 }
 
 main().catch((err) => {
-    console.error(err?.message ?? err);
-    process.exit(1);
+	console.error(err?.message ?? err);
+	process.exit(1);
 });

@@ -8,28 +8,28 @@ import { createInterface } from "node:readline";
  * @returns {Promise<string>}
  */
 export function readStdin() {
-  if (process.stdin.isTTY) {
-    return new Promise((resolve, reject) => {
-      const lines = [];
-      const rl = createInterface({
-        input: process.stdin,
-        output: process.stdout,
-        terminal: true,
-      });
-      rl.on("line", (line) => lines.push(line));
-      rl.on("close", () => resolve(lines.join("\n")));
-      rl.on("error", reject);
-    });
-  }
-  return new Promise((resolve, reject) => {
-    const chunks = [];
-    process.stdin.on("data", (chunk) => chunks.push(chunk));
-    process.stdin.on("end", () =>
-      resolve(Buffer.concat(chunks).toString("utf8"))
-    );
-    process.stdin.on("error", reject);
-    process.stdin.resume?.();
-  });
+	if (process.stdin.isTTY) {
+		return new Promise((resolve, reject) => {
+			const lines = [];
+			const rl = createInterface({
+				input: process.stdin,
+				output: process.stdout,
+				terminal: true,
+			});
+			rl.on("line", (line) => lines.push(line));
+			rl.on("close", () => resolve(lines.join("\n")));
+			rl.on("error", reject);
+		});
+	}
+	return new Promise((resolve, reject) => {
+		const chunks = [];
+		process.stdin.on("data", (chunk) => chunks.push(chunk));
+		process.stdin.on("end", () =>
+			resolve(Buffer.concat(chunks).toString("utf8")),
+		);
+		process.stdin.on("error", reject);
+		process.stdin.resume?.();
+	});
 }
 
 /**
@@ -39,29 +39,29 @@ export function readStdin() {
  * @param {{ prompt?: string }} [options]
  */
 export async function readLines(onLine, options = {}) {
-  const { prompt = "> " } = options;
-  const rl = createInterface({
-    input: process.stdin,
-    output: process.stdout,
-    terminal: process.stdin.isTTY,
-    prompt,
-  });
+	const { prompt = "> " } = options;
+	const rl = createInterface({
+		input: process.stdin,
+		output: process.stdout,
+		terminal: process.stdin.isTTY,
+		prompt,
+	});
 
-  if (process.stdin.isTTY) {
-    rl.prompt();
-  }
+	if (process.stdin.isTTY) {
+		rl.prompt();
+	}
 
-  for await (const line of rl) {
-    const trimmed = line.trim();
-    if (trimmed) {
-      try {
-        await onLine(trimmed);
-      } catch (err) {
-        console.error(err?.message ?? err);
-      }
-    }
-    if (process.stdin.isTTY) {
-      rl.prompt();
-    }
-  }
+	for await (const line of rl) {
+		const trimmed = line.trim();
+		if (trimmed) {
+			try {
+				await onLine(trimmed);
+			} catch (err) {
+				console.error(err?.message ?? err);
+			}
+		}
+		if (process.stdin.isTTY) {
+			rl.prompt();
+		}
+	}
 }

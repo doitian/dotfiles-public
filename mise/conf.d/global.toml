@@ -57,8 +57,9 @@ run_windows = "scoop cleanup -a -k"
 hide = true
 description = "Install cursor-agent cli"
 dir = "~"
-run = "g-add-cursor-agent-linux"
-run_windows = "g-add-cursor-agent-windows"
+shell = "{% if os() == 'windows' %}pwsh -NoProfile -NoLogo{% else %}bash -c{% endif %}"
+run = "curl https://cursor.com/install -fsS | bash"
+run_windows = "irm 'https://cursor.com/install?win32=true' | iex"
 
 [tasks."g:up:all"]
 hide = true
