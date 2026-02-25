@@ -12,7 +12,7 @@ function main() {
   }
   if (Bun.which("paru")) {
     spawnSyncOrExit("paru", "-Syu");
-  } else if (hasCommand("pacman")) {
+  } else if (Bun.which("pacman")) {
     spawnSyncOrExit("sudo", "pacman", "-Syu");
   }
 
