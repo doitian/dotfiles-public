@@ -7,6 +7,7 @@ import { createWriteStream } from "node:fs";
 import { join } from "node:path";
 import { exists } from "./lib/fs.js";
 import { home } from "./lib/env.js";
+import { spawnSyncOrExit } from "./lib/shell.js";
 import { $ } from "bun";
 
 const JOURNAL_DIRS = [
@@ -82,8 +83,8 @@ async function main() {
   }
   if (sepTitle === "-e") {
     const editor = process.env.EDITOR || "nvim";
-    const r = await $`${editor} ${JOURNAL_FILE}`.nothrow();
-    process.exit(r.exitCode ?? 0);
+    spawnSyncOrExit(editor, JOURNAL_FILE);
+    process.exit(0);
   }
 
   const titleSuffix = sepTitle ? ` ${sepTitle}` : "";
