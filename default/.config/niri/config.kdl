@@ -488,6 +488,7 @@ environment {
     QT_QPA_PLATFORMTHEME "qt6ct"
     // Include GNOME so Electron apps (VSCode, Edge, etc.) use gnome-keyring
     XDG_CURRENT_DESKTOP "GNOME:niri"
+    XDG_MENU_PREFIX "plasma-"
 }
 
 debug {
