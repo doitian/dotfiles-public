@@ -62,14 +62,16 @@ async function run(client, model) {
         return { exitCode: proc.exitCode, out, err };
       }),
     );
-    for (const r of results) {
-      if (r.exitCode !== 0) {
-        if (r.err.trim()) console.error(r.err.trim());
-        process.exit(1);
-      }
+    const [diffResult, logResult] = results;
+    if (diffResult.exitCode !== 0) {
+      if (diffResult.err.trim()) console.error(diffResult.err.trim());
+      process.exit(1);
     }
-    diff = results[0].out;
-    log = results[1].out;
+    diff = diffResult.out;
+    log =
+      logResult.exitCode === 0 && logResult.out?.trim()
+        ? logResult.out.trim()
+        : "(no commits yet)";
   } catch (e) {
     console.error("Failed to run git commands:", e?.message ?? e);
     process.exit(1);
