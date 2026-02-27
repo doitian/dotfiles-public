@@ -344,10 +344,10 @@ binds {
     Mod+Page_Up        { focus-workspace-up; }
     Mod+U              { focus-workspace-down; }
     Mod+I              { focus-workspace-up; }
-    Mod+Ctrl+Page_Down { move-column-to-workspace-down; }
-    Mod+Ctrl+Page_Up   { move-column-to-workspace-up; }
-    Mod+Ctrl+U         { move-column-to-workspace-down; }
-    Mod+Ctrl+I         { move-column-to-workspace-up; }
+    Mod+Ctrl+Page_Down { move-column-to-workspace-down focus=false; }
+    Mod+Ctrl+Page_Up   { move-column-to-workspace-up focus=false; }
+    Mod+Ctrl+U         { move-column-to-workspace-down focus=false; }
+    Mod+Ctrl+I         { move-column-to-workspace-up focus=false; }
 
     // Alternatively, there are commands to move just a single window:
     // Mod+Ctrl+Page_Down { move-window-to-workspace-down; }
