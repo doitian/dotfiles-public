@@ -3,39 +3,13 @@
  * Activate mise in VSCode: write terminal.integrated.env.{platform} to .vscode/settings.json.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { $ } from "bun";
-
-async function getMiseShimsPath() {
-  const r = await $`mise activate fish --shims`.quiet().nothrow();
-  const stdout = (r.stdout?.toString() ?? "").trim();
-  if (r.exitCode !== 0 || !stdout) return null;
-  const re = /^fish_add_path\s+.*\s+(?:'([^']+)'|(\S+))$/;
-  for (const line of stdout.split("\n")) {
-    const m = line.match(re);
-    if (m) {
-      const path = m[1] || m[2] || "";
-      if (path.includes("shims")) return path;
-    }
-  }
-  return null;
-}
+import { getMiseShimsPath, getMiseEnv } from "../lib/mise.js";
 
 function detectPlatform() {
   if (process.platform === "darwin") return "osx";
   if (process.platform === "win32" || process.platform === "cygwin")
     return "windows";
   return "linux";
-}
-
-async function getMiseEnv() {
-  try {
-    const r = await $`mise env -J`.quiet().nothrow();
-    const stdout = (r.stdout?.toString() ?? "").trim();
-    if (r.exitCode !== 0 || !stdout) return {};
-    return JSON.parse(stdout);
-  } catch {
-    return {};
-  }
 }
 
 async function main() {
