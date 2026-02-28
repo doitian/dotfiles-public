@@ -98,14 +98,14 @@ layout {
 
         // Teal to Sky - refreshing, subtle glow
         active-gradient from="#c6a0f6" to="#8839ef" angle=315
-        inactive-color "#9ca0b0"
+        inactive-color "#8e8bb6"
     }
 
     border {
         off
         width 2
         active-gradient from="#c6a0f6" to="#8839ef" angle=315
-        inactive-color "#9ca0b0"
+        inactive-color "#8e8bb6"
     }
 
     shadow {
@@ -113,7 +113,7 @@ layout {
         softness 10
         spread 2
         color "#c6a0f6"
-        inactive-color "#9ca0b0"
+        inactive-color "#8e8bb6"
     }
 
     tab-indicator {
