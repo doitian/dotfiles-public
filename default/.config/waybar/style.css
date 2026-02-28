@@ -240,6 +240,14 @@ button:hover {
     background: @surface1;
 }
 
+/* Menu separator: thin line instead of default thick grey bar */
+menu separator {
+    background: @surface1;
+    min-height: 1px;
+    margin: 4px 8px;
+    padding: 0;
+}
+
 /* Idle inhibitor */
 #idle_inhibitor {
     color: @overlay0;
