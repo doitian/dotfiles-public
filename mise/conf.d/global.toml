@@ -73,7 +73,7 @@ run_windows = "g-up-all-windows"
 [tasks."g:secrets:unlock"]
 run = """
 #!/usr/bin/env bun
-await Bun.secrets.set({service:"me.iany.bin",name:"_unlock",value:""});
+await Bun.secrets.set({service:"me.iany.bin",name:"_unlock",value:"true"});
 """
 
 # ============================================================================
