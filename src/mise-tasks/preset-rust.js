@@ -3,7 +3,7 @@ import { touch } from "../lib/fs";
 import { $ } from "bun";
 
 async function main() {
-  touch("mise.toml");
+  await touch("mise.toml");
 
   await $`mise tasks add pre-commit:cargo-fmt -- cargo fmt --check`.nothrow();
 

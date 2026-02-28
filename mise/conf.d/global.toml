@@ -162,7 +162,10 @@ hide = true
 description = "Create cursor:pushover:on:stop task for pushover notifications"
 dir = "{{cwd}}"
 depends_post = ["g:cursor:hook:sync"]
-run = "mise tasks add cursor:pushover:on:stop -- cursor-pushover-on-stop"
+run = [
+  "touch mise.toml",
+  "mise tasks add cursor:pushover:on:stop -- cursor-pushover-on-stop",
+]
 
 [tasks."preset:mise:windows:sh"]
 hide = true
@@ -181,3 +184,13 @@ run = [
   "mise config set -f mise.toml settings.windows_default_inline_shell_args 'pwsh -NoLogo -NoProfile -Command'",
   "mise config set -f mise.toml settings.windows_default_file_shell_args 'pwsh -NoLogo -NoProfile'",
 ]
+
+[tasks."preset:sccache:rust"]
+hide = true
+description = "Use sccache for a Rust project"
+run = "mise set -f mise.toml RUSTC_WRAPPER=sccache"
+
+[tasks."preset:sccache:shm"]
+hide = true
+description = "Use ramdisk for sccache"
+run = "mise set -f mise.toml SCCACHE_DIR=/dev/shm/sccache"
