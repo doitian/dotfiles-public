@@ -4,7 +4,7 @@
  */
 import { secrets, $ } from "bun";
 
-export const SERVICE_NAME = "ian-bin";
+export const SERVICE_NAME = "me.iany.bin";
 
 /**
  * Resolve a secret: try env vars first, then Bun.secrets, then prompt and store if TTY.
