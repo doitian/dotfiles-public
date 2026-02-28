@@ -97,27 +97,29 @@ layout {
         width 3
 
         // Teal to Sky - refreshing, subtle glow
-        active-gradient from="#179299" to="#04a5e5" angle=45
-        inactive-color "#bcc0cc"
+        active-gradient from="#c6a0f6" to="#8839ef" angle=315
+        inactive-color "#9ca0b0"
     }
 
     border {
         off
         width 2
-        active-gradient from="#179299" to="#04a5e5" angle=45
-        inactive-color "#bcc0cc"
+        active-gradient from="#c6a0f6" to="#8839ef" angle=315
+        inactive-color "#9ca0b0"
     }
 
     shadow {
         off
-        softness 15
-        color "#1e66f540"
+        softness 10
+        spread 2
+        color "#c6a0f6"
+        inactive-color "#9ca0b0"
     }
 
     tab-indicator {
         width 4
         gap 4
-        active-color "#04a5e5"
+        active-color "#c6a0f6"
     }
 
     struts {
@@ -170,6 +172,13 @@ window-rule {
     open-floating true
 }
 
+window-rule {
+    match is-floating=true
+    shadow {
+        on
+    }
+}
+
 // Temporary windows
 window-rule {
     match app-id="^$"
@@ -177,9 +186,6 @@ window-rule {
     open-focused false
     default-floating-position x=0 y=20 relative-to="bottom"
     border {
-        on
-    }
-    shadow {
         on
     }
 }
