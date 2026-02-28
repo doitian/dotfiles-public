@@ -70,6 +70,12 @@ depends_post = ["g:clean:all"]
 run = "g-up-all-linux"
 run_windows = "g-up-all-windows"
 
+[tasks."g:secrets:unlock"]
+run = """
+#!/usr/bin/env bun
+await Bun.secrets.set({service:"me.iany.bin",name:"_unlock",value:""});
+"""
+
 # ============================================================================
 # Preset tasks (preset:*)
 # ============================================================================
