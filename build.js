@@ -107,4 +107,14 @@ if (existsSync(miseTasksSrcDir)) {
   await buildIfStale(miseEntries, miseTasksDistDir);
 }
 
+// niri-scripts: built only on Linux, output to dist/
+const niriScriptsSrcDir = join(process.cwd(), "src", "niri-scripts");
+if (process.platform === "linux" && existsSync(niriScriptsSrcDir)) {
+  const niriEntries = [];
+  for await (const file of glob.scan(niriScriptsSrcDir)) {
+    niriEntries.push({ name: file.slice(0, -3), sourcePath: join(niriScriptsSrcDir, file) });
+  }
+  await buildIfStale(niriEntries, distDir);
+}
+
 console.log("Build done.");

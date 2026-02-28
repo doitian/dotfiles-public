@@ -184,15 +184,11 @@ window-rule {
     }
 }
 
-spawn-at-startup "/usr/lib/pam_kwallet_init"
-spawn-at-startup "swayidle" "-w" "timeout" "600" "clipman clear -a" "timeout" "901" "swaylock -e --grace 10 -f" "timeout" "900" "niri msg action power-off-monitors" "before-sleep" "swaylock -e --grace 10 -f"
-spawn-at-startup "wl-paste" "-t" "text" "--watch" "clipman" "store"
-spawn-at-startup "waybar"
-spawn-at-startup "~/.config/niri/scripts/niri-swaybg.sh"
+spawn-at-startup "niri-startup"
 
 binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
-    Mod+Slash hotkey-overlay-title="Rename Workspace" { spawn "~/.config/niri/scripts/niri-set-workspace-name.sh"; }
+    Mod+Slash hotkey-overlay-title="Rename Workspace" { spawn "niri-set-workspace-name"; }
 
     Mod+Return hotkey-overlay-title="Open a Terminal" { spawn "kitty"; }
     Mod+B hotkey-overlay-title="Run a Browser" { spawn "firefox"; }
@@ -241,7 +237,7 @@ binds {
 
     Mod+P hotkey-overlay-title="Run an Application" { spawn "fuzzel" "--terminal" "kitty"; }
     Mod+Shift+P hotkey-overlay-title="Copy a Password" { spawn "fpass" "--fuzzel"; }
-    Mod+Y hotkey-overlay-title="Fuzzel Focus" { spawn "~/.config/niri/scripts/niri-fuzzel-focus.sh"; }
+    Mod+Y hotkey-overlay-title="Fuzzel Focus" { spawn "niri-fuzzel-focus"; }
     Mod+V hotkey-overlay-title="Clipboard History" { spawn "clipman" "pick" "-t" "CUSTOM" "-T" "fuzzel --dmenu -w 78"; }
     Mod+Shift+V hotkey-overlay-title=null { spawn "clipman" "clear" "-a"; }
     Mod+T hotkey-overlay-title="Toggle Waybar" { spawn "killall" "-SIGUSR1" "waybar"; }
@@ -473,7 +469,7 @@ binds {
 
     Mod+Alt+L hotkey-overlay-title="Lock the Screen" { spawn-sh "clipman clear -a; swaylock -e --grace 10 -f"; }
     Mod+Shift+Backspace hotkey-overlay-title="Turn off Monitor" { spawn-sh "clipman clear -a; niri msg action power-off-monitors && swaylock -e --grace 10 -f"; }
-    Mod+Backslash hotkey-overlay-title="Change Wallpaper" { spawn "~/.config/niri/scripts/niri-swaybg.sh"; }
+    Mod+Backslash hotkey-overlay-title="Change Wallpaper" { spawn "niri-swaybg"; }
 }
 
 recent-windows {
