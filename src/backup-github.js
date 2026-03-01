@@ -19,21 +19,15 @@ const GH_QUERY = `query($endCursor: String) {
 }`;
 
 async function getReposFromGh() {
-  const r = await $`gh api graphql --paginate -f ${`query=${GH_QUERY}`}`
-    .quiet()
-    .nothrow();
+  const jq = ".data.viewer.repositories.nodes[].nameWithOwner";
+  const r =
+    await $`gh api graphql --paginate -f ${`query=${GH_QUERY}`} --jq ${jq}`
+      .quiet()
+      .nothrow();
   if (r.exitCode !== 0)
     throw new Error(`gh api failed: ${r.stderr?.toString() ?? ""}`);
-  const chunks = (r.stdout?.toString() ?? "")
-    .trim()
-    .split("\n")
-    .filter(Boolean)
-    .map((line) => JSON.parse(line));
-  const repos = [];
-  for (const chunk of chunks) {
-    const nodes = chunk?.data?.viewer?.repositories?.nodes;
-    if (nodes) for (const n of nodes) repos.push(n.nameWithOwner);
-  }
+  const repos = (r.stdout?.toString() ?? "").trim().split("\n").filter(Boolean);
+  if (repos.length === 0) throw new Error("No repos returned from gh api");
   return repos;
 }
 
@@ -66,8 +60,8 @@ async function main() {
       if (!(await exists(repoDir))) {
         await $`git clone --bare --depth 1 ${repoUrl} ${repoDir}`;
       } else {
-        await $`git -C ${repoDir} -c safe.directory=* fetch --depth 1`;
-        await $`git -C ${repoDir} -c safe.directory=* update-ref HEAD FETCH_HEAD`;
+        await $`git -C ${repoDir} -c "safe.directory=*" fetch --depth 1`;
+        await $`git -C ${repoDir} -c "safe.directory=*" update-ref HEAD FETCH_HEAD`;
       }
       remaining.delete(repo);
     }
