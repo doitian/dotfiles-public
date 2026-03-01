@@ -86,6 +86,11 @@ async function main() {
         remaining.delete(repo);
         continue;
       }
+      if (!remoteSha) {
+        console.log(`Skipping ${repo} (empty repo)`);
+        remaining.delete(repo);
+        continue;
+      }
       if (!(await exists(repoDir))) {
         console.log(`Cloning ${repo}...`);
         await $`git clone --bare --depth 1 ${repoUrl} ${repoDir}`;
