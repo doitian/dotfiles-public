@@ -31,6 +31,13 @@ async function getReposFromGh() {
   return repos;
 }
 
+async function dumpRemaining(remaining) {
+  if (remaining.size > 0) {
+    console.warn(`Dumping ${remaining.size} remaining repos to ${DUMP_FILE}`);
+    await writeFile(DUMP_FILE, [...remaining].join("\n") + "\n");
+  }
+}
+
 async function main() {
   let repos;
   if (await exists(DUMP_FILE)) {
@@ -46,6 +53,12 @@ async function main() {
 
   const remaining = new Set(repos);
   let hasError = false;
+
+  process.on("SIGINT", async () => {
+    console.warn("\nInterrupted.");
+    await dumpRemaining(remaining);
+    process.exit(1);
+  });
 
   try {
     for (const repo of repos) {
@@ -69,10 +82,7 @@ async function main() {
     console.error("Error:", err.message);
     hasError = true;
   } finally {
-    if (remaining.size > 0) {
-      console.warn(`Dumping ${remaining.size} remaining repos to ${DUMP_FILE}`);
-      await writeFile(DUMP_FILE, [...remaining].join("\n") + "\n");
-    }
+    await dumpRemaining(remaining);
   }
 
   if (hasError) process.exit(1);
