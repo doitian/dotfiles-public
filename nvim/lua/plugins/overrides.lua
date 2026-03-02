@@ -334,13 +334,10 @@ return {
         preset = "enter",
         ["<C-L>"] = {
           function(cmp)
-            if cmp.snippet_active() then
-              return cmp.accept()
-            else
-              return cmp.select_and_accept()
-            end
+            cmp.show_and_insert_or_accept_single({
+              providers = { 'snippets' },
+            })
           end,
-          "show",
         },
       },
     },
