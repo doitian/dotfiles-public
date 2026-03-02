@@ -71,6 +71,8 @@ run = "g-up-all-linux"
 run_windows = "g-up-all-windows"
 
 [tasks."g:secrets:unlock"]
+hide = true
+description = "Run Bun.secrets.set to unlock secrets for terminals"
 run = """
 #!/usr/bin/env bun
 await Bun.secrets.set({service:"me.iany.bin",name:"_unlock",value:"true"});
