@@ -250,22 +250,22 @@ return {
             border = true,
             keys = {
               ["<Leader>u/"] = function(win)
-                if win.opts.position == "bottom" then
+                local count = vim.v.count
+                if count == 0 then
                   win.opts.position = "float"
                   win.opts.height = 0
                   win.opts.width = 0
-                elseif win.opts.position == "float" then
+                elseif count <= 10 then
                   win.opts.position = "right"
                   win.opts.height = 0
-                  win.opts.width = 0.4
+                  win.opts.width = count > 9 and 0 or count / 10
                 else
                   win.opts.position = "bottom"
-                  win.opts.height = 0.4
+                  win.opts.height = count > 19 and 0 or (count - 10) / 10
                   win.opts.width = 0
                 end
                 win:hide()
                 win:show()
-                vim.cmd.stopinsert()
               end,
             },
           },
