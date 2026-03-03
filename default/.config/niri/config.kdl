@@ -243,7 +243,7 @@ binds {
 
     Mod+P hotkey-overlay-title="Run an Application" { spawn "fuzzel" "--terminal" "kitty"; }
     Mod+Shift+P hotkey-overlay-title="Copy a Password" { spawn "fpass" "--fuzzel"; }
-    Mod+Y hotkey-overlay-title="Fuzzel Focus" { spawn "niri-fuzzel-focus"; }
+    Mod+Ctrl+P hotkey-overlay-title="Fuzzel Focus" { spawn "niri-fuzzel-focus"; }
     Mod+V hotkey-overlay-title="Clipboard History" { spawn "clipman" "pick" "-t" "CUSTOM" "-T" "fuzzel --dmenu -w 78"; }
     Mod+Shift+V hotkey-overlay-title=null { spawn "clipman" "clear" "-a"; }
     Mod+T hotkey-overlay-title="Toggle Waybar" { spawn "killall" "-SIGUSR1" "waybar"; }
@@ -284,6 +284,9 @@ binds {
     // Mod+Ctrl+K     { move-window-up; }
     Mod+Ctrl+L     { move-column-right; }
 
+    Mod+Y { focus-column-first; }
+    Mod+Ctrl+Y { move-column-to-first; }
+
     // Alternative commands that move across workspaces when reaching
     // the first or last window in a column.
     Mod+J { focus-window-or-workspace-down; }
@@ -295,25 +298,14 @@ binds {
     Mod+Ctrl+Down { move-window-down-or-to-workspace-down; }
     Mod+Ctrl+Up { move-window-up-or-to-workspace-up; }
 
-    Alt+J { focus-window-or-workspace-down; }
-    Alt+K { focus-window-or-workspace-up; }
-    Alt+H { focus-column-left; }
-    Alt+L { focus-column-right; }
-    Alt+Y { focus-column-first; }
-    Alt+Ctrl+J { move-window-down-or-to-workspace-down; }
-    Alt+Ctrl+K { move-window-up-or-to-workspace-up; }
-    Alt+Ctrl+H { move-column-left; }
-    Alt+Ctrl+L { move-column-right; }
-    Alt+Ctrl+Y { move-column-to-first; }
-
     Mod+S { focus-window-or-workspace-down; }
     Mod+W { focus-window-or-workspace-up; }
     Mod+A { focus-column-left; }
     Mod+D { focus-column-right; }
     Mod+Ctrl+S { move-window-down-or-to-workspace-down; }
     Mod+Ctrl+W { move-window-up-or-to-workspace-up; }
-    Alt+Ctrl+A { move-column-left; }
-    Alt+Ctrl+D { move-column-right; }
+    Mod+Ctrl+A { move-column-left; }
+    Mod+Ctrl+D { move-column-right; }
 
     Mod+Home { focus-column-first; }
     Mod+End  { focus-column-last; }
