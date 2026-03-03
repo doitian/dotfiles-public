@@ -20,9 +20,7 @@ export async function getMiseShimsPath() {
 
 export async function getMiseEnv() {
   try {
-    const stdout = await $`mise env -J`.text().nothrow();
-    if (!stdout.trim()) return {};
-    return JSON.parse(stdout.trim());
+    return await $`mise env -J`.nothrow().json();
   } catch {
     return {};
   }
