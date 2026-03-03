@@ -142,8 +142,8 @@ dir = "{{cwd}}"
 shell = "sh -c -o errexit"
 run = [
   "touch mise.toml",
-  "mise config set -f mise.toml env.GITHUB_TOKEN.value '{{ exec(command='gh auth token') }}'",
-  "mise config set -f mise.toml env.GITHUB_TOKEN.redact true",
+  "mise config set -f mise.local.toml env.GITHUB_TOKEN.value '{{ exec(command='gh auth token') }}'",
+  "mise config set -f mise.local.toml env.GITHUB_TOKEN.redact true",
 ]
 
 [tasks."preset:default"]
