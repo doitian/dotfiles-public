@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-pwsh.exe -NoProfile -Command start "$@"
