@@ -63,6 +63,9 @@ format = 'in 🪟 [$env_value]($style) '
 [env_var.__MISE_SESSION]
 format = '𝔐 '
 
+[gcloud]
+disabled = true
+
 # [nodejs]
 # symbol = '🤖 '
 #
