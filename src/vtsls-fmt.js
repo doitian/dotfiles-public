@@ -179,7 +179,8 @@ async function queryEditorconfig(files) {
   await proc.exited;
 
   const result = new Map();
-  let currentPath = null;
+  // EditorConfig C Core omits the [path] header for single-file queries.
+  let currentPath = files.length === 1 ? files[0] : null;
   let indentStyle = null;
   let indentSize = null;
   let tabWidth = null;
