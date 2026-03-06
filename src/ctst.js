@@ -7,6 +7,7 @@ import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { exists } from "./lib/fs.js";
 import { home } from "./lib/env.js";
+import { spawnSyncOrExit } from "./lib/shell.js";
 
 const CHEATSHEETS_DIR = join(
   home(),
@@ -48,8 +49,14 @@ async function main() {
   if (code !== 0 || !out) process.exit(code ?? 1);
 
   const chosen = out.split("\n")[0];
-  const content = await readFile(join(CHEATSHEETS_DIR, chosen), "utf8");
-  process.stdout.write(content);
+  const path = join(CHEATSHEETS_DIR, chosen);
+  const content = await readFile(path, "utf8");
+
+  if (process.stdout.isTTY && Bun.which("glow")) {
+    spawnSyncOrExit("glow", "-p", path);
+  } else {
+    process.stdout.write(content);
+  }
 }
 
 main();
