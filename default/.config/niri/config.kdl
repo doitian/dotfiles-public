@@ -11,7 +11,7 @@ input {
     touchpad {
         tap
         natural-scroll
-        // accel-speed 0.2
+        accel-speed 0.6
         // accel-profile "flat"
         // scroll-method "two-finger"
         // disabled-on-external-mouse
@@ -377,14 +377,14 @@ binds {
     Mod+Ctrl+Shift+WheelScrollDown { move-column-right; }
     Mod+Ctrl+Shift+WheelScrollUp   { move-column-left; }
 
-    // Similarly, you can bind touchpad scroll "ticks".
-    // Touchpad scrolling is continuous, so for these binds it is split into
-    // discrete intervals.
-    // These binds are also affected by touchpad's natural-scroll, so these
-    // example binds are "inverted", since we have natural-scroll enabled for
-    // touchpads by default.
-    // Mod+TouchpadScrollDown { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.02+"; }
-    // Mod+TouchpadScrollUp   { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.02-"; }
+    Mod+TouchpadScrollDown  cooldown-ms=200 { focus-workspace-down; }
+    Mod+TouchpadScrollUp    cooldown-ms=200 { focus-workspace-up; }
+    Mod+TouchpadScrollRight cooldown-ms=200 { focus-column-right; }
+    Mod+TouchpadScrollLeft  cooldown-ms=200 { focus-column-left; }
+    Mod+Ctrl+TouchpadScrollDown  cooldown-ms=200 { move-column-to-workspace-down; }
+    Mod+Ctrl+TouchpadScrollUp    cooldown-ms=200 { move-column-to-workspace-up; }
+    Mod+Ctrl+TouchpadScrollRight cooldown-ms=200 { move-column-right; }
+    Mod+Ctrl+TouchpadScrollLeft  cooldown-ms=200 { move-column-left; }
 
     // Switches focus between the current and the previous workspace.
     // Mod+Tab { focus-workspace-previous; }
