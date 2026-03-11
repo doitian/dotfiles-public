@@ -84,7 +84,8 @@
   },
   "load": {
     "format": "{load1}",
-    "interval": 5
+    "interval": 5,
+    "on-click": "kitty btop"
   },
   "cpu": {
     "format": "{usage}% ",
@@ -92,14 +93,15 @@
       "warning": 70,
       "critical": 90
     },
-    "tooltip": false
+    "on-click": "kitty btop"
   },
   "memory": {
     "format": "{}% ",
     "states": {
       "warning": 70,
       "critical": 90
-    }
+    },
+    "on-click": "kitty btop"
   },
   "temperature": {
     // "thermal-zone": 2,
@@ -112,7 +114,8 @@
       "",
       "",
       ""
-    ]
+    ],
+    "on-click": "kitty btop"
   },
   "backlight": {
     // "device": "acpi_video1",
