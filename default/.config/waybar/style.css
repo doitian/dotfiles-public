@@ -215,8 +215,11 @@ button:hover {
 #tray > widget {
     padding: 2px 4px;
     margin: 0 2px;
-    background: alpha(@surface1, 0.6);
     border-radius: 4px;
+}
+
+#tray > widget:hover {
+    background: @surface0;
 }
 
 #tray > .passive {
@@ -234,10 +237,6 @@ button:hover {
     border: 1px solid @surface1;
     border-radius: 8px;
     padding: 4px;
-}
-
-#tray menu menuitem:hover {
-    background: @surface1;
 }
 
 /* Menu separator: thin line instead of default thick grey bar */
@@ -290,10 +289,8 @@ menu separator {
 }
 
 /* Custom hyprwhspr */
-
 #custom-hyprwhspr {
-    margin: 0 4px;
-    font-size: 13px;
+    padding: 0 4px;
     font-weight: bold;
     border-top: 2px solid transparent;
     border-bottom: 2px solid transparent;
@@ -319,6 +316,8 @@ menu separator {
 
 #custom-hyprwhspr.error {
     color: @surface2;
+    font-size: 16px;
+    margin: 4px -36px 0 0;
     background-color: transparent;
 }
 
