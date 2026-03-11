@@ -126,7 +126,8 @@ button:hover {
 #idle_inhibitor,
 #power-profiles-daemon,
 #mpd,
-#custom-power {
+#custom-power,
+#custom-hyprwhspr {
     padding: 0 10px;
     color: @subtext1;
 }
@@ -283,20 +284,7 @@ menu separator {
     color: @subtext0;
 }
 
-/* Custom power button */
-#custom-power {
-    font-size: 15px;
-}
-
 /* Custom hyprwhspr */
-#custom-hyprwhspr {
-    padding: 0 4px;
-    font-weight: bold;
-    border-top: 2px solid transparent;
-    border-bottom: 2px solid transparent;
-    transition: color 150ms ease-in-out, border-color 150ms ease-in-out;
-}
-
 #custom-hyprwhspr.ready {
     color: inherit;
     border-color: transparent;
@@ -316,8 +304,7 @@ menu separator {
 
 #custom-hyprwhspr.error {
     color: @surface2;
-    font-size: 16px;
-    margin: 4px -36px 0 0;
+    margin-right: -34px;
     background-color: transparent;
 }
 
