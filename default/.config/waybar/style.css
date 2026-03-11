@@ -288,3 +288,40 @@ menu separator {
 #custom-power {
     font-size: 15px;
 }
+
+/* Custom hyprwhspr */
+
+#custom-hyprwhspr {
+    margin: 0 4px;
+    font-size: 13px;
+    font-weight: bold;
+    border-top: 2px solid transparent;
+    border-bottom: 2px solid transparent;
+    transition: color 150ms ease-in-out, border-color 150ms ease-in-out;
+}
+
+#custom-hyprwhspr.ready {
+    color: inherit;
+    border-color: transparent;
+}
+
+#custom-hyprwhspr.recording {
+    color: @mauve;
+    border-bottom-color: @mauve;
+    font-family: monospace;
+    letter-spacing: 0.5px;
+}
+
+#custom-hyprwhspr.stopped {
+    color: inherit;
+    border-color: transparent;
+}
+
+#custom-hyprwhspr.error {
+    color: @surface2;
+    background-color: transparent;
+}
+
+#custom-hyprwhspr:hover {
+    opacity: 0.8;
+}

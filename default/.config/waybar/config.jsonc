@@ -30,6 +30,7 @@
     "battery",
     "clock",
     "tray",
+    "custom/hyprwhspr",
     "custom/power"
   ],
   // Modules configuration
@@ -205,5 +206,8 @@
       "suspend": "systemctl suspend",
       "hibernate": "systemctl hibernate"
     }
-  }
+  },
+  "include": [
+    "$HOME/.config/waybar/hyprwhspr-module.jsonc"
+  ]
 }
