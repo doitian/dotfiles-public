@@ -11,12 +11,22 @@ const SHIFT_PASTE_APP_IDS = new Set(["kitty", "org.kde.konsole", "foot", "alacri
 const PASTE_KEYS = ["29:1", "47:1", "47:0", "29:0"]; // Ctrl+V
 const PASTE_SHIFT_KEYS = ["29:1", "42:1", "47:1", "47:0", "42:0", "29:0"]; // Ctrl+Shift+V
 
+// ydotool key args (press:1 release:0) from linux/input-event-codes.h
+// KEY_ESC=1, KEY_BACKSPACE=14, KEY_ENTER=28, KEY_A=30, KEY_U=22
+const KEY_ARGS = {
+    enter: ["28:1", "28:0"],
+    esc: ["1:1", "1:0"],
+    backspace: ["14:1", "14:0"],
+    "c-u": ["29:1", "22:1", "22:0", "29:0"],
+    "c-a": ["29:1", "30:1", "30:0", "29:0"],
+};
+
 const HTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>niri-ws-paste</title>
+<title>niri-remote-type</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: system-ui, sans-serif; max-width: 480px; margin: 2rem auto; padding: 0 1rem; }
@@ -27,10 +37,15 @@ const HTML = `<!DOCTYPE html>
 </style>
 </head>
 <body>
-<h2>niri-ws-paste</h2>
+<h2>niri-remote-type</h2>
 <textarea id="txt" placeholder="Type text to paste..." autofocus></textarea>
 <div class="buttons">
   <button data-action="paste">Paste</button>
+  <button data-key="enter">Enter</button>
+  <button data-key="esc">Esc</button>
+  <button data-key="c-u">C-U</button>
+  <button data-key="c-a">C-A</button>
+  <button data-key="backspace">Backspace</button>
 </div>
 <div id="status"></div>
 <script>
@@ -62,6 +77,13 @@ document.querySelector('[data-action="paste"]').addEventListener("click", () => 
     send("/paste", { text });
     txt.value = "";
     txt.focus();
+});
+
+document.querySelectorAll("[data-key]").forEach(btn => {
+    btn.addEventListener("click", () => {
+        send("/key", { key: btn.dataset.key });
+        txt.focus();
+    });
 });
 </script>
 </body>
@@ -117,8 +139,27 @@ Bun.serve({
             return Response.json({ ok: true });
         }
 
+        if (req.method === "POST" && url.pathname === "/key") {
+            const { key } = await req.json();
+            if (typeof key !== "string") {
+                return Response.json({ ok: false, error: "missing key" }, { status: 400 });
+            }
+            const args = KEY_ARGS[key];
+            if (!args) {
+                return Response.json({ ok: false, error: "unknown key" }, { status: 400 });
+            }
+            const r = await $`ydotool key ${args}`.quiet().nothrow();
+            if (r.exitCode !== 0) {
+                return Response.json(
+                    { ok: false, error: r.stderr.toString().trim() },
+                    { status: 500 },
+                );
+            }
+            return Response.json({ ok: true });
+        }
+
         return new Response("Not Found", { status: 404 });
     },
 });
 
-console.log(`niri-ws-paste listening on http://0.0.0.0:${PORT}`);
+console.log(`niri-remote-type listening on http://0.0.0.0:${PORT}`);
