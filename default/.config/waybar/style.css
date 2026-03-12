@@ -183,6 +183,7 @@ button:hover {
 #cpu.warning,
 #memory.warning {
     color: @yellow;
+    background: transparent;
 }
 
 #cpu.critical,
