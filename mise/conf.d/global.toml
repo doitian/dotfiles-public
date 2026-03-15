@@ -187,11 +187,6 @@ run = [
   "mise config set -f mise.toml settings.windows_default_file_shell_args 'pwsh -NoLogo -NoProfile'",
 ]
 
-[tasks."preset:sccache:rust"]
-hide = true
-description = "Use sccache for a Rust project"
-run = "mise set --file mise.local.toml RUSTC_WRAPPER=sccache"
-
 [tasks."preset:sccache:shm"]
 hide = true
 description = "Use ramdisk for sccache"
