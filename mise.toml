@@ -10,6 +10,13 @@ depends = ["pre-commit:*"]
 [tasks.build]
 alias = "default"
 run = ["bun install", "bun run build"]
+sources = [
+  "package.json",
+  "bun.lock",
+  "build.js",
+  "src/**/*.js",
+  "../private/src/**/*.js",
+]
 
 [tasks.clean]
 run = "fd --no-ignore -t f . dist -x rm"
