@@ -9,6 +9,20 @@ local format = function()
   end
 end
 
+if vim.fn.has("win32") == 1 then
+  local root = LazyVim.root
+  local orig_bufpath = root.bufpath
+  ---@diagnostic disable-next-line: duplicate-set-field
+  function root.bufpath(buf)
+    local name = vim.api.nvim_buf_get_name(assert(buf))
+    local term_cwd = name:match("^term://(.-)//")
+    if term_cwd then
+      return root.realpath(vim.fn.expand(term_cwd))
+    end
+    return orig_bufpath(buf)
+  end
+end
+
 return {
   -- ui {{{1
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/ui.lua
@@ -335,7 +349,7 @@ return {
         ["<C-L>"] = {
           function(cmp)
             cmp.show_and_insert_or_accept_single({
-              providers = { 'snippets' },
+              providers = { "snippets" },
             })
           end,
         },
