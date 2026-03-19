@@ -12,13 +12,16 @@ end
 if vim.fn.has("win32") == 1 then
   local root = LazyVim.root
   ---@diagnostic disable-next-line: duplicate-set-field
-  function root.bufpath(buf)
-    local name = vim.api.nvim_buf_get_name(assert(buf))
-    if vim.startswith(name, "term:/") then
+  function root.realpath(path)
+    if path == "" or path == nil then
       return nil
-    else
-      return root.realpath(name)
     end
+    if vim.fn.has("win32") == 0 then
+      path = vim.uv.fs_realpath(path)
+    elseif path == "." then
+      path = vim.uv.cwd()
+    end
+    return LazyVim.norm(path)
   end
 end
 
