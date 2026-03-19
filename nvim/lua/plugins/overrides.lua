@@ -11,15 +11,14 @@ end
 
 if vim.fn.has("win32") == 1 then
   local root = LazyVim.root
-  local orig_bufpath = root.bufpath
   ---@diagnostic disable-next-line: duplicate-set-field
   function root.bufpath(buf)
     local name = vim.api.nvim_buf_get_name(assert(buf))
-    local term_cwd = name:match("^term://(.-)//")
-    if term_cwd then
-      return root.realpath(vim.fn.expand(term_cwd))
+    if vim.startswith(name, "term:/") then
+      return nil
+    else
+      return root.realpath(name)
     end
-    return orig_bufpath(buf)
   end
 end
 
