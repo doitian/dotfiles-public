@@ -6,7 +6,6 @@
       "name": "dotfiles-public",
       "dependencies": {
         "openai": "^4.77.0",
-        "zod": "^3.23.0",
       },
     },
   },

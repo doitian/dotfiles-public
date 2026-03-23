@@ -1,11 +1,8 @@
 #!/usr/bin/env bun
 /**
  * Generate a git commit message from staged changes using OpenAI.
- * Uses embedded prompt, Bun.spawn for git commands, and structured output.
- * Uses Chat Completions API
+ * Uses embedded prompt and Bun.spawn for git commands.
  */
-import { zodResponseFormat } from "openai/helpers/zod";
-import { z } from "zod";
 import { getOpenAICredentials } from "./lib/secrets.js";
 import { OpenAI } from "./lib/openai.js";
 
@@ -21,13 +18,7 @@ const SYSTEM_PROMPT = `Use the output of \`git diff --staged\` to generate the c
 - Add further paragraphs if necessary. Bullet points are OK.
 - Wrap body and further paragraphs at 72 characters.
 
-Respond with a JSON object with keys: subject, body, furtherParagraphs (string or null).`;
-
-const GitCommitSchema = z.object({
-  subject: z.string(),
-  body: z.string(),
-  furtherParagraphs: z.string().nullable(),
-});
+Respond with ONLY the commit message (subject, blank line, body, and optional further paragraphs). No extra commentary.`;
 
 async function main() {
   const { apiKey, baseURL, model } = await getOpenAICredentials();
@@ -90,39 +81,25 @@ async function run(client, model) {
     },
   ];
 
-  const completionParams = {
-    model,
-    messages,
-    temperature: 0.2,
-    response_format: zodResponseFormat(GitCommitSchema, "git_commit_message"),
-  };
-
   let completion;
   try {
-    completion = await client.beta.chat.completions.parse(completionParams);
+    completion = await client.chat.completions.create({
+      model,
+      messages,
+      temperature: 0.2,
+    });
   } catch (err) {
     console.error("API error:", err?.message ?? err);
     process.exit(1);
   }
 
-  const choice = completion.choices?.[0];
-  const parsed = choice?.message?.parsed ?? null;
-  if (parsed == null) {
-    const refusal = choice?.message?.refusal;
-    if (refusal) {
-      console.error("Model refused:", refusal);
-    } else {
-      console.error("No parsed output from model.");
-    }
+  const raw = completion.choices?.[0]?.message?.content;
+  if (!raw?.trim()) {
+    console.error("No output from model.");
     process.exit(1);
   }
 
-  const parts = [parsed.subject, parsed.body];
-  if (parsed.furtherParagraphs?.trim()) {
-    parts.push(parsed.furtherParagraphs.trim());
-  }
-  const message = parts.join("\n\n");
-  console.log(message);
+  console.log(raw);
 }
 
 main().catch((err) => {
