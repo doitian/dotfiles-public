@@ -129,25 +129,45 @@ const dispatch = {
   "git-untracked-file": gitUntrackedFile,
 };
 
+async function chooseSubcommand(query) {
+  const fzfArgs = ["--prompt=czf> ", "--select-1", "--exit-0"];
+  if (query) fzfArgs.push("--query", query);
+  const fzf = Bun.spawn(["fzf", ...fzfArgs], {
+    stdin: "pipe",
+    stdout: "pipe",
+    stderr: "inherit",
+    env: process.env,
+  });
+  fzf.stdin.write(subcommands.join("\n"));
+  fzf.stdin.end();
+  const code = await fzf.exited;
+  if (code !== 0) {
+    if (code === 1) {
+      console.error(usage);
+    }
+    process.exit(code);
+  }
+  return (await new Response(fzf.stdout).text()).trim();
+}
+
 async function main() {
   const arg = process.argv[2];
   const fzfArgs = process.argv.slice(3);
 
-  if (!arg || arg === "-h" || arg === "--help") {
+  if (arg === "-h" || arg === "--help") {
     console.error(usage);
-    process.exit(arg === "-h" || arg === "--help" ? 0 : 1);
+    process.exit(0);
   }
   if (arg === "-l" || arg === "--list") {
     subcommands.forEach((c) => console.log(c));
     process.exit(0);
   }
 
-  const fn = dispatch[arg];
-  if (fn) await fn(fzfArgs);
-  else {
-    console.error(`Unknown subcommand: ${arg}`);
-    console.error(usage);
-    process.exit(1);
+  if (dispatch[arg]) {
+    await dispatch[arg](fzfArgs);
+  } else {
+    const chosen = await chooseSubcommand(arg);
+    await dispatch[chosen](fzfArgs);
   }
 }
 
