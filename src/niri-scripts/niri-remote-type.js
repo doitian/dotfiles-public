@@ -11,14 +11,11 @@ const SHIFT_PASTE_APP_IDS = new Set(["kitty", "org.kde.konsole", "foot", "alacri
 const PASTE_KEYS = ["29:1", "47:1", "47:0", "29:0"]; // Ctrl+V
 const PASTE_SHIFT_KEYS = ["29:1", "42:1", "47:1", "47:0", "42:0", "29:0"]; // Ctrl+Shift+V
 
-// ydotool key args (press:1 release:0) from linux/input-event-codes.h
-// KEY_ESC=1, KEY_BACKSPACE=14, KEY_ENTER=28, KEY_A=30, KEY_U=22
+// KEY_LEFTCTRL=29, KEY_U=22, KEY_BACKSPACE=14
 const KEY_ARGS = {
-    enter: ["28:1", "28:0"],
-    esc: ["1:1", "1:0"],
     backspace: ["14:1", "14:0"],
+    "c-backspace": ["29:1", "14:1", "14:0", "29:0"],
     "c-u": ["29:1", "22:1", "22:0", "29:0"],
-    "c-a": ["29:1", "30:1", "30:0", "29:0"],
 };
 
 const HTML = `<!DOCTYPE html>
@@ -31,22 +28,12 @@ const HTML = `<!DOCTYPE html>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: system-ui, sans-serif; max-width: 480px; margin: 2rem auto; padding: 0 1rem; }
   textarea { width: 100%; height: 8rem; font-size: 1rem; padding: .5rem; margin-bottom: .75rem; resize: vertical; }
-  .buttons { display: flex; flex-wrap: wrap; gap: .5rem; }
-  button { font-size: 1rem; padding: .5rem 1rem; cursor: pointer; }
   #status { margin-top: .75rem; font-size: .875rem; color: #666; min-height: 1.25rem; }
 </style>
 </head>
 <body>
 <h2>niri-remote-type</h2>
 <textarea id="txt" placeholder="Type text to paste..." autofocus></textarea>
-<div class="buttons">
-  <button data-action="paste">Paste</button>
-  <button data-key="enter">Enter</button>
-  <button data-key="esc">Esc</button>
-  <button data-key="c-u">C-U</button>
-  <button data-key="c-a">C-A</button>
-  <button data-key="backspace">Backspace</button>
-</div>
 <div id="status"></div>
 <script>
 const txt = document.getElementById("txt");
@@ -66,40 +53,47 @@ async function send(url, body) {
         });
         const data = await res.json();
         setStatus(data.ok ? "OK" : "Error: " + (data.error || "unknown"), data.ok);
+        return data.ok;
     } catch (e) {
         setStatus("Error: " + e.message, false);
+        return false;
     }
 }
 
-document.querySelector('[data-action="paste"]').addEventListener("click", () => {
-    const text = txt.value;
-    if (!text) return;
-    send("/paste", { text });
-    txt.value = "";
-    txt.focus();
+let idleTimer = null;
+let sentPrefix = "";
+
+txt.addEventListener("input", () => {
+    clearTimeout(idleTimer);
+    if (!txt.value) { sentPrefix = ""; return; }
+    idleTimer = setTimeout(async () => {
+        const full = txt.value;
+        if (!full) return;
+        const textToSend = sentPrefix && full.startsWith(sentPrefix)
+            ? full.slice(sentPrefix.length)
+            : full;
+        if (!textToSend) return;
+        if (await send("/paste", { text: textToSend })) {
+            if (txt.value === full) {
+                txt.value = "";
+                sentPrefix = "";
+            } else {
+                sentPrefix = full;
+            }
+        }
+    }, 300);
 });
 
 txt.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+    if (txt.value) return;
+    let key = null;
+    if (e.ctrlKey && e.key === "u") key = "c-u";
+    else if (e.ctrlKey && e.key === "Backspace") key = "c-backspace";
+    else if (e.key === "Backspace") key = "backspace";
+    if (key) {
         e.preventDefault();
-        const text = txt.value;
-        if (!text) return;
-        send("/paste", { text, sendEnter: true });
-        txt.value = "";
-    } else if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        const text = txt.value;
-        if (!text) return;
-        send("/paste", { text });
-        txt.value = "";
+        send("/key", { key });
     }
-});
-
-document.querySelectorAll("[data-key]").forEach(btn => {
-    btn.addEventListener("click", () => {
-        send("/key", { key: btn.dataset.key });
-        txt.focus();
-    });
 });
 </script>
 </body>
@@ -117,12 +111,11 @@ Bun.serve({
         }
 
         if (req.method === "POST" && url.pathname === "/paste") {
-            const { text, sendEnter } = await req.json();
+            const { text } = await req.json();
             if (typeof text !== "string" || !text) {
                 return Response.json({ ok: false, error: "missing text" }, { status: 400 });
             }
 
-            // Save text to clipboard
             const copyR = await $`wl-copy -- ${text}`.quiet().nothrow();
             if (copyR.exitCode !== 0) {
                 return Response.json(
@@ -131,7 +124,6 @@ Bun.serve({
                 );
             }
 
-            // Get focused window app_id to choose paste shortcut
             let appId = "";
             const focusedR = await $`niri msg --json focused-window`.quiet().nothrow();
             if (focusedR.exitCode === 0) {
@@ -144,8 +136,7 @@ Bun.serve({
             }
 
             const pasteKeys = SHIFT_PASTE_APP_IDS.has(appId) ? PASTE_SHIFT_KEYS : PASTE_KEYS;
-            const allKeys = sendEnter ? [...pasteKeys, ...KEY_ARGS.enter] : pasteKeys;
-            const r = await $`ydotool key ${allKeys}`.quiet().nothrow();
+            const r = await $`ydotool key ${pasteKeys}`.quiet().nothrow();
             if (r.exitCode !== 0) {
                 return Response.json(
                     { ok: false, error: r.stderr.toString().trim() },
@@ -158,9 +149,6 @@ Bun.serve({
 
         if (req.method === "POST" && url.pathname === "/key") {
             const { key } = await req.json();
-            if (typeof key !== "string") {
-                return Response.json({ ok: false, error: "missing key" }, { status: 400 });
-            }
             const args = KEY_ARGS[key];
             if (!args) {
                 return Response.json({ ok: false, error: "unknown key" }, { status: 400 });
