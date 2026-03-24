@@ -79,6 +79,22 @@ document.querySelector('[data-action="paste"]').addEventListener("click", () => 
     txt.focus();
 });
 
+txt.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        const text = txt.value;
+        if (!text) return;
+        send("/paste", { text, sendEnter: true });
+        txt.value = "";
+    } else if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        const text = txt.value;
+        if (!text) return;
+        send("/paste", { text });
+        txt.value = "";
+    }
+});
+
 document.querySelectorAll("[data-key]").forEach(btn => {
     btn.addEventListener("click", () => {
         send("/key", { key: btn.dataset.key });
@@ -101,7 +117,7 @@ Bun.serve({
         }
 
         if (req.method === "POST" && url.pathname === "/paste") {
-            const { text } = await req.json();
+            const { text, sendEnter } = await req.json();
             if (typeof text !== "string" || !text) {
                 return Response.json({ ok: false, error: "missing text" }, { status: 400 });
             }
@@ -128,7 +144,8 @@ Bun.serve({
             }
 
             const pasteKeys = SHIFT_PASTE_APP_IDS.has(appId) ? PASTE_SHIFT_KEYS : PASTE_KEYS;
-            const r = await $`ydotool key ${pasteKeys}`.quiet().nothrow();
+            const allKeys = sendEnter ? [...pasteKeys, ...KEY_ARGS.enter] : pasteKeys;
+            const r = await $`ydotool key ${allKeys}`.quiet().nothrow();
             if (r.exitCode !== 0) {
                 return Response.json(
                     { ok: false, error: r.stderr.toString().trim() },
