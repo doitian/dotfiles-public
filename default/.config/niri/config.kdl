@@ -1,4 +1,8 @@
 // This config is in the KDL format: https://kdl.dev
+
+prefer-no-csd
+screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
+
 input {
     keyboard {
         // Enable numlock on startup, omitting this setting disables it.
@@ -42,6 +46,13 @@ input {
     // Focus windows and outputs automatically when moving the mouse into them.
     // Setting max-scroll-amount="0%" makes it work only on windows already fully on screen.
     focus-follows-mouse max-scroll-amount="49%"
+
+    workspace-auto-back-and-forth
+}
+
+cursor {
+    xcursor-theme "breeze_cursors"
+    hide-when-typing
 }
 
 output "HDMI-A-1" {
@@ -122,6 +133,10 @@ layout {
         active-color "#c6a0f6"
     }
 
+    insert-hint {
+        gradient from="#c6a0f666" to="#8839ef66" angle=315
+    }
+
     struts {
         // left 64
         // right 64
@@ -130,14 +145,6 @@ layout {
     }
 
     background-color "transparent"
-}
-
-layer-rule {
-    // This is for swaybg; change for other wallpaper tools.
-    // Find the right namespace by running niri msg layers.
-    match namespace="^wallpaper$"
-    match at-startup=true
-    place-within-backdrop true
 }
 
 overview {
@@ -151,15 +158,20 @@ hotkey-overlay {
     skip-at-startup
 }
 
-screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
-// screenshot-path null
-
 animations {
     // Uncomment to turn off all animations.
     // off
 
     // Slow down all animations by this factor. Values below 1 speed them up instead.
     // slowdown 3.0
+}
+
+layer-rule {
+    // This is for swaybg; change for other wallpaper tools.
+    // Find the right namespace by running niri msg layers.
+    match namespace="^wallpaper$"
+    match at-startup=true
+    place-within-backdrop true
 }
 
 window-rule {
