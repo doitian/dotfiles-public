@@ -29,12 +29,15 @@ const HTML = `<!DOCTYPE html>
   body { font-family: system-ui, sans-serif; max-width: 480px; margin: 2rem auto; padding: 0 1rem; }
   textarea { width: 100%; height: 8rem; font-size: 1rem; padding: .5rem; margin-bottom: .75rem; resize: vertical; }
   #status { margin-top: .75rem; font-size: .875rem; color: #666; min-height: 1.25rem; }
+  #keepAwakeBtn { margin-top: .75rem; padding: .4rem .8rem; font-size: .875rem; cursor: pointer; }
+  #keepAwakeBtn.active { background: #080; color: #fff; border-color: #060; }
 </style>
 </head>
 <body>
 <h2>niri-remote-type</h2>
 <textarea id="txt" placeholder="Type text to paste..." autofocus></textarea>
 <div id="status"></div>
+<button id="keepAwakeBtn">Keep Awake</button>
 <script>
 const txt = document.getElementById("txt");
 const status = document.getElementById("status");
@@ -95,6 +98,43 @@ txt.addEventListener("keydown", (e) => {
         send("/key", { key });
     }
 });
+
+let wakeLock = null;
+const keepAwakeBtn = document.getElementById("keepAwakeBtn");
+
+if (!("wakeLock" in navigator)) {
+    keepAwakeBtn.disabled = true;
+    keepAwakeBtn.textContent = "Keep Awake (unsupported)";
+} else {
+    async function requestWakeLock() {
+        try {
+            wakeLock = await navigator.wakeLock.request("screen");
+            wakeLock.addEventListener("release", () => {
+                wakeLock = null;
+                keepAwakeBtn.classList.remove("active");
+                keepAwakeBtn.textContent = "Keep Awake";
+            });
+            keepAwakeBtn.classList.add("active");
+            keepAwakeBtn.textContent = "Awake (tap to release)";
+        } catch (err) {
+            setStatus(err.name + ": " + err.message, false);
+        }
+    }
+
+    keepAwakeBtn.addEventListener("click", () => {
+        if (wakeLock) {
+            wakeLock.release();
+        } else {
+            requestWakeLock();
+        }
+    });
+
+    document.addEventListener("visibilitychange", () => {
+        if (wakeLock !== null && document.visibilityState === "visible") {
+            requestWakeLock();
+        }
+    });
+}
 </script>
 </body>
 </html>`;
