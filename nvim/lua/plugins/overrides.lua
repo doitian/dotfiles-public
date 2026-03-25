@@ -9,20 +9,10 @@ local format = function()
   end
 end
 
-if vim.fn.has("win32") == 1 then
-  local root = LazyVim.root
-  ---@diagnostic disable-next-line: duplicate-set-field
-  function root.realpath(path)
-    if path == "" or path == nil then
-      return nil
-    end
-    if vim.fn.has("win32") == 0 then
-      path = vim.uv.fs_realpath(path)
-    elseif path == "." then
-      path = vim.uv.cwd()
-    end
-    return LazyVim.norm(path)
-  end
+---@diagnostic disable-next-line: duplicate-set-field
+function LazyVim.root.bufpath(buf)
+  local name = LazyVim.norm(vim.api.nvim_buf_get_name(assert(buf)))
+  return LazyVim.root.realpath(name and name:match("^term:/([^:]+)") or name)
 end
 
 return {
