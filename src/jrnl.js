@@ -3,12 +3,12 @@
  * Append to daily journal or open it. Port of default/bin/jrnl.
  */
 import { appendFile, writeFile } from "node:fs/promises";
-import { createWriteStream } from "node:fs";
 import { join } from "node:path";
+import { parseArgs } from "node:util";
 import { exists } from "./lib/fs.js";
+import { readClipboard, readStdin } from "./lib/io.js";
 import { home } from "./lib/env.js";
 import { spawnSyncOrExit } from "./lib/shell.js";
-import { $ } from "bun";
 
 const JOURNAL_DIRS = [
   join(home(), "Dropbox", "Brain", "journal"),
@@ -67,6 +67,15 @@ async function ensureJournalFile(journalFile) {
 }
 
 async function main() {
+  const { values, positionals } = parseArgs({
+    allowPositionals: true,
+    options: {
+      clipboard: { type: "boolean", short: "c" },
+      edit: { type: "boolean", short: "e" },
+      path: { type: "boolean", short: "p" },
+    },
+  });
+
   const dir = await findJournalDir();
   if (!dir) {
     console.error("No journal directory found");
@@ -76,26 +85,31 @@ async function main() {
   const JOURNAL_FILE = join(dir, `Journal ${today}.md`);
   await ensureJournalFile(JOURNAL_FILE);
 
-  const sepTitle = process.argv.slice(2).join(" ");
-  if (sepTitle === "-p") {
+  if (values.path) {
     console.log(JOURNAL_FILE);
     return;
   }
-  if (sepTitle === "-e") {
+  if (values.edit) {
     const editor = process.env.EDITOR || "nvim";
     spawnSyncOrExit(editor, JOURNAL_FILE);
     process.exit(0);
   }
 
-  const titleSuffix = sepTitle ? ` ${sepTitle}` : "";
+  const title = positionals.join(" ");
   const time = new Date().toTimeString().slice(0, 5);
-  await appendFile(JOURNAL_FILE, `\n### ${time}${titleSuffix}\n\n`);
-  const w = createWriteStream(JOURNAL_FILE, { flags: "a" });
-  process.stdin.pipe(w);
-  w.on("finish", async () => {
-    await appendFile(JOURNAL_FILE, "\n");
-    console.log(JOURNAL_FILE);
-  });
+
+  const input = values.clipboard
+    ? (await readClipboard()).trimEnd()
+    : (await readStdin()).trimEnd();
+  const body = input || title;
+  const heading = input ? title : "";
+  if (!body) {
+    console.error("No input provided");
+    process.exit(1);
+  }
+  const headingSuffix = heading ? ` ${heading}` : "";
+  await appendFile(JOURNAL_FILE, `\n### ${time}${headingSuffix}\n\n${body}\n`);
+  console.log(JOURNAL_FILE);
 }
 
 main();
