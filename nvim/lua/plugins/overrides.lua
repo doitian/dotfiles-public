@@ -12,7 +12,12 @@ end
 ---@diagnostic disable-next-line: duplicate-set-field
 function LazyVim.root.bufpath(buf)
   local name = LazyVim.norm(vim.api.nvim_buf_get_name(assert(buf)))
-  return LazyVim.root.realpath(name and name:match("^term:/([^:]+)") or name)
+  local path = name and name:match("^term:/(.+/%d+):") or name
+  -- fix duplicated driver letters for Windows
+  if vim.fn.has("win32") == 1 and path and path:find(":/.*:/") then
+    path = path:gsub("^.-%:/", "", 1)
+  end
+  return LazyVim.root.realpath(path)
 end
 
 return {
