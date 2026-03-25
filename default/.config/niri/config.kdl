@@ -176,10 +176,7 @@ layer-rule {
 
 window-rule {
     match app-id="^Pinentry"
-    open-floating true
-}
-
-window-rule {
+    match app-id="^org\\.kde\\.kcalc$"
     match app-id="^Zotero$" title="^(?:Progress|Linter for Zotero)$"
     open-floating true
 }
@@ -261,6 +258,8 @@ binds {
     Mod+Shift+V hotkey-overlay-title=null { spawn "clipman" "clear" "-a"; }
     Mod+T hotkey-overlay-title="Toggle Waybar" { spawn "killall" "-SIGUSR1" "waybar"; }
     Mod+Shift+T hotkey-overlay-title=null { spawn-sh "killall waybar; exec waybar"; }
+
+    XF86Calculator { spawn "kcalc"; }
 
     XF86AudioRaiseVolume  allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05+ -l 1.0"; }
     XF86AudioLowerVolume  allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05-"; }
