@@ -255,21 +255,26 @@ return {
           terminal = {
             border = true,
             keys = {
-              ["<Leader>u/"] = function(win)
+              ["="] = function(win)
+                win.opts.position = "float"
+                win.opts.height = 0
+                win.opts.width = 0
+                win:hide()
+                win:show()
+              end,
+              ["\\"] = function(win)
                 local count = vim.v.count
-                if count == 0 then
-                  win.opts.position = "float"
-                  win.opts.height = 0
-                  win.opts.width = 0
-                elseif count <= 10 then
-                  win.opts.position = "right"
-                  win.opts.height = 0
-                  win.opts.width = count > 9 and 0 or count / 10
-                else
-                  win.opts.position = "bottom"
-                  win.opts.height = count > 19 and 0 or (count - 10) / 10
-                  win.opts.width = 0
-                end
+                win.opts.position = "right"
+                win.opts.height = 0
+                win.opts.width = count == 0 and 0.4 or (count / 10)
+                win:hide()
+                win:show()
+              end,
+              ["-"] = function(win)
+                local count = vim.v.count
+                win.opts.position = "bottom"
+                win.opts.height = count == 0 and 0.4 or (count / 10)
+                win.opts.width = 0
                 win:hide()
                 win:show()
               end,
