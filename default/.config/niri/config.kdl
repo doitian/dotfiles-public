@@ -480,7 +480,8 @@ binds {
 
     Mod+Alt+L hotkey-overlay-title="Lock the Screen" { spawn-sh "clipman clear -a; swaylock -e --grace 10 -f"; }
     Mod+Shift+Backspace hotkey-overlay-title="Turn off Monitor" { spawn-sh "clipman clear -a; niri msg action power-off-monitors && swaylock -e --grace 10 -f"; }
-    Mod+Backslash hotkey-overlay-title="Change Wallpaper" { spawn "niri-swaybg"; }
+    Mod+Backslash hotkey-overlay-title="Dismiss Notification" { spawn "makoctl" "dismiss" "--all"; }
+    Mod+Alt+Backslash hotkey-overlay-title="Change Background" { spawn "niri-swaybg"; }
 }
 
 recent-windows {
