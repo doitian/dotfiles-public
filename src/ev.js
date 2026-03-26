@@ -5,13 +5,20 @@
  * 1 arg (entry): print entry password.
  * 2 args (entry, field): print line starting with "field: " (content after prefix).
  */
+import { parseArgs } from "node:util";
 import { $ } from "bun";
 import { gopassPassword, gopassFields } from "./lib/secrets.js";
+import { writeClipboard } from "./lib/io.js";
 
 async function main() {
-  const args = process.argv.slice(2);
+  const { values, positionals } = parseArgs({
+    allowPositionals: true,
+    options: {
+      clipboard: { type: "boolean", short: "c" },
+    },
+  });
 
-  if (args.length === 0) {
+  if (positionals.length === 0) {
     process.env.GPG_TTY =
       process.env.GPG_TTY || (process.platform !== "win32" ? "/dev/tty" : "");
 
@@ -26,19 +33,26 @@ async function main() {
     const fieldChoice = (await fieldChoiceFzf.stdout.text()).trim();
 
     if (fieldChoice && fieldChoice !== "PASS") {
-      console.log(`ev ${entryChoice} ${$.escape(fieldChoice)}`);
+      const cmd = `ev ${entryChoice} ${$.escape(fieldChoice)}`;
+      console.log(cmd);
+      if (values.clipboard) await writeClipboard(cmd);
     } else {
-      console.log(`ev ${entryChoice}`);
+      const cmd = `ev ${entryChoice}`;
+      console.log(cmd);
+      if (values.clipboard) await writeClipboard(cmd);
     }
-  } else if (args.length === 1) {
-    await Bun.stdout.write(await gopassPassword(args[0]));
+  } else if (positionals.length === 1) {
+    const output = await gopassPassword(positionals[0]);
+    await Bun.stdout.write(output);
+    if (values.clipboard) await writeClipboard(output);
   } else {
-    const fields = await gopassFields(args[0]);
-    const fieldValue = fields.get(args[1]);
+    const fields = await gopassFields(positionals[0]);
+    const fieldValue = fields.get(positionals[1]);
     if (fieldValue) {
       await Bun.stdout.write(fieldValue);
+      if (values.clipboard) await writeClipboard(fieldValue);
     } else {
-      console.error(`Field "${args[1]}" not found in entry`);
+      console.error(`Field "${positionals[1]}" not found in entry`);
       process.exit(1);
     }
   }
