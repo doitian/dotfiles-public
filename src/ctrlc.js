@@ -12,5 +12,6 @@ if (files.length) {
   }
   await writeClipboard(chunks.join(""));
 } else {
-  await writeClipboard(process.stdin);
+  const text = await new Response(process.stdin).text();
+  await writeClipboard(text);
 }
