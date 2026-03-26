@@ -1,0 +1,156 @@
+name: Test Pandoc Defaults
+
+on:
+  push:
+    paths:
+      - pandoc/**
+      - .github/workflows/test-pandoc.yml
+  workflow_dispatch:
+
+jobs:
+  test-pandoc:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install LaTeX
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y \
+            texlive-xetex \
+            texlive-luatex \
+            texlive-latex-extra \
+            texlive-lang-japanese
+
+      - name: Install pandoc
+        env:
+          PANDOC_VERSION: "3.9.0.2"
+        run: |
+          curl -fsSL "https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-1-amd64.deb" -o /tmp/pandoc.deb
+          sudo dpkg -i /tmp/pandoc.deb
+          pandoc --version
+
+      - name: Install pandoc-crossref
+        env:
+          PANDOC_CROSSREF_VERSION: "v0.3.23a"
+        run: |
+          curl -fsSL "https://github.com/lierdakil/pandoc-crossref/releases/download/${PANDOC_CROSSREF_VERSION}/pandoc-crossref-Linux-X64.tar.xz" -o /tmp/pandoc-crossref.tar.xz
+          tar -xf /tmp/pandoc-crossref.tar.xz -C /tmp
+          sudo install /tmp/pandoc-crossref /usr/local/bin/
+          pandoc-crossref --version
+
+      - name: Install system fonts
+        run: |
+          sudo apt-get install -y \
+            fonts-lato \
+            fonts-noto-cjk \
+            fonts-noto-color-emoji
+
+      - name: Install Atkinson Hyperlegible font
+        run: |
+          curl -fsSL "https://github.com/googlefonts/atkinson-hyperlegible/archive/refs/heads/main.tar.gz" -o /tmp/atkinson.tar.gz
+          mkdir -p /tmp/atkinson
+          tar -xf /tmp/atkinson.tar.gz -C /tmp/atkinson --strip-components=1
+          sudo mkdir -p /usr/local/share/fonts/atkinson-hyperlegible
+          sudo cp /tmp/atkinson/fonts/ttf/*.ttf /usr/local/share/fonts/atkinson-hyperlegible/
+
+      - name: Install JetBrains Mono font
+        run: |
+          curl -fsSL "https://github.com/JetBrains/JetBrainsMono/releases/download/v2.304/JetBrainsMono-2.304.zip" -o /tmp/jetbrains-mono.zip
+          mkdir -p /tmp/jetbrains-mono
+          unzip -q /tmp/jetbrains-mono.zip -d /tmp/jetbrains-mono
+          sudo mkdir -p /usr/local/share/fonts/jetbrains-mono
+          sudo find /tmp/jetbrains-mono/fonts/ttf -name "*.ttf" -exec cp {} /usr/local/share/fonts/jetbrains-mono/ \;
+
+      - name: Install Symbols Nerd Font
+        run: |
+          curl -fsSL "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/NerdFontsSymbolsOnly.tar.xz" -o /tmp/nerd-symbols.tar.xz
+          mkdir -p /tmp/nerd-symbols
+          tar -xf /tmp/nerd-symbols.tar.xz -C /tmp/nerd-symbols
+          sudo mkdir -p /usr/local/share/fonts/nerd-fonts-symbols
+          sudo find /tmp/nerd-symbols -name "*.ttf" -exec cp {} /usr/local/share/fonts/nerd-fonts-symbols/ \;
+
+      - name: Update font cache
+        run: sudo fc-cache -f
+
+      - name: Install pandoc data files
+        run: |
+          mkdir -p ~/.local/share/pandoc
+          cp -r pandoc/defaults pandoc/filters pandoc/templates ~/.local/share/pandoc/
+
+      - name: Verify fonts
+        run: |
+          fc-list | grep -i "atkinson"
+          fc-list | grep -i "lato"
+          fc-list | grep -i "jetbrains"
+          fc-list | grep -i "noto.*cjk" | head -3
+          fc-list | grep -i "noto.*emoji"
+          fc-list | grep -i "nerd"
+
+      - name: Test xelatex defaults
+        run: |
+          cat > /tmp/test.md << 'EOF'
+          ---
+          title: "Test Document"
+          author: "CI Test"
+          ---
+
+          ## Introduction
+
+          This is a test document to validate pandoc xelatex defaults.
+
+          ## Code Example
+
+          ```python
+          def hello():
+              print("Hello, World!")
+          ```
+
+          ## Table Example
+
+          | Column 1 | Column 2 |
+          |----------|----------|
+          | Value 1  | Value 2  |
+          EOF
+
+          pandoc /tmp/test.md \
+            --defaults xelatex-artcl \
+            -o /tmp/test-xelatex.pdf
+          echo "xelatex-artcl: OK"
+
+      - name: Test xelatex-zh defaults
+        run: |
+          cat > /tmp/test-zh.md << 'EOF'
+          ---
+          title: "测试文档 / Test Document"
+          author: "CI Test"
+          ---
+
+          ## 引言 / Introduction
+
+          这是一个测试文档，用于验证 pandoc xelatex-zh 默认设置。
+
+          This is a test document to validate pandoc xelatex-zh defaults.
+          EOF
+
+          pandoc /tmp/test-zh.md \
+            --defaults xelatex-zh-artcl \
+            -o /tmp/test-xelatex-zh.pdf
+          echo "xelatex-zh-artcl: OK"
+
+      - name: Test lualatex defaults
+        run: |
+          pandoc /tmp/test.md \
+            --defaults lualatex-artcl \
+            -o /tmp/test-lualatex.pdf
+          echo "lualatex-artcl: OK"
+
+      - name: Test lualatex-zh defaults
+        run: |
+          pandoc /tmp/test-zh.md \
+            --defaults lualatex-zh-artcl \
+            -o /tmp/test-lualatex-zh.pdf
+          echo "lualatex-zh-artcl: OK"
