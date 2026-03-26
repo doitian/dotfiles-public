@@ -2,8 +2,9 @@
 /**
  * fzf over git branches/files. Renamed from pzf. Port of default/bin/pzf (Python).
  */
+import { writeClipboard } from "./lib/io.js";
 
-const usage = `Usage: czf <subcommand> [fzf-options...]
+const usage = `Usage: czf [-c] <subcommand> [fzf-options...]
 
 Subcommands:
   git-branch          Select a local git branch
@@ -23,7 +24,7 @@ function hasPreview(args) {
 }
 
 async function runFzf(producerCmd, producerArgs, fzfArgs, options = {}) {
-  const { defaultPreview, filter } = options;
+  const { defaultPreview, filter, clipboard } = options;
   const fzfArgsCopy = [...fzfArgs];
   if (defaultPreview && !hasPreview(fzfArgsCopy))
     fzfArgsCopy.push("--preview", defaultPreview);
@@ -36,13 +37,14 @@ async function runFzf(producerCmd, producerArgs, fzfArgs, options = {}) {
 
   try {
     let fzf;
+    const stdoutMode = clipboard ? "pipe" : "inherit";
     if (filter) {
       const out = await new Response(pProd.stdout).text();
       const lines = out.split(/\r?\n/).filter((line) => filter(line));
       const input = lines.join("\n");
       fzf = Bun.spawn(["fzf", ...fzfArgsCopy], {
         stdin: "pipe",
-        stdout: "inherit",
+        stdout: stdoutMode,
         stderr: "inherit",
         env: process.env,
       });
@@ -51,13 +53,18 @@ async function runFzf(producerCmd, producerArgs, fzfArgs, options = {}) {
     } else {
       fzf = Bun.spawn(["fzf", ...fzfArgsCopy], {
         stdin: pProd.stdout,
-        stdout: "inherit",
+        stdout: stdoutMode,
         stderr: "inherit",
         env: process.env,
       });
     }
     const code = await fzf.exited;
     pProd.kill();
+    if (clipboard && code === 0) {
+      const output = await new Response(fzf.stdout).text();
+      process.stdout.write(output);
+      await writeClipboard(output.trimEnd());
+    }
     const sig = fzf.signalCode;
     process.exit(sig ? 128 + (sig === "SIGINT" ? 2 : 0) : code);
   } catch (e) {
@@ -70,13 +77,14 @@ async function runFzf(producerCmd, producerArgs, fzfArgs, options = {}) {
   }
 }
 
-function gitBranch(fzfArgs) {
+function gitBranch(fzfArgs, clipboard) {
   runFzf("git", ["branch", "--format=%(refname:short)"], fzfArgs, {
     defaultPreview: "git -c color.ui=always log --oneline --graph -10 {1}",
+    clipboard,
   });
 }
 
-function gitRemoteBranch(fzfArgs) {
+function gitRemoteBranch(fzfArgs, clipboard) {
   runFzf(
     "git",
     ["for-each-ref", "--format=%(refname:short)", "refs/remotes/"],
@@ -84,31 +92,36 @@ function gitRemoteBranch(fzfArgs) {
     {
       defaultPreview: "git -c color.ui=always log --oneline --graph -10 {1}",
       filter: (line) => !line.includes("HEAD") && line.includes("/"),
+      clipboard,
     },
   );
 }
 
-function gitStagedFile(fzfArgs) {
+function gitStagedFile(fzfArgs, clipboard) {
   runFzf("git", ["diff", "--name-only", "--cached"], fzfArgs, {
     defaultPreview: "git -c color.ui=always diff --cached {1}",
+    clipboard,
   });
 }
 
-function gitModifiedFile(fzfArgs) {
+function gitModifiedFile(fzfArgs, clipboard) {
   runFzf("git", ["diff", "--name-only", "HEAD"], fzfArgs, {
     defaultPreview: "git -c color.ui=always diff HEAD {1}",
+    clipboard,
   });
 }
 
-function gitUnstagedFile(fzfArgs) {
+function gitUnstagedFile(fzfArgs, clipboard) {
   runFzf("git", ["diff", "--name-only"], fzfArgs, {
     defaultPreview: "git -c color.ui=always diff {1}",
+    clipboard,
   });
 }
 
-function gitUntrackedFile(fzfArgs) {
+function gitUntrackedFile(fzfArgs, clipboard) {
   runFzf("git", ["ls-files", "--others", "--exclude-standard"], fzfArgs, {
     defaultPreview: 'bat -n 50 {1} 2>/dev/null || echo "Binary or empty file"',
+    clipboard,
   });
 }
 
@@ -151,8 +164,15 @@ async function chooseSubcommand(query) {
 }
 
 async function main() {
-  const arg = process.argv[2];
-  const fzfArgs = process.argv.slice(3);
+  let clipboard = false;
+  const rawArgs = process.argv.slice(2);
+  const cIdx = rawArgs.indexOf("-c");
+  if (cIdx !== -1) {
+    clipboard = true;
+    rawArgs.splice(cIdx, 1);
+  }
+  const arg = rawArgs[0];
+  const fzfArgs = rawArgs.slice(1);
 
   if (arg === "-h" || arg === "--help") {
     console.error(usage);
@@ -164,10 +184,10 @@ async function main() {
   }
 
   if (dispatch[arg]) {
-    await dispatch[arg](fzfArgs);
+    await dispatch[arg](fzfArgs, clipboard);
   } else {
     const chosen = await chooseSubcommand(arg);
-    await dispatch[chosen](fzfArgs);
+    await dispatch[chosen](fzfArgs, clipboard);
   }
 }
 
