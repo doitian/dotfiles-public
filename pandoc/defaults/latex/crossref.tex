@@ -1,4 +1,8 @@
 \makeatletter
+% Workaround for pandoc/pandoc-crossref bug: captionless longtables
+% use \def\LTcaptype{none} but the 'none' counter is not defined.
+% See https://github.com/jgm/pandoc/issues/11201
+\@ifundefined{c@none}{\newcounter{none}}{}
 \@ifpackageloaded{subfig}{}{\usepackage{subfig}}
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \captionsetup[subfloat]{margin=0.5em}
