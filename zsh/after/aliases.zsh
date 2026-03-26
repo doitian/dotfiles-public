@@ -111,9 +111,10 @@ alias psa="ps -A -o pid,user,time,%cpu,%mem,args -w -w"
 alias pstg="pst | rg"
 alias psug="psu | rg"
 alias psag="psa | rg"
+alias oc=opencode
+alias bx="bun x.mjs"
 alias mx="mise x --"
 alias mr="mise run"
-alias bx="bun x.mjs"
 function mact() {
   eval "$(mise activate "$@")"
 }
