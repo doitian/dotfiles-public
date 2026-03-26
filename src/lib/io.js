@@ -95,28 +95,30 @@ export async function readClipboard() {
 
 /**
  * Write text to the system clipboard (cross-platform).
- * Reads from stdin when called with no arguments.
- * @param {ReadableStream | Buffer | string} input
+ * @param {Buffer | string} input
  */
 export async function writeClipboard(input) {
+  const buf = Buffer.from(input);
+  const spawn = (cmd) =>
+    Bun.spawn(cmd, { stdin: buf, stdout: "ignore", stderr: "ignore" }).exited;
   if (process.platform === "win32") {
-    await $`clip.exe`.stdin(input).nothrow();
+    await spawn(["clip.exe"]);
     return;
   }
   if (process.env.WAYLAND_DISPLAY && !process.env.WSL_DISTRO_NAME) {
-    await $`wl-copy`.stdin(input).quiet().nothrow();
+    await spawn(["wl-copy", "--type", "text/plain"]);
     return;
   }
   if (process.platform === "darwin") {
-    await $`pbcopy`.stdin(input).nothrow();
+    await spawn(["pbcopy"]);
     return;
   }
   if (Bun.which("xclip")) {
-    await $`xclip -in -selection clipboard`.stdin(input).nothrow();
+    await spawn(["xclip", "-in", "-selection", "clipboard"]);
     return;
   }
   if (Bun.which("clip.exe")) {
-    await $`clip.exe`.stdin(input).nothrow();
+    await spawn(["clip.exe"]);
     return;
   }
   throw new Error("No clipboard tool found");
