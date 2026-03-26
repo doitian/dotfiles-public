@@ -91,7 +91,8 @@ async function main() {
   }
   if (values.edit) {
     const editor = process.env.EDITOR || "nvim";
-    spawnSyncOrExit(editor, JOURNAL_FILE);
+    const args = editor.includes("vim") ? ["+$", JOURNAL_FILE] : [JOURNAL_FILE];
+    spawnSyncOrExit(editor, ...args);
     process.exit(0);
   }
 
