@@ -76,6 +76,11 @@ jobs:
       - name: Update font cache
         run: sudo fc-cache -f
 
+      - name: Install pandoc data files
+        run: |
+          mkdir -p ~/.local/share/pandoc
+          cp -r pandoc/defaults pandoc/filters pandoc/templates ~/.local/share/pandoc/
+
       - name: Verify fonts
         run: |
           fc-list | grep -i "atkinson"
@@ -113,7 +118,6 @@ jobs:
 
           pandoc /tmp/test.md \
             --defaults xelatex-artcl \
-            --data-dir "${{ github.workspace }}/pandoc" \
             -o /tmp/test-xelatex.pdf
           echo "xelatex-artcl: OK"
 
@@ -134,14 +138,19 @@ jobs:
 
           pandoc /tmp/test-zh.md \
             --defaults xelatex-zh-artcl \
-            --data-dir "${{ github.workspace }}/pandoc" \
             -o /tmp/test-xelatex-zh.pdf
           echo "xelatex-zh-artcl: OK"
+
+      - name: Test lualatex defaults
+        run: |
+          pandoc /tmp/test.md \
+            --defaults lualatex-artcl \
+            -o /tmp/test-lualatex.pdf
+          echo "lualatex-artcl: OK"
 
       - name: Test lualatex-zh defaults
         run: |
           pandoc /tmp/test-zh.md \
             --defaults lualatex-zh-artcl \
-            --data-dir "${{ github.workspace }}/pandoc" \
             -o /tmp/test-lualatex-zh.pdf
           echo "lualatex-zh-artcl: OK"
