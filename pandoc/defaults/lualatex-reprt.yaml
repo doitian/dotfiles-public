@@ -1,0 +1,5 @@
+defaults:
+  - lualatex-base
+variables:
+  # scrbook, scrreprt, scrartcl, scrlttr2 and typearea
+  documentclass: scrreprt
