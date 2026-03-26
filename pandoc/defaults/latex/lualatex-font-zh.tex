@@ -8,3 +8,12 @@
 \setmainfont{Atkinson Hyperlegible}[RawFeature={fallback=noto-sans}]
 \setsansfont{Lato}[RawFeature={fallback=noto-sans}]
 \setmonofont{JetBrains Mono}[RawFeature={fallback=noto-mono}]
+% Force smart quotes to use Latin (ALchar) font instead of CJK (JAchar) font.
+% By default, luatexja classifies U+2018..U+201D as JAchar, rendering them
+% with the CJK font (e.g. Noto Sans CJK SC). This override ensures they use
+% the main Latin font (e.g. Atkinson Hyperlegible).
+%
+% Character range 8 in luatexja includes miscellaneous symbols. We define a
+% custom range (217) containing just the smart quotes and set it to ALchar.
+\ltjdefcharrange{217}{"2018-"201D}
+\ltjsetparameter{jacharrange={-217}}

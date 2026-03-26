@@ -4,3 +4,5 @@ variables:
   CJKmainfont: Noto Sans CJK SC
   CJKsansfont: Noto Sans CJK SC
   CJKmonofont: Noto Sans CJK SC
+include-in-header:
+  - xelatex-font-zh.tex
