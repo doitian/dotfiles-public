@@ -256,6 +256,7 @@ binds {
     Mod+Ctrl+P hotkey-overlay-title="Fuzzel Focus" { spawn "niri-fuzzel-focus"; }
     Mod+V hotkey-overlay-title="Clipboard History" { spawn "clipman" "pick" "-t" "CUSTOM" "-T" "fuzzel --dmenu -w 78"; }
     Mod+Shift+V hotkey-overlay-title=null { spawn "clipman" "clear" "-a"; }
+    Mod+Ctrl+V hotkey-overlay-title=null { spawn "pavucontrol"; }
     Mod+T hotkey-overlay-title="Toggle Waybar" { spawn "killall" "-SIGUSR1" "waybar"; }
     Mod+Shift+T hotkey-overlay-title=null { spawn-sh "killall waybar; exec waybar"; }
 
