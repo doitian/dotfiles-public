@@ -31,7 +31,7 @@
   \@ifpackageloaded{tocbasic}{}{\usepackage{tocbasic}}
   \renewcommand\newfloat[3]{%
     \addtotoclist[float]{#3}%
-    \setuptoc{#3}{chapteratlist}%
+    \@ifundefined{c@chapter}{}{\setuptoc{#3}{chapteratlist}}%
     \@namedef{ext@#1}{#3}%
     \let\float@do=\relax
     \xdef\@tempa{\noexpand\float@exts{\the\float@exts \float@do{#3}}}%
