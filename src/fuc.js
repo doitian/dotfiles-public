@@ -4,9 +4,11 @@
  */
 import { join } from "node:path";
 import { mkdir } from "node:fs/promises";
+import { parseArgs } from "node:util";
 import { $ } from "bun";
 import { exists } from "./lib/fs.js";
 import { home } from "./lib/env.js";
+import { writeClipboard } from "./lib/io.js";
 
 const UNICODES_URL =
   "https://www.unicode.org/Public/UCA/latest/allkeys.txt";
@@ -42,7 +44,14 @@ async function main() {
     await Bun.write(unicodesPath, filtered + "\n");
   }
 
-  const query = process.argv.slice(2).join(" ");
+  const { values, positionals } = parseArgs({
+    allowPositionals: true,
+    options: {
+      clipboard: { type: "boolean", short: "c" },
+    },
+  });
+
+  const query = positionals.join(" ");
   const fzfArgs = ["fzf"];
   if (query) fzfArgs.push("--query", query);
   const fzfProc = Bun.spawn(fzfArgs, {
@@ -57,7 +66,9 @@ async function main() {
 
   const hex = selected.replace(/ *#.*/, "").trim();
   const chars = hex.split(/\s+/).map((h) => String.fromCodePoint(parseInt(h, 16)));
-  process.stdout.write(chars.join("") + "\n");
+  const output = chars.join("") + "\n";
+  process.stdout.write(output);
+  if (values.clipboard) await writeClipboard(output.trimEnd());
 }
 
 main();
