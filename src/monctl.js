@@ -43,12 +43,12 @@ function parseInputArg(arg) {
 
 function parseBrightnessArg(raw) {
     const arg = raw.replace(/^=/, "");
-    const m = arg.match(/^([+-])?(\d+)$/);
+    const m = arg.match(/^(\d+)([+-])?$/);
     if (!m) return null;
-    const value = parseInt(m[2], 10);
+    const value = parseInt(m[1], 10);
     if (value > 100) return null;
-    if (m[1] === "+") return { mode: "rel", delta: value };
-    if (m[1] === "-") return { mode: "rel", delta: -value };
+    if (m[2] === "+") return { mode: "rel", delta: value };
+    if (m[2] === "-") return { mode: "rel", delta: -value };
     return { mode: "abs", value };
 }
 
@@ -350,13 +350,13 @@ Usage:
   monctl                       Show all monitors (input + brightness)
   monctl -c                    Show monitors with DDC/CI capabilities
   monctl <input> [-m N]        Set input source (by name or VCP value)
-  monctl -b <val> [-m N]       Set brightness (0-100, +n, -n)
+  monctl -b <val> [-m N]       Set brightness (0-100, or n+/n- for relative)
   monctl -l                    List known input source names
 
 Examples:
   monctl -b 50                 Set brightness to 50 on all monitors
-  monctl -b +10 -m 1           Increase brightness by 10 on monitor 1
-  monctl -b=-20                Decrease brightness by 20
+  monctl -b 10+ -m 1           Increase brightness by 10 on monitor 1
+  monctl -b 20-                Decrease brightness by 20
   monctl dp -m 1               Switch monitor 1 to DisplayPort
   monctl 5 -m 1                Set input to VCP value 5
 
@@ -397,7 +397,7 @@ async function main() {
         brightness = parseBrightnessArg(values.brightness);
         if (!brightness) {
             console.error(`Invalid brightness value: ${values.brightness}`);
-            console.error("Use 0-100 for absolute, +n/-n for relative.");
+            console.error("Use 0-100 for absolute, n+/n- for relative.");
             process.exit(1);
         }
     }
