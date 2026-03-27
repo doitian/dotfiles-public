@@ -79,7 +79,7 @@ jobs:
       - name: Install pandoc data files
         run: |
           mkdir -p ~/.local/share/pandoc
-          cp -r pandoc/defaults pandoc/filters pandoc/templates ~/.local/share/pandoc/
+          cp -r pandoc/defaults pandoc/filters ~/.local/share/pandoc/
 
       - name: Verify fonts
         run: |
