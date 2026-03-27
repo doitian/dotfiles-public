@@ -262,16 +262,20 @@ binds {
 
     XF86Calculator { spawn "kcalc"; }
 
-    XF86AudioRaiseVolume  allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05+ -l 1.0"; }
-    XF86AudioLowerVolume  allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05-"; }
-    XF86AudioMute         allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
-    XF86AudioMicMute      allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
-    XF86AudioPlay         allow-when-locked=true { spawn-sh "playerctl play-pause"; }
-    XF86AudioStop         allow-when-locked=true { spawn-sh "playerctl stop"; }
-    XF86AudioPrev         allow-when-locked=true { spawn-sh "playerctl previous"; }
-    XF86AudioNext         allow-when-locked=true { spawn-sh "playerctl next"; }
+    XF86AudioRaiseVolume  allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.05+" "-l" "1.0"; }
+    XF86AudioLowerVolume  allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.05-"; }
+    XF86AudioMute         allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+    XF86AudioMicMute      allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
+    XF86AudioPlay         allow-when-locked=true { spawn "playerctl" "play-pause"; }
+    XF86AudioStop         allow-when-locked=true { spawn "playerctl" "stop"; }
+    XF86AudioPrev         allow-when-locked=true { spawn "playerctl" "previous"; }
+    XF86AudioNext         allow-when-locked=true { spawn "playerctl" "next"; }
     XF86MonBrightnessUp   allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "+10%"; }
     XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "10%-"; }
+
+    Alt+XF86AudioRaiseVolume  { spawn "monctl" "-b" "1+" "-m" "0"; }
+    Alt+XF86AudioLowerVolume  { spawn "monctl" "-b" "1-" "-m" "0"; }
+    XF86Mail hotkey-overlay-title=null { spawn "monctl" "15" "-m" "0"; }
 
     Mod+O repeat=false { toggle-overview; }
     Mod+Ctrl+Tab repeat=false hotkey-overlay-title=null { toggle-overview; }
@@ -479,10 +483,10 @@ binds {
     Mod+Shift+Q { quit; }
 
     Mod+Alt+L hotkey-overlay-title="Lock the Screen" { spawn-sh "clipman clear -a; swaylock -e --grace 10 -f"; }
-    Mod+Shift+Backspace hotkey-overlay-title="Turn off Monitor" { spawn-sh "clipman clear -a; niri msg action power-off-monitors && swaylock -e --grace 10 -f"; }
+    Mod+Alt+Backspace hotkey-overlay-title="Turn off Monitor" { spawn-sh "clipman clear -a; niri msg action power-off-monitors && swaylock -e --grace 10 -f"; }
+    Mod+Alt+Backslash hotkey-overlay-title="Change Background" { spawn "niri-swaybg"; }
     Mod+Backslash hotkey-overlay-title="Dismiss Notification" { spawn "makoctl" "dismiss" "--all"; }
     Mod+Shift+Backslash hotkey-overlay-title=null { spawn "makoctl" "menu" "fuzzel" "--" "-d" "-p" "Choose Action: "; }
-    Mod+Alt+Backslash hotkey-overlay-title="Change Background" { spawn "niri-swaybg"; }
 }
 
 recent-windows {
