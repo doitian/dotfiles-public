@@ -165,8 +165,9 @@ function parseInputValuesFromCaps(capsStr) {
     return m[1].trim().split(/\s+/).map(v => parseInt(v, 16));
 }
 
-function winStatus(sym, monitors, showCaps) {
-    for (let i = 0; i < monitors.length; i++) {
+function winStatus(sym, monitors, monitorSel, showCaps) {
+    const targets = resolveTargets(monitors, monitorSel);
+    for (const i of targets) {
         const m = monitors[i];
         const label = m.description || "(unknown)";
 
@@ -196,8 +197,8 @@ function winStatus(sym, monitors, showCaps) {
     }
 }
 
-function winSetInput(sym, monitors, monitorIdx, inputValue) {
-    const targets = resolveTargets(monitors, monitorIdx);
+function winSetInput(sym, monitors, monitorSel, inputValue) {
+    const targets = resolveTargets(monitors, monitorSel);
     for (const i of targets) {
         const m = monitors[i];
         if (!sym.SetVCPFeature(m.handle, VCP_INPUT_SELECT, inputValue)) {
@@ -208,8 +209,8 @@ function winSetInput(sym, monitors, monitorIdx, inputValue) {
     }
 }
 
-function winSetBrightness(sym, monitors, monitorIdx, bright) {
-    const targets = resolveTargets(monitors, monitorIdx);
+function winSetBrightness(sym, monitors, monitorSel, bright) {
+    const targets = resolveTargets(monitors, monitorSel);
     for (const i of targets) {
         const m = monitors[i];
         const label = m.description || "(unknown)";
@@ -243,11 +244,11 @@ async function windowsImpl(opts) {
 
     try {
         if (opts.inputValue != null) {
-            winSetInput(sym, monitors, opts.monitorIdx, opts.inputValue);
+            winSetInput(sym, monitors, opts.monitorSel, opts.inputValue);
         } else if (opts.brightness != null) {
-            winSetBrightness(sym, monitors, opts.monitorIdx, opts.brightness);
+            winSetBrightness(sym, monitors, opts.monitorSel, opts.brightness);
         } else {
-            winStatus(sym, monitors, opts.showCaps);
+            winStatus(sym, monitors, opts.monitorSel, opts.showCaps);
         }
     } finally {
         for (const m of monitors) sym.DestroyPhysicalMonitor(m.handle);
@@ -258,9 +259,17 @@ async function windowsImpl(opts) {
 // ─── Linux ──────────────────────────────────────────────────────────────
 
 async function linuxDetectDisplays() {
-    const out = (await $`ddcutil detect --terse`.nothrow().quiet()).stdout.toString();
-    const nums = [...out.matchAll(/Display\s+(\d+)/g)].map(m => parseInt(m[1], 10));
-    return nums.length ? nums : [1];
+    const out = (await $`ddcutil detect`.nothrow().quiet()).stdout.toString();
+    const displays = [];
+    for (const block of out.split(/(?=Display\s+\d+)/)) {
+        const numMatch = block.match(/Display\s+(\d+)/);
+        if (!numMatch) continue;
+        const num = parseInt(numMatch[1], 10);
+        const modelMatch = block.match(/Model:\s*(.+)/i);
+        const description = modelMatch ? modelMatch[1].trim() : "";
+        displays.push({ num, description });
+    }
+    return displays.length ? displays : [{ num: 1, description: "" }];
 }
 
 async function linuxImpl(opts) {
@@ -269,12 +278,13 @@ async function linuxImpl(opts) {
         process.exit(1);
     }
 
-    const displayNums = await linuxDetectDisplays();
+    const displays = await linuxDetectDisplays();
+    const targetIdxs = resolveTargets(displays, opts.monitorSel);
 
     if (opts.inputValue != null) {
         const hex = fmtHex(opts.inputValue);
-        const targets = opts.monitorIdx != null ? [displayNums[opts.monitorIdx] ?? opts.monitorIdx + 1] : displayNums;
-        for (const d of targets) {
+        for (const i of targetIdxs) {
+            const d = displays[i].num;
             const display = String(d);
             const r = await $`ddcutil setvcp 0x60 ${hex} --display ${display}`.nothrow().quiet();
             if (r.exitCode !== 0) {
@@ -284,8 +294,8 @@ async function linuxImpl(opts) {
             }
         }
     } else if (opts.brightness != null) {
-        const targets = opts.monitorIdx != null ? [displayNums[opts.monitorIdx] ?? opts.monitorIdx + 1] : displayNums;
-        for (const d of targets) {
+        for (const i of targetIdxs) {
+            const d = displays[i].num;
             const display = String(d);
             let value;
             if (opts.brightness.mode === "abs") {
@@ -315,8 +325,8 @@ async function linuxImpl(opts) {
             }
         }
     } else {
-        const targets = opts.monitorIdx != null ? [displayNums[opts.monitorIdx] ?? opts.monitorIdx + 1] : displayNums;
-        for (const d of targets) {
+        for (const i of targetIdxs) {
+            const d = displays[i].num;
             const display = String(d);
             const ri = await $`ddcutil getvcp 0x60 --display ${display}`.nothrow().quiet();
             const rb = await $`ddcutil getvcp 0x10 --display ${display}`.nothrow().quiet();
@@ -331,15 +341,25 @@ async function linuxImpl(opts) {
 
 // ─── Helpers ────────────────────────────────────────────────────────────
 
-function resolveTargets(monitors, monitorIdx) {
-    if (monitorIdx != null) {
-        if (!monitors[monitorIdx]) {
-            console.error(`Monitor index ${monitorIdx} out of range (0-${monitors.length - 1})`);
+function resolveTargets(monitors, monitorSel) {
+    if (monitorSel == null) return monitors.map((_, i) => i);
+    if (typeof monitorSel === "number") {
+        if (!monitors[monitorSel]) {
+            console.error(`Monitor index ${monitorSel} out of range (0-${monitors.length - 1})`);
             process.exit(1);
         }
-        return [monitorIdx];
+        return [monitorSel];
     }
-    return monitors.map((_, i) => i);
+    const keyword = monitorSel.toLowerCase();
+    const matches = [];
+    for (let i = 0; i < monitors.length; i++) {
+        if ((monitors[i].description || "").toLowerCase().includes(keyword)) matches.push(i);
+    }
+    if (!matches.length) {
+        console.error(`No monitor matching "${monitorSel}"`);
+        process.exit(1);
+    }
+    return matches;
 }
 
 // ─── Main ───────────────────────────────────────────────────────────────
@@ -349,8 +369,8 @@ const USAGE = `monctl - Monitor control via DDC/CI
 Usage:
   monctl                       Show all monitors (input + brightness)
   monctl -c                    Show monitors with DDC/CI capabilities
-  monctl <input> [-m N]        Set input source (by name or VCP value)
-  monctl -b <val> [-m N]       Set brightness (0-100, or n+/n- for relative)
+  monctl <input> [-m SEL]      Set input source (by name or VCP value)
+  monctl -b <val> [-m SEL]     Set brightness (0-100, or n+/n- for relative)
   monctl -l                    List known input source names
 
 Examples:
@@ -358,9 +378,11 @@ Examples:
   monctl -b 10+ -m 1           Increase brightness by 10 on monitor 1
   monctl -b 20-                Decrease brightness by 20
   monctl dp -m 1               Switch monitor 1 to DisplayPort
+  monctl dp -m G95NC           Switch monitor matching "G95NC" to DisplayPort
   monctl 5 -m 1                Set input to VCP value 5
 
-Monitor index (-m) is 0-based.`;
+Monitor selector (-m) is a 0-based index or a keyword matched against the
+monitor description (case-insensitive substring match).`;
 
 async function main() {
     const { values, positionals } = parseArgs({
@@ -389,7 +411,11 @@ async function main() {
         return;
     }
 
-    const monitorIdx = values.monitor != null ? parseInt(values.monitor, 10) : null;
+    let monitorSel = null;
+    if (values.monitor != null) {
+        const n = parseInt(values.monitor, 10);
+        monitorSel = String(n) === values.monitor ? n : values.monitor;
+    }
     let inputValue = null;
     let brightness = null;
 
@@ -416,7 +442,7 @@ async function main() {
         process.exit(1);
     }
 
-    const opts = { inputValue, brightness, monitorIdx, showCaps: values.caps };
+    const opts = { inputValue, brightness, monitorSel, showCaps: values.caps };
 
     if (process.platform === "win32") {
         await windowsImpl(opts);
