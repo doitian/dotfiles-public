@@ -149,6 +149,15 @@ else
   bindkey -M vicmd "^[3;5~" delete-char
 fi
 
+# [Ctrl-Backspace] - delete word backward
+bindkey -M emacs '^H' backward-kill-word
+bindkey -M viins '^H' backward-kill-word
+bindkey -M vicmd '^H' backward-kill-word
+# [Ctrl-Alt-Backspace] - delete line backward
+bindkey -M emacs '\e^H' kill-whole-line
+bindkey -M viins '\e^H' kill-whole-line
+bindkey -M vicmd '\e^H' kill-whole-line
+
 # [Ctrl-Delete] - delete whole forward-word
 bindkey -M emacs '^[[3;5~' kill-word
 bindkey -M viins '^[[3;5~' kill-word

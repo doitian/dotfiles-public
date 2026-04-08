@@ -223,12 +223,6 @@ nnoremap >gp <Cmd>exec 'put '.v:register<CR>j
 nnoremap <gp <Cmd>exec 'put! '.v:register<CR>j
 nnoremap >p <Cmd>exec 'put '.v:register."<Bar>keepjump norm '["<CR>
 nnoremap <p <Cmd>exec 'put! '.v:register."<Bar>keepjump norm '["<CR>
-nnoremap <expr> n 'Nn'[v:searchforward].'zv'
-xnoremap <expr> n 'Nn'[v:searchforward]
-onoremap <expr> n 'Nn'[v:searchforward]
-nnoremap <expr> N 'nN'[v:searchforward].'zv'
-xnoremap <expr> N 'nN'[v:searchforward]
-onoremap <expr> N 'nN'[v:searchforward]
 inoremap , ,<C-G>u
 inoremap . .<C-G>u
 inoremap ; ;<C-G>u
@@ -240,6 +234,7 @@ nnoremap ]<Space> <Cmd>call append(line('.'), repeat([''], v:count1))<CR>
 nnoremap [<Space> <Cmd>call append(line('.')-1, repeat([''], v:count1))<CR>
 nnoremap & <Cmd>&&<CR>
 xnoremap & :&&<CR>
+inoremap <C-M-BS> <C-u>
 
 " ui {{{2
 nnoremap <Leader>qq <Cmd>qa<CR>
