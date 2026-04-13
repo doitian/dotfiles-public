@@ -27,11 +27,33 @@ Analyze outputs of following commands to generate the commit message:
 ## Rules
 
 - Summarize the nature of the changes as `<subject>` (eg. new feature, enhancement to an existing feature, bug fix, refactoring, test, docs, etc.).
-    - Ensure the subject accurately reflects the changes and their purpose (i.e. "add" means a wholly new feature, "update" means an enhancement to an existing feature, "fix" means a bug fix, etc.).
-    - Subject is lowercase, no period at the end.
-    - Follow this repository's commit subject style by checking the output `git log --oneline -n 5 --no-merges`.
-    - Keep the subject within 72 characters
+  - Ensure the subject accurately reflects the changes and their purpose (i.e. "add" means a wholly new feature, "update" means an enhancement to an existing feature, "fix" means a bug fix, etc.).
+  - Subject is lowercase, no period at the end.
+  - Follow this repository's commit subject style by checking the output `git log --oneline -n 5 --no-merges`.
+  - Keep the subject within 72 characters
 - Draft a concise (1-2 sentences) `<body>` that focuses on the "why" rather than the "what".
-    - Body must use proper punctuation and capitalization like normal paragraphs.
+  - Body must use proper punctuation and capitalization like normal paragraphs.
 - Add `<further paragraphs>` if necessary. Bullet points are OK.
 - Wrap body and further paragraphs at 72 characters.
+
+## Attribution
+
+When user asks to commit with AI attribution, include an Assisted-by tag in the following format:
+
+```
+Assisted-by: AGENT_NAME:MODEL_VERSION [TOOL1] [TOOL2]
+```
+
+Where:
+
+- `AGENT_NAME` is the name of the AI tool or framework
+- `MODEL_VERSION` is the specific model version used
+- `[TOOL1]` `[TOOL2]` are optional specialized analysis tools used (e.g., coccinelle, sparse, smatch, clang-tidy)
+
+Basic development tools (git, gcc, make, editors) should not be listed.
+
+Example:
+
+```
+Assisted-by: Claude:claude-3-opus coccinelle sparse
+```
