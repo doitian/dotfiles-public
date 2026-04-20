@@ -109,7 +109,7 @@ button:hover {
 }
 
 .niri-taskbar button.urgent {
-    color: @red;
+    border-bottom: 1px solid @red;
 }
 
 /* Common module styling */
