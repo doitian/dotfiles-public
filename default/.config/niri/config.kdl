@@ -207,6 +207,7 @@ binds {
 
     Mod+Return hotkey-overlay-title="Open a Terminal" { spawn "kitty"; }
     Mod+Shift+Return hotkey-overlay-title="Run Shell" { spawn "niri-run"; }
+    Mod+Alt+Return hotkey-overlay-title="Attach Clash Session" { spawn "kitty" "--class" "clash" "-d" "~/codebase/clashd/" "tmux-up"; }
     Mod+B hotkey-overlay-title="Run a Browser" { spawn "firefox"; }
     Mod+E hotkey-overlay-title="Run a File Explorer" { spawn "kitty" "yazi"; }
     Mod+Shift+E hotkey-overlay-title=null { spawn "dolphin"; }
