@@ -94,24 +94,6 @@ button:hover {
     opacity: 0.5;
 }
 
-/* Niri Taskbar */
-.niri-taskbar button {
-    padding: 0 6px;
-    margin: 0 2px;
-}
-
-.niri-taskbar button:hover {
-    background: @surface0;
-}
-
-.niri-taskbar button.focused {
-    background: alpha(@mauve, 0.5);
-}
-
-.niri-taskbar button.urgent {
-    border-bottom: 1px solid @red;
-}
-
 /* Common module styling */
 #clock,
 #battery,

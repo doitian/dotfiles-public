@@ -8,8 +8,7 @@
   // Choose the order of the modules
   "modules-left": [
     "niri/workspaces",
-    // "wlr/taskbar",
-    "cffi/niri-taskbar"
+    "wlr/taskbar"
   ],
   "modules-center": [
     "niri/window"
@@ -50,9 +49,6 @@
     "tooltip-format": "{title}",
     "on-click": "activate",
     "on-click-middle": "close"
-  },
-  "cffi/niri-taskbar": {
-    "module_path": "/usr/lib/waybar/libniri_taskbar.so"
   },
   "keyboard-state": {
     "numlock": true,
