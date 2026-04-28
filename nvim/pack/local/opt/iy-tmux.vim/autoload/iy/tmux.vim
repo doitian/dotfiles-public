@@ -24,7 +24,7 @@ endfunction
 
 function! iy#tmux#SendLine(...) abort
   let chunk1 = ['tmux', 'send-keys', '-t', s:GetTarget(), '-l']
-  let chunk2 = ['\;', 'send-keys', '-t', s:GetTarget(), 'C-m']
+  let chunk2 = [';', 'send-keys', '-t', s:GetTarget(), 'C-m']
   let comm = flatten([chunk1, a:000, chunk2], 1)
   call s:System(comm)
 endfunction
