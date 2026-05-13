@@ -1,6 +1,7 @@
 private-snippets.code-snippets
 /mise/auto
 /mise/config.toml
+/mise/github_tokens.toml
 node_modules
 /dist
 /src/lib/config.js

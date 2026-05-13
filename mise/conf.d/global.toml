@@ -78,6 +78,19 @@ run = """
 await Bun.secrets.set({service:"me.iany.bin",name:"_unlock",value:"true"});
 """
 
+[tasks."g:mise:github-token"]
+hide = true
+description = "Create mise GitHub token file from gh auth token"
+shell = "sh -c -o errexit"
+run = '''
+mkdir -p ~/.config/mise
+umask 077
+cat > ~/.config/mise/github_tokens.toml <<EOF
+[tokens."github.com"]
+token = "$(gh auth token)"
+EOF
+'''
+
 # ============================================================================
 # Preset tasks (preset:*)
 # ============================================================================
