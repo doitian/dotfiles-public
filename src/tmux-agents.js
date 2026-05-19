@@ -139,10 +139,19 @@ function formatLine(entry) {
     ].join("\t");
 }
 
+async function goToPane(paneTarget) {
+    const target = `=${paneTarget}`;
+    if (process.env.TMUX) {
+        await $`tmux switch-client -t ${target}`.nothrow().quiet();
+    } else {
+        await $`tmux attach -t ${target}`.nothrow().quiet();
+    }
+}
+
 const USAGE = `tmux-agents - List AI agents running in tmux sessions
 
 Usage:
-  tmux-agents              Interactive fzf picker with preview
+  tmux-agents              Interactive fzf picker; attach or switch to selection
   tmux-agents --list       Plain text list (no fzf)
 
 Detected agents: opencode, cursor-agent, copilot (gh copilot)`;
@@ -218,7 +227,7 @@ async function main() {
     if (code === 0) {
         const selected = (await new Response(fzf.stdout).text()).trim();
         const paneTarget = selected.split("\t")[0];
-        await $`tmux switch-client -t ${paneTarget}`.nothrow().quiet();
+        if (paneTarget) await goToPane(paneTarget);
     }
     process.exit(code === 130 ? 0 : code);
 }
