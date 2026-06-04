@@ -78,6 +78,18 @@ run = """
 await Bun.secrets.set({service:"me.iany.bin",name:"_unlock",value:"true"});
 """
 
+[tasks."g:ramdisk:up"]
+hide = true
+description = "Mount ramdisks for code projects"
+dir = "~"
+run = "g-ramdisk-up"
+
+[tasks."g:ramdisk:down"]
+hide = true
+description = "Unmount ramdisks for code projects"
+dir = "~"
+run = "g-ramdisk-down"
+
 [tasks."g:mise:github-token"]
 hide = true
 description = "Create mise GitHub token file from gh auth token"
