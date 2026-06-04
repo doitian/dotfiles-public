@@ -20,7 +20,16 @@ end, {})
 
 -- vim +TermHl
 vim.api.nvim_create_user_command("TermHl", function()
+  local lc = vim.api.nvim_buf_line_count(0)
   vim.api.nvim_open_term(0, {})
+  local pipe_data = vim.env.KITTY_PIPE_DATA
+  if pipe_data then
+    local cursor_x = pipe_data:match("^%d+:(%d+),%d+:%d+,%d+$")
+    local cx = tonumber(cursor_x) or 0
+    vim.defer_fn(function()
+      vim.api.nvim_win_set_cursor(0, { vim.fn.prevnonblank(lc), cx })
+    end, 100)
+  end
   vim.keymap.set("n", "q", "<Cmd>q<CR>", { buffer = true })
 end, { desc = "Highlights ANSI termcodes in curbuf" })
 
