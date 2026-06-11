@@ -65,6 +65,8 @@ vim.F.npcall(unmap, { "s" }, "<")
 
 map("i", "<C-M-BS>", "<C-u>")
 
+map({ "n", "x" }, "<A-v>", "<C-v>", { desc = "Toggle visual block mode" })
+
 if vim.fn.exists("g:GuiLoaded") and vim.fn.has("win32") == 1 then
   map({ "n", "x" }, "<C-S-V>", [["+p]], { desc = "Paste from system clipboard" })
   map("i", "<C-S-V>", "<C-R>+", { desc = "Paste from system clipboard" })

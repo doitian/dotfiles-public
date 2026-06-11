@@ -236,6 +236,9 @@ nnoremap & <Cmd>&&<CR>
 xnoremap & :&&<CR>
 inoremap <C-M-BS> <C-u>
 
+nnoremap <A-v> <C-v>
+xnoremap <A-v> <C-v>
+
 " ui {{{2
 nnoremap <Leader>qq <Cmd>qa<CR>
 nnoremap <Leader>ur <Cmd>noh<Bar>diffupdate<Bar>normal! <C-L><CR>
