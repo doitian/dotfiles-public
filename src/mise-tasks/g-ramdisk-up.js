@@ -5,6 +5,7 @@ import { $ } from "bun";
 import { home } from "../lib/env";
 
 const CODEBASE_DIR = join(home(), "codebase");
+const CURSOR_WORKTREES_DIR = join(home(), ".cursor", "worktrees");
 const TARGET_SHM_FLAG = ".target.shm";
 
 async function directDirectories(dir) {
@@ -27,7 +28,13 @@ async function projects() {
   const worktreeProjects = (
     await Promise.all(worktreeRoots.map((dir) => directDirectories(dir)))
   ).flat();
-  return [...codebaseProjects, ...worktreeProjects];
+
+  const cursorWorktreeDirs = await directDirectories(CURSOR_WORKTREES_DIR);
+  const cursorWorktreeProjects = (
+    await Promise.all(cursorWorktreeDirs.map((dir) => directDirectories(dir)))
+  ).flat();
+
+  return [...codebaseProjects, ...worktreeProjects, ...cursorWorktreeProjects];
 }
 
 async function hasBrokenTargetSymlink(project) {
