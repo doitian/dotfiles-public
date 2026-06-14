@@ -444,6 +444,7 @@ return {
         ["markdown"] = { "markdownlint-cli2" },
         ["toml"] = { "taplo" },
         ["haskell"] = { "ormolu" },
+        ["clojure"] = { "cljfmt" },
       },
     },
   },
