@@ -120,6 +120,7 @@ alias mr="mise run"
 function mact() {
   eval "$(mise activate "$@")"
 }
+alias kt="kitty --detach"
 
 ##################################################
 # Skip History
