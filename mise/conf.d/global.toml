@@ -38,7 +38,7 @@ run = "bun update -g --latest"
 hide = true
 description = "Install uv tools"
 dir = "~"
-run = "uv tool install specify-cli --from git+https://github.com/github/spec-kit.git"
+run = "true"
 
 [tasks."g:add:bun:all"]
 hide = true
