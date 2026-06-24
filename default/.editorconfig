@@ -30,5 +30,5 @@ indent_size = 4
 indent_style = tab
 indent_size = 4
 
-[*.{rs,kdl}]
+[*.{rs,kdl,py}]
 indent_size = 4
