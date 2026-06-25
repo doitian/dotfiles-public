@@ -5,6 +5,7 @@
 import { secrets, $ } from "bun";
 
 export const SERVICE_NAME = "me.iany.bin";
+const DISABLE_ENV_VAR_NAME = "NO_SECRET_ENV_VAR";
 
 /**
  * Resolve a secret: try env vars first, then Bun.secrets, then prompt and store if TTY.
@@ -14,9 +15,12 @@ export const SERVICE_NAME = "me.iany.bin";
  * @throws {Error} When value is not set and stdin is not a TTY.
  */
 export async function getSecret(secretName, ...envVarNames) {
-  for (const name of envVarNames) {
-    const val = process.env[name];
-    if (val != null && val !== "") return val;
+  const disable_flag = process.env[DISABLE_ENV_VAR_NAME];
+  if (disable_flag == null || disable_flag === "") {
+    for (const name of envVarNames) {
+      const val = process.env[name];
+      if (val != null && val !== "") return val;
+    }
   }
   let value = await secrets.get({
     service: SERVICE_NAME,
@@ -55,7 +59,7 @@ export async function getOpenAICredentials() {
   const apiKey = await getSecret("openai-api-key", "OPENAI_API_KEY");
   const baseURL = await getSecret("openai-base-url", "OPENAI_BASE_URL");
   const model =
-    (await getSecret("openai-model", "OPENAI_MODEL")) ?? "gpt-4o-mini";
+    (await getSecret("openai-model", "OPENAI_DEFAULT_MODEL")) ?? "gpt-4o-mini";
   return { apiKey, baseURL, model };
 }
 
