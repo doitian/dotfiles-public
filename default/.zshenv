@@ -1,7 +1,7 @@
 if [[ -n "${CURSOR_AGENT:-}${OPENCODE:-}${GEMINI_CLI:-}"  ]]; then
     export AI_AGENT=true
 fi
-if [[ -z "${AI_AGENT:-}" && "${SHELL_ENV_LOADED:-}" ]] then
+if [[ -z "${AI_AGENT:-}" && "${SHELL_ENV_LOADED:-}" ]]; then
     return
 fi
 export SHELL_ENV_LOADED=1
