@@ -25,3 +25,24 @@ export async function getMiseEnv() {
     return {};
   }
 }
+
+export async function getMisePathEntries(configRoot) {
+  try {
+    const result = await $`mise config get env._.path`.nothrow().quiet();
+    if (result.exitCode !== 0 || !result.stdout) return [];
+    const raw = result.stdout.toString().trim();
+    if (!raw) return [];
+    let entries;
+    try {
+      entries = JSON.parse(raw);
+    } catch {
+      return [];
+    }
+    if (!Array.isArray(entries)) return [];
+    return entries.map((e) =>
+      String(e).replaceAll("{{config_root}}", configRoot),
+    );
+  } catch {
+    return [];
+  }
+}

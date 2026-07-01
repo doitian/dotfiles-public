@@ -118,7 +118,7 @@ EOF
 [tasks."preset:ide"]
 hide = true
 description = "Activate mise in IDEs"
-depends = ["preset:neovim", "preset:vscode"]
+depends = ["preset:neovim", "preset:vscode", "preset:claude"]
 
 [tasks."preset:neovim"]
 hide = true
@@ -131,6 +131,12 @@ hide = true
 description = "Activate mise in vscode"
 dir = "{{cwd}}"
 run = "preset-vscode"
+
+[tasks."preset:claude"]
+hide = true
+description = "Activate mise in claude"
+dir = "{{cwd}}"
+run = "preset-claude"
 
 [tasks."preset:rust"]
 hide = true

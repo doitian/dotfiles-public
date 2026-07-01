@@ -3,16 +3,16 @@
  * Activate mise in neovim: write mise shims and env to .lazy.lua.
  */
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
-import { getMiseShimsPath, getMiseEnv } from "../lib/mise.js";
+import { getMiseShimsPath, getMiseEnv, getMisePathEntries } from "../lib/mise.js";
 
 function escapeLua(s) {
   return s.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\n");
 }
 
-function generateMiseSection(shimsPath, miseEnv) {
+function generateMiseSection(pathPrefix, miseEnv) {
   const lines = [
     "--- mise",
-    `vim.env.PATH = "${escapeLua(shimsPath)}" .. ":" .. vim.env.PATH`,
+    `vim.env.PATH = "${escapeLua(pathPrefix)}" .. ":" .. vim.env.PATH`,
   ];
   for (const key of Object.keys(miseEnv).sort()) {
     if (key === "PATH" || key === "Path") continue;
@@ -30,7 +30,9 @@ async function main() {
     process.exit(1);
   }
   const miseEnv = await getMiseEnv();
-  const miseSection = generateMiseSection(shimsPath, miseEnv);
+  const pathEntries = await getMisePathEntries(process.cwd());
+  const pathPrefix = [shimsPath, ...pathEntries].join(":");
+  const miseSection = generateMiseSection(pathPrefix, miseEnv);
   const lazyFile = ".lazy.lua";
 
   let newContent;

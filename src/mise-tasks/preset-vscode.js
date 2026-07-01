@@ -3,7 +3,7 @@
  * Activate mise in VSCode: write terminal.integrated.env.{platform} to .vscode/settings.json.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { getMiseShimsPath, getMiseEnv } from "../lib/mise.js";
+import { getMiseShimsPath, getMiseEnv, getMisePathEntries } from "../lib/mise.js";
 
 function detectPlatform() {
   if (process.platform === "darwin") return "osx";
@@ -31,7 +31,9 @@ async function main() {
 
   const envKey = `terminal.integrated.env.${platform}`;
   if (!settings[envKey]) settings[envKey] = {};
-  settings[envKey].PATH = `${shimsPath}:\${env:PATH}`;
+  const pathEntries = await getMisePathEntries(process.cwd());
+  const extraPath = [shimsPath, ...pathEntries].join(":");
+  settings[envKey].PATH = `${extraPath}:\${env:PATH}`;
 
   const miseEnv = await getMiseEnv();
   for (const [key, value] of Object.entries(miseEnv)) {
