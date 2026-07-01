@@ -1,9 +1,3 @@
-if [[ -n "${CURSOR_AGENT:-}${OPENCODE:-}${GEMINI_CLI:-}"  ]]; then
-    export AI_AGENT=true
-fi
-if [[ -z "${AI_AGENT:-}" && "${SHELL_ENV_LOADED:-}" ]]; then
-    return
-fi
 export SHELL_ENV_LOADED=1
 : "${PATH:=/bin:/usr/bin:/usr/local/bin}"
 export REMEMBER_PATH="${REMEMBER_PATH:-$PATH}"
@@ -76,11 +70,3 @@ export FCEDIT="$EDITOR"
 export VISUAL="$EDITOR"
 export ALTERNATE_EDITOR="$EDITOR"
 export PAGER="${PAGER:=less}"
-
-# mise for AI
-if [[ -n "${AI_AGENT:-}" ]]; then
-  export GIT_PAGER=
-  if command -v mise &> /dev/null; then
-    eval "$(mise activate zsh)"
-  fi
-fi
