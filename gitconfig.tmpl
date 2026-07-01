@@ -5,7 +5,9 @@
 	pushsnap = "!f() { git push origin \"stash@{0}:refs/stashes/$(git stash list --pretty='%s' -1 \"$@\" | sed -e 's/^On //' -e 's/^WIP on/wip/' -e 's/: /\\//' -e 's/[^\\/a-zA-Z0-9_-]/-/g')\"; }; f"
 
 	br = branch
-	bl = branch --format "%(refname:short)"
+	bl = branch --format '%(refname:short)'
+	blar = for-each-ref --format='%(refname:short) <%(authorname)>' refs/remotes
+	blme = "!f() { git blar | grep -i '<ian'; }; f"
 	bt = branch-tree
     bg = log --graph --oneline --simplify-by-decoration --branches --decorate-refs "refs/heads/*"
     bgr = log --graph --oneline --simplify-by-decoration --branches --decorate-refs "refs/heads/*" --decorate-refs "refs/remotes/*"
