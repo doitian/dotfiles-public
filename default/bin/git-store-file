@@ -308,8 +308,14 @@ Examples:
   %(prog)s ls                            # list all files in branch
 """,
     )
+
+    default_remote = "origin"
+    result = run(["git", "remote"], check=False, capture=True)
+    if result.returncode == 0 and "_store" in result.stdout.splitlines():
+        default_remote = "_store"
+
     parser.add_argument("-b", "--branch", default="_store", help="Branch name (default: _store)")
-    parser.add_argument("-r", "--remote", default="origin", help="Remote name (default: origin)")
+    parser.add_argument("-r", "--remote", default=default_remote, help=f"Remote name (default: {default_remote})")
 
     subparsers = parser.add_subparsers(dest="command", help="Command to run")
 
