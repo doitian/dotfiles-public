@@ -61,6 +61,14 @@ shell = "{% if os() == 'windows' %}pwsh -NoLogo -NoProfile -Command{% else %}bas
 run = "curl https://cursor.com/install -fsS | bash"
 run_windows = "irm 'https://cursor.com/install?win32=true' | iex"
 
+[tasks."g:add:claude-code"]
+hide = true
+description = "Install Claude Code cli"
+dir = "~"
+shell = "{% if os() == 'windows' %}pwsh -NoLogo -NoProfile -Command{% else %}bash -c -o errexit{% endif %}"
+run = "curl -fsSL https://claude.ai/install.sh | bash"
+run_windows = "irm https://claude.ai/install.ps1 | iex"
+
 [tasks."g:up:all"]
 hide = true
 alias = "g:up"
