@@ -3,17 +3,30 @@
     "prefix": "tu",
     "body": [
       "send \"vim\" C-m",
-      "neww -n shell"
+      "neww -n shell",
+      "selectw 1"
     ]
   },
-
+  "Tmux ➤ tmux-up with mise": {
+    "prefix": "tmise",
+    "body": [
+      "send \"mact && vim\" C-m",
+      "set default-command \"env TERM=xterm-256color mise en -s zsh\"",
+      "neww -n shell",
+      "selectw 1"
+    ]
+  },
   "Tmux ➤ send": {
     "prefix": "send",
-    "body": ["send \"$1\" C-m"]
+    "body": [
+      "send \"$1\" C-m"
+    ]
   },
-
   "Tmux ➤ New Window": {
     "prefix": "neww",
-    "body": ["neww -n ${1:shell}", "send \"$2\" C-m"]
+    "body": [
+      "neww -n ${1:shell}",
+      "send \"$2\" C-m"
+    ]
   }
 }
