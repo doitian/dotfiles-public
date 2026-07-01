@@ -1,4 +1,3 @@
-**/.claude/settings.local.json
 *.pyc
 *.qf
 *.tags
@@ -17,7 +16,9 @@
 .vim-spell-en.utf-8.add.spl
 TAGS
 desktop.ini
+mise.env
 mise.local.toml
+settings.local.json
 tags
 x.md
 x.mjs
