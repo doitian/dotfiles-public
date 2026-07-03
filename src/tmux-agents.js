@@ -18,6 +18,11 @@ const AGENTS = [
         runningPattern: /working|thinking|generating/i,
     },
     {
+        name: "claude",
+        match: /claude(?!-agent)/i,
+        runningPattern: /working|thinking|generating/i,
+    },
+    {
         name: "copilot",
         match: /gh\s+copilot|copilot.*agent|github-copilot/,
         runningPattern: /working|thinking|generating/i,
@@ -154,7 +159,7 @@ Usage:
   tmux-agents              Interactive fzf picker; attach or switch to selection
   tmux-agents --list       Plain text list (no fzf)
 
-Detected agents: opencode, cursor-agent, copilot (gh copilot)`;
+Detected agents: opencode, cursor-agent, claude, copilot (gh copilot)`;
 
 async function main() {
     const { values } = parseArgs({
