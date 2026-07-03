@@ -30,7 +30,7 @@ async function getRootWorktreePath() {
 
 /**
  * Copy untracked files from the root worktree into the new worktree, selecting
- * them with .worktreeinclude / .worktreeinclude.local (both .gitignore syntax).
+ * them with .worktreeinclude (.gitignore syntax).
  *
  * Matching is delegated to git itself: `git ls-files -o -i --exclude-from=<file>`
  * lists untracked files matching the given patterns, recursing into matched
@@ -38,21 +38,15 @@ async function getRootWorktreePath() {
  * into the new worktree.
  */
 async function copyIncludedFiles(rootWorktreePath, worktreePath) {
-  const includeFiles = [".worktreeinclude", ".worktreeinclude.local"];
-  const excludeArgs = [];
-  for (const name of includeFiles) {
-    if (await exists(resolve(rootWorktreePath, name))) {
-      excludeArgs.push(`--exclude-from=${name}`);
-    }
-  }
-  if (excludeArgs.length === 0) {
+  const includeFile = ".worktreeinclude";
+  if (!(await exists(resolve(rootWorktreePath, includeFile)))) {
     return;
   }
 
-  // `-C rootWorktreePath` makes both the --exclude-from paths and the output
+  // `-C rootWorktreePath` makes both the --exclude-from path and the output
   // paths resolve relative to the root worktree.
   const output =
-    await $`git -C ${rootWorktreePath} ls-files -o -i ${excludeArgs}`.text();
+    await $`git -C ${rootWorktreePath} ls-files -o -i --exclude-from=${includeFile}`.text();
   const relPaths = output.split("\n").filter((line) => line.length > 0);
   if (relPaths.length === 0) {
     return;
