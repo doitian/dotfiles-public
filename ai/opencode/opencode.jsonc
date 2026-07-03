@@ -5,6 +5,11 @@
       "type": "remote",
       "url": "https://mcp.linear.app/mcp",
       "enabled": false
+    },
+    "readwise": {
+      "type": "remote",
+      "url": "https://mcp2.readwise.io/mcp",
+      "enabled": false
     }
   }
 }
