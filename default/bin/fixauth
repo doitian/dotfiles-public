@@ -9,5 +9,9 @@ export GPG_TTY="$(tty)"
 gpg-connect-agent KILLAGENT /bye &>/dev/null
 gpg-connect-agent UPDATESTARTUPTTY /bye &>/dev/null
 
-echo "export GPG_TTY='$GPG_TTY'"
+if [ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ]; then
+  echo "unset GPG_TTY"
+else
+  echo "export GPG_TTY='$GPG_TTY'"
+fi
 echo "export SSH_AUTH_SOCK='$(gpgconf --list-dirs agent-ssh-socket)'"
