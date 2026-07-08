@@ -5,7 +5,7 @@ export REMEMBER_PATH="${REMEMBER_PATH:-$PATH}"
 if [[ -n "$BASH_VERSION" && -f "$HOME/.bashrc" ]]; then
   . "$HOME/.bashrc"
 fi
-if [[ "$OSTYPE" == "linux"* && (-n "${DISPLAY:-}" || -n "${WAYLAND_DISPLAY:-}") ]]; then
+if [[ "$OSTYPE" == "linux"* && -z "${DISPLAY:-}" && -z "${WAYLAND_DISPLAY:-}" ]]; then
   export GPG_TTY="${TTY:-}"
 fi
 
