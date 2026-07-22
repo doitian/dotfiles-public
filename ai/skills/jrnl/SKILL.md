@@ -10,10 +10,16 @@ Markdown file named `Journal YYYY-MM-DD.md` stored in `~/Dropbox/Brain/journal/`
 ## Commands
 
 `jrnl <title>` — Read stdin and append a timestamped entry with the given title.
-Pipe or type the entry body, then press Ctrl+D (or Ctrl+Z Enter on Windows).
-Example:
 
-    echo "Finished refactoring the auth module" | jrnl "Auth refactor"
+Prefer a temp file or HEREDOC for the body to avoid escaping issues:
+
+    cat <<'EOF' | jrnl "Auth refactor"
+    Finished refactoring the auth module.
+    Notes with "quotes" and $vars stay literal.
+    EOF
+
+    # or write body to a temp file, then:
+    jrnl "Auth refactor" < /tmp/jrnl-body.md
 
 `jrnl -c <title>` — Same as above, but reads the body from the clipboard
 instead of stdin.
@@ -34,7 +40,3 @@ headings within the body.
 - User asks to save, note, capture, record, log, or journal something
 - User wants to open or edit the journal
 - User wants to know where the journal file is
-- Wrap complex content in a here-string or pipe it. If the body is short, pass
-  it as a here-string: `@"
-  body
-  "@ | jrnl "title"`
