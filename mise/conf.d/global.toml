@@ -69,6 +69,14 @@ shell = "{% if os() == 'windows' %}pwsh -NoLogo -NoProfile -Command{% else %}bas
 run = "curl -fsSL https://claude.ai/install.sh | bash"
 run_windows = "irm https://claude.ai/install.ps1 | iex"
 
+[tasks."g:add:grok-cli"]
+hide = true
+description = "Install grok-cli"
+dir = "~"
+shell = "{% if os() == 'windows' %}pwsh -NoLogo -NoProfile -Command{% else %}bash -c -o errexit{% endif %}"
+run = "curl -fsSL https://x.ai/cli/install.sh | bash"
+run_windows = "irm https://x.ai/cli/install.ps1 | iex"
+
 [tasks."g:up:all"]
 hide = true
 alias = "g:up"
