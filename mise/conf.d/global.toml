@@ -118,6 +118,61 @@ cat > ~/.config/mise/github_tokens.toml <<EOF
 token = "$(gh auth token)"
 EOF
 '''
+[tasks."g:opencode:ce:enable"]
+hide = true
+description = "Enable the compound-engineering plugin in opencode config"
+run = '''
+FILE="$HOME/.config/opencode/opencode.jsonc"
+PLUGIN="compound-engineering@git+https://github.com/EveryInc/compound-engineering-plugin.git"
+if grep -qF "$PLUGIN" "$FILE"; then
+  echo "compound-engineering plugin already enabled"
+else
+  jq --arg p "$PLUGIN" '.plugin += [$p]' "$FILE" > "$FILE.tmp" && mv "$FILE.tmp" "$FILE"
+  echo "compound-engineering plugin enabled"
+fi
+'''
+
+[tasks."g:opencode:ce:disable"]
+hide = true
+description = "Disable the compound-engineering plugin in opencode config"
+run = '''
+FILE="$HOME/.config/opencode/opencode.jsonc"
+PLUGIN="compound-engineering@git+https://github.com/EveryInc/compound-engineering-plugin.git"
+if grep -qF "$PLUGIN" "$FILE"; then
+  jq --arg p "$PLUGIN" '.plugin = (.plugin | map(select(. != $p)))' "$FILE" > "$FILE.tmp" && mv "$FILE.tmp" "$FILE"
+  echo "compound-engineering plugin disabled"
+else
+  echo "compound-engineering plugin already disabled"
+fi
+'''
+
+[tasks."g:opencode:mcp:readwise:enable"]
+hide = true
+description = "Enable the Readwise MCP server in opencode config"
+run = '''
+FILE="$HOME/.config/opencode/opencode.jsonc"
+if [ "$(jq -r '(.mcp // {}).readwise.enabled // false' "$FILE")" = "true" ]; then
+  echo "readwise mcp already enabled"
+else
+  jq '.mcp //= {} | .mcp.readwise //= {type: "remote", url: "https://mcp2.readwise.io/mcp"} | .mcp.readwise.enabled = true' "$FILE" > "$FILE.tmp" && mv "$FILE.tmp" "$FILE"
+  echo "readwise mcp enabled"
+fi
+'''
+
+[tasks."g:opencode:mcp:readwise:disable"]
+hide = true
+description = "Disable the Readwise MCP server in opencode config"
+run = '''
+FILE="$HOME/.config/opencode/opencode.jsonc"
+if [ -z "$(jq -r '.mcp.readwise // empty' "$FILE")" ]; then
+  echo "readwise mcp not configured"
+elif [ "$(jq -r '.mcp.readwise.enabled // false' "$FILE")" = "false" ]; then
+  echo "readwise mcp already disabled"
+else
+  jq '.mcp.readwise.enabled = false' "$FILE" > "$FILE.tmp" && mv "$FILE.tmp" "$FILE"
+  echo "readwise mcp disabled"
+fi
+'''
 
 # ============================================================================
 # Preset tasks (preset:*)
