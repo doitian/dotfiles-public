@@ -5,6 +5,11 @@
       "type": "remote",
       "url": "https://mcp2.readwise.io/mcp",
       "enabled": false
+    },
+    "spiral": {
+      "type": "remote",
+      "url": "https://api.writewithspiral.com/mcp/",
+      "enabled": false
     }
   }
 }

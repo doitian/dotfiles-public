@@ -146,33 +146,14 @@ else
 fi
 '''
 
-[tasks."g:opencode:mcp:readwise:enable"]
+[tasks."g:opencode:mcp"]
 hide = true
-description = "Enable the Readwise MCP server in opencode config"
-run = '''
-FILE="$HOME/.config/opencode/opencode.jsonc"
-if [ "$(jq -r '(.mcp // {}).readwise.enabled // false' "$FILE")" = "true" ]; then
-  echo "readwise mcp already enabled"
-else
-  jq '.mcp //= {} | .mcp.readwise //= {type: "remote", url: "https://mcp2.readwise.io/mcp"} | .mcp.readwise.enabled = true' "$FILE" > "$FILE.tmp" && mv "$FILE.tmp" "$FILE"
-  echo "readwise mcp enabled"
-fi
+description = "Enable or disable an MCP server in opencode config"
+usage = '''
+arg "<name>" help="MCP server name"
+flag "--disable" help="Disable instead of enable"
 '''
-
-[tasks."g:opencode:mcp:readwise:disable"]
-hide = true
-description = "Disable the Readwise MCP server in opencode config"
-run = '''
-FILE="$HOME/.config/opencode/opencode.jsonc"
-if [ -z "$(jq -r '.mcp.readwise // empty' "$FILE")" ]; then
-  echo "readwise mcp not configured"
-elif [ "$(jq -r '.mcp.readwise.enabled // false' "$FILE")" = "false" ]; then
-  echo "readwise mcp already disabled"
-else
-  jq '.mcp.readwise.enabled = false' "$FILE" > "$FILE.tmp" && mv "$FILE.tmp" "$FILE"
-  echo "readwise mcp disabled"
-fi
-'''
+run = "g-opencode-mcp {{usage.name}}{% if usage.disable %} --disable{% endif %}"
 
 # ============================================================================
 # Preset tasks (preset:*)
