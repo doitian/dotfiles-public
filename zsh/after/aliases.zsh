@@ -116,6 +116,7 @@ alias psag="psa | rg"
 alias oc=opencode
 alias qianwen='opencode -m opencode-go/qwen3.7-max'
 alias deepseek='opencode -m opencode-go/deepseek-v4-pro'
+alias kimi='opencode -m opencode-go/kimi-k3'
 alias bx="bun x.mjs"
 alias mx="mise x --"
 alias mr="mise run"
