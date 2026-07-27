@@ -141,14 +141,15 @@ else
 fi
 '''
 
-[tasks."g:opencode:mcp"]
+[tasks."g:mcp"]
 hide = true
-description = "Enable or disable an MCP server in opencode config"
+description = "Enable or disable an MCP server for a code agent"
 usage = '''
+arg "<agent>" help="Code agent (opencode, claude-desktop, claude-code)"
 arg "<name>" help="MCP server name"
 flag "--disable" help="Disable instead of enable"
 '''
-run = "g-opencode-mcp {{usage.name}}{% if usage.disable %} --disable{% endif %}"
+run = "g-mcp {{usage.agent}} {{usage.name}}{% if usage.disable %} --disable{% endif %}"
 
 # ============================================================================
 # Preset tasks (preset:*)
