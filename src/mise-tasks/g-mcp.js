@@ -9,6 +9,7 @@ const TEMPLATE = join(
 );
 
 const AGENTS = ["opencode", "claude-desktop", "claude-code"];
+const ACTIONS = ["enable", "disable", "status"];
 
 function claudeDesktopConfigPath() {
   const h = home();
@@ -65,23 +66,23 @@ function toClaudeEntry(mcpTemplate) {
 
 function usage(code = 1) {
   console.error(
-    `Usage: g-mcp <agent> [--disable] <name>\nAgents: ${AGENTS.join(", ")}`,
+    `Usage: g-mcp <enable|disable|status> <agent> <name>\nAgents: ${AGENTS.join(", ")}`,
   );
   process.exit(code);
 }
 
 function parseArgs(argv) {
-  let disable = false;
+  let action;
   let agent;
   let name;
   for (const arg of argv) {
-    if (arg === "--disable") {
-      disable = true;
-    } else if (arg === "-h" || arg === "--help") {
+    if (arg === "-h" || arg === "--help") {
       usage(0);
     } else if (arg.startsWith("-")) {
       console.error(`Unknown flag: ${arg}`);
       usage(1);
+    } else if (action == null) {
+      action = arg;
     } else if (agent == null) {
       agent = arg;
     } else if (name == null) {
@@ -91,12 +92,16 @@ function parseArgs(argv) {
       usage(1);
     }
   }
-  if (agent == null || name == null) usage(1);
+  if (action == null || agent == null || name == null) usage(1);
+  if (!ACTIONS.includes(action)) {
+    console.error(`Unknown action: ${action}`);
+    usage(1);
+  }
   if (!AGENTS.includes(agent)) {
     console.error(`Unknown agent: ${agent}`);
     usage(1);
   }
-  return { disable, agent, name };
+  return { action, agent, name };
 }
 
 async function readJson(path) {
@@ -107,8 +112,57 @@ async function writeJson(path, data) {
   await Bun.write(path, `${JSON.stringify(data, null, 2)}\n`);
 }
 
+function mcpStatus(cfg, servers, name) {
+  if (cfg.style === "opencode") {
+    if (servers[name] == null) return "not configured";
+    if (servers[name].enabled === false) return "disabled";
+    return "enabled";
+  }
+  return servers[name] != null ? "enabled" : "not configured";
+}
+
+async function enable(cfg, servers, name, mcpTemplate, agent) {
+  if (cfg.style === "opencode") {
+    if (servers[name]?.enabled === true) {
+      console.log(`${agent}: ${name} mcp already enabled`);
+      return;
+    }
+    servers[name] = { ...mcpTemplate, enabled: true };
+    return `${agent}: ${name} mcp enabled`;
+  }
+
+  if (servers[name] != null) {
+    console.log(`${agent}: ${name} mcp already enabled`);
+    return;
+  }
+  servers[name] = toClaudeEntry(mcpTemplate);
+  return `${agent}: ${name} mcp enabled`;
+}
+
+async function disable(cfg, servers, name, agent) {
+  if (cfg.style === "opencode") {
+    if (servers[name] == null) {
+      console.log(`${agent}: ${name} mcp not configured`);
+      return;
+    }
+    if (servers[name].enabled === false) {
+      console.log(`${agent}: ${name} mcp already disabled`);
+      return;
+    }
+    servers[name].enabled = false;
+    return `${agent}: ${name} mcp disabled`;
+  }
+
+  if (servers[name] == null) {
+    console.log(`${agent}: ${name} mcp not configured`);
+    return;
+  }
+  delete servers[name];
+  return `${agent}: ${name} mcp disabled`;
+}
+
 async function main() {
-  const { disable, agent, name } = parseArgs(process.argv.slice(2));
+  const { action, agent, name } = parseArgs(process.argv.slice(2));
   const cfg = agentConfig(agent);
 
   if (!(await exists(TEMPLATE))) {
@@ -129,53 +183,20 @@ async function main() {
   config[cfg.key] ??= {};
   const servers = config[cfg.key];
 
-  if (cfg.style === "opencode") {
-    if (disable) {
-      if (servers[name] == null) {
-        console.log(`${agent}: ${name} mcp not configured`);
-        return;
-      }
-      if (servers[name].enabled === false) {
-        console.log(`${agent}: ${name} mcp already disabled`);
-        return;
-      }
-      servers[name].enabled = false;
-      await writeJson(cfg.path, config);
-      console.log(`${agent}: ${name} mcp disabled`);
-      return;
-    }
-
-    if (servers[name]?.enabled === true) {
-      console.log(`${agent}: ${name} mcp already enabled`);
-      return;
-    }
-
-    servers[name] = { ...mcpTemplate, enabled: true };
-    await writeJson(cfg.path, config);
-    console.log(`${agent}: ${name} mcp enabled`);
+  if (action === "status") {
+    console.log(`${agent}: ${name} mcp ${mcpStatus(cfg, servers, name)}`);
     return;
   }
 
-  // claude-code / claude-desktop: presence enables; no enabled flag
-  if (disable) {
-    if (servers[name] == null) {
-      console.log(`${agent}: ${name} mcp not configured`);
-      return;
-    }
-    delete servers[name];
-    await writeJson(cfg.path, config);
-    console.log(`${agent}: ${name} mcp disabled`);
-    return;
-  }
+  const message =
+    action === "enable"
+      ? await enable(cfg, servers, name, mcpTemplate, agent)
+      : await disable(cfg, servers, name, agent);
 
-  if (servers[name] != null) {
-    console.log(`${agent}: ${name} mcp already enabled`);
-    return;
-  }
+  if (message == null) return;
 
-  servers[name] = toClaudeEntry(mcpTemplate);
   await writeJson(cfg.path, config);
-  console.log(`${agent}: ${name} mcp enabled`);
+  console.log(message);
 }
 
 main().catch((err) => {
