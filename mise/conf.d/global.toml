@@ -120,17 +120,12 @@ EOF
 '''
 [tasks."g:opencode:ce:enable"]
 hide = true
-description = "Enable the compound-engineering plugin in opencode config"
-run = '''
-FILE="$HOME/.config/opencode/opencode.jsonc"
-PLUGIN="compound-engineering@git+https://github.com/EveryInc/compound-engineering-plugin.git"
-if grep -qF "$PLUGIN" "$FILE"; then
-  echo "compound-engineering plugin already enabled"
-else
-  jq --arg p "$PLUGIN" '.plugin += [$p]' "$FILE" > "$FILE.tmp" && mv "$FILE.tmp" "$FILE"
-  echo "compound-engineering plugin enabled"
-fi
+description = "Install the compound-engineering plugin for opencode"
+dir = "{{cwd}}"
+usage = '''
+flag "--local" help="Install in local project instead of globally"
 '''
+run = "opencode plugin compound-engineering@git+https://github.com/EveryInc/compound-engineering-plugin.git{% if not usage.local %} -g{% endif %} -f"
 
 [tasks."g:opencode:ce:disable"]
 hide = true
