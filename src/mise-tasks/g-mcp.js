@@ -66,11 +66,40 @@ function isRemoteTemplate(mcpTemplate) {
   );
 }
 
-function toClaudeCodeEntry(mcpTemplate) {
-  const entry = { ...mcpTemplate };
-  delete entry.enabled;
-  if (entry.type === "remote") entry.type = "http";
+// OpenCode local: { type: "local", command: string[], environment? }
+// Claude stdio:   { command: string, args?: string[], env? }
+function toClaudeStdioEntry(mcpTemplate) {
+  const entry = {};
+
+  if (Array.isArray(mcpTemplate.command)) {
+    if (mcpTemplate.command.length === 0) {
+      throw new Error("local mcp template missing command");
+    }
+    entry.command = mcpTemplate.command[0];
+    if (mcpTemplate.command.length > 1) {
+      entry.args = mcpTemplate.command.slice(1);
+    }
+  } else if (typeof mcpTemplate.command === "string") {
+    entry.command = mcpTemplate.command;
+    if (mcpTemplate.args != null) entry.args = mcpTemplate.args;
+  } else {
+    throw new Error("local mcp template missing command");
+  }
+
+  const env = mcpTemplate.environment ?? mcpTemplate.env;
+  if (env != null) entry.env = env;
+
   return entry;
+}
+
+function toClaudeCodeEntry(mcpTemplate) {
+  if (isRemoteTemplate(mcpTemplate)) {
+    const entry = { ...mcpTemplate };
+    delete entry.enabled;
+    if (entry.type === "remote") entry.type = "http";
+    return entry;
+  }
+  return toClaudeStdioEntry(mcpTemplate);
 }
 
 // Claude Desktop only accepts stdio servers in claude_desktop_config.json
@@ -89,14 +118,7 @@ function toClaudeDesktopEntry(mcpTemplate) {
     return { command: "bunx", args };
   }
 
-  const entry = {};
-  if (mcpTemplate.command != null) entry.command = mcpTemplate.command;
-  if (mcpTemplate.args != null) entry.args = mcpTemplate.args;
-  if (mcpTemplate.env != null) entry.env = mcpTemplate.env;
-  if (entry.command == null) {
-    throw new Error("local mcp template missing command");
-  }
-  return entry;
+  return toClaudeStdioEntry(mcpTemplate);
 }
 
 function toClaudeEntry(mcpTemplate, agent) {
