@@ -57,11 +57,51 @@ function agentConfig(agent) {
   return null;
 }
 
-function toClaudeEntry(mcpTemplate) {
+function isRemoteTemplate(mcpTemplate) {
+  return (
+    mcpTemplate.type === "remote" ||
+    mcpTemplate.type === "http" ||
+    mcpTemplate.type === "sse" ||
+    (mcpTemplate.url != null && mcpTemplate.command == null)
+  );
+}
+
+function toClaudeCodeEntry(mcpTemplate) {
   const entry = { ...mcpTemplate };
   delete entry.enabled;
   if (entry.type === "remote") entry.type = "http";
   return entry;
+}
+
+// Claude Desktop only accepts stdio servers in claude_desktop_config.json
+// ({ command, args?, env? }). Bridge remote/http templates via mcp-remote.
+function toClaudeDesktopEntry(mcpTemplate) {
+  if (isRemoteTemplate(mcpTemplate)) {
+    if (mcpTemplate.url == null) {
+      throw new Error("remote mcp template missing url");
+    }
+    const args = ["mcp-remote", mcpTemplate.url];
+    if (mcpTemplate.headers && typeof mcpTemplate.headers === "object") {
+      for (const [key, value] of Object.entries(mcpTemplate.headers)) {
+        args.push("--header", `${key}:${value}`);
+      }
+    }
+    return { command: "bunx", args };
+  }
+
+  const entry = {};
+  if (mcpTemplate.command != null) entry.command = mcpTemplate.command;
+  if (mcpTemplate.args != null) entry.args = mcpTemplate.args;
+  if (mcpTemplate.env != null) entry.env = mcpTemplate.env;
+  if (entry.command == null) {
+    throw new Error("local mcp template missing command");
+  }
+  return entry;
+}
+
+function toClaudeEntry(mcpTemplate, agent) {
+  if (agent === "claude-desktop") return toClaudeDesktopEntry(mcpTemplate);
+  return toClaudeCodeEntry(mcpTemplate);
 }
 
 function usage(code = 1) {
@@ -135,7 +175,7 @@ async function enable(cfg, servers, name, mcpTemplate, agent) {
     console.log(`${agent}: ${name} mcp already enabled`);
     return;
   }
-  servers[name] = toClaudeEntry(mcpTemplate);
+  servers[name] = toClaudeEntry(mcpTemplate, agent);
   return `${agent}: ${name} mcp enabled`;
 }
 
