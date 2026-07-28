@@ -13,7 +13,10 @@
     },
     "grafana": {
       "type": "local",
-      "command": ["bunx", "mcp-grafana"],
+      "command": [
+        "uvx",
+        "mcp-grafana"
+      ],
       "enabled": false
     }
   }

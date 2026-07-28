@@ -193,11 +193,15 @@ async function enable(cfg, servers, name, mcpTemplate, agent) {
     return `${agent}: ${name} mcp enabled`;
   }
 
-  if (servers[name] != null) {
+  const entry = toClaudeEntry(mcpTemplate, agent);
+  if (
+    servers[name] != null &&
+    JSON.stringify(servers[name]) === JSON.stringify(entry)
+  ) {
     console.log(`${agent}: ${name} mcp already enabled`);
     return;
   }
-  servers[name] = toClaudeEntry(mcpTemplate, agent);
+  servers[name] = entry;
   return `${agent}: ${name} mcp enabled`;
 }
 
