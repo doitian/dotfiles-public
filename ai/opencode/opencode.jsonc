@@ -18,6 +18,11 @@
         "mcp-grafana"
       ],
       "enabled": false
+    },
+    "Personal Portal": {
+      "type": "remote",
+      "url": "https://mcp.iany.me/mcp",
+      "enabled": true
     }
   }
 }
