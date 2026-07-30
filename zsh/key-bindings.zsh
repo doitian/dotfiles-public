@@ -184,5 +184,14 @@ autoload -U edit-command-line
 zle -N edit-command-line
 bindkey '\C-x\C-e' edit-command-line
 
+# Copy the active line buffer to the system clipboard
+copybuffer() {
+  printf '%s' "$BUFFER" | ctrlc
+}
+zle -N copybuffer
+bindkey -M emacs '^[o' copybuffer
+bindkey -M viins '^[o' copybuffer
+bindkey -M vicmd '^[o' copybuffer
+
 # file rename magick
 bindkey "^[m" copy-prev-shell-word
