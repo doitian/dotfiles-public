@@ -49,3 +49,15 @@ function ycd() {
 	[ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
 	rm -f -- "$tmp"
 }
+
+function gwtcd() {
+  local current selected
+  current="$(git rev-parse --show-toplevel 2>/dev/null)" || return 1
+  selected="$(
+    git worktree list --porcelain |
+      sed -n 's/^worktree //p' |
+      grep -vxF -- "$current" |
+      fzf -0 -1 -q "$*"
+  )" || return
+  [[ -n "$selected" ]] && cd -- "$selected"
+}
