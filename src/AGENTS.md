@@ -2,7 +2,7 @@
 
 ## Layout
 
-- **Executable scripts** live in `src/*.js` and are the entrypoints listed in `package.json` `bin`. Each is built to `dist/<name>` by `bun run build`.
+- **Executable scripts** live in `src/*.js`; `bun run build` compiles each to `dist/<name>` (plus `src/mise-tasks/` → `dist/mise-tasks/`, and `src/niri-scripts/` → `dist/` on Linux only).
 - **Non-executable shared code** lives in `src/lib/`. These are libraries used by the scripts; they are not run directly and are not listed in `bin`.
 
 ## Why `src/lib/`
@@ -12,17 +12,6 @@ Shared patterns were extracted from the CLI scripts so that:
 1. **Single place for common behavior** – e.g. async `exists(path)`, `home()`, and `readStdin()` live in `src/lib/`. Scripts run subprocesses via Bun shell; see the **bun-shell-src** skill.
 2. **Clear split** – anything in `src/` that is a `#!/usr/bin/env node` (or bun) entrypoint is an executable; anything in `src/lib/` is a dependency only.
 3. **Credentials** – `src/lib/secrets.js` provides `getSecret()` using Bun Secrets (service name `ian-bin`). Scripts resolve API keys and tokens via env, then stored secrets, then TTY prompt.
-
-## `src/lib/` modules
-
-| File | Purpose |
-|------|--------|
-| `secrets.js` | `getSecret(name, ...envVars)` – credentials via env, Bun Secrets, or TTY prompt (service `ian-bin`). |
-| `openai.js` | `getOpenAIClient()`, `streamCompletion()`, `runOneshot()` – oneshot streaming (optional system + user input). |
-| `env.js` | `home()` – user home dir (USERPROFILE / HOME). |
-| `io.js` | `readStdin()` – read all stdin (TTY or pipe). |
-| `fs.js` | `exists(path)` – async “path exists?”. |
-| `pushover.js` | `send(extraForm, credentials)` – send a message via Pushover API (caller supplies user key and app token). |
 
 ## Conventions
 
@@ -34,5 +23,5 @@ Shared patterns were extracted from the CLI scripts so that:
 
 ## JavaScript Formatting
 
-- Use 4-space indentation
+- Use 2-space indentation (per `default/.editorconfig`, which sets `indent_size = 2` for all files)
 - Format file using `vtsls-fmt <file>`
