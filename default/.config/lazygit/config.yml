@@ -6,6 +6,17 @@ git:
   autoFetch: false
   parseEmoji: true
   mainBranches: ["develop", "main", "master"]
+  diffRenderers:
+    - type: rawGit
+      name: default
+    - command: delta --paging=never
+      name: delta
+    - command: delta --paging=never --side-by-side
+      name: delta-side-by-side
+    - type: rawGit
+      args: ["--color-words"]
+      name: color-words
+
 gui:
   language: "en"
   commandLogSize: 2
