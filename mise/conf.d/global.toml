@@ -46,6 +46,15 @@ description = "Install all bun global packages"
 dir = "~"
 run = "bun install -g @github/copilot opencode-ai"
 
+[tasks."g:add:gh:all"]
+hide = true
+description = "Install gh extensions"
+dir = "~"
+run = [
+  "gh extension install dlvhdr/gh-dash",
+  "gh extension install github/gh-stack",
+]
+
 [tasks."g:clean:all"]
 hide = true
 dir = "~"
