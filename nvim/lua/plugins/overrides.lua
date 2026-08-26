@@ -398,6 +398,29 @@ return {
             end
           end,
         },
+        -- TypeScript 7's native language server. Prefer Bun's installation,
+        -- then fall back to Mason's.
+        vtsls = { enabled = false },
+        typescript_native = {
+          cmd = {
+            vim.fn.executable(vim.fn.expand("~/.bun/bin/tsc")) == 1 and vim.fn.expand("~/.bun/bin/tsc")
+              or vim.fn.expand("~/.local/share/nvim/mason/bin/tsc"),
+            "--lsp",
+            "--stdio",
+          },
+          filetypes = {
+            "javascript",
+            "javascriptreact",
+            "typescript",
+            "typescriptreact",
+          },
+          root_markers = {
+            "tsconfig.json",
+            "jsconfig.json",
+            "package.json",
+            ".git",
+          },
+        },
         yamlls = {},
         jsonls = {},
         harper_ls = {
