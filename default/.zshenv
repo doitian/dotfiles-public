@@ -2,6 +2,7 @@ if [[ "${SHELL_ENV_LOADED:-}" ]]; then
     return
 fi
 export SHELL_ENV_LOADED=1
+export OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1
 : "${PATH:=/bin:/usr/bin:/usr/local/bin}"
 export REMEMBER_PATH="${REMEMBER_PATH:-$PATH}"
 [ -z "$HOME" ] && HOME="$(cd ~ && pwd)"
