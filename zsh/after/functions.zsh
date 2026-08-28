@@ -35,6 +35,25 @@ function vman() {
   man "$@" | nvim '+Man!' -
 }
 
+function vpexec() {
+  if (( $# == 0 )); then
+    print -u2 'usage: vpexec command [arg ...]'
+    return 2
+  fi
+
+  local name="$1" cmd
+  shift
+  if (( ${+aliases[$name]} )); then
+    cmd="${aliases[$name]}"
+  else
+    cmd="${(qq)name}"
+  fi
+  (( $# > 0 )) && cmd+=" ${(j: :)${(qq)@}}"
+
+  setopt local_options pipe_fail
+  command script -qefc "$cmd" /dev/null </dev/null | command vimpager
+}
+
 function fixauth() {
   local authenv="$(command fixauth)"
   echo "$authenv"
