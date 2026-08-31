@@ -28,9 +28,9 @@
 	print-commit-message = log --pretty="format:%B"
 	cgen = "!f() { git-mgen | git commit -F - -e; }; f"
 	cqw = "!opencode -m opencode-go/qwen3.8-max run /git-commit"
-	sqw = "!opencode -m opencode-go/qwen3.8-max run -i /split-commit"
+	sqw = "!f() { opencode -m opencode-go/qwen3.8-max run /split-commit && exec opencode -c; }; f"
 	cds = "!opencode -m opencode-go/deepseek-v4-pro run /git-commit"
-	sds = "!opencode -m opencode-go/deepseek-v4-pro run -i /split-commit"
+	sds = "!f() { opencode -m opencode-go/deepseek-v4-pro run /split-commit && exec opencode -c; }; f"
 
 	co = checkout
 	cb = checkout -b
