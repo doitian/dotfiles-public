@@ -1,22 +1,26 @@
 #!/usr/bin/env bun
 /**
  * Create a new git worktree, copy included files, and optionally run setup
- * commands from .cursor/worktrees.json.
+ * commands from .agents/worktrees.json or .cursor/worktrees.json.
  *
  * Usage: git-wta [git-worktree-add-options...] <path> [<commit-ish>]
+ *        git-wta --setup <source> <dest>
  *
  * After `git worktree add`, any untracked files in the root worktree matching
  * the patterns in .worktreeinclude (using .gitignore syntax) are copied into
- * the new worktree at the same relative paths. Then, if .cursor/worktrees.json
- * exists in the root worktree, the "setup-worktree" commands are executed
+ * the new worktree at the same relative paths. Then setup commands are executed
  * inside the new worktree with ROOT_WORKTREE_PATH set to the root worktree
- * path.
+ * path. Pass --setup to perform only the copy and setup steps for an existing
+ * destination.
  */
 import { cp, mkdir } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { $ } from "bun";
 import { exists } from "./lib/fs.js";
+
+const usage = `Usage: git-wta [git-worktree-add-options...] <path> [<commit-ish>]
+       git-wta --setup <source> <dest>`;
 
 async function getRootWorktreePath() {
   // `git worktree list --porcelain` lists worktrees; the first one is the root.
@@ -60,8 +64,54 @@ async function copyIncludedFiles(rootWorktreePath, worktreePath) {
   }
 }
 
+async function getWorktreeConfig(rootWorktreePath) {
+  for (const directory of [".agents", ".cursor"]) {
+    const path = resolve(rootWorktreePath, directory, "worktrees.json");
+    if (await exists(path)) {
+      return Bun.file(path).json();
+    }
+  }
+}
+
+async function runSetupCommands(rootWorktreePath, worktreePath) {
+  const config = await getWorktreeConfig(rootWorktreePath);
+  if (!config) {
+    return;
+  }
+
+  const platformKey =
+    process.platform === "win32"
+      ? "setup-worktree-windows"
+      : "setup-worktree-unix";
+  const setupKey = config[platformKey] != null ? platformKey : "setup-worktree";
+  const commands = config[setupKey];
+  if (!Array.isArray(commands) || commands.length === 0) {
+    return;
+  }
+
+  console.log(`Running ${setupKey} commands…`);
+  const env = { ...process.env, ROOT_WORKTREE_PATH: rootWorktreePath };
+
+  for (const cmd of commands) {
+    console.log(`$ ${cmd}`);
+    const result = await $`${{ raw: cmd }}`
+      .cwd(worktreePath)
+      .env(env)
+      .nothrow();
+    if (result.exitCode !== 0) {
+      console.error(`Command failed with exit code ${result.exitCode}: ${cmd}`);
+      process.exit(result.exitCode);
+    }
+  }
+}
+
+async function setupWorktree(rootWorktreePath, worktreePath) {
+  await copyIncludedFiles(rootWorktreePath, worktreePath);
+  await runSetupCommands(rootWorktreePath, worktreePath);
+}
+
 async function main() {
-  const { positionals } = parseArgs({
+  const { values, positionals } = parseArgs({
     args: process.argv.slice(2),
     allowPositionals: true,
     options: {
@@ -74,19 +124,29 @@ async function main() {
       orphan: { type: "boolean" },
       b: { type: "string", short: "b" },
       B: { type: "string", short: "B" },
+      setup: { type: "boolean" },
     },
     strict: false,
   });
 
-  const args = process.argv.slice(2);
+  if (values.setup) {
+    if (positionals.length !== 2) {
+      console.error(usage);
+      process.exit(1);
+    }
+
+    const [source, dest] = positionals.map((path) => resolve(path));
+    await setupWorktree(source, dest);
+    return;
+  }
+
   if (positionals.length === 0) {
-    console.error(
-      "Usage: git-wta [git-worktree-add-options...] <path> [<commit-ish>]",
-    );
+    console.error(usage);
     process.exit(1);
   }
 
   // Run git worktree add with all provided arguments
+  const args = process.argv.slice(2);
   const result = await $`git worktree add ${args}`.nothrow();
   if (result.exitCode !== 0) {
     process.exit(result.exitCode);
@@ -94,34 +154,7 @@ async function main() {
 
   const worktreePath = resolve(positionals[0]);
   const rootWorktreePath = await getRootWorktreePath();
-
-  // Copy files selected by .worktreeinclude / .worktreeinclude.local
-  await copyIncludedFiles(rootWorktreePath, worktreePath);
-
-  // Check for .cursor/worktrees.json in the root worktree
-  const configPath = resolve(rootWorktreePath, ".cursor", "worktrees.json");
-
-  if (!(await exists(configPath))) {
-    return;
-  }
-
-  const config = await Bun.file(configPath).json();
-  const commands = config["setup-worktree"];
-  if (!Array.isArray(commands) || commands.length === 0) {
-    return;
-  }
-
-  console.log("Running setup-worktree commands…");
-  const env = { ...process.env, ROOT_WORKTREE_PATH: rootWorktreePath };
-
-  for (const cmd of commands) {
-    console.log(`$ ${cmd}`);
-    const r = await $`${{ raw: cmd }}`.cwd(worktreePath).env(env).nothrow();
-    if (r.exitCode !== 0) {
-      console.error(`Command failed with exit code ${r.exitCode}: ${cmd}`);
-      process.exit(r.exitCode);
-    }
-  }
+  await setupWorktree(rootWorktreePath, worktreePath);
 }
 
 main();
