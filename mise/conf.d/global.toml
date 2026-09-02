@@ -62,6 +62,12 @@ description = "Clean up all apps"
 run = "true"
 run_windows = "scoop cleanup -a -k"
 
+[tasks."g:add:aistat"]
+hide = true
+description = "Install aistat"
+dir = "~"
+run = "go install github.com/drogers0/aistat/v2/cmd/aistat@latest"
+
 [tasks."g:add:cursor-agent"]
 hide = true
 description = "Install cursor-agent cli"
