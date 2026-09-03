@@ -72,25 +72,45 @@ run = "go install github.com/drogers0/aistat/v2/cmd/aistat@latest"
 hide = true
 description = "Install cursor-agent cli"
 dir = "~"
-shell = "{% if os() == 'windows' %}pwsh -NoLogo -NoProfile -Command{% else %}bash -c -o errexit{% endif %}"
+shell = "{% if os() == 'windows' %}pwsh -NoLogo -NoProfile -ExecutionPolicy Bypass -Command{% else %}bash -c -o errexit{% endif %}"
 run = "curl https://cursor.com/install -fsS | bash"
-run_windows = "irm 'https://cursor.com/install?win32=true' | iex"
+run_windows = [
+  "Invoke-WebRequest 'https://cursor.com/install?win32=true' -OutFile (Join-Path ([IO.Path]::GetTempPath()) 'cursor-agent-install.ps1')",
+  "$installer = Join-Path ([IO.Path]::GetTempPath()) 'cursor-agent-install.ps1'; try { & $installer } finally { Remove-Item -LiteralPath $installer -Force -ErrorAction SilentlyContinue }",
+]
 
 [tasks."g:add:claude-code"]
 hide = true
 description = "Install Claude Code cli"
 dir = "~"
-shell = "{% if os() == 'windows' %}pwsh -NoLogo -NoProfile -Command{% else %}bash -c -o errexit{% endif %}"
+shell = "{% if os() == 'windows' %}pwsh -NoLogo -NoProfile -ExecutionPolicy Bypass -Command{% else %}bash -c -o errexit{% endif %}"
 run = "curl -fsSL https://claude.ai/install.sh | bash"
-run_windows = "irm https://claude.ai/install.ps1 | iex"
+run_windows = [
+  "Invoke-WebRequest 'https://claude.ai/install.ps1' -OutFile (Join-Path ([IO.Path]::GetTempPath()) 'claude-code-install.ps1')",
+  "$installer = Join-Path ([IO.Path]::GetTempPath()) 'claude-code-install.ps1'; try { & $installer } finally { Remove-Item -LiteralPath $installer -Force -ErrorAction SilentlyContinue }",
+]
 
 [tasks."g:add:grok-cli"]
 hide = true
 description = "Install grok-cli"
 dir = "~"
-shell = "{% if os() == 'windows' %}pwsh -NoLogo -NoProfile -Command{% else %}bash -c -o errexit{% endif %}"
+shell = "{% if os() == 'windows' %}pwsh -NoLogo -NoProfile -ExecutionPolicy Bypass -Command{% else %}bash -c -o errexit{% endif %}"
 run = "curl -fsSL https://x.ai/cli/install.sh | bash"
-run_windows = "irm https://x.ai/cli/install.ps1 | iex"
+run_windows = [
+  "Invoke-WebRequest 'https://x.ai/cli/install.ps1' -OutFile (Join-Path ([IO.Path]::GetTempPath()) 'grok-cli-install.ps1')",
+  "$installer = Join-Path ([IO.Path]::GetTempPath()) 'grok-cli-install.ps1'; try { & $installer } finally { Remove-Item -LiteralPath $installer -Force -ErrorAction SilentlyContinue }",
+]
+
+[tasks."g:add:codex-cli"]
+hide = true
+description = "Install Codex cli"
+dir = "~"
+shell = "{% if os() == 'windows' %}pwsh -NoLogo -NoProfile -ExecutionPolicy Bypass -Command{% else %}bash -c -o errexit{% endif %}"
+run = "curl -fsSL https://chatgpt.com/codex/install.sh | bash"
+run_windows = [
+  "Invoke-WebRequest 'https://chatgpt.com/codex/install.ps1' -OutFile (Join-Path ([IO.Path]::GetTempPath()) 'codex-install.ps1')",
+  "$installer = Join-Path ([IO.Path]::GetTempPath()) 'codex-install.ps1'; try { & $installer } finally { Remove-Item -LiteralPath $installer -Force -ErrorAction SilentlyContinue }",
+]
 
 [tasks."g:up:all"]
 hide = true
