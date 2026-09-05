@@ -22,7 +22,7 @@ Options:
 
 function claudeEnv(effort) {
   return {
-    ANTHROPIC_BASE_URL: "https://api.moonshot.ai/anthropic",
+    ANTHROPIC_BASE_URL: "https://api.moonshot.cn/anthropic",
     ANTHROPIC_MODEL: "kimi-k3[1m]",
     ANTHROPIC_DEFAULT_OPUS_MODEL: "kimi-k3[1m]",
     ANTHROPIC_DEFAULT_SONNET_MODEL: "kimi-k3[1m]",
@@ -173,7 +173,7 @@ model_context_window = 1048576
 
 ${original}${original ? "\n\n" : ""}[model_providers.kimi]
 name = "Kimi"
-base_url = "https://api.moonshot.ai/v1"
+base_url = "https://api.moonshot.cn/v1"
 env_key = "KIMI_API_KEY"
 wire_api = "responses"
 `;
