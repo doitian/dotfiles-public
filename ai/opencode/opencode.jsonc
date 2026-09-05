@@ -6,11 +6,6 @@
       "url": "https://mcp2.readwise.io/mcp",
       "enabled": false
     },
-    "spiral": {
-      "type": "remote",
-      "url": "https://api.writewithspiral.com/mcp/",
-      "enabled": false
-    },
     "grafana": {
       "type": "local",
       "command": [
@@ -19,7 +14,7 @@
       ],
       "enabled": false
     },
-    "Personal Portal": {
+    "portal": {
       "type": "remote",
       "url": "https://mcp.iany.me/mcp",
       "enabled": true
