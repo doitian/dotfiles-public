@@ -10,11 +10,17 @@ async function set(name, value) {
 }
 
 const openaiEntry = Bun.argv[2] ?? "default"
-const [openai, pushover] = await Promise.all([gopass(`key/openai/${openaiEntry}`), gopass("web/pushover.net/ian")]);
+const [openai, pushover, moonshot] = await Promise.all([
+  gopass(`key/openai/${openaiEntry}`),
+  gopass("web/pushover.net/ian"),
+  gopass("key/moonshot/personal"),
+]);
 
 await set("openai-api-key", openai.password);
 await set("openai-base-url", openai.fields.get("base_url"));
 await set("openai-model", openai.fields.get("model"));
+
+await set("moonshot-token", moonshot.password);
 
 await set("pushover-user-key", pushover.fields.get("key"));
 await set("pushover-agent-token", pushover.fields.get("agent"));

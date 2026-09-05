@@ -63,6 +63,15 @@ export async function getOpenAICredentials() {
   return { apiKey, baseURL, model };
 }
 
+export async function getMoonshotCredentials() {
+  const token = await getSecret(
+    "moonshot-token",
+    "MOONSHOT_API_KEY",
+    "KIMI_API_KEY",
+  );
+  return { token };
+}
+
 export async function gopassPassword(name) {
   return await $`gopass show -o ${name}`.text()
 }
