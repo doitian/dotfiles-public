@@ -5,4 +5,4 @@ private-snippets.code-snippets
 node_modules
 /dist
 /src/lib/config.js
-/.agents/skills
+/.claude/skills
