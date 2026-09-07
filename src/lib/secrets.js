@@ -45,7 +45,7 @@ export async function getSecret(secretName, ...envVarNames) {
 }
 
 export async function getPushoverCredentials(app) {
-  const appUpperCase = app.toUpperCase();
+  const appUpperCase = app.toUpperCase().replaceAll("-", "_");
   const userKey = await getSecret("pushover-user-key", "PUSHOVER_USER_KEY");
   const appToken = await getSecret(
     `pushover-${app}-token`,

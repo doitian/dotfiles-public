@@ -12,6 +12,7 @@ export const CATEGORIES = {
     "pushover-user-key",
     "pushover-personal-token",
     "pushover-agent-token",
+    "pushover-desktop-notification-token",
   ],
 };
 

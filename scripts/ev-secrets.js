@@ -25,3 +25,4 @@ await set("moonshot-token", moonshot.password);
 await set("pushover-user-key", pushover.fields.get("key"));
 await set("pushover-agent-token", pushover.fields.get("agent"));
 await set("pushover-personal-token", pushover.fields.get("personal"));
+await set("pushover-desktop-notification-token", pushover.fields.get("desktop-notification"));
