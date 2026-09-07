@@ -5,4 +5,6 @@ private-snippets.code-snippets
 node_modules
 /dist
 /src/lib/config.js
+/src/lib/dn-windows/bin/
+/src/lib/dn-windows/obj/
 /.claude/skills

@@ -43,10 +43,11 @@ function getNewestInputMtime(sourcePath) {
     if (s.mtimeMs > newest) newest = s.mtimeMs;
   } catch (_) { }
   if (existsSync(libDir)) {
-    for (const f of readdirSync(libDir)) {
+    for (const f of readdirSync(libDir, { recursive: true })) {
       const p = join(libDir, f);
       try {
         const st = statSync(p);
+        if (st.isDirectory()) continue;
         if (st.mtimeMs > newest) newest = st.mtimeMs;
       } catch (_) { }
     }
