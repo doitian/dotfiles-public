@@ -4,6 +4,8 @@
   "description": "Ian's configuration files and scripts",
   "type": "module",
   "scripts": {
+    "test": "bun test ./tests",
+    "check:mise": "bun run scripts/check-mise.js",
     "build": "bun run build.js",
     "clear-secrets": "bun run scripts/clear-secrets.js",
     "ev-secrets": "bun run scripts/ev-secrets.js",

@@ -2,6 +2,27 @@
 
 See <https://github.com/doitian/dotfiles>
 
+## Tests
+
+Install Bun 1.4.1 and mise 2026.9.1, then run:
+
+```sh
+bun install --frozen-lockfile
+bun run test
+bun run check:mise
+```
+
+The suite covers shared helpers and tasks in `mise/conf.d/global.toml`, including
+platform selection, arguments, dependencies, and project preset output. Mise tests
+use isolated configuration and temporary projects. Installer and update tasks use
+dry runs; external requests and plugin commands use mocks. No credentials or
+external services are required. On Windows, Git for Windows tools must be on PATH.
+
+`check:mise` loads a temporary copy of `mise/conf.d/global.toml`, verifies every
+task was discovered, and runs `mise tasks validate` to check syntax, usage specs,
+and dependency references. GitHub Actions runs both checks on Linux and Windows
+for pushes and pull requests.
+
 ## Tools I Used
 
 - Obsidian: note taking

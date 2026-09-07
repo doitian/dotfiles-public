@@ -1,0 +1,40 @@
+name: Test Scripts
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4.1"
+      - uses: jdx/mise-action@v3
+        with:
+          version: "2026.9.1"
+          install: false
+          cache: false
+      - name: Add Git shell utilities to PATH
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $gitRoot = Split-Path (Split-Path (Get-Command git).Source -Parent) -Parent
+          [IO.File]::AppendAllText($env:GITHUB_PATH, (Join-Path $gitRoot 'usr/bin') + "`n")
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Validate global mise config and tasks
+        run: bun run check:mise
+      - name: Run tests
+        run: bun run test
