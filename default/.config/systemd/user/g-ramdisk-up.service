@@ -1,0 +1,9 @@
+[Unit]
+Description=Ramdisk setup
+
+[Service]
+Type=oneshot
+ExecStart=%h/.dotfiles/repos/public/dist/mise-tasks/g-ramdisk-up
+
+[Install]
+WantedBy=default.target
