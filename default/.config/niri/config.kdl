@@ -418,6 +418,9 @@ binds {
     // Expel the bottom window from the focused column to the right.
     Mod+Period { expel-window-from-column; }
 
+    Mod+Shift+Comma { spawn "ulanzi-niri" "control" "prev-page"; }
+    Mod+Shift+Period { spawn "ulanzi-niri" "control" "next-page"; }
+
     Mod+Semicolon { switch-preset-column-width; }
     // Mod+R { switch-preset-column-width-back; }
     Mod+Shift+Semicolon { switch-preset-window-height; }
