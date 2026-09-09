@@ -6,20 +6,34 @@ import { OpenAI } from "openai";
 export { OpenAI };
 
 /**
+ * Extra body fields to disable thinking on Qwen/DashScope hybrid models.
+ * Official OpenAI has no equivalent; unknown params are omitted.
+ * @param {string} model
+ * @param {boolean} [noThinking]
+ */
+export function extraBodyForThinking(model, noThinking) {
+  if (!noThinking || !/qwen/i.test(model)) return {};
+  return { enable_thinking: false };
+}
+
+/**
  * Run streaming chat completion; write content deltas to output stream.
  * @param {OpenAI} client
  * @param {string} model
  * @param {import('openai').ChatCompletionMessageParam[]} messages
- * @param {{ outputStream?: NodeJS.Writable, temperature?: number }} [options]
+ * @param {{ outputStream?: NodeJS.Writable, temperature?: number, noThinking?: boolean }} [options]
  * @throws {Error} on API error or when finish_reason is content_filter/refusal
  */
 export async function streamCompletion(client, model, messages, options = {}) {
-  const { outputStream = process.stdout, temperature = 0.3 } = options;
+  const { outputStream = process.stdout, temperature = 0.3, noThinking = false } =
+    options;
+  const extra_body = extraBodyForThinking(model, noThinking);
   const stream = await client.chat.completions.create({
     model,
     messages,
     temperature,
     stream: true,
+    ...extra_body,
   });
 
   let lastChunk = null;
@@ -47,11 +61,11 @@ export async function streamCompletion(client, model, messages, options = {}) {
  * Builds messages and calls streamCompletion. Caller handles errors and exit.
  * @param {OpenAI} client
  * @param {string} model
- * @param {{ systemPrompt?: string | null, input: string }} options
+ * @param {{ systemPrompt?: string | null, input: string, noThinking?: boolean }} options
  * @throws {Error} when input is empty, or on API/refusal from streamCompletion
  */
 export async function runOneshot(client, model, options) {
-  const { systemPrompt, input } = options;
+  const { systemPrompt, input, noThinking } = options;
   if (!input.trim()) {
     throw new Error("No input on stdin.");
   }
@@ -60,5 +74,5 @@ export async function runOneshot(client, model, options) {
     messages.push({ role: "system", content: systemPrompt.trim() });
   }
   messages.push({ role: "user", content: input });
-  await streamCompletion(client, model, messages);
+  await streamCompletion(client, model, messages, { noThinking });
 }

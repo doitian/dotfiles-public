@@ -4,7 +4,7 @@
  * Uses embedded prompt and Bun.spawn for git commands.
  */
 import { getOpenAICredentials } from "./lib/secrets.js";
-import { OpenAI } from "./lib/openai.js";
+import { extraBodyForThinking, OpenAI } from "./lib/openai.js";
 
 const SYSTEM_PROMPT = `Use the output of \`git diff --staged\` to generate the commit message.
 
@@ -83,10 +83,12 @@ async function run(client, model) {
 
   let completion;
   try {
+    const extra_body = extraBodyForThinking(model, true);
     completion = await client.chat.completions.create({
       model,
       messages,
       temperature: 0.2,
+      ...extra_body,
     });
   } catch (err) {
     console.error("API error:", err?.message ?? err);
