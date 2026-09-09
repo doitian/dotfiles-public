@@ -17,8 +17,8 @@ const [openai, pushover, moonshot] = await Promise.all([
 ]);
 
 await set("openai-api-key", openai.password);
-await set("openai-base-url", openai.fields.get("base_url"));
-await set("openai-model", openai.fields.get("model"));
+await set("openai-base-url", openai.fields.get("OPENAI_BASE_URL"));
+await set("openai-model", openai.fields.get("OPENAI_DEFAULT_MODEL"));
 
 await set("moonshot-token", moonshot.password);
 

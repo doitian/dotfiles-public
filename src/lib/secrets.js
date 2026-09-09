@@ -95,3 +95,28 @@ export async function gopass(name) {
 export async function gopassFields(name) {
   return (await gopass(name)).fields
 }
+
+const ENV_FIELD_NAME = /^[A-Z0-9_]+$/;
+
+function isExportableField(name) {
+  return ENV_FIELD_NAME.test(name) && /[A-Z]/.test(name);
+}
+
+function shellQuote(value) {
+  return `'${String(value).replaceAll("'", `'\\''`)}'`;
+}
+
+export function gopassToEnv({ password, fields }) {
+  const lines = [];
+  const exportAs = fields.get("export_as")?.trim();
+  if (exportAs) {
+    lines.push(`${exportAs}=${shellQuote(password ?? "")}`);
+  }
+  for (const [key, value] of fields) {
+    if (key === "export_as") continue;
+    if (isExportableField(key)) {
+      lines.push(`${key}=${shellQuote(value)}`);
+    }
+  }
+  return lines.length ? `${lines.join("\n")}\n` : "";
+}
