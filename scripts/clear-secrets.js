@@ -1,12 +1,13 @@
 #!/usr/bin/env bun
 /**
- * Clear ian-bin secrets by category. Run: bun run clear-secrets [openai|pushover]
- * No args = clear all. openai = OpenAI secrets only. pushover = Pushover secrets only.
+ * Clear stored credentials by category. No args clears all categories.
  */
 import { secrets } from "bun";
 import { SERVICE_NAME } from "../src/lib/secrets.js";
+import { GOOGLE_TASKS_SECRETS } from "../src/gtasks.js";
 
 export const CATEGORIES = {
+  "google-tasks": GOOGLE_TASKS_SECRETS,
   openai: ["openai-api-key", "openai-base-url", "openai-model"],
   pushover: [
     "pushover-user-key",
@@ -16,12 +17,12 @@ export const CATEGORIES = {
   ],
 };
 
-export const SECRET_NAMES = [...CATEGORIES.openai, ...CATEGORIES.pushover];
+export const SECRET_NAMES = Object.values(CATEGORIES).flat();
 
 if (import.meta.main) {
   function usage() {
     process.stderr.write(
-      "Usage: bun run clear-secrets [openai|pushover]\n  No args = clear all. openai = OpenAI only. pushover = Pushover only.\n",
+      "Usage: bun run clear-secrets [openai|pushover|google-tasks]\n  No args = clear all categories.\n",
     );
     process.exit(1);
   }
@@ -30,10 +31,8 @@ if (import.meta.main) {
   let names;
   if (arg === undefined) {
     names = SECRET_NAMES;
-  } else if (arg === "openai") {
-    names = CATEGORIES.openai;
-  } else if (arg === "pushover") {
-    names = CATEGORIES.pushover;
+  } else if (Object.hasOwn(CATEGORIES, arg)) {
+    names = CATEGORIES[arg];
   } else {
     usage();
   }
