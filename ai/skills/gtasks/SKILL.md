@@ -52,7 +52,9 @@ All task commands default to `@default`. Use `--list LIST_ID` for another list.
 
 - `add` requires `--title`. Omit `--parent` to add at the root.
 - `edit` changes only supplied fields. `--notes ""` clears the description.
-- Titles and notes are Markdown. Do not escape them.
+- Write `--title` and `--notes` as Markdown (links, emphasis, lists, code). Do
+  not escape or flatten them to plain text. Title is one line; put the rest in
+  notes.
 
 ## Workflow
 
