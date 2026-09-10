@@ -345,7 +345,7 @@ describe("Persistent local task queue", () => {
         await pending;
     });
 
-    test("TUI p prints raw Markdown and P pipes it to glow", async () => {
+    test("TUI p prints raw Markdown", async () => {
         const { local } = fixture();
         await local.syncOnce();
         const input = new PassThrough();
@@ -355,9 +355,8 @@ describe("Persistent local task queue", () => {
         output.columns = 110;
         output.rows = 24;
         let screen = "";
-        let paged = "";
         output.on("data", chunk => { screen += chunk; });
-        const pending = runTasksTui(local, "@default", { input, output, runGlow: async md => { paged = md; } });
+        const pending = runTasksTui(local, "@default", { input, output });
         await new Promise(resolve => setImmediate(resolve));
         screen = "";
         input.write("p");
@@ -366,10 +365,6 @@ describe("Persistent local task queue", () => {
         expect(screen).toContain("Press any key to return.");
         input.write("x");
         await new Promise(resolve => setImmediate(resolve));
-        screen = "";
-        input.write("P");
-        await new Promise(resolve => setImmediate(resolve));
-        expect(paged).toContain("- [ ] Existing");
         input.write("q");
         await pending;
     });
@@ -636,9 +631,10 @@ describe("Task navigation and actions", () => {
 
     test("entering a task shows its current description above its children, including empty parents", () => {
         const { view } = fixture();
+        expect(renderTasks(view)).toContain("/ Default list\r\n  @default");
         view.tasks.find(task => task.id === "p").notes = "Project context\nSecond line";
         view.enter();
-        expect(renderTasks(view)).toContain("/ Project\r\n  Project context\r\n  Second line");
+        expect(renderTasks(view)).toContain("/ Project\r\n  p\r\n  Project context\r\n  Second line");
         expect(renderTasks(view)).toContain("[ ] Child");
         view.tasks.find(task => task.id === "p").notes = "Updated context";
         expect(renderTasks(view)).toContain("Updated context");
@@ -646,7 +642,8 @@ describe("Task navigation and actions", () => {
         expect(renderTasks(view)).toContain("Updated context");
         expect(renderTasks(view)).toContain("No tasks here");
         view.back();
-        expect(renderTasks(view)).not.toContain("/ Project\r\n  Updated context");
+        expect(renderTasks(view)).toContain("/ Default list\r\n  @default");
+        expect(renderTasks(view)).not.toContain("/ Project\r\n  p\r\n  Updated context");
     });
 
     test("long focused descriptions leave room for selected children and controls", () => {

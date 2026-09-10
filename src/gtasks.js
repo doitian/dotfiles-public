@@ -701,6 +701,7 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
         `Google Tasks / ${view.listTitle}${view.path.map(entry => ` / ${entry.title}`).join("")}`,
     ];
     const focusedTask = view.tasks.find(task => task.id === view.parent);
+    lines.push(`  ${focusedTask?.id ?? view.list}`);
     if (focusedTask?.notes) {
         const notes = focusedTask.notes.split(/\r?\n/);
         const limit = Math.max(1, Math.min(Math.floor(height / 3), height - 9));
@@ -742,7 +743,7 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
     else lines.push(...body.slice(start, start + pageSize));
     while (lines.length < height - 5) lines.push("");
     lines.push(`j/k move  Enter/l cd  h/Backspace up  / search  Esc clear`);
-    lines.push("a add  e edit  d delete  Space/x/u status  c completed  p print  P glow  r refresh  q quit");
+    lines.push("a add  e edit  d delete  Space/x/u status  c completed  p print  r refresh  q quit");
     let prompt = view.message || "";
     if (view.mode === "search") prompt = `/ ${view.input}  (Enter apply, Esc cancel)`;
     if (view.mode === "delete") prompt = `Delete task + children? [y/N] ${view.deleteTask.title}`;
@@ -829,7 +830,7 @@ export function readTaskInput(initial, { input = process.stdin, output = process
     });
 }
 
-export async function runTasksTui(api, list = "@default", { input = process.stdin, output = process.stdout, cd, runGlow } = {}) {
+export async function runTasksTui(api, list = "@default", { input = process.stdin, output = process.stdout, cd } = {}) {
     if (!input.isTTY || !output.isTTY) throw new Error("gtasks needs an interactive terminal. Use gtasks list for Markdown output.");
     const view = new TasksView(api, list);
     output.write("Loading Google Tasks...\n");
@@ -874,11 +875,11 @@ export async function runTasksTui(api, list = "@default", { input = process.stdi
         if ((key.ctrl && key.name === "c") || (view.mode === "browse" && text === "q")) { finish(); return; }
         if (busy || closed) return;
         try {
-            if (view.mode === "browse" && (text === "p" || text === "P")) {
+            if (view.mode === "browse" && text === "p") {
                 busy = true;
                 input.off("keypress", onKey);
                 try {
-                    await presentMarkdown(view.markdown(), { glow: text === "P", input, output, runGlow });
+                    await presentMarkdown(view.markdown(), { input, output });
                 } finally {
                     if (!closed) input.on("keypress", onKey);
                 }
@@ -1003,17 +1004,11 @@ export async function writeMarkdown(md, output, { raw = false, runGlow } = {}) {
     output.write(`${md}\n`);
 }
 
-async function presentMarkdown(md, { glow = false, input, output, runGlow } = {}) {
+async function presentMarkdown(md, { input, output } = {}) {
     const wasRaw = input.isRaw ?? true;
     output.write("\x1b[?2004l\x1b[?25h\x1b[?1049l");
     input.setRawMode(false);
     try {
-        if (glow) {
-            const pager = runGlow ?? (Bun.which("glow") ? glowMarkdown : null);
-            if (!pager) throw new Error("glow is not on PATH.");
-            await pager(md);
-            return;
-        }
         output.write(`${md}${md.endsWith("\n") ? "" : "\n"}\nPress any key to return.\n`);
         input.setRawMode(true);
         await new Promise(resolve => input.once("keypress", resolve));
@@ -1052,7 +1047,7 @@ TUI: j/k or arrows move; Enter/l enters a task; h/Backspace goes up.
 a adds here; e edits; Enter inserts a newline; Ctrl+S saves; Esc cancels.
 d deletes with confirmation; Space toggles; x done; u undone.
 c toggles completed tasks (hidden by default).
-p prints the focused, filtered list as raw Markdown; P pipes it to glow.
+p prints the focused, filtered list as raw Markdown.
 r refreshes; q or Ctrl+C quits.
 
 Seed credentials: bun run ev-secrets --google-tasks
