@@ -146,14 +146,19 @@ prompt lets you reload Google's actual state.
 | g / G | Select the first / last task |
 | / | Search the current subtree, keeping matching tasks' ancestors visible |
 | Enter / Esc while searching | Keep / cancel the search |
-| Esc while browsing | Clear the filter |
+| V | Start visual selection; j/k extends it; V again leaves it |
+| Esc while browsing | Clear the filter, visual selection, and yank/cut buffer |
 | a | Add a task at the current level in the multiline editor |
+| o / O | Add a task after / before the selected task |
 | e | Edit the selected task's title and description in the same editor |
-| d | Delete the selected task and its children; y confirms |
+| y | Yank (copy) the selected task(s) and their children |
+| d | Cut the selected task(s); paste moves them |
+| D | Delete the selected task(s) and their children; y confirms |
+| p / P | Paste after / before the selected task |
 | Space | Toggle completed / incomplete |
 | x / u | Mark done / undone |
 | c | Toggle between undone tasks only and all tasks |
-| p | Print the focused, filtered list as raw Markdown |
+| m | Print the focused, filtered list as raw Markdown |
 | r | Retry pending changes and refresh from Google |
 | q or Ctrl+C | Quit |
 

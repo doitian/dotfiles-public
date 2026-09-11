@@ -63,13 +63,11 @@ function getOutputMtime(outfile) {
   return 0;
 }
 
-async function buildOne({ sourcePath, outName, outdir = distDir }) {
+async function buildOne({ sourcePath, outfile }) {
   const result = await Bun.build({
     entrypoints: [sourcePath],
-    outdir,
-    naming: outName,
     minify: true,
-    compile: true,
+    compile: { outfile },
   });
   if (!result.success) {
     console.error(result.logs);
@@ -91,7 +89,7 @@ async function buildIfStale(entryList, outDir) {
       continue;
     }
     console.log(`Building ${sourcePath} -> ${outfile}`);
-    const outPath = await buildOne({ sourcePath, outName: name, outdir: outDir });
+    const outPath = await buildOne({ sourcePath, outfile });
     console.log(`  -> ${outPath}`);
   }
 }

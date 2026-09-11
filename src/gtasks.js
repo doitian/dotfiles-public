@@ -110,9 +110,9 @@ export class GoogleTasks {
         return tasks;
     }
 
-    add(list, title, parent = null, notes = "") {
+    add(list, title, parent = null, notes = "", previous) {
         return this.request(`/lists/${encodeURIComponent(list)}/tasks`, {
-            method: "POST", body: { title, notes }, query: { parent },
+            method: "POST", body: { title, notes }, query: { parent, previous },
         });
     }
 
@@ -131,10 +131,57 @@ export class GoogleTasks {
     delete(list, task) {
         return this.request(`/lists/${encodeURIComponent(list)}/tasks/${encodeURIComponent(task)}`, { method: "DELETE" });
     }
+
+    move(list, task, { parent = null, previous = null } = {}) {
+        return this.request(`/lists/${encodeURIComponent(list)}/tasks/${encodeURIComponent(task)}/move`, {
+            method: "POST", query: { parent, previous },
+        });
+    }
+}
+
+function siblingTasks(tasks, parent) {
+    return tasks.filter(task => !task.deleted && (task.parent ?? null) === (parent ?? null))
+        .sort((a, b) => (a.position ?? "").localeCompare(b.position ?? ""));
+}
+
+function subtreeIds(tasks, roots) {
+    const ids = new Set(roots);
+    let size;
+    do {
+        size = ids.size;
+        for (const task of tasks) if (ids.has(task.parent)) ids.add(task.id);
+    } while (size !== ids.size);
+    return ids;
+}
+
+function positionBetween(prev, next) {
+    if (next == null) return `${prev ?? ""}n`;
+    if (!prev) {
+        const code = next.charCodeAt(0);
+        return code > 1 ? `${String.fromCharCode(code - 1)}n` : "\x01";
+    }
+    if (prev.localeCompare(next) >= 0) return `${prev}n`;
+    let i = 0;
+    while (i < prev.length && i < next.length && prev[i] === next[i]) i++;
+    const pc = prev.charCodeAt(i);
+    const nc = next.charCodeAt(i);
+    if (pc === pc && nc === nc && nc - pc > 1) return prev.slice(0, i) + String.fromCharCode((pc + nc) >> 1);
+    return `${prev}n`;
+}
+
+function positionAfter(tasks, parent, previousId, exclude) {
+    const siblings = siblingTasks(tasks, parent).filter(task => task.id !== exclude);
+    if (!previousId) return positionBetween(null, siblings[0]?.position);
+    const index = siblings.findIndex(task => task.id === previousId);
+    return positionBetween(siblings[index]?.position, siblings[index + 1]?.position);
 }
 
 function applyLocalChange(tasks, operation) {
-    if (operation.kind === "add") return [{ id: operation.task, parent: operation.parent ?? undefined, ...operation.fields, status: "needsAction", position: "" }, ...tasks];
+    if (operation.kind === "add") {
+        const parent = operation.parent ?? undefined;
+        const position = operation.previous !== undefined ? positionAfter(tasks, parent, operation.previous) : "";
+        return [{ id: operation.task, parent, ...operation.fields, status: "needsAction", position }, ...tasks];
+    }
     if (operation.kind === "delete") {
         const removed = new Set([operation.task]);
         let size;
@@ -143,6 +190,11 @@ function applyLocalChange(tasks, operation) {
             for (const task of tasks) if (removed.has(task.parent)) removed.add(task.id);
         } while (size !== removed.size);
         return tasks.filter(task => !removed.has(task.id));
+    }
+    if (operation.kind === "move") {
+        const parent = operation.parent ?? undefined;
+        const position = positionAfter(tasks, parent, operation.previous, operation.task);
+        return tasks.map(task => task.id === operation.task ? { ...task, parent, position } : task);
     }
     return tasks.map(task => task.id === operation.task ? { ...task, ...operation.fields } : task);
 }
@@ -204,12 +256,13 @@ export class LocalGoogleTasks {
         return Promise.resolve({ id: operation.task, ...operation.fields });
     }
 
-    add(list, title, parent = null, notes = "") {
-        return this.enqueue({ kind: "add", task: `local:${crypto.randomUUID()}`, parent, fields: { title, notes } });
+    add(list, title, parent = null, notes = "", previous) {
+        return this.enqueue({ kind: "add", task: `local:${crypto.randomUUID()}`, parent, previous, fields: { title, notes } });
     }
     edit(list, task, fields) { return this.enqueue({ kind: "edit", task, fields: { title: fields.title, notes: fields.notes } }); }
     setDone(list, task, done) { return this.enqueue({ kind: "done", task, fields: { status: done ? "completed" : "needsAction", completed: done ? new Date(this.now()).toISOString() : null } }); }
     delete(list, task) { return this.enqueue({ kind: "delete", task }); }
+    move(list, task, { parent = null, previous = null } = {}) { return this.enqueue({ kind: "move", task, parent, previous, fields: {} }); }
 
     start() { this.started = true; this.wake(); }
     wake() {
@@ -248,11 +301,12 @@ export class LocalGoogleTasks {
             // Google assigns task IDs, so a lost insert response cannot be safely replayed.
             if (operation.started) throw new Error("A queued addition may already exist on Google. Reset and reload to resolve it.");
             const parent = this.remoteId(operation.parent);
+            const previous = operation.previous != null ? this.remoteId(operation.previous) : null;
             await this.remote.token?.();
             if (this.stopped) return;
             this.change(state => { state.queue[0].started = true; });
             try {
-                result = await this.remote.add(this.listId, operation.fields.title, parent, operation.fields.notes);
+                result = await this.remote.add(this.listId, operation.fields.title, parent, operation.fields.notes, previous);
             } catch (error) {
                 if (!this.stopped && error.status >= 400 && error.status < 500) this.change(state => { state.queue[0].started = false; });
                 throw error;
@@ -262,6 +316,12 @@ export class LocalGoogleTasks {
             const id = this.remoteId(operation.task);
             if (operation.kind === "edit") result = await this.remote.edit(this.listId, id, operation.fields);
             if (operation.kind === "done") result = await this.remote.setDone(this.listId, id, operation.fields.status === "completed");
+            if (operation.kind === "move") {
+                result = await this.remote.move(this.listId, id, {
+                    parent: this.remoteId(operation.parent),
+                    previous: operation.previous != null ? this.remoteId(operation.previous) : null,
+                });
+            }
             if (operation.kind === "delete") {
                 try { await this.remote.delete(this.listId, id); }
                 catch (error) { if (error.status !== 404 && error.status !== 410) throw error; }
@@ -506,7 +566,7 @@ export function parseTaskInput(input) {
 
 export class TasksView {
     constructor(api, list = "@default") {
-        Object.assign(this, { api, list, tasks: [], path: [], search: "", selected: 0, mode: "browse", input: "", showCompleted: false, message: "", listTitle: "Default list" });
+        Object.assign(this, { api, list, tasks: [], path: [], search: "", selected: 0, mode: "browse", input: "", showCompleted: false, message: "", listTitle: "Default list", clipboard: null, visual: null });
     }
 
     get parent() { return this.path.at(-1)?.id ?? null; }
@@ -514,7 +574,109 @@ export class TasksView {
     get task() { return this.rows[this.selected]; }
     markdown() { return viewMarkdown(this.tasks, this.parent, this.search, this.showCompleted); }
 
-    clamp() { this.selected = Math.max(0, Math.min(this.selected, this.rows.length - 1)); }
+    clamp() {
+        this.selected = Math.max(0, Math.min(this.selected, this.rows.length - 1));
+        if (this.visual != null) this.visual = Math.max(0, Math.min(this.visual, this.rows.length - 1));
+    }
+
+    visualRows() {
+        if (this.visual == null) return this.task ? [this.task] : [];
+        const from = Math.min(this.visual, this.selected);
+        const to = Math.max(this.visual, this.selected);
+        return this.rows.slice(from, to + 1);
+    }
+
+    operatorRoots() {
+        const rows = this.visualRows();
+        const ids = new Set(rows.map(task => task.id));
+        return rows.filter(task => !ids.has(task.parent));
+    }
+
+    yank() {
+        const roots = this.operatorRoots();
+        if (!roots.length) return;
+        const ids = subtreeIds(this.tasks, roots.map(task => task.id));
+        this.clipboard = { type: "yank", roots: roots.map(task => task.id), tasks: this.tasks.filter(task => ids.has(task.id)).map(task => ({ ...task })) };
+        this.visual = null;
+        this.message = roots.length === 1 ? "Yanked." : `Yanked ${roots.length} tasks.`;
+    }
+
+    cut() {
+        const roots = this.operatorRoots();
+        if (!roots.length) return;
+        this.clipboard = { type: "cut", roots: roots.map(task => task.id) };
+        this.visual = null;
+        this.message = roots.length === 1 ? "Cut." : `Cut ${roots.length} tasks.`;
+    }
+
+    pasteAnchor(before) {
+        const selected = this.task;
+        if (!selected) return { parent: this.parent, previous: null };
+        const parent = selected.parent ?? null;
+        const siblings = siblingTasks(this.tasks, parent);
+        const index = siblings.findIndex(task => task.id === selected.id);
+        return { parent, previous: before ? (index > 0 ? siblings[index - 1].id : null) : selected.id };
+    }
+
+    paste(before) {
+        if (!this.clipboard) {
+            this.message = "Nothing to paste.";
+            return;
+        }
+        return this.clipboard.type === "cut" ? this.pasteCut(before) : this.pasteYank(before);
+    }
+
+    pasteCut(before) {
+        const roots = (this.clipboard.roots ?? [this.clipboard.root]).filter(id => this.tasks.some(task => task.id === id && !task.deleted));
+        if (!roots.length) {
+            this.message = "Cut task is gone.";
+            return;
+        }
+        const { parent, previous } = this.pasteAnchor(before);
+        if (parent && subtreeIds(this.tasks, roots).has(parent)) {
+            this.message = "Cannot move a task into its own subtree.";
+            return;
+        }
+        if (roots.length === 1) {
+            const current = this.tasks.find(task => task.id === roots[0]);
+            if ((current.parent ?? null) === parent) {
+                const siblings = siblingTasks(this.tasks, parent);
+                const index = siblings.findIndex(task => task.id === roots[0]);
+                const currentPrevious = index > 0 ? siblings[index - 1].id : null;
+                if (previous === roots[0] || previous === currentPrevious) return;
+            }
+        }
+        return this.mutate(async () => {
+            let prev = previous;
+            for (const root of roots) {
+                await this.api.move(this.list, root, { parent, previous: prev });
+                prev = root;
+            }
+        });
+    }
+
+    pasteYank(before) {
+        const { parent, previous } = this.pasteAnchor(before);
+        const items = this.clipboard.tasks;
+        const roots = this.clipboard.roots ?? [this.clipboard.root];
+        const childrenOf = id => items.filter(task => (task.parent ?? null) === id)
+            .sort((a, b) => (a.position ?? "").localeCompare(b.position ?? ""));
+        const addTree = async (oldId, newParent, newPrevious) => {
+            const task = items.find(item => item.id === oldId);
+            const created = await this.api.add(this.list, task.title ?? "", newParent, task.notes ?? "", newPrevious);
+            let prev = null;
+            for (const child of childrenOf(oldId)) prev = (await addTree(child.id, created.id, prev)).id;
+            return created;
+        };
+        return this.mutate(async () => {
+            let prev = previous;
+            for (const root of roots) {
+                const created = await addTree(root, parent, prev);
+                prev = created.id;
+            }
+            this.search = "";
+        });
+    }
 
     startAt(query) {
         if (!query?.trim()) return;
@@ -529,9 +691,11 @@ export class TasksView {
         }
     }
 
-    openEditor(mode) {
+    openEditor(mode, insert) {
+        this.visual = null;
         this.mode = mode;
         this.editingTask = mode === "edit" ? this.task : null;
+        this.insert = insert;
         this.input = this.editingTask ? `${this.editingTask.title ?? ""}${this.editingTask.notes ? `\n${this.editingTask.notes}` : ""}` : "";
         this.message = "";
     }
@@ -542,7 +706,7 @@ export class TasksView {
         if (!fields.title) throw new Error("The first line must contain a title.");
         return this.mutate(async () => {
             if (this.mode === "edit") await this.api.edit(this.list, this.editingTask.id, fields);
-            else await this.api.add(this.list, fields.title, this.parent, fields.notes);
+            else await this.api.add(this.list, fields.title, this.insert ? this.insert.parent : this.parent, fields.notes, this.insert?.previous);
             this.search = "";
         });
     }
@@ -562,6 +726,7 @@ export class TasksView {
     }
 
     enter() {
+        this.visual = null;
         if (!this.task) return;
         const byId = new Map(this.tasks.map(task => [task.id, task]));
         const ancestors = [];
@@ -581,6 +746,7 @@ export class TasksView {
     }
 
     back() {
+        this.visual = null;
         const previous = this.path.pop();
         if (previous) {
             this.search = previous.search;
@@ -622,15 +788,19 @@ export class TasksView {
         if (this.mode === "delete") {
             this.mode = "browse";
             if (text?.toLowerCase() === "y") {
-                const id = this.deleteTask.id;
-                return this.mutate(() => this.api.delete(this.list, id));
+                const ids = this.deleteTasks.map(task => task.id);
+                return this.mutate(async () => {
+                    for (const id of ids) await this.api.delete(this.list, id);
+                });
             }
             return;
         }
         if (this.mode === "search") {
             if (key.name === "escape") {
-                if (this.mode === "search") this.search = this.previousSearch;
+                this.search = this.previousSearch;
                 this.mode = "browse";
+                const index = this.rows.findIndex(task => task.id === this.previousSelected);
+                if (index !== -1) this.selected = index;
                 this.clamp();
             } else if (key.name === "return") {
                 this.mode = "browse";
@@ -649,13 +819,25 @@ export class TasksView {
         else if (key.name === "end" || text === "G") this.selected = this.rows.length - 1;
         else if (key.name === "return" || key.name === "right" || text === "l") this.enter();
         else if (key.name === "left" || key.name === "backspace" || text === "h") this.back();
-        else if (key.name === "escape") { this.search = ""; this.selected = 0; }
-        else if (text === "/") {
+        else if (key.name === "escape") {
+            const id = this.task?.id;
+            this.search = "";
+            this.clipboard = null;
+            this.visual = null;
+            const index = this.rows.findIndex(task => task.id === id);
+            if (index !== -1) this.selected = index;
+        } else if (text === "V" && this.task) {
+            this.visual = this.visual == null ? this.selected : null;
+        } else if (text === "/") {
+            this.visual = null;
             this.mode = "search";
             this.previousSearch = this.search;
+            this.previousSelected = this.task?.id;
             this.input = this.search;
         } else if (text === "a") {
             this.openEditor("add");
+        } else if (text === "o" || text === "O") {
+            this.openEditor("add", this.pasteAnchor(text === "O"));
         } else if (text === "e" && this.task) {
             this.openEditor("edit");
         } else if (text === "c") {
@@ -663,9 +845,16 @@ export class TasksView {
             this.showCompleted = !this.showCompleted;
             const index = this.rows.findIndex(task => task.id === id);
             if (index !== -1) this.selected = index;
-        } else if (text === "d" && this.task) {
+        } else if (text === "y" && this.operatorRoots().length) {
+            this.yank();
+        } else if (text === "d" && this.operatorRoots().length) {
+            this.cut();
+        } else if (text === "D" && this.operatorRoots().length) {
             this.mode = "delete";
-            this.deleteTask = this.task;
+            this.deleteTasks = this.operatorRoots();
+            this.visual = null;
+        } else if ((text === "p" || text === "P")) {
+            return this.paste(text === "P");
         } else if ([" ", "x", "u"].includes(text) && this.task) {
             const task = this.task;
             const done = text === "x" || (text === " " && task.status !== "completed");
@@ -721,6 +910,11 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
     for (const task of view.tasks) {
         if (task.parent && !task.deleted && (view.showCompleted || task.status !== "completed")) childCounts.set(task.parent, (childCounts.get(task.parent) ?? 0) + 1);
     }
+    const clip = view.clipboard;
+    const clipRoots = clip?.roots ?? (clip?.root ? [clip.root] : []);
+    const clipIds = clip?.type === "yank" ? new Set(clip.tasks.map(task => task.id)) : subtreeIds(view.tasks, clipRoots);
+    const visualLo = view.visual == null ? -1 : Math.min(view.visual, view.selected);
+    const visualHi = view.visual == null ? -1 : Math.max(view.visual, view.selected);
     const body = [];
     let selectedStart = 0;
     let selectedEnd = 0;
@@ -729,7 +923,9 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
         const children = childCounts.get(task.id) ?? 0;
         const indent = "  ".repeat(task.depth);
         if (index === view.selected) selectedStart = body.length;
-        body.push(`${index === view.selected ? ">" : " "} ${indent}- [${task.status === "completed" ? "x" : " "}] ${task.title || "(untitled)"}${children ? `  (${children} children)` : ""}`);
+        const marked = clipIds.has(task.id);
+        const gutter = index === view.selected && marked ? (clip.type === "cut" ? "D" : "Y") : index === view.selected ? ">" : marked ? (clip.type === "cut" ? "d" : "y") : index >= visualLo && index <= visualHi ? "*" : " ";
+        body.push(`${gutter} ${indent}- [${task.status === "completed" ? "x" : " "}] ${task.title || "(untitled)"}${children ? `  (${children} children)` : ""}`);
         if (task.notes) {
             for (const note of task.notes.split(/\r?\n/)) body.push(`        ${indent}${note}`);
         }
@@ -742,11 +938,11 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
     if (!rows.length) lines.push(view.search ? "  No matching tasks." : "  No tasks here. Press a to add one.");
     else lines.push(...body.slice(start, start + pageSize));
     while (lines.length < height - 5) lines.push("");
-    lines.push(`j/k move  Enter/l cd  h/Backspace up  / search  Esc clear`);
-    lines.push("a add  e edit  d delete  Space/x/u status  c completed  p print  r refresh  q quit");
+    lines.push(`j/k move  V visual  Enter/l cd  h/Backspace up  / search  Esc clear  q quit`);
+    lines.push("a/o/O add  e edit  y yank  d cut  D delete  p/P paste  Space/x/u  c all  m print  r refresh");
     let prompt = view.message || "";
     if (view.mode === "search") prompt = `/ ${view.input}  (Enter apply, Esc cancel)`;
-    if (view.mode === "delete") prompt = `Delete task + children? [y/N] ${view.deleteTask.title}`;
+    if (view.mode === "delete") prompt = view.deleteTasks.length === 1 ? `Delete task + children? [y/N] ${view.deleteTasks[0].title}` : `Delete ${view.deleteTasks.length} tasks + children? [y/N]`;
     if (view.mode === "reset") prompt = `Reset local cache? [y/N] Discard ${view.api.state.queue.length} queued changes and reload Google.`;
     lines.push(busy ? "Working... (Ctrl+C to quit)" : prompt);
     return lines.slice(0, Math.max(1, height - 1)).map(line => fit(line, width)).join("\r\n");
@@ -875,7 +1071,7 @@ export async function runTasksTui(api, list = "@default", { input = process.stdi
         if ((key.ctrl && key.name === "c") || (view.mode === "browse" && text === "q")) { finish(); return; }
         if (busy || closed) return;
         try {
-            if (view.mode === "browse" && text === "p") {
+            if (view.mode === "browse" && text === "m") {
                 busy = true;
                 input.off("keypress", onKey);
                 try {
@@ -1042,12 +1238,13 @@ Agent commands use Google directly and wait for confirmation. The TUI uses its l
 JSON goes to stdout without Markdown rendering. list uses glow on a TTY unless --raw.
 Errors go to stderr with exit code 1.
 
-TUI: j/k or arrows move; Enter/l enters a task; h/Backspace goes up.
-/ searches the current subtree, keeping ancestors visible; Esc clears the filter.
-a adds here; e edits; Enter inserts a newline; Ctrl+S saves; Esc cancels.
-d deletes with confirmation; Space toggles; x done; u undone.
+TUI: j/k or arrows move; V starts visual selection; Enter/l enters a task; h/Backspace goes up.
+/ searches the current subtree, keeping ancestors visible; Esc clears the filter, visual, and yank/cut.
+a adds here; o after; O before; e edits; Enter inserts a newline; Ctrl+S saves; Esc cancels.
+y yanks; d cuts; D deletes with confirmation; y/d/D apply to the visual selection; p pastes after; P pastes before.
+Space toggles; x done; u undone.
 c toggles completed tasks (hidden by default).
-p prints the focused, filtered list as raw Markdown.
+m prints the focused, filtered list as raw Markdown.
 r refreshes; q or Ctrl+C quits.
 
 Seed credentials: bun run ev-secrets --google-tasks
@@ -1127,7 +1324,7 @@ export function matchTask(tasks, name) {
     throw new Error(`Multiple tasks match ${JSON.stringify(name)}. Use a task ID: ${matches.map(task => `${JSON.stringify(task.title)} (${task.id})`).join(", ")}`);
 }
 
-if (import.meta.main) main().catch(error => {
+if (import.meta.main || Bun.isStandaloneExecutable) main().catch(error => {
     console.error(error.message ?? error);
     process.exitCode = 1;
 });

@@ -118,9 +118,9 @@ function localFixture(path = ":memory:") {
             return { title: "My tasks" };
         },
         list: async () => structuredClone(data.tasks),
-        add: async (list, title, parent, notes) => {
+        add: async (list, title, parent, notes, previous) => {
             const task = { id: `server-${data.writes.length}`, title, notes, parent: parent ?? undefined, status: "needsAction" };
-            data.writes.push(["add", title, parent, notes]);
+            data.writes.push(["add", title, parent, notes, previous]);
             data.tasks.push(task);
             return structuredClone(task);
         },
@@ -138,6 +138,12 @@ function localFixture(path = ":memory:") {
         delete: async (list, id) => {
             data.writes.push(["delete", id]);
             data.tasks = data.tasks.filter(task => task.id !== id && task.parent !== id);
+        },
+        move: async (list, id, { parent, previous } = {}) => {
+            data.writes.push(["move", id, parent, previous]);
+            const task = data.tasks.find(item => item.id === id);
+            task.parent = parent ?? undefined;
+            return task;
         },
     };
     const local = new LocalGoogleTasks(remote, "@default", path);
@@ -177,6 +183,18 @@ describe("Persistent local task queue", () => {
         expect(data.writes[2][1]).toBe("server-1");
         expect(reopened.state.queue).toHaveLength(0);
         expect((await reopened.list()).find(task => task.id === child.id)).toMatchObject({ parent: parent.id, title: "Edited child", status: "completed" });
+    });
+
+    test("cut paste moves a task locally and syncs with previous sibling", async () => {
+        const { local, data } = fixture();
+        await local.syncOnce();
+        const child = await local.add("@default", "Child", "existing");
+        await local.move("@default", child.id, { parent: null, previous: "existing" });
+        const listed = await local.list();
+        expect(listed.find(task => task.id === child.id)).toMatchObject({ parent: undefined });
+        expect(listed.sort((a, b) => (a.position ?? "").localeCompare(b.position ?? "")).map(task => task.id)).toEqual(["existing", child.id]);
+        await local.syncOnce();
+        expect(data.writes[1]).toEqual(["move", "server-0", null, "existing"]);
     });
 
     test("a second process cannot overwrite an open cache", () => {
@@ -345,7 +363,7 @@ describe("Persistent local task queue", () => {
         await pending;
     });
 
-    test("TUI p prints raw Markdown", async () => {
+    test("TUI m prints raw Markdown", async () => {
         const { local } = fixture();
         await local.syncOnce();
         const input = new PassThrough();
@@ -359,7 +377,7 @@ describe("Persistent local task queue", () => {
         const pending = runTasksTui(local, "@default", { input, output });
         await new Promise(resolve => setImmediate(resolve));
         screen = "";
-        input.write("p");
+        input.write("m");
         await new Promise(resolve => setImmediate(resolve));
         expect(screen).toContain("- [ ] Existing");
         expect(screen).toContain("Press any key to return.");
@@ -399,12 +417,14 @@ describe("Google Tasks API", () => {
     });
 
     test("adds at root or under the current task, patches completion, and deletes", async () => {
-        const { api, calls } = mockClient([token(), json({}), json({}), json({}), json({}), new Response(null, { status: 204 })]);
+        const { api, calls } = mockClient([token(), json({}), json({}), json({}), json({}), new Response(null, { status: 204 }), json({}), json({})]);
         await api.add("list/id", "Top");
         await api.add("list/id", "Child & 世界", "parent/id");
         await api.setDone("list/id", "task/id", true);
         await api.setDone("list/id", "task/id", false);
         await api.delete("list/id", "task/id");
+        await api.add("list/id", "After", "parent/id", "", "prev/id");
+        await api.move("list/id", "task/id", { parent: "parent/id", previous: "prev/id" });
         expect(calls[1].url.searchParams.has("parent")).toBe(false);
         expect(calls[2].url.searchParams.get("parent")).toBe("parent/id");
         expect(JSON.parse(calls[2].body)).toEqual({ title: "Child & 世界", notes: "" });
@@ -413,6 +433,10 @@ describe("Google Tasks API", () => {
         expect(JSON.parse(calls[4].body)).toEqual({ status: "needsAction", completed: null });
         expect(calls[5].url.pathname).toEndWith("/lists/list%2Fid/tasks/task%2Fid");
         expect(calls[5].method).toBe("DELETE");
+        expect(calls[6].url.searchParams.get("previous")).toBe("prev/id");
+        expect(calls[7].method).toBe("POST");
+        expect(calls[7].url.pathname).toEndWith("/lists/list%2Fid/tasks/task%2Fid/move");
+        expect(Object.fromEntries(calls[7].url.searchParams)).toMatchObject({ parent: "parent/id", previous: "prev/id" });
     });
 
     test("retries an unauthorized request only once with a fresh token", async () => {
@@ -450,10 +474,11 @@ function fixture() {
     const api = {
         getList: async () => ({ title: "My tasks" }),
         list: async () => tasks.map(task => ({ ...task })),
-        add: async (...args) => { calls.push(["add", ...args]); },
+        add: async (...args) => { calls.push(["add", ...args]); return { id: `new-${calls.length}` }; },
         edit: async (...args) => { calls.push(["edit", ...args]); },
         delete: async (...args) => { calls.push(["delete", ...args]); },
         setDone: async (...args) => { calls.push(["setDone", ...args]); },
+        move: async (...args) => { calls.push(["move", ...args]); },
     };
     const view = new TasksView(api);
     view.tasks = tasks.map(task => ({ ...task }));
@@ -531,32 +556,129 @@ describe("Task navigation and actions", () => {
         expect(view.mode).toBe("browse");
     });
 
+    test("o and O add after or before the selected task", async () => {
+        const { view, calls } = fixture();
+        press(view, "o");
+        view.input = "After";
+        await save(view);
+        expect(calls).toEqual([["add", "@default", "After", null, "", "p"]]);
+        calls.length = 0;
+        press(view, "O");
+        view.input = "Before";
+        await save(view);
+        expect(calls).toEqual([["add", "@default", "Before", null, "", null]]);
+        calls.length = 0;
+        press(view, "j");
+        press(view, "o");
+        view.input = "After child";
+        await save(view);
+        expect(calls).toEqual([["add", "@default", "After child", "p", "", "c"]]);
+    });
+
     test("search applies live, Escape restores it, and browse Escape clears it", () => {
         const { view } = fixture();
         press(view, "c");
+        press(view, "j");
+        expect(view.task.id).toBe("c");
         press(view, "/");
         for (const char of "Other") press(view, char);
         expect(view.rows.map(task => task.id)).toEqual(["b"]);
         press(view, "", "escape");
         expect(view.rows).toHaveLength(4);
+        expect(view.task.id).toBe("c");
         press(view, "/");
         press(view, "Project");
         press(view, "\r", "return");
         expect(view.rows).toHaveLength(1);
+        expect(view.task.id).toBe("p");
         press(view, "", "escape");
         expect(view.search).toBe("");
+        expect(view.task.id).toBe("p");
     });
 
     test("confirms deletion and sends explicit done and undone statuses", async () => {
         const { view, calls } = fixture();
-        press(view, "d");
+        press(view, "D");
         press(view, "n");
         expect(calls).toHaveLength(0);
-        press(view, "d");
+        press(view, "D");
         await press(view, "y");
         await press(view, "x");
         await press(view, "u");
         expect(calls).toEqual([["delete", "@default", "p"], ["setDone", "@default", "p", true], ["setDone", "@default", "p", false]]);
+    });
+
+    test("yanks a subtree, pastes after or before, and cut moves without deleting", async () => {
+        const { view, calls } = fixture();
+        press(view, "y");
+        expect(renderTasks(view)).toContain("Y - [ ] Project");
+        expect(renderTasks(view)).toContain("y   - [ ] Child");
+        await press(view, "p");
+        expect(calls).toEqual([
+            ["add", "@default", "Project", null, "", "p"],
+            ["add", "@default", "Child", "new-1", "Find ME", null],
+            ["add", "@default", "Grandchild", "new-2", "", null],
+        ]);
+        calls.length = 0;
+        await press(view, "P");
+        expect(calls[0]).toEqual(["add", "@default", "Project", null, "", null]);
+        calls.length = 0;
+        press(view, "j");
+        press(view, "d");
+        expect(renderTasks(view)).toContain("D   - [ ] Child");
+        expect(renderTasks(view)).toContain("d     - [ ] Grandchild");
+        expect(view.tasks.some(task => task.id === "c")).toBe(true);
+        expect(calls).toEqual([]);
+        press(view, "k");
+        await press(view, "p");
+        expect(calls).toEqual([["move", "@default", "c", { parent: null, previous: "p" }]]);
+        calls.length = 0;
+        press(view, "d");
+        press(view, "j");
+        await press(view, "p");
+        expect(view.message).toContain("subtree");
+        expect(calls).toEqual([]);
+        const empty = fixture().view;
+        press(empty, "p");
+        expect(empty.message).toContain("Nothing to paste");
+        press(view, "y");
+        press(view, "", "escape");
+        expect(view.clipboard).toBeNull();
+        expect(renderTasks(view)).not.toContain("Y - [ ] Project");
+    });
+
+    test("V selects a range so yank, cut, and delete apply to all selected roots", async () => {
+        const { view, calls } = fixture();
+        view.tasks.push({ id: "c2", title: "Second child", parent: "p", position: "002" });
+        press(view, "j");
+        press(view, "V");
+        press(view, "j");
+        press(view, "j");
+        expect(renderTasks(view)).toContain("*   - [ ] Child");
+        expect(renderTasks(view)).toContain(">   - [ ] Second child");
+        press(view, "y");
+        expect(view.visual).toBeNull();
+        expect(view.clipboard.roots).toEqual(["c", "c2"]);
+        press(view, "", "escape");
+        expect(view.clipboard).toBeNull();
+        press(view, "k");
+        press(view, "k");
+        press(view, "V");
+        press(view, "j");
+        press(view, "j");
+        press(view, "d");
+        expect(view.clipboard.roots).toEqual(["c", "c2"]);
+        press(view, "", "escape");
+        expect(view.visual).toBeNull();
+        expect(view.clipboard).toBeNull();
+        press(view, "k");
+        press(view, "k");
+        press(view, "V");
+        press(view, "G");
+        press(view, "D");
+        expect(view.deleteTasks.map(task => task.id)).toEqual(["c", "c2"]);
+        await press(view, "y");
+        expect(calls.filter(call => call[0] === "delete")).toEqual([["delete", "@default", "c"], ["delete", "@default", "c2"]]);
     });
 
     test("renders indented Markdown tasks and applies actions to a selected nested task", async () => {
