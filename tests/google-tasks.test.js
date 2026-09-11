@@ -1,4 +1,4 @@
-import { GoogleTasks, LocalGoogleTasks, authorize, createAuthorizationRequest, googleTasksSecrets, TasksView, renderTasks, runTasksTui, visibleTasks, renderMarkdown, viewMarkdown, parseTaskInput, parseDue, formatDue, readTaskInput } from "../src/gtasks.js";
+import { GoogleTasks, LocalGoogleTasks, authorize, createAuthorizationRequest, googleTasksSecrets, TasksView, renderTasks, runTasksTui, visibleTasks, renderMarkdown, viewMarkdown, parseTaskInput, parseDue, formatDue, formatId, readTaskInput } from "../src/gtasks.js";
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { main as importSecrets } from "../scripts/ev-secrets.js";
 import { createHash } from "node:crypto";
@@ -200,6 +200,8 @@ describe("Persistent local task queue", () => {
         await local.syncOnce();
         expect(data.writes.at(-1)).toEqual(["add", "Dated", null, "", null, "2026-09-15T00:00:00.000Z"]);
         expect((await local.list()).find(task => task.id === dated.id).due).toBe("2026-09-15T00:00:00.000Z");
+        expect(dated.id.startsWith("local:")).toBe(true);
+        expect(formatId(dated.id, local.state.ids)).toBe("^server-1");
     });
 
     test("cut paste moves a task locally and syncs with previous sibling", async () => {
@@ -695,8 +697,11 @@ describe("Task navigation and actions", () => {
         const { view, calls } = fixture();
         view.tasks.find(task => task.id === "p").due = "2026-09-14T00:00:00.000Z";
         expect(renderTasks(view)).toContain("Project  [[2026-09-14]]");
+        press(view, ",");
+        expect(renderTasks(view)).toContain("Project  [[2026-09-14]]  ^p");
+        press(view, ",");
         view.enter();
-        expect(renderTasks(view)).toContain("  p  [[2026-09-14]]");
+        expect(renderTasks(view)).toContain("  [[2026-09-14]]  ^p");
         view.back();
         press(view, "s");
         expect(view.mode).toBe("due");
@@ -717,6 +722,36 @@ describe("Task navigation and actions", () => {
         expect(view.message).toContain("Invalid due date");
         press(view, "", "escape");
         expect(view.mode).toBe("browse");
+    });
+
+    test(", toggles ^id on task rows and prefers synced Google IDs", () => {
+        const { view } = fixture();
+        expect(renderTasks(view)).toContain("  ^@default");
+        expect(renderTasks(view)).not.toContain("^p");
+        press(view, ",");
+        expect(renderTasks(view)).toContain("- [ ] Project  ^p");
+        view.api.state = { ids: { p: "google-p" } };
+        expect(renderTasks(view)).toContain("- [ ] Project  ^google-p");
+        press(view, ",");
+        expect(renderTasks(view)).not.toContain("- [ ] Project  ^google-p");
+    });
+
+    test("gx opens the selected task in the browser", async () => {
+        const { view } = fixture();
+        const opened = [];
+        view.openUrl = async url => { opened.push(url); };
+        press(view, "g");
+        await press(view, "x");
+        expect(view.message).toContain("No web link");
+        expect(opened).toEqual([]);
+        view.tasks.find(task => task.id === "p").webViewLink = "https://tasks.google.com/task/p";
+        press(view, "g");
+        await press(view, "x");
+        expect(opened).toEqual(["https://tasks.google.com/task/p"]);
+        expect(view.message).toBe("Opened.");
+        press(view, "g");
+        press(view, "g");
+        expect(view.selected).toBe(0);
     });
 
     test("V selects a range so yank, cut, and delete apply to all selected roots", async () => {
@@ -825,10 +860,10 @@ describe("Task navigation and actions", () => {
 
     test("entering a task shows its current description above its children, including empty parents", () => {
         const { view } = fixture();
-        expect(renderTasks(view)).toContain("/ Default list\r\n  @default");
+        expect(renderTasks(view)).toContain("/ Default list\r\n  ^@default");
         view.tasks.find(task => task.id === "p").notes = "Project context\nSecond line";
         view.enter();
-        expect(renderTasks(view)).toContain("/ Project\r\n  p\r\n  Project context\r\n  Second line");
+        expect(renderTasks(view)).toContain("/ Project\r\n  ^p\r\n  Project context\r\n  Second line");
         expect(renderTasks(view)).toContain("[ ] Child");
         view.tasks.find(task => task.id === "p").notes = "Updated context";
         expect(renderTasks(view)).toContain("Updated context");
@@ -836,8 +871,8 @@ describe("Task navigation and actions", () => {
         expect(renderTasks(view)).toContain("Updated context");
         expect(renderTasks(view)).toContain("No tasks here");
         view.back();
-        expect(renderTasks(view)).toContain("/ Default list\r\n  @default");
-        expect(renderTasks(view)).not.toContain("/ Project\r\n  p\r\n  Updated context");
+        expect(renderTasks(view)).toContain("/ Default list\r\n  ^@default");
+        expect(renderTasks(view)).not.toContain("/ Project\r\n  ^p\r\n  Updated context");
     });
 
     test("long focused descriptions leave room for selected children and controls", () => {

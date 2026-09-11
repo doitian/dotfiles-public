@@ -6,8 +6,8 @@ of indentation per level, without tree connector lines. Parent tasks appear abov
 indented beneath each task's title. `gtasks tui <list-id>`
 opens another list, and `gtasks list [list-id]` prints a nested Markdown todo list.
 Both use Google OAuth directly; `gws` is no longer required.
-The root shows the list ID beneath the breadcrumb. When you enter a task, its
-ID and description appear there, above its children. Long descriptions are
+The root shows the list ID as `^id` beneath the breadcrumb. When you enter a
+task, its ID and description appear there, above its children. Long descriptions are
 shortened to keep the children and controls visible.
 
 Start inside a matching task with `gtasks --cd "Project"` (or
@@ -145,7 +145,8 @@ prompt lets you reload Google's actual state.
 | Up/Down or k/j | Select a task |
 | Enter, Right, or l | Enter the selected task and show its child hierarchy |
 | Backspace, Left, or h | Return to the parent level |
-| g / G | Select the first / last task |
+| gg / G | Select the first / last task |
+| gx | Open the selected task in the default browser |
 | / | Search the current subtree, keeping matching tasks' ancestors visible |
 | Enter / Esc while searching | Keep / cancel the search |
 | V | Start visual selection; j/k extends it; V again leaves it |
@@ -161,6 +162,7 @@ prompt lets you reload Google's actual state.
 | Space | Toggle completed / incomplete |
 | x / u | Mark done / undone |
 | . | Toggle between undone tasks only and all tasks |
+| , | Toggle task IDs (`^id`) on each row |
 | m | Print the focused, filtered list as raw Markdown |
 | r | Retry pending changes and refresh from Google |
 | q or Ctrl+C | Quit |

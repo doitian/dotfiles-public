@@ -518,7 +518,7 @@ export function googleTasksSecrets({ password, fields }) {
     return entries;
 }
 
-export function visibleTasks(tasks, parent = null, search = "", showCompleted = false) {
+export function visibleTasks(tasks, parent = null, search = "", showCompleted = false, ids) {
     const query = search.trim().toLocaleLowerCase();
     const children = new Map();
     for (const task of tasks.filter(task => !task.deleted)
@@ -551,7 +551,7 @@ export function visibleTasks(tasks, parent = null, search = "", showCompleted = 
     const byId = new Map(rows.map(task => [task.id, task]));
     const included = new Set();
     for (const row of visible) {
-        if (!`${row.title ?? ""}\n${row.notes ?? ""}\n${formatDue(row.due)}`.toLocaleLowerCase().includes(query)) continue;
+        if (!`${row.title ?? ""}\n${row.notes ?? ""}\n${formatDue(row.due)}\n${row.id}\n${formatId(row.id, ids)}`.toLocaleLowerCase().includes(query)) continue;
         let task = row;
         while (task && !included.has(task.id)) {
             included.add(task.id);
@@ -571,6 +571,17 @@ export function parseTaskInput(input) {
 export function formatDue(due) {
     const day = String(due ?? "").match(/^(\d{4}-\d{2}-\d{2})/)?.[1];
     return day ? `[[${day}]]` : "";
+}
+
+export function formatId(id, ids) {
+    if (!id) return "";
+    return `^${ids?.[id] ?? id}`;
+}
+
+export async function openInBrowser(url) {
+    if (process.platform === "win32") await $`cmd /c start "" ${url}`.quiet();
+    else if (process.platform === "darwin") await $`open ${url}`.quiet();
+    else await $`xdg-open ${url}`.quiet();
 }
 
 export function parseDue(input, now = () => new Date()) {
@@ -603,11 +614,12 @@ export function parseDue(input, now = () => new Date()) {
 
 export class TasksView {
     constructor(api, list = "@default") {
-        Object.assign(this, { api, list, tasks: [], path: [], search: "", selected: 0, mode: "browse", input: "", showCompleted: false, message: "", listTitle: "Default list", clipboard: null, visual: null });
+        Object.assign(this, { api, list, tasks: [], path: [], search: "", selected: 0, mode: "browse", input: "", showCompleted: false, showIds: false, prefix: null, openUrl: openInBrowser, message: "", listTitle: "Default list", clipboard: null, visual: null });
     }
 
     get parent() { return this.path.at(-1)?.id ?? null; }
-    get rows() { return visibleTasks(this.tasks, this.parent, this.search, this.showCompleted); }
+    get ids() { return this.api.state?.ids; }
+    get rows() { return visibleTasks(this.tasks, this.parent, this.search, this.showCompleted, this.ids); }
     get task() { return this.rows[this.selected]; }
     markdown() { return viewMarkdown(this.tasks, this.parent, this.search, this.showCompleted); }
 
@@ -627,6 +639,15 @@ export class TasksView {
         const rows = this.visualRows();
         const ids = new Set(rows.map(task => task.id));
         return rows.filter(task => !ids.has(task.parent));
+    }
+
+    openWeb() {
+        const url = this.task?.webViewLink;
+        if (!url) {
+            this.message = "No web link for this task.";
+            return;
+        }
+        return Promise.resolve(this.openUrl(url)).then(() => { this.message = "Opened."; }, error => { this.message = error.message ?? String(error); });
     }
 
     yank() {
@@ -862,10 +883,21 @@ export class TasksView {
             return;
         }
         this.message = "";
+        if (this.prefix === "g") {
+            this.prefix = null;
+            if (text === "g") this.selected = 0;
+            else if (text === "x") return this.openWeb();
+            this.clamp();
+            return;
+        }
         if (key.name === "down" || text === "j") this.selected++;
         else if (key.name === "up" || text === "k") this.selected--;
-        else if (key.name === "home" || text === "g") this.selected = 0;
+        else if (key.name === "home") this.selected = 0;
         else if (key.name === "end" || text === "G") this.selected = this.rows.length - 1;
+        else if (text === "g") {
+            this.prefix = "g";
+            return;
+        }
         else if (key.name === "return" || key.name === "right" || text === "l") this.enter();
         else if (key.name === "left" || key.name === "backspace" || text === "h") this.back();
         else if (key.name === "escape") {
@@ -899,6 +931,8 @@ export class TasksView {
             this.showCompleted = !this.showCompleted;
             const index = this.rows.findIndex(task => task.id === id);
             if (index !== -1) this.selected = index;
+        } else if (text === ",") {
+            this.showIds = !this.showIds;
         } else if (text === "y" && this.operatorRoots().length) {
             this.yank();
         } else if (text === "d" && this.operatorRoots().length) {
@@ -944,7 +978,7 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
         `Google Tasks / ${view.listTitle}${view.path.map(entry => ` / ${entry.title}`).join("")}`,
     ];
     const focusedTask = view.tasks.find(task => task.id === view.parent);
-    lines.push(`  ${focusedTask?.id ?? view.list}${focusedTask?.due ? `  ${formatDue(focusedTask.due)}` : ""}`);
+    lines.push(`  ${[focusedTask?.due && formatDue(focusedTask.due), formatId(focusedTask?.id ?? view.list, view.ids)].filter(Boolean).join("  ")}`);
     if (focusedTask?.notes) {
         const notes = focusedTask.notes.split(/\r?\n/);
         const limit = Math.max(1, Math.min(Math.floor(height / 3), height - 9));
@@ -979,7 +1013,7 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
         if (index === view.selected) selectedStart = body.length;
         const marked = clipIds.has(task.id);
         const gutter = index === view.selected && marked ? (clip.type === "cut" ? "D" : "Y") : index === view.selected ? ">" : marked ? (clip.type === "cut" ? "d" : "y") : index >= visualLo && index <= visualHi ? "*" : " ";
-        body.push(`${gutter} ${indent}- [${task.status === "completed" ? "x" : " "}] ${task.title || "(untitled)"}${task.due ? `  ${formatDue(task.due)}` : ""}${children ? `  (${children} children)` : ""}`);
+        body.push(`${gutter} ${indent}- [${task.status === "completed" ? "x" : " "}] ${task.title || "(untitled)"}${task.due ? `  ${formatDue(task.due)}` : ""}${view.showIds ? `  ${formatId(task.id, view.ids)}` : ""}${children ? `  (${children} children)` : ""}`);
         if (task.notes) {
             for (const note of task.notes.split(/\r?\n/)) body.push(`        ${indent}${note}`);
         }
@@ -992,8 +1026,8 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
     if (!rows.length) lines.push(view.search ? "  No matching tasks." : "  No tasks here. Press a to add one.");
     else lines.push(...body.slice(start, start + pageSize));
     while (lines.length < height - 5) lines.push("");
-    lines.push(`j/k move  V visual  Enter/l cd  h/Backspace up  / search  Esc clear  q quit`);
-    lines.push("a/o/O add  e edit  s due  y yank  d cut  D delete  p/P paste  Space/x/u  . all  m print  r refresh");
+    lines.push(`j/k move  V visual  Enter/l cd  h/Backspace up  / search  Esc clear  gx open  q quit`);
+    lines.push("a/o/O add  e edit  s due  , ids  y yank  d cut  D delete  p/P paste  Space/x/u  . all  m print  r refresh");
     let prompt = view.message || "";
     if (view.mode === "search") prompt = `/ ${view.input}  (Enter apply, Esc cancel)`;
     if (view.mode === "due") prompt = `Due: ${view.input}  (${view.message || "YYYY-MM-DD, today, tomorrow; empty clears; Enter save, Esc cancel"})`;
@@ -1297,10 +1331,11 @@ Errors go to stderr with exit code 1.
 
 TUI: j/k or arrows move; V starts visual selection; Enter/l enters a task; h/Backspace goes up.
 / searches the current subtree, keeping ancestors visible; Esc clears the filter, visual, and yank/cut.
+gg / G select first / last; gx opens the selected task in the default browser.
 a adds here; o after; O before; e edits; s sets due date; Enter inserts a newline; Ctrl+S saves; Esc cancels.
 y yanks; d cuts; D deletes with confirmation; y/d/D apply to the visual selection; p pastes after; P pastes before.
 Space toggles; x done; u undone.
-. toggles completed tasks (hidden by default).
+. toggles completed tasks (hidden by default). , toggles task IDs (^id).
 m prints the focused, filtered list as raw Markdown.
 r refreshes; q or Ctrl+C quits.
 
