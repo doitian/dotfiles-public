@@ -25,8 +25,8 @@ gtasks list --json
 gtasks list --raw
 gtasks list --cd "Project"
 gtasks list --list LIST_ID --cd "Project" --json
-gtasks add --title "New task" --notes "Description" --parent PARENT_ID --json
-gtasks edit TASK_ID --title "Updated title" --notes "Updated description" --json
+gtasks add --title "New task" --notes "Description" --due 2026-09-14 --parent PARENT_ID --json
+gtasks edit TASK_ID --title "Updated title" --notes "Updated description" --due tomorrow --json
 gtasks done TASK_ID --json
 gtasks undone TASK_ID --json
 ```
@@ -45,12 +45,14 @@ PATH; `--raw` prints the Markdown instead.
 
 `list --json` returns `{ "listId", "parent", "tasks" }`. `parent` is the selected
 Google task object, or `null` at the root. `tasks` is a flat array of Google task
-objects, including IDs, titles, notes, status and parent IDs. With `--cd`, it
+objects, including IDs, titles, notes, status, due dates, and parent IDs. With `--cd`, it
 contains only descendants; parent links remain intact for rebuilding the tree.
 
 `add`, `edit`, `done`, and `undone` return the resulting Google task object with
 `--json`, or its ID and Markdown without it. `edit` changes only supplied
-fields; `--notes ""` clears the description. `add` requires `--title`; omit
+fields; `--notes ""` clears the description; `--due ""` clears the due date.
+`--due` accepts `YYYY-MM-DD`, `today`, or `tomorrow`. Google Tasks stores dates
+only. Markdown shows due dates as `[[YYYY-MM-DD]]`. `add` requires `--title`; omit
 `--parent` to add at the root. Mutation targets and `--parent` use task IDs.
 
 These commands read and write Google directly and wait for confirmation; they
@@ -151,13 +153,14 @@ prompt lets you reload Google's actual state.
 | a | Add a task at the current level in the multiline editor |
 | o / O | Add a task after / before the selected task |
 | e | Edit the selected task's title and description in the same editor |
+| s | Set or clear the selected task's due date |
 | y | Yank (copy) the selected task(s) and their children |
 | d | Cut the selected task(s); paste moves them |
 | D | Delete the selected task(s) and their children; y confirms |
 | p / P | Paste after / before the selected task |
 | Space | Toggle completed / incomplete |
 | x / u | Mark done / undone |
-| c | Toggle between undone tasks only and all tasks |
+| . | Toggle between undone tasks only and all tasks |
 | m | Print the focused, filtered list as raw Markdown |
 | r | Retry pending changes and refresh from Google |
 | q or Ctrl+C | Quit |
@@ -172,7 +175,11 @@ lines, preserving the cursor column across short or blank lines. Editing prefill
 title and description. Removing
 all description lines clears the saved description. Failed saves keep your draft.
 
-Completed tasks are hidden by default. Press **c** to show them for reopening;
+Due dates appear as `[[YYYY-MM-DD]]` after the title. Press **s** to set one;
+**Enter** saves, **Esc** cancels, and an empty value clears it. `today` and
+`tomorrow` are accepted. Google's API stores the date only.
+
+Completed tasks are hidden by default. Press **.** to show them for reopening;
 press it again to hide them. Undone children remain visible even if their parent
 is completed. `gtasks list` still includes completed tasks. All pages are fetched,
 including tasks completed in Google's apps. Search is limited to the current

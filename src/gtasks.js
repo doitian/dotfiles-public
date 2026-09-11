@@ -110,15 +110,15 @@ export class GoogleTasks {
         return tasks;
     }
 
-    add(list, title, parent = null, notes = "", previous) {
+    add(list, title, parent = null, notes = "", previous, due) {
         return this.request(`/lists/${encodeURIComponent(list)}/tasks`, {
-            method: "POST", body: { title, notes }, query: { parent, previous },
+            method: "POST", body: { title, notes, ...(due != null && { due }) }, query: { parent, previous },
         });
     }
 
-    edit(list, task, { title, notes }) {
+    edit(list, task, fields) {
         return this.request(`/lists/${encodeURIComponent(list)}/tasks/${encodeURIComponent(task)}`, {
-            method: "PATCH", body: { title, notes },
+            method: "PATCH", body: fields,
         });
     }
 
@@ -256,10 +256,14 @@ export class LocalGoogleTasks {
         return Promise.resolve({ id: operation.task, ...operation.fields });
     }
 
-    add(list, title, parent = null, notes = "", previous) {
-        return this.enqueue({ kind: "add", task: `local:${crypto.randomUUID()}`, parent, previous, fields: { title, notes } });
+    add(list, title, parent = null, notes = "", previous, due) {
+        return this.enqueue({ kind: "add", task: `local:${crypto.randomUUID()}`, parent, previous, fields: { title, notes, ...(due != null && { due }) } });
     }
-    edit(list, task, fields) { return this.enqueue({ kind: "edit", task, fields: { title: fields.title, notes: fields.notes } }); }
+    edit(list, task, fields) {
+        const next = {};
+        for (const key of ["title", "notes", "due"]) if (fields[key] !== undefined) next[key] = fields[key];
+        return this.enqueue({ kind: "edit", task, fields: next });
+    }
     setDone(list, task, done) { return this.enqueue({ kind: "done", task, fields: { status: done ? "completed" : "needsAction", completed: done ? new Date(this.now()).toISOString() : null } }); }
     delete(list, task) { return this.enqueue({ kind: "delete", task }); }
     move(list, task, { parent = null, previous = null } = {}) { return this.enqueue({ kind: "move", task, parent, previous, fields: {} }); }
@@ -306,7 +310,7 @@ export class LocalGoogleTasks {
             if (this.stopped) return;
             this.change(state => { state.queue[0].started = true; });
             try {
-                result = await this.remote.add(this.listId, operation.fields.title, parent, operation.fields.notes, previous);
+                result = await this.remote.add(this.listId, operation.fields.title, parent, operation.fields.notes, previous, operation.fields.due);
             } catch (error) {
                 if (!this.stopped && error.status >= 400 && error.status < 500) this.change(state => { state.queue[0].started = false; });
                 throw error;
@@ -547,7 +551,7 @@ export function visibleTasks(tasks, parent = null, search = "", showCompleted = 
     const byId = new Map(rows.map(task => [task.id, task]));
     const included = new Set();
     for (const row of visible) {
-        if (!`${row.title ?? ""}\n${row.notes ?? ""}`.toLocaleLowerCase().includes(query)) continue;
+        if (!`${row.title ?? ""}\n${row.notes ?? ""}\n${formatDue(row.due)}`.toLocaleLowerCase().includes(query)) continue;
         let task = row;
         while (task && !included.has(task.id)) {
             included.add(task.id);
@@ -562,6 +566,39 @@ export function parseTaskInput(input) {
     while (lines.length && !lines[0].trim()) lines.shift();
     while (lines.length && !lines.at(-1).trim()) lines.pop();
     return { title: first.trim(), notes: lines.join("\n") };
+}
+
+export function formatDue(due) {
+    const day = String(due ?? "").match(/^(\d{4}-\d{2}-\d{2})/)?.[1];
+    return day ? `[[${day}]]` : "";
+}
+
+export function parseDue(input, now = () => new Date()) {
+    if (input == null) return undefined;
+    const text = String(input).trim().replace(/^\[\[|\]\]$/g, "").trim();
+    if (!text) return null;
+    const localDay = date => {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+    };
+    const dueTimestamp = day => {
+        const [y, m, d] = day.split("-").map(Number);
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || new Date(Date.UTC(y, m - 1, d)).toISOString().slice(0, 10) !== day) {
+            throw new Error(`Invalid due date ${JSON.stringify(input)}. Use YYYY-MM-DD, today, or tomorrow.`);
+        }
+        return `${day}T00:00:00.000Z`;
+    };
+    if (/^today$/i.test(text)) return dueTimestamp(localDay(new Date(now())));
+    if (/^tomorrow$/i.test(text)) {
+        const date = new Date(now());
+        date.setDate(date.getDate() + 1);
+        return dueTimestamp(localDay(date));
+    }
+    const day = text.match(/^(\d{4}-\d{2}-\d{2})(?:[T\s].*)?$/)?.[1];
+    if (day) return dueTimestamp(day);
+    throw new Error(`Invalid due date ${JSON.stringify(input)}. Use YYYY-MM-DD, today, or tomorrow.`);
 }
 
 export class TasksView {
@@ -663,7 +700,7 @@ export class TasksView {
             .sort((a, b) => (a.position ?? "").localeCompare(b.position ?? ""));
         const addTree = async (oldId, newParent, newPrevious) => {
             const task = items.find(item => item.id === oldId);
-            const created = await this.api.add(this.list, task.title ?? "", newParent, task.notes ?? "", newPrevious);
+            const created = await this.api.add(this.list, task.title ?? "", newParent, task.notes ?? "", newPrevious, ...(task.due != null ? [task.due] : []));
             let prev = null;
             for (const child of childrenOf(oldId)) prev = (await addTree(child.id, created.id, prev)).id;
             return created;
@@ -795,19 +832,31 @@ export class TasksView {
             }
             return;
         }
-        if (this.mode === "search") {
+        if (this.mode === "search" || this.mode === "due") {
             if (key.name === "escape") {
-                this.search = this.previousSearch;
+                if (this.mode === "search") {
+                    this.search = this.previousSearch;
+                    const index = this.rows.findIndex(task => task.id === this.previousSelected);
+                    if (index !== -1) this.selected = index;
+                    this.clamp();
+                }
                 this.mode = "browse";
-                const index = this.rows.findIndex(task => task.id === this.previousSelected);
-                if (index !== -1) this.selected = index;
-                this.clamp();
             } else if (key.name === "return") {
-                this.mode = "browse";
+                if (this.mode === "due") {
+                    try {
+                        const due = parseDue(this.input);
+                        const id = this.task.id;
+                        this.mode = "browse";
+                        return this.mutate(() => this.api.edit(this.list, id, { due }));
+                    } catch (error) {
+                        this.message = error.message;
+                    }
+                } else this.mode = "browse";
             } else {
                 if (key.name === "backspace") this.input = Array.from(this.input).slice(0, -1).join("");
                 else if (key.ctrl && key.name === "u") this.input = "";
                 else if (text && !key.ctrl && !key.meta && !/[\x00-\x1f\x7f-\x9f]/.test(text)) this.input += text;
+                this.message = "";
                 if (this.mode === "search") { this.search = this.input; this.selected = 0; }
             }
             return;
@@ -840,7 +889,12 @@ export class TasksView {
             this.openEditor("add", this.pasteAnchor(text === "O"));
         } else if (text === "e" && this.task) {
             this.openEditor("edit");
-        } else if (text === "c") {
+        } else if (text === "s" && this.task) {
+            this.visual = null;
+            this.mode = "due";
+            this.input = formatDue(this.task.due).replace(/^\[\[|\]\]$/g, "");
+            this.message = "";
+        } else if (text === ".") {
             const id = this.task?.id;
             this.showCompleted = !this.showCompleted;
             const index = this.rows.findIndex(task => task.id === id);
@@ -890,7 +944,7 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
         `Google Tasks / ${view.listTitle}${view.path.map(entry => ` / ${entry.title}`).join("")}`,
     ];
     const focusedTask = view.tasks.find(task => task.id === view.parent);
-    lines.push(`  ${focusedTask?.id ?? view.list}`);
+    lines.push(`  ${focusedTask?.id ?? view.list}${focusedTask?.due ? `  ${formatDue(focusedTask.due)}` : ""}`);
     if (focusedTask?.notes) {
         const notes = focusedTask.notes.split(/\r?\n/);
         const limit = Math.max(1, Math.min(Math.floor(height / 3), height - 9));
@@ -925,7 +979,7 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
         if (index === view.selected) selectedStart = body.length;
         const marked = clipIds.has(task.id);
         const gutter = index === view.selected && marked ? (clip.type === "cut" ? "D" : "Y") : index === view.selected ? ">" : marked ? (clip.type === "cut" ? "d" : "y") : index >= visualLo && index <= visualHi ? "*" : " ";
-        body.push(`${gutter} ${indent}- [${task.status === "completed" ? "x" : " "}] ${task.title || "(untitled)"}${children ? `  (${children} children)` : ""}`);
+        body.push(`${gutter} ${indent}- [${task.status === "completed" ? "x" : " "}] ${task.title || "(untitled)"}${task.due ? `  ${formatDue(task.due)}` : ""}${children ? `  (${children} children)` : ""}`);
         if (task.notes) {
             for (const note of task.notes.split(/\r?\n/)) body.push(`        ${indent}${note}`);
         }
@@ -939,9 +993,10 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
     else lines.push(...body.slice(start, start + pageSize));
     while (lines.length < height - 5) lines.push("");
     lines.push(`j/k move  V visual  Enter/l cd  h/Backspace up  / search  Esc clear  q quit`);
-    lines.push("a/o/O add  e edit  y yank  d cut  D delete  p/P paste  Space/x/u  c all  m print  r refresh");
+    lines.push("a/o/O add  e edit  s due  y yank  d cut  D delete  p/P paste  Space/x/u  . all  m print  r refresh");
     let prompt = view.message || "";
     if (view.mode === "search") prompt = `/ ${view.input}  (Enter apply, Esc cancel)`;
+    if (view.mode === "due") prompt = `Due: ${view.input}  (${view.message || "YYYY-MM-DD, today, tomorrow; empty clears; Enter save, Esc cancel"})`;
     if (view.mode === "delete") prompt = view.deleteTasks.length === 1 ? `Delete task + children? [y/N] ${view.deleteTasks[0].title}` : `Delete ${view.deleteTasks.length} tasks + children? [y/N]`;
     if (view.mode === "reset") prompt = `Reset local cache? [y/N] Discard ${view.api.state.queue.length} queued changes and reload Google.`;
     lines.push(busy ? "Working... (Ctrl+C to quit)" : prompt);
@@ -1159,6 +1214,7 @@ export function renderMarkdown(items) {
         const indent = "  ".repeat(depth);
         const checked = task.status === "completed" ? "x" : " ";
         let line = `${indent}- [${checked}] ${terminalText(task.title || "(untitled)")}`;
+        if (task.due) line += ` ${formatDue(task.due)}`;
         if (task.notes) {
             line += `\n\n${markdownNotes(task.notes).split("\n").map(note => note ? `${indent}  ${note}` : "").join("\n")}\n`;
         }
@@ -1182,7 +1238,7 @@ export function viewMarkdown(tasks, parent = null, search = "", showCompleted = 
         return rest.parent === parent ? { ...rest, parent: undefined } : rest;
     });
     return [
-        focused ? `# ${terminalText(focused.title || "(untitled)")}` : "",
+        focused ? `# ${terminalText(focused.title || "(untitled)")}${focused.due ? ` ${formatDue(focused.due)}` : ""}` : "",
         focused?.notes ? markdownNotes(focused.notes) : "",
         renderMarkdown(items),
     ].filter(Boolean).join("\n\n");
@@ -1219,8 +1275,8 @@ const USAGE = `Usage: gtasks <command> [options]
   gtasks              Manage your default Google Tasks list
   gtasks lists [--json]                    List all task lists (id and name)
   gtasks list [list-id] [--cd NAME] [--json] [--raw] Read tasks or a parent's subtree
-  gtasks add --title TEXT [--notes TEXT] [--parent TASK-ID] [--list LIST-ID] [--json]
-  gtasks edit TASK-ID [--title TEXT] [--notes TEXT] [--list LIST-ID] [--json]
+  gtasks add --title TEXT [--notes TEXT] [--due DATE] [--parent TASK-ID] [--list LIST-ID] [--json]
+  gtasks edit TASK-ID [--title TEXT] [--notes TEXT] [--due DATE] [--list LIST-ID] [--json]
   gtasks done TASK-ID [--list LIST-ID] [--json]
   gtasks undone TASK-ID [--list LIST-ID] [--json]
   gtasks tui [list-id] [--cd NAME]          Open the TUI
@@ -1233,17 +1289,18 @@ const USAGE = `Usage: gtasks <command> [options]
 Lists default to @default. --list also works with list and tui.
 list --cd accepts a task ID or a unique title match, including completed tasks.
 An exact title match takes precedence over substring matches; ambiguous names fail.
---notes "" clears the description; omitted edit fields stay unchanged.
+--notes "" clears the description; --due "" clears the due date; omitted edit fields stay unchanged.
+--due accepts YYYY-MM-DD, today, or tomorrow. Google Tasks stores dates only.
 Agent commands use Google directly and wait for confirmation. The TUI uses its local queue.
 JSON goes to stdout without Markdown rendering. list uses glow on a TTY unless --raw.
 Errors go to stderr with exit code 1.
 
 TUI: j/k or arrows move; V starts visual selection; Enter/l enters a task; h/Backspace goes up.
 / searches the current subtree, keeping ancestors visible; Esc clears the filter, visual, and yank/cut.
-a adds here; o after; O before; e edits; Enter inserts a newline; Ctrl+S saves; Esc cancels.
+a adds here; o after; O before; e edits; s sets due date; Enter inserts a newline; Ctrl+S saves; Esc cancels.
 y yanks; d cuts; D deletes with confirmation; y/d/D apply to the visual selection; p pastes after; P pastes before.
 Space toggles; x done; u undone.
-c toggles completed tasks (hidden by default).
+. toggles completed tasks (hidden by default).
 m prints the focused, filtered list as raw Markdown.
 r refreshes; q or Ctrl+C quits.
 
@@ -1256,7 +1313,7 @@ export async function main(args = process.argv.slice(2), { createApi = createGoo
         allowPositionals: true,
         options: {
             help: { type: "boolean", short: "h" }, port: { type: "string" }, cd: { type: "string" },
-            json: { type: "boolean" }, raw: { type: "boolean" }, list: { type: "string" }, title: { type: "string" }, notes: { type: "string" }, parent: { type: "string" },
+            json: { type: "boolean" }, raw: { type: "boolean" }, list: { type: "string" }, title: { type: "string" }, notes: { type: "string" }, parent: { type: "string" }, due: { type: "string" },
         },
     });
     const print = value => output.write(`${value}\n`);
@@ -1264,7 +1321,7 @@ export async function main(args = process.argv.slice(2), { createApi = createGoo
     const [command = "tui", target] = positionals;
     const allowed = {
         tui: ["list", "cd", "port"], auth: ["port"], lists: ["json"], list: ["list", "cd", "json", "raw"],
-        add: ["list", "title", "notes", "parent", "json"], edit: ["list", "title", "notes", "json"],
+        add: ["list", "title", "notes", "due", "parent", "json"], edit: ["list", "title", "notes", "due", "json"],
         done: ["list", "json"], undone: ["list", "json"],
     };
     if (!allowed[command] || positionals.length > 2 || (["auth", "lists", "add"].includes(command) && target !== undefined)) throw new Error(USAGE);
@@ -1272,7 +1329,8 @@ export async function main(args = process.argv.slice(2), { createApi = createGoo
     if (["edit", "done", "undone"].includes(command) && !target?.trim()) throw new Error(`${command} requires a task ID.`);
     if (command === "add" && values.title === undefined) throw new Error("add requires --title TEXT.");
     if (values.title !== undefined && !values.title.trim()) throw new Error("Task title cannot be empty.");
-    if (command === "edit" && values.title === undefined && values.notes === undefined) throw new Error("edit requires --title or --notes.");
+    if (command === "edit" && values.title === undefined && values.notes === undefined && values.due === undefined) throw new Error("edit requires --title, --notes, or --due.");
+    const due = values.due !== undefined ? parseDue(values.due) : undefined;
     for (const key of ["list", "parent", "cd"]) if (values[key] !== undefined && !values[key].trim()) throw new Error(`--${key} cannot be empty.`);
     if (["list", "tui"].includes(command) && target !== undefined && values.list !== undefined) throw new Error("Use either a positional list ID or --list, not both.");
     const tasklist = values.list ?? (["list", "tui"].includes(command) ? target : undefined) ?? "@default";
@@ -1300,8 +1358,8 @@ export async function main(args = process.argv.slice(2), { createApi = createGoo
             data = { listId: tasklist, parent, tasks };
             md = viewMarkdown(items, parent?.id ?? null, "", true);
         } else {
-            if (command === "add") data = await api.add(tasklist, values.title, values.parent ?? null, values.notes ?? "");
-            if (command === "edit") data = await api.edit(tasklist, target, { title: values.title, notes: values.notes });
+            if (command === "add") data = await api.add(tasklist, values.title, values.parent ?? null, values.notes ?? "", undefined, due);
+            if (command === "edit") data = await api.edit(tasklist, target, { title: values.title, notes: values.notes, due });
             if (command === "done" || command === "undone") data = await api.setDone(tasklist, target, command === "done");
             md = `ID: ${data.id}\n\n${renderMarkdown([{ ...data, parent: undefined }])}`;
         }

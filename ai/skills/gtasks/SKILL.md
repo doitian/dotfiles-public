@@ -26,8 +26,8 @@ gtasks list --json
 gtasks list --raw
 gtasks list --cd "Project" --json
 gtasks list --list LIST_ID --cd "Project" --json
-gtasks add --title "Task" --notes "Description" --parent TASK_ID --json
-gtasks edit TASK_ID --title "Updated" --notes "Updated description" --json
+gtasks add --title "Task" --notes "Description" --due 2026-09-14 --parent TASK_ID --json
+gtasks edit TASK_ID --title "Updated" --notes "Updated description" --due tomorrow --json
 gtasks done TASK_ID --json
 gtasks undone TASK_ID --json
 ```
@@ -39,8 +39,8 @@ All task commands default to `@default`. Use `--list LIST_ID` for another list.
 
 - `lists --json` returns `{ "id", "name" }[]`.
 - `list --json` returns `{ "listId", "parent", "tasks" }`. `parent` is null at
-  the root. `tasks` is a flat array with `id`, `title`, `notes`, `status`, and
-  `parent`. With `--cd`, it is only descendants.
+  the root. `tasks` is a flat array with `id`, `title`, `notes`, `status`, `due`,
+  and `parent`. With `--cd`, it is only descendants.
 - `add`, `edit`, `done`, and `undone` with `--json` return the Google task
   object. Capture `id` from `add` before using `--parent` or mutations.
 - Mutation targets and `--parent` must be task IDs, not titles.
@@ -52,6 +52,9 @@ All task commands default to `@default`. Use `--list LIST_ID` for another list.
 
 - `add` requires `--title`. Omit `--parent` to add at the root.
 - `edit` changes only supplied fields. `--notes ""` clears the description.
+  `--due ""` clears the due date. `--due` accepts `YYYY-MM-DD`, `today`, or
+  `tomorrow`. Google Tasks stores dates only. Markdown shows due dates as
+  `[[YYYY-MM-DD]]`.
 - Write `--title` and `--notes` as Markdown (links, emphasis, lists, code). Do
   not escape or flatten them to plain text. Title is one line; put the rest in
   notes.

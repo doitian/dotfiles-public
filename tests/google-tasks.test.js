@@ -1,4 +1,4 @@
-import { GoogleTasks, LocalGoogleTasks, authorize, createAuthorizationRequest, googleTasksSecrets, TasksView, renderTasks, runTasksTui, visibleTasks, renderMarkdown, viewMarkdown, parseTaskInput, readTaskInput } from "../src/gtasks.js";
+import { GoogleTasks, LocalGoogleTasks, authorize, createAuthorizationRequest, googleTasksSecrets, TasksView, renderTasks, runTasksTui, visibleTasks, renderMarkdown, viewMarkdown, parseTaskInput, parseDue, formatDue, readTaskInput } from "../src/gtasks.js";
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { main as importSecrets } from "../scripts/ev-secrets.js";
 import { createHash } from "node:crypto";
@@ -88,10 +88,14 @@ describe("Agent commands", () => {
             const result = await run([command, "new", "--json"], [token(), json(created)]);
             expect(JSON.parse(result.calls[1].body)).toEqual(command === "done" ? { status: "completed" } : { status: "needsAction", completed: null });
         }
+        const dated = await run(["add", "--title", "Dated", "--due", "2026-09-14", "--json"], [token(), json({ ...created, due: "2026-09-14T00:00:00.000Z" })]);
+        expect(JSON.parse(dated.calls[1].body)).toEqual({ title: "Dated", notes: "", due: "2026-09-14T00:00:00.000Z" });
+        const cleared = await run(["edit", "new", "--due", "", "--json"], [token(), json({ ...created, due: null })]);
+        expect(JSON.parse(cleared.calls[1].body)).toEqual({ due: null });
     });
 
     test("invalid arguments fail before credentials or network access", async () => {
-        for (const args of [["edit"], ["edit", "id"], ["done"], ["add"], ["add", "--title", " "], ["lists", "--cd", "x"], ["lists", "--raw"], ["list", "--cd", ""], ["done", "id", "--title", "oops"], ["list", "a", "--list", "b"]]) {
+        for (const args of [["edit"], ["edit", "id"], ["done"], ["add"], ["add", "--title", " "], ["lists", "--cd", "x"], ["lists", "--raw"], ["list", "--cd", ""], ["done", "id", "--title", "oops"], ["list", "a", "--list", "b"], ["add", "--title", "x", "--due", "nope"], ["edit", "id", "--due", "2026-02-31"]]) {
             let accessed = false;
             await expect(runCommand(args, { createApi: async () => { accessed = true; } })).rejects.toThrow();
             expect(accessed).toBe(false);
@@ -118,9 +122,9 @@ function localFixture(path = ":memory:") {
             return { title: "My tasks" };
         },
         list: async () => structuredClone(data.tasks),
-        add: async (list, title, parent, notes, previous) => {
-            const task = { id: `server-${data.writes.length}`, title, notes, parent: parent ?? undefined, status: "needsAction" };
-            data.writes.push(["add", title, parent, notes, previous]);
+        add: async (list, title, parent, notes, previous, due) => {
+            const task = { id: `server-${data.writes.length}`, title, notes, parent: parent ?? undefined, status: "needsAction", ...(due != null && { due }) };
+            data.writes.push(["add", title, parent, notes, previous, due]);
             data.tasks.push(task);
             return structuredClone(task);
         },
@@ -183,6 +187,19 @@ describe("Persistent local task queue", () => {
         expect(data.writes[2][1]).toBe("server-1");
         expect(reopened.state.queue).toHaveLength(0);
         expect((await reopened.list()).find(task => task.id === child.id)).toMatchObject({ parent: parent.id, title: "Edited child", status: "completed" });
+    });
+
+    test("due dates queue locally and sync without wiping other fields", async () => {
+        const { local, data } = fixture();
+        await local.syncOnce();
+        await local.edit("@default", "existing", { due: "2026-09-14T00:00:00.000Z" });
+        expect((await local.list())[0]).toMatchObject({ title: "Existing", due: "2026-09-14T00:00:00.000Z" });
+        await local.syncOnce();
+        expect(data.writes).toEqual([["edit", "existing", { due: "2026-09-14T00:00:00.000Z" }]]);
+        const dated = await local.add("@default", "Dated", null, "", undefined, "2026-09-15T00:00:00.000Z");
+        await local.syncOnce();
+        expect(data.writes.at(-1)).toEqual(["add", "Dated", null, "", null, "2026-09-15T00:00:00.000Z"]);
+        expect((await local.list()).find(task => task.id === dated.id).due).toBe("2026-09-15T00:00:00.000Z");
     });
 
     test("cut paste moves a task locally and syncs with previous sibling", async () => {
@@ -446,12 +463,16 @@ describe("Google Tasks API", () => {
     });
 
     test("adding and editing send title and description without changing other fields", async () => {
-        const { api, calls } = mockClient([token(), json({}), json({})]);
+        const { api, calls } = mockClient([token(), json({}), json({}), json({}), json({})]);
         await api.add("@default", "Title", "parent", "First\nSecond");
         await api.edit("@default", "task", { title: "Edited", notes: "" });
+        await api.add("@default", "Dated", null, "", undefined, "2026-09-14T00:00:00.000Z");
+        await api.edit("@default", "task", { due: null });
         expect(JSON.parse(calls[1].body)).toEqual({ title: "Title", notes: "First\nSecond" });
         expect(calls[2].method).toBe("PATCH");
         expect(JSON.parse(calls[2].body)).toEqual({ title: "Edited", notes: "" });
+        expect(JSON.parse(calls[3].body)).toEqual({ title: "Dated", notes: "", due: "2026-09-14T00:00:00.000Z" });
+        expect(JSON.parse(calls[4].body)).toEqual({ due: null });
     });
 
     test("does not retry writes on server errors and gives an auth recovery hint", async () => {
@@ -494,13 +515,28 @@ describe("Task navigation and actions", () => {
         expect(parseTaskInput("\nDescription").title).toBe("");
     });
 
-    test("completed tasks are hidden by default and c toggles them without losing unfinished children", async () => {
+    test("due dates parse to UTC midnight and render as wiki dates", () => {
+        const now = () => new Date("2026-09-12T15:04:00");
+        expect(parseDue("2026-09-14")).toBe("2026-09-14T00:00:00.000Z");
+        expect(parseDue("[[2026-09-14]]")).toBe("2026-09-14T00:00:00.000Z");
+        expect(parseDue("2026-09-14T15:30:00")).toBe("2026-09-14T00:00:00.000Z");
+        expect(parseDue("today", now)).toBe("2026-09-12T00:00:00.000Z");
+        expect(parseDue("tomorrow", now)).toBe("2026-09-13T00:00:00.000Z");
+        expect(parseDue("")).toBeNull();
+        expect(parseDue(undefined)).toBeUndefined();
+        expect(() => parseDue("2026-02-31")).toThrow("Invalid due date");
+        expect(() => parseDue("nope")).toThrow("Invalid due date");
+        expect(formatDue("2026-09-14T00:00:00.000Z")).toBe("[[2026-09-14]]");
+        expect(formatDue(null)).toBe("");
+    });
+
+    test("completed tasks are hidden by default and . toggles them without losing unfinished children", async () => {
         const { view, api } = fixture();
         expect(view.rows.some(task => task.status === "completed")).toBe(false);
-        press(view, "c");
+        press(view, ".");
         expect(view.rows.map(task => task.id)).toContain("b");
         view.selected = view.rows.length - 1;
-        press(view, "c");
+        press(view, ".");
         expect(view.task.id).toBe("g");
         view.tasks.find(task => task.id === "p").status = "completed";
         expect(view.rows.map(task => [task.id, task.depth])).toEqual([["c", 0], ["g", 1]]);
@@ -577,7 +613,7 @@ describe("Task navigation and actions", () => {
 
     test("search applies live, Escape restores it, and browse Escape clears it", () => {
         const { view } = fixture();
-        press(view, "c");
+        press(view, ".");
         press(view, "j");
         expect(view.task.id).toBe("c");
         press(view, "/");
@@ -645,6 +681,42 @@ describe("Task navigation and actions", () => {
         press(view, "", "escape");
         expect(view.clipboard).toBeNull();
         expect(renderTasks(view)).not.toContain("Y - [ ] Project");
+    });
+
+    test("yank paste copies due dates", async () => {
+        const { view, calls } = fixture();
+        view.tasks.find(task => task.id === "p").due = "2026-09-14T00:00:00.000Z";
+        press(view, "y");
+        await press(view, "p");
+        expect(calls[0]).toEqual(["add", "@default", "Project", null, "", "p", "2026-09-14T00:00:00.000Z"]);
+    });
+
+    test("s sets or clears due dates and lists render wiki dates", async () => {
+        const { view, calls } = fixture();
+        view.tasks.find(task => task.id === "p").due = "2026-09-14T00:00:00.000Z";
+        expect(renderTasks(view)).toContain("Project  [[2026-09-14]]");
+        view.enter();
+        expect(renderTasks(view)).toContain("  p  [[2026-09-14]]");
+        view.back();
+        press(view, "s");
+        expect(view.mode).toBe("due");
+        expect(view.input).toBe("2026-09-14");
+        view.input = "2026-09-15";
+        await press(view, "\r", "return");
+        expect(calls).toEqual([["edit", "@default", "p", { due: "2026-09-15T00:00:00.000Z" }]]);
+        calls.length = 0;
+        view.tasks.find(task => task.id === "p").due = "2026-09-15T00:00:00.000Z";
+        press(view, "s");
+        view.input = "";
+        await press(view, "\r", "return");
+        expect(calls).toEqual([["edit", "@default", "p", { due: null }]]);
+        press(view, "s");
+        view.input = "nope";
+        press(view, "\r", "return");
+        expect(view.mode).toBe("due");
+        expect(view.message).toContain("Invalid due date");
+        press(view, "", "escape");
+        expect(view.mode).toBe("browse");
     });
 
     test("V selects a range so yank, cut, and delete apply to all selected roots", async () => {
@@ -743,7 +815,7 @@ describe("Task navigation and actions", () => {
         expect(screen).toContain("Project  (1 children)\r\n        Project details\r\n        Second line");
         expect(screen).toContain("    - [ ] Child  (1 children)\r\n          Find ME");
         view.tasks[1].notes = "Long description\n".repeat(30);
-        press(view, "c");
+        press(view, ".");
         view.selected = view.rows.length - 1;
         const scrolled = renderTasks(view, 100, 16);
         expect(scrolled).toContain("> - [x] Other");
@@ -790,7 +862,7 @@ describe("Task navigation and actions", () => {
         view.search = "grand";
         expect(viewMarkdown(view.tasks, view.parent, view.search, view.showCompleted)).toContain("- [ ] Child\n  - [ ] Grandchild");
         expect(view.markdown()).not.toContain("Other");
-        press(view, "c");
+        press(view, ".");
         view.back();
         expect(view.markdown()).toContain("- [x] Other");
     });
@@ -798,6 +870,8 @@ describe("Task navigation and actions", () => {
     test("Markdown listing preserves nesting and completion", () => {
         expect(renderMarkdown(tasks)).toContain("- [ ] Project\n  - [ ] Child");
         expect(renderMarkdown(tasks)).toContain("- [x] Other");
+        expect(renderMarkdown([{ id: "a", title: "Work", due: "2026-09-14T00:00:00.000Z" }])).toContain("- [ ] Work [[2026-09-14]]");
+        expect(viewMarkdown([{ id: "p", title: "Project", due: "2026-09-14T00:00:00.000Z", notes: "Context" }], "p")).toBe("# Project [[2026-09-14]]\n\nContext");
     });
 
     test("Markdown listing keeps title and description markup", () => {
