@@ -1,8 +1,10 @@
 # Google Tasks
 
 `gtasks` opens a TUI showing your default Google Tasks list as an expanded,
-Markdown-style list with `- [ ]` and `- [x]` checkboxes. Child tasks use two spaces
-of indentation per level, without tree connector lines. Parent tasks appear above their children, with descriptions
+Markdown-style list with `- [ ]` and `- [x]` checkboxes. The TUI shows two
+levels at a time: the current tasks and their direct children. Enter a task to
+see the next level. Child tasks use two spaces of indentation per level, without
+tree connector lines. Parent tasks appear above their children, with descriptions
 indented beneath each task's title. `gtasks tui <list-id>`
 opens another list, and `gtasks list [list-id]` prints a nested Markdown todo list.
 Both use Google OAuth directly; `gws` is no longer required.

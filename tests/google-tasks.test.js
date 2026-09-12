@@ -539,7 +539,7 @@ describe("Task navigation and actions", () => {
         expect(view.rows.map(task => task.id)).toContain("b");
         view.selected = view.rows.length - 1;
         press(view, ".");
-        expect(view.task.id).toBe("g");
+        expect(view.task.id).toBe("c");
         view.tasks.find(task => task.id === "p").status = "completed";
         expect(view.rows.map(task => [task.id, task.depth])).toEqual([["c", 0], ["g", 1]]);
         api.list = async () => [{ id: "last", title: "Last", status: "completed" }];
@@ -570,8 +570,8 @@ describe("Task navigation and actions", () => {
 
     test("shows the subtree and keeps matching tasks' ancestors while searching", () => {
         const { view } = fixture();
-        expect(view.rows.map(task => task.id)).toEqual(["p", "c", "g"]);
-        expect(view.rows.map(task => task.depth)).toEqual([0, 1, 2]);
+        expect(view.rows.map(task => task.id)).toEqual(["p", "c"]);
+        expect(view.rows.map(task => task.depth)).toEqual([0, 1]);
         view.search = "project";
         view.enter();
         expect(view.rows.map(task => task.id)).toEqual(["c", "g"]);
@@ -622,7 +622,7 @@ describe("Task navigation and actions", () => {
         for (const char of "Other") press(view, char);
         expect(view.rows.map(task => task.id)).toEqual(["b"]);
         press(view, "", "escape");
-        expect(view.rows).toHaveLength(4);
+        expect(view.rows).toHaveLength(3);
         expect(view.task.id).toBe("c");
         press(view, "/");
         press(view, "Project");
@@ -664,7 +664,6 @@ describe("Task navigation and actions", () => {
         press(view, "j");
         press(view, "d");
         expect(renderTasks(view)).toContain("D   - [ ] Child");
-        expect(renderTasks(view)).toContain("d     - [ ] Grandchild");
         expect(view.tasks.some(task => task.id === "c")).toBe(true);
         expect(calls).toEqual([]);
         press(view, "k");
@@ -760,7 +759,6 @@ describe("Task navigation and actions", () => {
         press(view, "j");
         press(view, "V");
         press(view, "j");
-        press(view, "j");
         expect(renderTasks(view)).toContain("*   - [ ] Child");
         expect(renderTasks(view)).toContain(">   - [ ] Second child");
         press(view, "y");
@@ -769,16 +767,13 @@ describe("Task navigation and actions", () => {
         press(view, "", "escape");
         expect(view.clipboard).toBeNull();
         press(view, "k");
-        press(view, "k");
         press(view, "V");
-        press(view, "j");
         press(view, "j");
         press(view, "d");
         expect(view.clipboard.roots).toEqual(["c", "c2"]);
         press(view, "", "escape");
         expect(view.visual).toBeNull();
         expect(view.clipboard).toBeNull();
-        press(view, "k");
         press(view, "k");
         press(view, "V");
         press(view, "G");
@@ -793,8 +788,11 @@ describe("Task navigation and actions", () => {
         view.tasks.push({ id: "c2", title: "Second child", parent: "p", position: "002" });
         const screen = renderTasks(view);
         expect(screen).toContain("    - [ ] Child");
-        expect(screen).toContain("      - [ ] Grandchild");
+        expect(screen).not.toContain("Grandchild");
         expect(screen).toContain("    - [ ] Second child");
+        view.enter();
+        expect(renderTasks(view)).toContain("    - [ ] Grandchild");
+        view.back();
         press(view, "j");
         expect(view.task.id).toBe("c");
         await press(view, "x");

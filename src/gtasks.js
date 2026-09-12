@@ -518,7 +518,7 @@ export function googleTasksSecrets({ password, fields }) {
     return entries;
 }
 
-export function visibleTasks(tasks, parent = null, search = "", showCompleted = false, ids) {
+export function visibleTasks(tasks, parent = null, search = "", showCompleted = false, ids, maxDepth = Infinity) {
     const query = search.trim().toLocaleLowerCase();
     const children = new Map();
     for (const task of tasks.filter(task => !task.deleted)
@@ -547,7 +547,7 @@ export function visibleTasks(tasks, parent = null, search = "", showCompleted = 
         task.depth = depth;
         return shown;
     });
-    if (!query) return visible;
+    if (!query) return maxDepth === Infinity ? visible : visible.filter(task => task.depth <= maxDepth);
     const byId = new Map(rows.map(task => [task.id, task]));
     const included = new Set();
     for (const row of visible) {
@@ -619,7 +619,7 @@ export class TasksView {
 
     get parent() { return this.path.at(-1)?.id ?? null; }
     get ids() { return this.api.state?.ids; }
-    get rows() { return visibleTasks(this.tasks, this.parent, this.search, this.showCompleted, this.ids); }
+    get rows() { return visibleTasks(this.tasks, this.parent, this.search, this.showCompleted, this.ids, 1); }
     get task() { return this.rows[this.selected]; }
     markdown() { return viewMarkdown(this.tasks, this.parent, this.search, this.showCompleted); }
 
