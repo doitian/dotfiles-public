@@ -98,6 +98,9 @@ async function main() {
   }
 
   const { apiKey, baseURL, model } = await getOpenAICredentials();
+  if (!apiKey || /^(sk-)?(test|placeholder|xxx|your[-_]?api[-_]?key)/i.test(apiKey)) {
+    throw new Error("Invalid OpenAI API key: looks like a placeholder or test value");
+  }
   const selectedModel = cliModel ?? model;
   const client = new OpenAI({ apiKey, baseURL });
 
