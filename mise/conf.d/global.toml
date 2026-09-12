@@ -258,15 +258,6 @@ dir = "{{cwd}}"
 depends = ["preset:rust"]
 run = "preset-cargo-workspace"
 
-[tasks."preset:cursor:hook:pushover"]
-hide = true
-description = "Create cursor:pushover:on:stop task for pushover notifications"
-dir = "{{cwd}}"
-run = [
-  "touch mise.toml",
-  "mise tasks add cursor:pushover:on:stop -- cursor-pushover-on-stop",
-]
-
 [tasks."preset:mise:windows:sh"]
 hide = true
 description = "Use sh.exe as mise default shell for Windows"

@@ -155,8 +155,3 @@ test("preset:default fails when no build system is recognized", async () => {
   expect(result.exitCode).not.toBe(0);
   expect(result.stderr).toContain("No recognizable build system found");
 });
-
-test("cursor notification preset creates its task", async () => {
-  await run("run", "preset:cursor:hook:pushover");
-  expect((await readConfig()).tasks["cursor:pushover:on:stop"].run).toBe("cursor-pushover-on-stop");
-});
