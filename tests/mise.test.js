@@ -51,7 +51,6 @@ test.each([
   ["g:up:bun", "bun update -g --latest"],
   ["g:add:bun:all", "bun install -g @github/copilot opencode-ai"],
   ["g:add:gh:all", "gh extension install github/gh-stack"],
-  ["g:add:aistat", "go install github.com/drogers0/aistat/v2/cmd/aistat@latest"],
   ["g:ramdisk:up", "g-ramdisk-up"],
   ["g:ramdisk:down", "g-ramdisk-down"],
 ])("%s resolves its command without executing it", async (name, command) => {
