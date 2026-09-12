@@ -10,6 +10,8 @@ Markdown file named `Journal YYYY-MM-DD.md` stored in `~/Dropbox/Brain/journal/`
 ## Commands
 
 `jrnl <title>` — Read stdin and append a timestamped entry with the given title.
+If stdin is empty, the title is written as the body instead, and the heading has
+no title.
 
 Prefer a temp file or HEREDOC for the body to avoid escaping issues:
 

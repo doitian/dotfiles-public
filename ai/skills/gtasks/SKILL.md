@@ -12,8 +12,9 @@ Manage Google Tasks with the `gtasks` CLI. Never open the TUI (`gtasks`,
 `gtasks tui`) or run `gtasks auth` unless the user asks.
 
 These commands talk to Google directly and wait for confirmation. They do not
-read or write the TUI's local queue. Failures go to stderr and exit 1. Do not
-prompt for credentials.
+read or write the TUI's local queue. Failures go to stderr and exit 1. If a
+command fails because no credentials are stored, tell the user to run
+`gtasks auth`; do not prompt for or enter credentials yourself.
 
 ## Commands
 
