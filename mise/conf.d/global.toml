@@ -100,15 +100,11 @@ EOF
 [tasks."g:opencode:ce:enable"]
 hide = true
 description = "Install the compound-engineering plugin for opencode"
-dir = "{{cwd}}"
-usage = '''
-flag "--local" help="Install in local project instead of globally"
-'''
-run = "opencode plugin compound-engineering@git+https://github.com/EveryInc/compound-engineering-plugin.git{% if not usage.local %} -g{% endif %} -f"
+run = "opencode plugin compound-engineering@git+https://github.com/EveryInc/compound-engineering-plugin.git -g -f"
 
 [tasks."g:opencode:ce:disable"]
 hide = true
-description = "Disable the compound-engineering plugin in opencode config"
+description = "Disable the compound-engineering plugin for opencode"
 run = '''
 FILE="$HOME/.config/opencode/opencode.jsonc"
 PLUGIN="compound-engineering@git+https://github.com/EveryInc/compound-engineering-plugin.git"
@@ -119,6 +115,16 @@ else
   echo "compound-engineering plugin already disabled"
 fi
 '''
+
+[tasks."g:pi:ce:enable"]
+hide = true
+description = "Install the compound-engineering plugin for pi"
+run = "pi install git:github.com/EveryInc/compound-engineering-plugin"
+
+[tasks."g:pi:ce:disable"]
+hide = true
+description = "Disable the compound-engineering plugin for pi"
+run = "pi remove git:github.com/EveryInc/compound-engineering-plugin"
 
 [tasks."g:mcp"]
 hide = true

@@ -73,15 +73,26 @@ test("preset:ide resolves all editor presets", async () => {
   }
 });
 
-test("opencode plugin installation defaults to global and supports --local", async () => {
+test("opencode plugin installation is global", async () => {
   await sandbox.recordCommand("opencode");
   const plugin = "compound-engineering@git+https://github.com/EveryInc/compound-engineering-plugin.git";
   await run("run", "g:opencode:ce:enable");
   expect(await Bun.file(join(sandbox.project, "opencode-args.json")).json())
     .toEqual(["plugin", plugin, "-g", "-f"]);
-  await run("run", "g:opencode:ce:enable", "--local");
-  expect(await Bun.file(join(sandbox.project, "opencode-args.json")).json())
-    .toEqual(["plugin", plugin, "-f"]);
+});
+
+test("pi plugin installation is global", async () => {
+  await sandbox.recordCommand("pi");
+  await run("run", "g:pi:ce:enable");
+  expect(await Bun.file(join(sandbox.project, "pi-args.json")).json())
+    .toEqual(["install", "git:github.com/EveryInc/compound-engineering-plugin"]);
+});
+
+test("pi plugin removal is global", async () => {
+  await sandbox.recordCommand("pi");
+  await run("run", "g:pi:ce:disable");
+  expect(await Bun.file(join(sandbox.project, "pi-args.json")).json())
+    .toEqual(["remove", "git:github.com/EveryInc/compound-engineering-plugin"]);
 });
 
 test("g:mcp forwards valid arguments", async () => {
