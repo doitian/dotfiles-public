@@ -10,6 +10,7 @@ import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { homedir } from "node:os";
 import { SERVICE_NAME, getSecret } from "./lib/secrets.js";
+import { writeClipboard } from "./lib/io.js";
 
 const API = "https://tasks.googleapis.com/tasks/v1";
 const TOKEN_URL = "https://oauth2.googleapis.com/token";
@@ -657,7 +658,7 @@ export function parseDue(input, now = () => new Date()) {
 
 export class TasksView {
     constructor(api, list = "@default") {
-        Object.assign(this, { api, list, tasks: [], path: [], search: "", selected: 0, mode: "browse", input: "", showCompleted: false, showIds: false, prefix: null, openUrl: openInBrowser, message: "", listTitle: "Default list", clipboard: null, visual: null });
+        Object.assign(this, { api, list, tasks: [], path: [], search: "", selected: 0, mode: "browse", input: "", showCompleted: false, showIds: false, prefix: null, openUrl: openInBrowser, writeClipboard, message: "", listTitle: "Default list", clipboard: null, visual: null });
     }
 
     get parent() { return this.path.at(-1)?.id ?? null; }
@@ -708,6 +709,24 @@ export class TasksView {
         this.mode = "links";
         this.linkChoices = links;
         this.linkSelected = 0;
+    }
+
+    copyMarkdown() {
+        const selected = this.visual != null ? this.visualRows() : this.task ? flattenTasks(this.tasks, [this.task.id]) : [];
+        if (!selected.length) return;
+        const selectedIds = new Set(selected.map(task => task.id));
+        const items = selected.map(task => {
+            let parent = task.parent;
+            while (parent && !selectedIds.has(parent)) parent = this.tasks.find(item => item.id === parent)?.parent;
+            return { ...task, parent: parent ?? undefined };
+        });
+        const md = renderMarkdown(items, this.ids ?? {});
+        const roots = items.filter(task => !task.parent);
+        this.visual = null;
+        return Promise.resolve(this.writeClipboard(md)).then(
+            () => { this.message = roots.length === 1 ? "Copied." : `Copied ${roots.length} tasks.`; },
+            error => { this.message = error.message ?? String(error); },
+        );
     }
 
     yank() {
@@ -1012,6 +1031,8 @@ export class TasksView {
             if (index !== -1) this.selected = index;
         } else if (text === ",") {
             this.showIds = !this.showIds;
+        } else if (text === "Y") {
+            return this.copyMarkdown();
         } else if (text === "y" && this.operatorRoots().length) {
             this.yank();
         } else if (text === "d" && this.operatorRoots().length) {
@@ -1097,7 +1118,7 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
     else lines.push(...body.slice(start, start + pageSize));
     while (lines.length < height - 5) lines.push("");
     lines.push(`j/k move  V visual  Enter/l cd  h/Backspace up  / search  Esc clear  gx open  gf links  q quit`);
-    lines.push("a/o/O add  e edit  s due  , ids  y yank  d cut  D delete  p/P paste  Space/x/u  . all  m print  r refresh");
+    lines.push("a/o/O add  e edit  s due  , ids  y yank  Y copy  d cut  D delete  p/P paste  Space/x/u  . all  m print  r refresh");
     let prompt = view.message || "";
     if (view.mode === "search") prompt = `/ ${view.input}  (Enter apply, Esc cancel)`;
     if (view.mode === "due") prompt = `Due: ${view.input}  (${view.message || "YYYY-MM-DD, today, tomorrow; empty clears; Enter save, Esc cancel"})`;
@@ -1308,7 +1329,7 @@ function markdownNotes(value) {
     return String(value).replace(/\r\n?/g, "\n").split("\n").map(line => terminalText(line)).join("\n");
 }
 
-export function renderMarkdown(items) {
+export function renderMarkdown(items, ids) {
     const children = new Map();
     for (const t of [...items].sort((a, b) => (a.position ?? "").localeCompare(b.position ?? ""))) {
         const pid = t.parent ?? null;
@@ -1323,6 +1344,7 @@ export function renderMarkdown(items) {
         const checked = task.status === "completed" ? "x" : " ";
         let line = `${indent}- [${checked}] ${terminalText(task.title || "(untitled)")}`;
         if (task.due) line += ` ${formatDue(task.due)}`;
+        if (ids) line += `  ${formatId(task.id, ids)}`;
         if (task.notes) {
             line += `\n\n${markdownNotes(task.notes).split("\n").map(note => note ? `${indent}  ${note}` : "").join("\n")}\n`;
         }
@@ -1407,7 +1429,7 @@ TUI: j/k or arrows move; V starts visual selection; Enter/l enters a task; h/Bac
 / searches the current subtree, keeping ancestors visible; Esc clears the filter, visual, and yank/cut.
 gg / G select first / last; gx opens the selected task in the default browser; gf opens found links, including a Keep note.
 a adds here; o after; O before; e edits; s sets due date; Enter inserts a newline; Ctrl+S saves; Esc cancels.
-y yanks; d cuts; D deletes with confirmation; y/d/D apply to the visual selection; p pastes after; P pastes before.
+y yanks; Y copies Markdown with IDs; d cuts; D deletes with confirmation; y/d/D/Y apply to the visual selection; p pastes after; P pastes before.
 Space toggles; x done; u undone.
 . toggles completed tasks (hidden by default). , toggles task IDs (^id).
 m prints the focused, filtered list as raw Markdown.

@@ -710,6 +710,40 @@ describe("Task navigation and actions", () => {
         expect(renderTasks(view)).not.toContain("Y - [ ] Project");
     });
 
+    test("Y copies the current subtree or visual selection as Markdown with IDs", async () => {
+        const { view } = fixture();
+        const copied = [];
+        view.writeClipboard = async md => { copied.push(md); };
+        await press(view, "Y");
+        expect(copied[0]).toContain("- [ ] Project  ^p");
+        expect(copied[0]).toContain("- [ ] Child  ^c");
+        expect(copied[0]).toContain("- [ ] Grandchild  ^g");
+        expect(view.message).toBe("Copied.");
+        expect(view.visual).toBeNull();
+        press(view, "j");
+        await press(view, "Y");
+        expect(copied[1]).toContain("- [ ] Child  ^c");
+        expect(copied[1]).toContain("- [ ] Grandchild  ^g");
+        expect(copied[1]).not.toContain("Project  ^p");
+        view.tasks.push({ id: "c2", title: "Second child", parent: "p", position: "002" });
+        press(view, "V");
+        press(view, "j");
+        await press(view, "Y");
+        expect(copied[2]).toContain("- [ ] Child  ^c");
+        expect(copied[2]).toContain("- [ ] Second child  ^c2");
+        expect(copied[2]).not.toContain("Grandchild");
+        expect(copied[2]).not.toContain("Project  ^p");
+        expect(view.message).toBe("Copied 2 tasks.");
+        expect(view.visual).toBeNull();
+        view.api.state = { ids: { p: "google-p" } };
+        view.selected = 0;
+        await press(view, "Y");
+        expect(copied[3]).toContain("^google-p");
+        view.writeClipboard = async () => { throw new Error("clipboard failed"); };
+        await press(view, "Y");
+        expect(view.message).toBe("clipboard failed");
+    });
+
     test("yank paste copies due dates", async () => {
         const { view, calls } = fixture();
         view.tasks.find(task => task.id === "p").due = "2026-09-14T00:00:00.000Z";
@@ -978,6 +1012,7 @@ describe("Task navigation and actions", () => {
         expect(renderMarkdown(tasks)).toContain("- [ ] Project\n  - [ ] Child");
         expect(renderMarkdown(tasks)).toContain("- [x] Other");
         expect(renderMarkdown([{ id: "a", title: "Work", due: "2026-09-14T00:00:00.000Z" }])).toContain("- [ ] Work [[2026-09-14]]");
+        expect(renderMarkdown([{ id: "a", title: "Work", due: "2026-09-14T00:00:00.000Z" }], { a: "google-a" })).toContain("- [ ] Work [[2026-09-14]]  ^google-a");
         expect(viewMarkdown([{ id: "p", title: "Project", due: "2026-09-14T00:00:00.000Z", notes: "Context" }], "p")).toBe("# Project [[2026-09-14]]\n\nContext");
     });
 

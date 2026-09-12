@@ -160,6 +160,7 @@ prompt lets you reload Google's actual state.
 | e | Edit the selected task's title and description in the same editor |
 | s | Set or clear the selected task's due date |
 | y | Yank (copy) the selected task(s) and their children |
+| Y | Copy the current task and children, or the visual selection, as Markdown with IDs |
 | d | Cut the selected task(s); paste moves them |
 | D | Delete the selected task(s) and their children; y confirms |
 | p / P | Paste after / before the selected task |
