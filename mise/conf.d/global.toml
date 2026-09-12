@@ -16,12 +16,6 @@ package_manager = "bun"
 # Global tasks (g:*)
 # ============================================================================
 
-[tasks."g:cursor:hook:sync"]
-hide = true
-description = "Sync mise cursor:*:on:* tasks to .cursor/hooks.json"
-dir = "{{cwd}}"
-run = "g-cursor-hook-sync"
-
 [tasks."g:up:uv"]
 hide = true
 description = "Update all uv tools"
@@ -285,7 +279,6 @@ run = "preset-cargo-workspace"
 hide = true
 description = "Create cursor:pushover:on:stop task for pushover notifications"
 dir = "{{cwd}}"
-depends_post = ["g:cursor:hook:sync"]
 run = [
   "touch mise.toml",
   "mise tasks add cursor:pushover:on:stop -- cursor-pushover-on-stop",

@@ -157,13 +157,7 @@ test("preset:default fails when no build system is recognized", async () => {
   expect(result.stderr).toContain("No recognizable build system found");
 });
 
-test("cursor notification preset creates its task and synchronizes hooks", async () => {
-  await sandbox.linkScript("g-cursor-hook-sync");
+test("cursor notification preset creates its task", async () => {
   await run("run", "preset:cursor:hook:pushover");
   expect((await readConfig()).tasks["cursor:pushover:on:stop"].run).toBe("cursor-pushover-on-stop");
-  const hooks = await Bun.file(join(sandbox.project, ".cursor/hooks.json")).json();
-  expect(hooks).toEqual({
-    version: 1,
-    hooks: { stop: [{ command: "mise run cursor:pushover:on:stop" }] },
-  });
 });
