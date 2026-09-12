@@ -56,17 +56,6 @@ description = "Clean up all apps"
 run = "true"
 run_windows = "scoop cleanup -a -k"
 
-[tasks."g:add:cursor-agent"]
-hide = true
-description = "Install cursor-agent cli"
-dir = "~"
-shell = "{% if os() == 'windows' %}pwsh -NoLogo -NoProfile -ExecutionPolicy Bypass -Command{% else %}bash -c -o errexit{% endif %}"
-run = "curl https://cursor.com/install -fsS | bash"
-run_windows = [
-  "Invoke-WebRequest 'https://cursor.com/install?win32=true' -OutFile (Join-Path ([IO.Path]::GetTempPath()) 'cursor-agent-install.ps1')",
-  "$installer = Join-Path ([IO.Path]::GetTempPath()) 'cursor-agent-install.ps1'; try { & $installer } finally { Remove-Item -LiteralPath $installer -Force -ErrorAction SilentlyContinue }",
-]
-
 [tasks."g:add:claude-code"]
 hide = true
 description = "Install Claude Code cli"

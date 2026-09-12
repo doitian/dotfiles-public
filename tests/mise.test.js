@@ -57,7 +57,7 @@ test.each([
   expect(await run("run", "--dry-run", name)).toContain(command);
 });
 
-test.each(["cursor-agent", "claude-code", "grok-cli", "codex-cli"])(
+test.each(["claude-code", "grok-cli", "codex-cli"])(
   "installer %s selects the platform's command and shell",
   async (app) => {
     const result = await sandbox.run(["tasks", "info", "--json", `g:add:${app}`]);
