@@ -9,8 +9,9 @@ indented beneath each task's title. `gtasks tui <list-id>`
 opens another list, and `gtasks list [list-id]` prints a nested Markdown todo list.
 Both use Google OAuth directly; `gws` is no longer required.
 The root shows the list ID as `^id` beneath the breadcrumb. When you enter a
-task, its ID and description appear there, above its children. Long descriptions are
-shortened to keep the children and controls visible.
+task, it remains selectable as the first list item, with its description under
+the title and its children below. With that parent selected, **a**/**o** add a
+child at the end, **O** adds one at the start, and **p**/**P** paste as children.
 
 Start inside a matching task with `gtasks --cd "Project"` (or
 `gtasks tui <list-id> --cd "Project"`). Matching is a case-insensitive substring

@@ -554,7 +554,7 @@ describe("Task navigation and actions", () => {
         view.startAt("pRoJeCt");
         expect(view.parent).toBe("p");
         expect(view.search).toBe("");
-        expect(view.rows.map(task => task.id)).toEqual(["c", "g"]);
+        expect(view.rows.map(task => task.id)).toEqual(["p", "c"]);
         const ambiguous = fixture().view;
         ambiguous.tasks.push({ id: "p2", title: "Project Two" });
         ambiguous.startAt("Project");
@@ -574,13 +574,36 @@ describe("Task navigation and actions", () => {
         expect(view.rows.map(task => task.depth)).toEqual([0, 1]);
         view.search = "project";
         view.enter();
-        expect(view.rows.map(task => task.id)).toEqual(["c", "g"]);
+        expect(view.rows.map(task => task.id)).toEqual(["p", "c"]);
         expect(visibleTasks(tasks, "p", "find me").map(task => task.id)).toEqual(["c"]);
         expect(visibleTasks(tasks, "p", "Grandchild").map(task => task.id)).toEqual(["c", "g"]);
         expect(visibleTasks(tasks, "p", "Other")).toEqual([]);
         view.back();
         expect(view.search).toBe("project");
         expect(view.task.id).toBe("p");
+    });
+
+    test("focused heading is selectable and a/o/O insert children at the ends", async () => {
+        const { view, calls } = fixture();
+        view.enter();
+        expect(view.focused).toBe(true);
+        expect(renderTasks(view)).toContain("> - [ ] Project");
+        press(view, "a");
+        view.input = "Appended";
+        await save(view);
+        expect(calls).toEqual([["add", "@default", "Appended", "p", "", "c"]]);
+        calls.length = 0;
+        press(view, "O");
+        view.input = "Prepended";
+        await save(view);
+        expect(calls).toEqual([["add", "@default", "Prepended", "p", "", null]]);
+        view.tasks.find(task => task.id === "c").webViewLink = "https://example";
+        press(view, "j");
+        press(view, "y");
+        press(view, "l");
+        expect(view.parent).toBe("c");
+        await press(view, "p");
+        expect(view.message).toContain("Cannot paste into a child task.");
     });
 
     test("adds under the current parent and does not treat editing keys as actions", async () => {
@@ -590,7 +613,7 @@ describe("Task navigation and actions", () => {
         view.input = "a q/d 世界";
         expect(calls).toHaveLength(0);
         await save(view);
-        expect(calls).toEqual([["add", "@default", "a q/d 世界", "p", ""]]);
+        expect(calls).toEqual([["add", "@default", "a q/d 世界", "p", "", "c"]]);
         expect(view.mode).toBe("browse");
     });
 
@@ -654,8 +677,8 @@ describe("Task navigation and actions", () => {
         await press(view, "p");
         expect(calls).toEqual([
             ["add", "@default", "Project", null, "", "p"],
-            ["add", "@default", "Child", "new-1", "Find ME", null],
-            ["add", "@default", "Grandchild", "new-2", "", null],
+            ["add", "@default", "Child", null, "Find ME", "new-1"],
+            ["add", "@default", "Grandchild", null, "", "new-2"],
         ]);
         calls.length = 0;
         await press(view, "P");
@@ -668,7 +691,10 @@ describe("Task navigation and actions", () => {
         expect(calls).toEqual([]);
         press(view, "k");
         await press(view, "p");
-        expect(calls).toEqual([["move", "@default", "c", { parent: null, previous: "p" }]]);
+        expect(calls).toEqual([
+            ["move", "@default", "c", { parent: null, previous: "p" }],
+            ["move", "@default", "g", { parent: null, previous: "c" }],
+        ]);
         calls.length = 0;
         press(view, "d");
         press(view, "j");
@@ -700,6 +726,7 @@ describe("Task navigation and actions", () => {
         expect(renderTasks(view)).toContain("Project  [[2026-09-14]]  ^p");
         press(view, ",");
         view.enter();
+        expect(renderTasks(view)).toContain("> - [ ] Project  [[2026-09-14]]");
         expect(renderTasks(view)).toContain("  [[2026-09-14]]  ^p");
         view.back();
         press(view, "s");
@@ -790,16 +817,14 @@ describe("Task navigation and actions", () => {
         expect(screen).toContain("    - [ ] Child");
         expect(screen).not.toContain("Grandchild");
         expect(screen).toContain("    - [ ] Second child");
-        view.enter();
-        expect(renderTasks(view)).toContain("    - [ ] Grandchild");
-        view.back();
         press(view, "j");
         expect(view.task.id).toBe("c");
         await press(view, "x");
         expect(calls).toEqual([["setDone", "@default", "c", true]]);
         view.enter();
         expect(view.path.map(task => task.id)).toEqual(["p", "c"]);
-        expect(view.rows.map(task => task.id)).toEqual(["g"]);
+        expect(view.rows.map(task => task.id)).toEqual(["c", "g"]);
+        expect(renderTasks(view)).toContain("[ ] Grandchild");
         view.back();
         expect(view.parent).toBe("p");
         view.back();
@@ -861,16 +886,18 @@ describe("Task navigation and actions", () => {
         expect(renderTasks(view)).toContain("/ Default list\r\n  ^@default");
         view.tasks.find(task => task.id === "p").notes = "Project context\nSecond line";
         view.enter();
-        expect(renderTasks(view)).toContain("/ Project\r\n  ^p\r\n  Project context\r\n  Second line");
+        expect(renderTasks(view)).toContain("/ Project\r\n  ^p");
+        expect(renderTasks(view)).toContain("> - [ ] Project");
+        expect(renderTasks(view)).toContain("Project context");
         expect(renderTasks(view)).toContain("[ ] Child");
         view.tasks.find(task => task.id === "p").notes = "Updated context";
         expect(renderTasks(view)).toContain("Updated context");
         view.tasks = view.tasks.filter(task => !task.parent);
         expect(renderTasks(view)).toContain("Updated context");
-        expect(renderTasks(view)).toContain("No tasks here");
+        expect(renderTasks(view)).toContain("[ ] Project");
         view.back();
         expect(renderTasks(view)).toContain("/ Default list\r\n  ^@default");
-        expect(renderTasks(view)).not.toContain("/ Project\r\n  ^p\r\n  Updated context");
+        expect(renderTasks(view)).not.toContain("/ Project\r\n  ^p");
     });
 
     test("long focused descriptions leave room for selected children and controls", () => {
@@ -878,8 +905,7 @@ describe("Task navigation and actions", () => {
         view.tasks.find(task => task.id === "p").notes = "Context\n".repeat(40);
         view.enter();
         const screen = renderTasks(view, 100, 16);
-        expect(screen).toContain("more description lines");
-        expect(screen).toContain("> - [ ] Child");
+        expect(screen).toContain("> - [ ] Project");
         expect(screen).toContain("q quit");
         expect(screen.split("\r\n").length).toBeLessThanOrEqual(15);
     });

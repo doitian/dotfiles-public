@@ -154,6 +154,20 @@ function subtreeIds(tasks, roots) {
     return ids;
 }
 
+function flattenTasks(items, roots) {
+    const childrenOf = id => items.filter(task => (task.parent ?? null) === id)
+        .sort((a, b) => (a.position ?? "").localeCompare(b.position ?? ""));
+    const byId = new Map(items.map(task => [task.id, task]));
+    const out = [];
+    const walk = id => {
+        const task = byId.get(id);
+        if (task) out.push(task);
+        for (const child of childrenOf(id)) walk(child.id);
+    };
+    for (const root of roots) walk(root);
+    return out;
+}
+
 function positionBetween(prev, next) {
     if (next == null) return `${prev ?? ""}n`;
     if (!prev) {
@@ -619,7 +633,12 @@ export class TasksView {
 
     get parent() { return this.path.at(-1)?.id ?? null; }
     get ids() { return this.api.state?.ids; }
-    get rows() { return visibleTasks(this.tasks, this.parent, this.search, this.showCompleted, this.ids, 1); }
+    get rows() {
+        const kids = visibleTasks(this.tasks, this.parent, this.search, this.showCompleted, this.ids, this.parent ? 0 : 1);
+        const focused = this.parent ? this.tasks.find(task => task.id === this.parent && !task.deleted) : null;
+        if (!focused) return kids;
+        return [{ ...focused, depth: 0 }, ...kids.map(task => ({ ...task, depth: task.depth + 1 }))];
+    }
     get task() { return this.rows[this.selected]; }
     markdown() { return viewMarkdown(this.tasks, this.parent, this.search, this.showCompleted); }
 
@@ -667,9 +686,15 @@ export class TasksView {
         this.message = roots.length === 1 ? "Cut." : `Cut ${roots.length} tasks.`;
     }
 
+    get focused() { return this.task?.id === this.parent; }
+
     pasteAnchor(before) {
         const selected = this.task;
         if (!selected) return { parent: this.parent, previous: null };
+        if (selected.id === this.parent) {
+            const siblings = siblingTasks(this.tasks, selected.id);
+            return { parent: selected.id, previous: before ? null : siblings.at(-1)?.id ?? null };
+        }
         const parent = selected.parent ?? null;
         const siblings = siblingTasks(this.tasks, parent);
         const index = siblings.findIndex(task => task.id === selected.id);
@@ -679,6 +704,11 @@ export class TasksView {
     paste(before) {
         if (!this.clipboard) {
             this.message = "Nothing to paste.";
+            return;
+        }
+        const { parent } = this.pasteAnchor(before);
+        if (parent && this.tasks.find(task => task.id === parent)?.parent) {
+            this.message = "Cannot paste into a child task.";
             return;
         }
         return this.clipboard.type === "cut" ? this.pasteCut(before) : this.pasteYank(before);
@@ -704,11 +734,12 @@ export class TasksView {
                 if (previous === roots[0] || previous === currentPrevious) return;
             }
         }
+        const items = this.tasks.filter(task => subtreeIds(this.tasks, roots).has(task.id));
         return this.mutate(async () => {
             let prev = previous;
-            for (const root of roots) {
-                await this.api.move(this.list, root, { parent, previous: prev });
-                prev = root;
+            for (const task of flattenTasks(items, roots)) {
+                await this.api.move(this.list, task.id, { parent, previous: prev });
+                prev = task.id;
             }
         });
     }
@@ -717,19 +748,10 @@ export class TasksView {
         const { parent, previous } = this.pasteAnchor(before);
         const items = this.clipboard.tasks;
         const roots = this.clipboard.roots ?? [this.clipboard.root];
-        const childrenOf = id => items.filter(task => (task.parent ?? null) === id)
-            .sort((a, b) => (a.position ?? "").localeCompare(b.position ?? ""));
-        const addTree = async (oldId, newParent, newPrevious) => {
-            const task = items.find(item => item.id === oldId);
-            const created = await this.api.add(this.list, task.title ?? "", newParent, task.notes ?? "", newPrevious, ...(task.due != null ? [task.due] : []));
-            let prev = null;
-            for (const child of childrenOf(oldId)) prev = (await addTree(child.id, created.id, prev)).id;
-            return created;
-        };
         return this.mutate(async () => {
             let prev = previous;
-            for (const root of roots) {
-                const created = await addTree(root, parent, prev);
+            for (const task of flattenTasks(items, roots)) {
+                const created = await this.api.add(this.list, task.title ?? "", parent, task.notes ?? "", prev, ...(task.due != null ? [task.due] : []));
                 prev = created.id;
             }
             this.search = "";
@@ -915,10 +937,8 @@ export class TasksView {
             this.previousSearch = this.search;
             this.previousSelected = this.task?.id;
             this.input = this.search;
-        } else if (text === "a") {
-            this.openEditor("add");
-        } else if (text === "o" || text === "O") {
-            this.openEditor("add", this.pasteAnchor(text === "O"));
+        } else if (text === "a" || text === "o" || text === "O") {
+            this.openEditor("add", this.focused || text !== "a" ? this.pasteAnchor(text === "O") : undefined);
         } else if (text === "e" && this.task) {
             this.openEditor("edit");
         } else if (text === "s" && this.task) {
@@ -979,15 +999,6 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
     ];
     const focusedTask = view.tasks.find(task => task.id === view.parent);
     lines.push(`  ${[focusedTask?.due && formatDue(focusedTask.due), formatId(focusedTask?.id ?? view.list, view.ids)].filter(Boolean).join("  ")}`);
-    if (focusedTask?.notes) {
-        const notes = focusedTask.notes.split(/\r?\n/);
-        const limit = Math.max(1, Math.min(Math.floor(height / 3), height - 9));
-        if (notes.length <= limit) lines.push(...notes.map(note => `  ${note}`));
-        else {
-            lines.push(...notes.slice(0, limit - 1).map(note => `  ${note}`));
-            lines.push(`  … (${notes.length - limit + 1} more description lines)`);
-        }
-    }
     lines.push(
         `${view.showCompleted ? "All tasks" : "Undone only"} | Search: ${view.search || "(none)"}   ${rows.length} tasks${rows.length ? `   ${view.selected + 1}/${rows.length}` : ""}`,
         "",
