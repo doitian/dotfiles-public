@@ -22,8 +22,8 @@ sources = [
 run = "fd --no-ignore -t f . dist -x rm"
 
 [tasks.update-skills]
-description = "Update AI skills via opencode"
+description = "Update AI skills"
 usage = '''
 arg "[skill]" help="Skill name under ai/skills to update (default: all)"
 '''
-run = 'opencode run --auto -m opencode-go/deepseek-v4.1-flash --title update-skills "{% if usage.skill %}Only update ai/skills/{{usage.skill}}. {% else %}Update every skill under ai/skills/. {% endif %}Origin sources: gh-stack is https://github.com/github/gh-stack (path skills/gh-stack); sync SKILL.md and references from that origin. Every other skill is local to this repository; do not replace local skills from the internet. Do not commit."'
+run = "bunx skills update -g -y{% if usage.skill %} {{usage.skill}}{% endif %}"
