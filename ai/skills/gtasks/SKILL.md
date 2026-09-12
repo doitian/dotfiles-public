@@ -60,10 +60,4 @@ All task commands default to `@default`. Use `--list LIST_ID` for another list.
   not escape or flatten them to plain text. Title is one line; put the rest in
   notes.
 
-## Workflow
-
-1. `gtasks list --json` or `gtasks list --cd "Name" --json` to find IDs.
-2. Mutate with those IDs.
-3. If `--cd` is ambiguous, pick an ID from the error and retry.
-
-Do not invent task IDs. Do not use IFTTT or other webhooks for Google Tasks.
+Find IDs with `list --json` before mutating; never invent a task ID.

@@ -1,44 +1,28 @@
 ---
 name: jrnl
-description: Capture notes into your daily journal using the jrnl CLI
+description: Append an entry to the daily journal with the jrnl CLI. Use when asked to journal, log, note, or capture something, or to open or locate today's journal file.
 ---
+# jrnl
 
-Use the `jrnl` CLI to append entries to your daily journal. The journal is a
-Markdown file named `Journal YYYY-MM-DD.md` stored in `~/Dropbox/Brain/journal/`,
+Appends to `Journal YYYY-MM-DD.md` in `~/Dropbox/Brain/journal/`,
 `~/Brain/journal/`, or `~/.journal/` (first found wins).
 
-## Commands
+| Command | Effect |
+|---|---|
+| `jrnl <title>` | Append a timestamped entry, body read from stdin |
+| `jrnl -c <title>` | Same, body read from the clipboard |
+| `jrnl -e` | Open today's file in `$EDITOR` (default nvim), creating it |
+| `jrnl -p` | Print the path to today's file |
 
-`jrnl <title>` — Read stdin and append a timestamped entry with the given title.
-If stdin is empty, the title is written as the body instead, and the heading has
-no title.
+With empty stdin, the title becomes the body and the heading gets no title.
 
-Prefer a temp file or HEREDOC for the body to avoid escaping issues:
+Pipe the body in via HEREDOC or a temp file so quotes and `$` stay literal:
 
-    cat <<'EOF' | jrnl "Auth refactor"
-    Finished refactoring the auth module.
-    Notes with "quotes" and $vars stay literal.
-    EOF
+```bash
+cat <<'EOF' | jrnl "Auth refactor"
+Finished refactoring the auth module.
+EOF
+```
 
-    # or write body to a temp file, then:
-    jrnl "Auth refactor" < /tmp/jrnl-body.md
-
-`jrnl -c <title>` — Same as above, but reads the body from the clipboard
-instead of stdin.
-
-`jrnl -e` — Open today's journal file in `$EDITOR` (defaults to nvim). The
-file is created with a template if it doesn't exist.
-
-`jrnl -p` — Print the path to today's journal file and exit.
-
-## Formatting
-
-Entries are appended under an h3 heading (`### HH:MM <title>`). Format the body
-in Markdown. Because each entry starts at h3, use h4 (`####`) or deeper for any
-headings within the body.
-
-## When to use
-
-- User asks to save, note, capture, record, log, or journal something
-- User wants to open or edit the journal
-- User wants to know where the journal file is
+Entries land under an h3 heading (`### HH:MM <title>`), so format the body as
+Markdown using h4 or deeper for any headings of its own.

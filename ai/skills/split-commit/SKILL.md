@@ -1,50 +1,29 @@
 ---
 name: split-commit
-description: Split working tree changes into up to five atomic commits, each with a message generated using the git-commit skill
+description: Split working tree changes into up to five atomic commits. Use when asked to split, break up, or stage uncommitted work into separate commits.
 ---
-Split the current working tree changes into up to five atomic, logically self-contained commits.
+# Split commit
+
+Split the current working tree into **at most 5** atomic commits.
+
+## Grouping rules
+
+Each commit must be:
+
+- **Self-contained** — the repo builds and works at every commit.
+- **One concern** — refactor, feature, bugfix, tests, or docs; never a mix.
+- **Ordered** — foundational changes before the changes that depend on them.
+
+If the work is genuinely one concern, make one commit; don't split artificially.
+If there are more than 5 logical groups, merge the least distinct ones.
 
 ## Workflow
 
-### 1. Analyze changes
+1. Present the plan as a numbered list — files/hunks per commit, plus a draft
+   subject — and wait for approval. The user may want a different split.
+2. Stage and commit each group in order, using the **git-commit** skill for each
+   message. Use `git add -p` (driven non-interactively) when a file's hunks
+   belong to different commits.
+3. Show `git log --oneline` for the new commits.
 
-Run the following to understand the full scope of uncommitted work:
-
-- `git status --short`
-- `git diff` (unstaged changes)
-- `git diff --staged` (already staged changes)
-- `git branch --show-current`
-- `git log --oneline -n 5 --no-merges`
-
-If a diff lacks sufficient context to understand intent, examine the full file.
-
-### 2. Plan the split
-
-Group changes into **up to 5** atomic units. Each unit must be:
-
-- **Self-contained** — the repo builds/works after each commit.
-- **Logically cohesive** — one concern per commit (e.g. refactor, feature, bugfix, tests, docs).
-- **Ordered sensibly** — foundational changes first, dependent changes later.
-
-Present the plan to the user as a numbered list showing which files/hunks go into each commit and a draft subject line. Wait for approval before proceeding.
-
-### 3. Execute commits
-
-For each planned commit, in order:
-
-1. Stage only the relevant files or hunks (`git add <path>` or `git add -p` with automated expect/input when partial staging is needed).
-2. Use the **git-commit** skill to generate the commit message from the staged diff.
-3. Create the commit.
-4. Verify with `git status --short` that no unintended changes remain staged before moving to the next commit.
-
-### 4. Verify
-
-After all commits are created, run `git log --oneline -n <number of commits created> --no-merges` and present the result to the user.
-
-## Rules
-
-- Never combine unrelated changes in a single commit.
-- If all changes are logically one concern, a single commit is fine — do not split artificially.
-- Do not exceed 5 commits. If there are more than 5 logical groups, combine the least distinct ones.
-- Never leave the working tree in a broken state between commits.
-- Do not push to the remote unless the user explicitly asks.
+Don't push unless asked.

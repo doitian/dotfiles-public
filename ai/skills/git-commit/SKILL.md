@@ -1,20 +1,15 @@
 ---
 name: git-commit
-description: Create a git commit using the message format below
+description: Create a git commit using this repo's message conventions
 disable-model-invocation: true
 ---
-Create a git commit using the message format below.
+# git commit
 
-## Commit Message
+Commit the staged changes, using the message format below. If the staged diff
+doesn't make the intent clear, read the full file; the branch name often
+carries ticket/feature context.
 
-Analyze outputs of following commands to generate the commit message:
-
-- `git status --short` (change overview)
-- `git diff --staged` (primary input). If the diff lacks sufficient context to understand intent, examine the full file.
-- `git branch --show-current` (ticket/feature context)
-- `git log --oneline -n 5 --no-merges` (subject style reference).
-
-### Message Format
+## Message format
 
 ```
 <subject>
@@ -24,36 +19,25 @@ Analyze outputs of following commands to generate the commit message:
 <further paragraphs>
 ```
 
-## Rules
-
-- Summarize the nature of the changes as `<subject>` (eg. new feature, enhancement to an existing feature, bug fix, refactoring, test, docs, etc.).
-  - Ensure the subject accurately reflects the changes and their purpose (i.e. "add" means a wholly new feature, "update" means an enhancement to an existing feature, "fix" means a bug fix, etc.).
-  - Subject is lowercase, no period at the end.
-  - Follow this repository's commit subject style by checking the output `git log --oneline -n 5 --no-merges`.
-  - Keep the subject within 72 characters
-- Draft a concise (1-2 sentences) `<body>` that focuses on the "why" rather than the "what".
-  - Body must use proper punctuation and capitalization like normal paragraphs.
-- Add `<further paragraphs>` if necessary. Bullet points are OK.
+- **Subject** — lowercase, no trailing period, within 72 characters. Name the
+  nature of the change precisely: "add" for a wholly new feature, "update" for
+  an enhancement to an existing one, "fix" for a bug fix. Match the prevailing
+  style in `git log --oneline -n 5 --no-merges`.
+- **Body** — 1–2 sentences on the *why*, not the *what*. Normal punctuation and
+  capitalization.
+- **Further paragraphs** — only if needed. Bullets are fine.
 - Wrap body and further paragraphs at 72 characters.
 
 ## Attribution
 
-When user asks to commit with AI attribution, include an Assisted-by tag in the following format:
+Only when the user asks to commit with AI attribution, add:
 
 ```
 Assisted-by: AGENT_NAME:MODEL_VERSION [TOOL1] [TOOL2]
 ```
 
-Where:
+`AGENT_NAME:MODEL_VERSION` identifies the agent and model. The optional tools
+are specialized analysis tools actually used (coccinelle, sparse, smatch,
+clang-tidy); basic tooling (git, compilers, editors) is never listed.
 
-- `AGENT_NAME` is the name of the AI tool or framework
-- `MODEL_VERSION` is the specific model version used
-- `[TOOL1]` `[TOOL2]` are optional specialized analysis tools used (e.g., coccinelle, sparse, smatch, clang-tidy)
-
-Basic development tools (git, gcc, make, editors) should not be listed.
-
-Example:
-
-```
-Assisted-by: Claude:claude-3-opus coccinelle sparse
-```
+Example: `Assisted-by: Claude:claude-opus-5 coccinelle sparse`
