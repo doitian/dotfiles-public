@@ -598,6 +598,35 @@ export async function openInBrowser(url) {
     else await $`xdg-open ${url}`.quiet();
 }
 
+export function taskLinks(task) {
+    const found = [];
+    const seen = new Set();
+    const add = (label, url) => {
+        const href = String(url ?? "").trim().replace(/[.,;:!?]+$/, "");
+        if (!/^https?:\/\//.test(href) || seen.has(href)) return;
+        seen.add(href);
+        found.push({ label: String(label || href).trim() || href, url: href });
+    };
+    const fromText = text => {
+        const value = String(text ?? "");
+        const taken = [];
+        for (const match of value.matchAll(/\[([^\]]*)\]\((https?:\/\/[^)\s]+)\)/g)) {
+            add(match[1], match[2]);
+            taken.push([match.index, match.index + match[0].length]);
+        }
+        for (const match of value.matchAll(/https?:\/\/[^\s<>"']+/g)) {
+            if (taken.some(([start, end]) => match.index >= start && match.index < end)) continue;
+            add("", match[0]);
+        }
+    };
+    for (const item of [...(task?.links ?? [])].sort((a, b) => Number(b.type === "keep_note") - Number(a.type === "keep_note"))) {
+        add(item.description || (item.type === "keep_note" ? "Keep Note" : item.type), item.link);
+    }
+    fromText(task?.title);
+    fromText(task?.notes);
+    return found;
+}
+
 export function parseDue(input, now = () => new Date()) {
     if (input == null) return undefined;
     const text = String(input).trim().replace(/^\[\[|\]\]$/g, "").trim();
@@ -660,13 +689,25 @@ export class TasksView {
         return rows.filter(task => !ids.has(task.parent));
     }
 
-    openWeb() {
-        const url = this.task?.webViewLink;
+    openLink(url, missing = "No links.") {
         if (!url) {
-            this.message = "No web link for this task.";
+            this.message = missing;
             return;
         }
         return Promise.resolve(this.openUrl(url)).then(() => { this.message = "Opened."; }, error => { this.message = error.message ?? String(error); });
+    }
+
+    openWeb() {
+        return this.openLink(this.task?.webViewLink, "No web link for this task.");
+    }
+
+    openFound() {
+        const links = taskLinks(this.task);
+        if (links.length <= 1) return this.openLink(links[0]?.url);
+        this.visual = null;
+        this.mode = "links";
+        this.linkChoices = links;
+        this.linkSelected = 0;
     }
 
     yank() {
@@ -875,6 +916,23 @@ export class TasksView {
             }
             return;
         }
+        if (this.mode === "links") {
+            if (key.name === "escape") {
+                this.mode = "browse";
+                this.linkChoices = null;
+                return;
+            }
+            if (key.name === "down" || text === "j") this.linkSelected = Math.min(this.linkChoices.length - 1, this.linkSelected + 1);
+            else if (key.name === "up" || text === "k") this.linkSelected = Math.max(0, this.linkSelected - 1);
+            else if (key.name === "return" || key.name === "right" || text === "l" || /^[1-9]$/.test(text)) {
+                const choice = /^[1-9]$/.test(text) ? this.linkChoices[Number(text) - 1] : this.linkChoices[this.linkSelected];
+                if (!choice) return;
+                this.mode = "browse";
+                this.linkChoices = null;
+                return this.openLink(choice.url);
+            }
+            return;
+        }
         if (this.mode === "search" || this.mode === "due") {
             if (key.name === "escape") {
                 if (this.mode === "search") {
@@ -909,6 +967,7 @@ export class TasksView {
             this.prefix = null;
             if (text === "g") this.selected = 0;
             else if (text === "x") return this.openWeb();
+            else if (text === "f") return this.openFound();
             this.clamp();
             return;
         }
@@ -1037,13 +1096,17 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
     if (!rows.length) lines.push(view.search ? "  No matching tasks." : "  No tasks here. Press a to add one.");
     else lines.push(...body.slice(start, start + pageSize));
     while (lines.length < height - 5) lines.push("");
-    lines.push(`j/k move  V visual  Enter/l cd  h/Backspace up  / search  Esc clear  gx open  q quit`);
+    lines.push(`j/k move  V visual  Enter/l cd  h/Backspace up  / search  Esc clear  gx open  gf links  q quit`);
     lines.push("a/o/O add  e edit  s due  , ids  y yank  d cut  D delete  p/P paste  Space/x/u  . all  m print  r refresh");
     let prompt = view.message || "";
     if (view.mode === "search") prompt = `/ ${view.input}  (Enter apply, Esc cancel)`;
     if (view.mode === "due") prompt = `Due: ${view.input}  (${view.message || "YYYY-MM-DD, today, tomorrow; empty clears; Enter save, Esc cancel"})`;
     if (view.mode === "delete") prompt = view.deleteTasks.length === 1 ? `Delete task + children? [y/N] ${view.deleteTasks[0].title}` : `Delete ${view.deleteTasks.length} tasks + children? [y/N]`;
     if (view.mode === "reset") prompt = `Reset local cache? [y/N] Discard ${view.api.state.queue.length} queued changes and reload Google.`;
+    if (view.mode === "links") {
+        const choice = view.linkChoices[view.linkSelected];
+        prompt = `Open ${view.linkSelected + 1}/${view.linkChoices.length}: ${choice.label}  (j/k, Enter, Esc)`;
+    }
     lines.push(busy ? "Working... (Ctrl+C to quit)" : prompt);
     return lines.slice(0, Math.max(1, height - 1)).map(line => fit(line, width)).join("\r\n");
 }
@@ -1342,7 +1405,7 @@ Errors go to stderr with exit code 1.
 
 TUI: j/k or arrows move; V starts visual selection; Enter/l enters a task; h/Backspace goes up.
 / searches the current subtree, keeping ancestors visible; Esc clears the filter, visual, and yank/cut.
-gg / G select first / last; gx opens the selected task in the default browser.
+gg / G select first / last; gx opens the selected task in the default browser; gf opens found links, including a Keep note.
 a adds here; o after; O before; e edits; s sets due date; Enter inserts a newline; Ctrl+S saves; Esc cancels.
 y yanks; d cuts; D deletes with confirmation; y/d/D apply to the visual selection; p pastes after; P pastes before.
 Space toggles; x done; u undone.

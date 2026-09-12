@@ -1,4 +1,4 @@
-import { GoogleTasks, LocalGoogleTasks, authorize, createAuthorizationRequest, googleTasksSecrets, TasksView, renderTasks, runTasksTui, visibleTasks, renderMarkdown, viewMarkdown, parseTaskInput, parseDue, formatDue, formatId, readTaskInput } from "../src/gtasks.js";
+import { GoogleTasks, LocalGoogleTasks, authorize, createAuthorizationRequest, googleTasksSecrets, TasksView, renderTasks, runTasksTui, visibleTasks, renderMarkdown, viewMarkdown, parseTaskInput, parseDue, formatDue, formatId, readTaskInput, taskLinks } from "../src/gtasks.js";
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { main as importSecrets } from "../scripts/ev-secrets.js";
 import { createHash } from "node:crypto";
@@ -778,6 +778,54 @@ describe("Task navigation and actions", () => {
         press(view, "g");
         press(view, "g");
         expect(view.selected).toBe(0);
+    });
+
+    test("gf opens found links and asks when several", async () => {
+        expect(taskLinks({
+            title: "See [Docs](https://docs.example/a)",
+            notes: "Also https://ex.com/b.",
+            links: [{ type: "keep_note", description: "Shopping", link: "https://keep.google.com/n" }, { type: "email", link: "https://mail.google.com/m" }],
+        })).toEqual([
+            { label: "Shopping", url: "https://keep.google.com/n" },
+            { label: "email", url: "https://mail.google.com/m" },
+            { label: "Docs", url: "https://docs.example/a" },
+            { label: "https://ex.com/b", url: "https://ex.com/b" },
+        ]);
+        expect(taskLinks({ links: [{ type: "keep_note", link: "https://keep.google.com/n" }], notes: "https://keep.google.com/n" })).toEqual([
+            { label: "Keep Note", url: "https://keep.google.com/n" },
+        ]);
+        const { view } = fixture();
+        const opened = [];
+        view.openUrl = async url => { opened.push(url); };
+        press(view, "g");
+        await press(view, "f");
+        expect(view.message).toBe("No links.");
+        expect(opened).toEqual([]);
+        view.tasks.find(task => task.id === "p").notes = "Read https://ex.com/only";
+        press(view, "g");
+        await press(view, "f");
+        expect(opened).toEqual(["https://ex.com/only"]);
+        expect(view.message).toBe("Opened.");
+        view.tasks.find(task => task.id === "p").links = [{ type: "keep_note", link: "https://keep.google.com/n" }];
+        view.tasks.find(task => task.id === "p").notes = "See [GitHub](https://github.com/foo)";
+        press(view, "g");
+        press(view, "f");
+        expect(view.mode).toBe("links");
+        expect(renderTasks(view)).toContain("Open 1/2: Keep Note");
+        press(view, "j");
+        expect(renderTasks(view)).toContain("Open 2/2: GitHub");
+        await press(view, "\r", "return");
+        expect(opened).toEqual(["https://ex.com/only", "https://github.com/foo"]);
+        expect(view.mode).toBe("browse");
+        press(view, "g");
+        press(view, "f");
+        await press(view, "1");
+        expect(opened.at(-1)).toBe("https://keep.google.com/n");
+        press(view, "g");
+        press(view, "f");
+        press(view, "", "escape");
+        expect(view.mode).toBe("browse");
+        expect(opened).toHaveLength(3);
     });
 
     test("V selects a range so yank, cut, and delete apply to all selected roots", async () => {

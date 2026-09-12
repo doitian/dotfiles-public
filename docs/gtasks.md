@@ -150,6 +150,7 @@ prompt lets you reload Google's actual state.
 | Backspace, Left, or h | Return to the parent level |
 | gg / G | Select the first / last task |
 | gx | Open the selected task in the default browser |
+| gf | Open found links, including a Keep note; choose if several |
 | / | Search the current subtree, keeping matching tasks' ancestors visible |
 | Enter / Esc while searching | Keep / cancel the search |
 | V | Start visual selection; j/k extends it; V again leaves it |
