@@ -49,6 +49,17 @@ run = [
   "gh extension install github/gh-stack",
 ]
 
+[tasks."g:add:sprite"]
+hide = true
+description = "Install sprites CLI"
+dir = "~"
+shell = "{% if os() == 'windows' %}pwsh -NoLogo -NoProfile -ExecutionPolicy Bypass -Command{% else %}bash -c -o errexit{% endif %}"
+run = "curl -fsSL https://sprites.dev/install.sh | bash"
+run_windows = [
+  "Invoke-WebRequest 'https://sprites.dev/install.ps1' -OutFile (Join-Path ([IO.Path]::GetTempPath()) 'sprite-install.ps1')",
+  "$installer = Join-Path ([IO.Path]::GetTempPath()) 'sprite-install.ps1'; try { & $installer } finally { Remove-Item -LiteralPath $installer -Force -ErrorAction SilentlyContinue }",
+]
+
 [tasks."g:clean:all"]
 hide = true
 dir = "~"

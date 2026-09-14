@@ -59,6 +59,19 @@ test.each([
   expect(await run("run", "--dry-run", name)).toContain(command);
 });
 
+test("installer sprite selects the platform's command and shell", async () => {
+  const result = await sandbox.run(["tasks", "info", "--json", "g:add:sprite"]);
+  expect(result.exitCode, result.stderr).toBe(0);
+  const task = JSON.parse(result.stdout);
+  expect(task.shell).toBe(windows
+    ? "pwsh -NoLogo -NoProfile -ExecutionPolicy Bypass -Command"
+    : "bash -c -o errexit");
+  const output = await run("run", "--dry-run", "g:add:sprite");
+  expect(output).toContain(windows ? "Invoke-WebRequest" : "curl");
+  expect(task.run.join("\n")).toContain(windows ? "finally { Remove-Item -LiteralPath" : "| bash");
+  expect(task.run.join("\n")).not.toContain(windows ? "| bash" : "Invoke-WebRequest");
+});
+
 test("g:up alias chooses the platform updater and then cleanup", async () => {
   const output = await run("run", "--dry-run", "g:up");
   const update = windows ? "g-up-all-windows" : "g-up-all-linux";
