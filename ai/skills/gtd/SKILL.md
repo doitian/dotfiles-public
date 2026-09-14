@@ -6,8 +6,8 @@ description: Organize Google Tasks using GTD for capture, inbox clarification, n
 # GTD
 
 Maintain clear outcomes and available next actions in Google Tasks. Requests
-include `$gtd capture …`, `$gtd clarify`, `$gtd next`, and `$gtd review`, or their
-natural-language equivalents. These are agent requests, not shell commands.
+include “Capture this in my GTD inbox”, “Clarify my inbox”, “Choose my next
+action”, and “Run my weekly review”.
 
 For Google Tasks reads or changes, use the [gtasks skill](../gtasks/SKILL.md).
 For workflow advice alone, no tool instructions are needed. Reuse skills already

@@ -16,8 +16,9 @@ edits can overwrite the same fields when synced.
 - For adding, editing, completing, reopening, or moving tasks, read
   [references/change.md](references/change.md). Load the read reference as
   needed to locate targets.
-- For `$gtasks gtd …`, follow the [gtd skill](../gtd/SKILL.md).
-  The preferred entry point is `$gtd …`; the executable has no `gtd` command.
+- For GTD workflow requests, including “gtasks gtd …”, follow the
+  [gtd skill](../gtd/SKILL.md). This is an agent request; the executable has
+  no `gtd` command.
 
 ## Shared behavior
 
