@@ -1,9 +1,25 @@
-# GTD mode
+---
+name: gtd
+description: >
+  Maintain a GTD workflow in Google Tasks: capture inputs, clarify projects and
+  next actions, choose available work, track waiting items, and conduct weekly
+  reviews. Use for GTD task organization or review requests; use gtasks for
+  direct task operations that do not need GTD decisions.
+---
 
-Use this workflow for the `gtd` skill subcommand, for example `$gtasks gtd
-capture …`, `$gtasks gtd clarify`, `$gtasks gtd next`, or `$gtasks gtd review`.
-These are requests to the agent. Execute the ordinary CLI commands documented
-in SKILL.md; the executable has no `gtd` subcommand.
+# GTD
+
+Manage the user's Google Tasks with a consistent GTD workflow. Entry points
+include `$gtd capture …`, `$gtd clarify`, `$gtd next`, and `$gtd review`;
+natural-language requests for those workflows also apply. These are agent
+requests, not shell commands.
+
+Before reading or changing Google Tasks, load the [gtasks skill](../gtasks/SKILL.md)
+for CLI commands, IDs, filtering, edits, errors, and sync behavior. It owns the
+tool instructions; this skill owns workflow decisions. If already loaded, use
+its instructions without reloading. Its compatibility route back here does not
+require another load. Do not substitute another task service when gtasks is
+unavailable; report the missing dependency and continue any planning possible.
 
 ## Task model
 
@@ -48,13 +64,13 @@ For clarification, read current tasks and process inputs in manageable batches:
   delegated dependency, or record genuinely date-specific work.
 - Replace `#inbox` with the appropriate state and move the original action
   under its project when appropriate. Preserve IDs rather than copying and
-  deleting. The move command only works within one list.
+  deleting; follow the tool skill for supported moves.
 
 Ask for missing intent or decisions that materially change commitments; apply
 clear requested changes directly. A review request alone does not authorize
 deleting commitments, activating every idea, or contacting other people.
-The CLI has no delete command: never mark discarded work completed merely to
-simulate deletion. Explain that limitation when disposal is requested.
+Never mark discarded work completed merely to simulate deletion. Consult the
+tool skill for supported operations and explain any relevant limitation.
 
 ## Choose the next action
 
@@ -64,54 +80,36 @@ duration/energy estimates only when useful; do not invent a priority score.
 Waiting, someday, project containers, and dependent future steps are not
 available next actions.
 
-```sh
-gtasks list --status needsAction --token '#next' --token '@computer' --json
-gtasks list --status needsAction --token '#waiting' --json
-gtasks list --status needsAction --token '#inbox' --json
-```
+Use the tool skill to query the relevant state and context markers. Read enough
+of the full task hierarchy to understand project membership and find untagged
+work; an empty tag query does not prove the user has no work. Include each
+relevant list when the system spans lists. Do not inherit a parent's state or
+context implicitly.
 
-All filters combine with AND and match title or notes. Unmatched parents are
-omitted from filtered results, although parent IDs remain. Read the full list
-to reconstruct project context and find untagged work; an empty tag query does
-not prove the user has no work. Inspect each relevant list separately when
-the system spans lists. Do not inherit a parent's state or context implicitly.
-
-## Completion and weekly review
+## Completion
 
 When the user reports completion or authorized work provides evidence, mark
 the action done and identify newly available next actions. A completed child
-does not establish that the project's outcome is achieved. Preserve existing
-notes, links, and checked checklist entries; editing notes replaces the entire
-field. Read current IDs and content before changes, and summarize results.
+does not establish that the project's outcome is achieved. Preserve notes,
+links, and checked checklist entries using the tool skill's edit rules.
+Summarize the changes and any unresolved decisions.
 
-For a weekly review:
+## Weekly review
 
-1. Gather loose inputs and mental reminders; clarify the inbox.
-2. Review completed and open actions and past/upcoming calendar information
-   that is accessible or supplied. Identify missing inputs explicitly.
-3. Review waiting items and follow-ups without assuming silence means completion.
-4. Inspect each active project's outcome and available next actions. Flag
-   projects with none; distinguish those blocked entirely on others. Propose
-   clarification rather than inventing work to fill the gap.
-5. Review relevant checklists, areas of responsibility, and Someday/Maybe for
-   commitments to activate, change, or drop based on user intent.
+For `$gtd review` or a weekly review request, read
+[references/review.md](references/review.md). Keep this procedure unloaded for
+ordinary capture, clarification, and next-action requests.
 
-Finish with useful next actions, unresolved decisions, and a concise account of
-changes. Task update timestamps alone do not prove that a project is neglected.
-Schedule recurring reviews only when the user requests scheduling.
+## Shared state
 
-## Across computers
-
-Google Tasks holds the shared task state, including marker text and notes.
-Use the same account and skill conventions on each computer. Agent conversation
-history is not shared task state: record durable decisions in task notes.
-CLI commands read Google directly; pending TUI edits are local and can overwrite
-the same fields after syncing. Refresh current state before maintenance.
+Google Tasks holds the shared task state. Record durable decisions and project
+criteria in task notes so agents on other computers can recover the context.
+Use the same account and conventions across computers; conversation history
+is not shared task state. Follow the tool skill for fresh reads and sync limits.
 
 ## Sources
 
-This workflow adapts David Allen Company's [GTD overview](https://gettingthingsdone.com/what-is-gtd/),
+Adapted from David Allen Company's [GTD overview](https://gettingthingsdone.com/what-is-gtd/),
 [clarification guidance](https://gettingthingsdone.com/2011/10/gtd-best-practices-process-part-2-of-5/),
-[action selection criteria](https://gettingthingsdone.com/2023/01/choosing-what-to-do/),
-and [weekly review checklist](https://gettingthingsdone.com/wp-content/uploads/2016/04/GTD-WeeklyReview.pdf).
-The tags and parent-task representation are conventions for gtasks, not GTD requirements.
+and [action selection criteria](https://gettingthingsdone.com/2023/01/choosing-what-to-do/).
+The tags and parent-task representation are conventions for this setup, not GTD requirements.

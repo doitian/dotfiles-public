@@ -3,8 +3,7 @@ name: gtasks
 description: >
   Use the gtasks CLI in non-interactive mode to list, add, edit, complete, or
   reopen, move, or filter Google Tasks. Use when asked to inspect or change Google Tasks,
-  including parent/child tasks, without opening the TUI. Also use for GTD task
-  maintenance: capture, clarify, next-action selection, and weekly reviews.
+  including parent/child tasks, without opening the TUI.
 ---
 
 # gtasks
@@ -17,19 +16,12 @@ read or write the TUI's local queue. Failures go to stderr and exit 1. If a
 command fails because no credentials are stored, tell the user to run
 `gtasks auth`; do not prompt for or enter credentials yourself.
 
-## Skill subcommand: gtd
+## GTD compatibility route
 
-For `$gtasks gtd …` or a request to maintain Google Tasks using GTD, read
-[references/gtd.md](references/gtd.md). Examples: `$gtasks gtd capture …`,
-`$gtasks gtd clarify`, `$gtasks gtd next`, and `$gtasks gtd review`.
-`gtd` is an agent workflow within this skill; do not execute `gtasks gtd` in
-the shell. Use the CLI commands below to carry out the requested workflow.
-
-GTD rules: distinguish project outcomes from available next actions; keep
-waiting and someday items separate; use real dates rather than invented
-urgency; preserve one task per action and its project membership; review
-active projects for next actions. Follow the user's existing conventions or
-use the reference defaults. Load the reference only when GTD mode is relevant.
+For `$gtasks gtd …`, load the [gtd skill](../gtd/SKILL.md) and follow its
+workflow. The preferred entry point is `$gtd …`. These are agent requests;
+the executable has no `gtd` subcommand. Ordinary task operations use the
+instructions below without loading the GTD workflow.
 
 ## Commands
 
