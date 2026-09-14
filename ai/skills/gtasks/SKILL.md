@@ -1,107 +1,34 @@
 ---
 name: gtasks
-description: >
-  Use the gtasks CLI in non-interactive mode to list, add, edit, complete, or
-  reopen, move, or filter Google Tasks. Use when asked to inspect or change Google Tasks,
-  including parent/child tasks, without opening the TUI.
+description: Read and change Google Tasks with the noninteractive gtasks CLI, including task hierarchy and filters.
 ---
 
 # gtasks
 
-Manage Google Tasks with the `gtasks` CLI. Never open the TUI (`gtasks`,
-`gtasks tui`) or run `gtasks auth` unless the user asks.
+Use `gtasks` for Google Tasks operations. Commands contact Google directly and
+wait for the server result; they do not use the TUI's local queue. Pending TUI
+edits can overwrite the same fields when synced.
 
-These commands talk to Google directly and wait for confirmation. They do not
-read or write the TUI's local queue. Failures go to stderr and exit 1. If a
-command fails because no credentials are stored, tell the user to run
-`gtasks auth`; do not prompt for or enter credentials yourself.
+## Read what the operation needs
 
-## GTD compatibility route
+- For list discovery, task lookup, subtree navigation, or filtering, read
+  [references/read.md](references/read.md).
+- For adding, editing, completing, reopening, or moving tasks, read
+  [references/change.md](references/change.md). Load the read reference as
+  needed to locate targets.
+- For `$gtasks gtd …`, follow the [gtd skill](../gtd/SKILL.md).
+  The preferred entry point is `$gtd …`; the executable has no `gtd` command.
 
-For `$gtasks gtd …`, load the [gtd skill](../gtd/SKILL.md) and follow its
-workflow. The preferred entry point is `$gtd …`. These are agent requests;
-the executable has no `gtd` subcommand. Ordinary task operations use the
-instructions below without loading the GTD workflow.
+## Shared behavior
 
-## Commands
+Prefer `--json` for operations: results include IDs. Use `--raw` for Markdown.
+Task commands default to `@default`; select another list with `--list LIST_ID`.
+Use IDs from current task data for mutations and parents, not titles or invented
+IDs. Reuse suitable current data rather than fetching it again for each step.
 
-Prefer `--json` so IDs are available for later commands. Use `--raw` when the
-user should see Markdown. Default `list` output uses glow on a TTY.
+Use noninteractive commands. Open the TUI (`gtasks`, `gtasks tui`) or start
+`gtasks auth` only when requested. If credentials are missing, tell the user to
+run `gtasks auth`; do not handle credentials yourself.
 
-```powershell
-gtasks lists --json
-gtasks list --json
-gtasks list --raw
-gtasks list --status needsAction --token "#next" --token "@computer" --json
-gtasks list --search "proposal" --json
-gtasks list --cd "Project" --json
-gtasks list --list LIST_ID --cd "Project" --json
-gtasks add --title "Task" --notes "Description" --due 2026-09-14 --parent TASK_ID --json
-gtasks edit TASK_ID --title "Updated" --notes "Updated description" --due tomorrow --json
-gtasks move TASK_ID --parent PARENT_ID --previous SIBLING_ID --json
-gtasks move TASK_ID --root --list LIST_ID --json
-gtasks done TASK_ID --json
-gtasks undone TASK_ID --json
-```
-
-All task commands default to `@default`. Use `--list LIST_ID` for another list.
-`list` also accepts a positional list ID.
-
-## IDs and `--cd`
-
-- `lists --json` returns `{ "id", "name" }[]`.
-- `list --json` returns `{ "listId", "parent", "tasks" }`. `parent` is null at
-  the root. `tasks` is a flat array with `id`, `title`, `notes`, `status`, `due`,
-  and `parent`. With `--cd`, it is only descendants.
-- `add`, `edit`, `move`, `done`, and `undone` with `--json` return the Google task
-  object. Capture `id` from `add` before using `--parent` or mutations.
-- Mutation targets and `--parent` must be task IDs, not titles.
-- `list --cd NAME` matches a task ID, then a case-insensitive exact title, then
-  a unique substring. Completed tasks are included. Ambiguous names fail and
-  print matching IDs; use one of those IDs.
-
-## Edit and add
-
-- `add` requires `--title`. Omit `--parent` to add at the root.
-- `edit` changes only supplied fields. `--notes ""` clears the description.
-  `--due ""` clears the due date. `--due` accepts `YYYY-MM-DD`, `today`, or
-  `tomorrow`. Google Tasks stores dates only. Markdown shows due dates as
-  `[[YYYY-MM-DD]]`.
-- Write `--title` and `--notes` as Markdown (links, emphasis, lists, code). Do
-  not escape or flatten them to plain text. Title is one line; put the rest in
-  notes.
-
-Find IDs with `list --json` before mutating; never invent a task ID.
-
-## List filters and moves
-
-`list` accepts `--status needsAction|completed` (default: both), `--search TEXT`
-(case-insensitive substring in title or notes), and repeatable `--token TOKEN`
-(exact, case-sensitive hashtag or context in title or notes). All filters combine
-with AND. Quote tokens in shells, for example `--token "#next" --token "@computer"`.
-Tokens start with `#` or `@`, followed by Unicode letters, numbers, underscores,
-or hyphens. Whitespace or punctuation separates tokens; letters, numbers,
-underscores, hyphens, `#`, and `@` do not start a new token. Thus `(#next)` matches
-`#next`, while `#next-step`, `#nextish`, and `mail@computer` do not match `#next`
-or `@computer`. Empty search strings and malformed tokens fail.
-
-Filters apply after `--cd` resolves against the full list and selects descendants.
-Only matching tasks are returned: unmatched ancestors and descendants are not
-included. JSON keeps the same `{ "listId", "parent", "tasks" }` shape and original
-IDs/parent links, even when a parent is absent from `tasks`. The selected `--cd`
-parent remains in `parent` and the Markdown heading regardless of filters.
-Markdown shows matches whose immediate parents were omitted at the top level;
-it nests matches whose parents also match. Without filters, output is unchanged.
-
-`move TASK_ID` requires exactly one destination: `--parent PARENT_ID` or `--root`.
-It uses Google's same-list move API, preserving the task ID. `--previous TASK_ID`
-places it after another sibling in the destination; omit it to place first.
-`--list LIST_ID` defaults to `@default`. All IDs must exist in that list. Self or
-descendant parenting, a missing task/parent, and a previous task that is the target
-or not a destination sibling fail before any write. Validation reads the current
-list first; concurrent changes and Google's task restrictions can still cause an
-API error. `--json` returns the server's task object; errors emit no success result.
-
-Tags such as `#next`, `#waiting`, `#someday`, `@computer`, and `@calls` are ordinary
-text conventions chosen by the user. The CLI imposes no GTD taxonomy, priorities,
-or additional metadata storage.
+Failures go to stderr and exit 1. Report the operation's result or specific
+failure; an unsuccessful command is not confirmation of a change.

@@ -1,25 +1,21 @@
 # Weekly review
 
-Use the conventions and authorization boundaries in the gtd skill, and the
-gtasks skill for reads and changes. Review current task state rather than
-relying on conversation history. Include the relevant lists and untagged work
-so filtered views do not hide neglected commitments.
+A useful review leaves the task system current and exposes decisions needed to
+move commitments forward. Cover the relevant lists and untagged work using
+current data, and adapt the order and depth to the user's situation.
 
-For a weekly review:
+- Gather loose inputs and mental reminders; clarify the inbox using
+  [clarify.md](clarify.md) when there are items to process.
+- Review completed and open actions, plus accessible or supplied past/upcoming
+  calendar information. Identify unavailable inputs rather than claiming coverage.
+- Inspect waiting items and follow-ups; silence does not establish completion.
+- Check active project outcomes and next actions. Flag projects with none,
+  distinguishing those blocked entirely on others; do not invent work to fill gaps.
+- Revisit relevant checklists, areas of responsibility, and Someday/Maybe for
+  commitments the user may want to activate, change, or drop.
 
-1. Gather loose inputs and mental reminders; clarify the inbox.
-2. Review completed and open actions and past/upcoming calendar information
-   that is accessible or supplied. Identify missing inputs explicitly.
-3. Review waiting items and follow-ups without assuming silence means completion.
-4. Inspect each active project's outcome and available next actions. Flag
-   projects with none; distinguish those blocked entirely on others. Propose
-   clarification rather than inventing work to fill the gap.
-5. Review relevant checklists, areas of responsibility, and Someday/Maybe for
-   commitments to activate, change, or drop based on user intent.
+Finish with useful next actions, unresolved decisions, and changes made.
+Update timestamps alone do not prove neglect. Schedule future reviews when
+scheduling is part of the user's request.
 
-Finish with useful next actions, unresolved decisions, and a concise account of
-changes. Task update timestamps alone do not prove that a project is neglected.
-Schedule recurring reviews only when the user requests scheduling.
-
-
-Source: David Allen Company's [weekly review checklist](https://gettingthingsdone.com/wp-content/uploads/2016/04/GTD-WeeklyReview.pdf).
+Source: [GTD weekly review checklist](https://gettingthingsdone.com/wp-content/uploads/2016/04/GTD-WeeklyReview.pdf).

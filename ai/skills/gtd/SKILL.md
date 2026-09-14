@@ -1,25 +1,23 @@
 ---
 name: gtd
-description: >
-  Maintain a GTD workflow in Google Tasks: capture inputs, clarify projects and
-  next actions, choose available work, track waiting items, and conduct weekly
-  reviews. Use for GTD task organization or review requests; use gtasks for
-  direct task operations that do not need GTD decisions.
+description: Organize Google Tasks using GTD for capture, inbox clarification, next-action selection, and commitment reviews.
 ---
 
 # GTD
 
-Manage the user's Google Tasks with a consistent GTD workflow. Entry points
-include `$gtd capture …`, `$gtd clarify`, `$gtd next`, and `$gtd review`;
-natural-language requests for those workflows also apply. These are agent
-requests, not shell commands.
+Maintain clear outcomes and available next actions in Google Tasks. Requests
+include `$gtd capture …`, `$gtd clarify`, `$gtd next`, and `$gtd review`, or their
+natural-language equivalents. These are agent requests, not shell commands.
 
-Before reading or changing Google Tasks, load the [gtasks skill](../gtasks/SKILL.md)
-for CLI commands, IDs, filtering, edits, errors, and sync behavior. It owns the
-tool instructions; this skill owns workflow decisions. If already loaded, use
-its instructions without reloading. Its compatibility route back here does not
-require another load. Do not substitute another task service when gtasks is
-unavailable; report the missing dependency and continue any planning possible.
+For Google Tasks reads or changes, use the [gtasks skill](../gtasks/SKILL.md).
+For workflow advice alone, no tool instructions are needed. Reuse skills already
+loaded; the gtasks compatibility route does not require loading this file again.
+
+## Choose the relevant workflow
+
+- Capture or clarify inputs: [references/clarify.md](references/clarify.md).
+- Select work or handle completion: [references/actions.md](references/actions.md).
+- Conduct a weekly review: [references/review.md](references/review.md).
 
 ## Task model
 
@@ -46,70 +44,17 @@ Use `due` for actual deadlines or genuinely day-specific actions. Appointments
 with times belong in a calendar. Keep a follow-up/review date explicit in notes
 when it is not a deadline. Do not invent dates, readiness, or commitments.
 
-## Capture and clarify
+## Decisions and shared state
 
-Capture requested thoughts promptly, preserving meaning and source links.
-Do not require a project, context, estimate, or deadline to capture an item.
-Use the user's selected list, or the CLI default when none is specified.
+Apply clear requested changes through completion. Ask for missing intent when
+it affects commitments; retain existing authorization rather than asking again.
+Mark actions complete on the user's report or evidence from authorized work.
+A review identifies decisions; it does not by itself authorize contacting people
+or dropping commitments. Never use completion to simulate discarding an item.
 
-For clarification, read current tasks and process inputs in manageable batches:
+Record durable decisions and project criteria in task notes so another agent
+or computer can recover the context. End with changes made and unresolved
+choices relevant to the request.
 
-- Determine whether each item is actionable. Non-actionable material belongs
-  in reference, Someday/Maybe, or trash according to the user's intent.
-- For actionable work, identify the desired outcome and the next visible
-  action. If multiple actions are required, identify or create its project
-  within the requested scope.
-- A practical action taking under two minutes can be done during clarification
-  when execution is authorized. Otherwise record a next action, track a
-  delegated dependency, or record genuinely date-specific work.
-- Replace `#inbox` with the appropriate state and move the original action
-  under its project when appropriate. Preserve IDs rather than copying and
-  deleting; follow the tool skill for supported moves.
-
-Ask for missing intent or decisions that materially change commitments; apply
-clear requested changes directly. A review request alone does not authorize
-deleting commitments, activating every idea, or contacting other people.
-Never mark discarded work completed merely to simulate deletion. Consult the
-tool skill for supported operations and explain any relevant limitation.
-
-## Choose the next action
-
-Check date-specific commitments and follow-ups, then select available actions
-by context, time available, energy, and importance to the user's goals. Use
-duration/energy estimates only when useful; do not invent a priority score.
-Waiting, someday, project containers, and dependent future steps are not
-available next actions.
-
-Use the tool skill to query the relevant state and context markers. Read enough
-of the full task hierarchy to understand project membership and find untagged
-work; an empty tag query does not prove the user has no work. Include each
-relevant list when the system spans lists. Do not inherit a parent's state or
-context implicitly.
-
-## Completion
-
-When the user reports completion or authorized work provides evidence, mark
-the action done and identify newly available next actions. A completed child
-does not establish that the project's outcome is achieved. Preserve notes,
-links, and checked checklist entries using the tool skill's edit rules.
-Summarize the changes and any unresolved decisions.
-
-## Weekly review
-
-For `$gtd review` or a weekly review request, read
-[references/review.md](references/review.md). Keep this procedure unloaded for
-ordinary capture, clarification, and next-action requests.
-
-## Shared state
-
-Google Tasks holds the shared task state. Record durable decisions and project
-criteria in task notes so agents on other computers can recover the context.
-Use the same account and conventions across computers; conversation history
-is not shared task state. Follow the tool skill for fresh reads and sync limits.
-
-## Sources
-
-Adapted from David Allen Company's [GTD overview](https://gettingthingsdone.com/what-is-gtd/),
-[clarification guidance](https://gettingthingsdone.com/2011/10/gtd-best-practices-process-part-2-of-5/),
-and [action selection criteria](https://gettingthingsdone.com/2023/01/choosing-what-to-do/).
-The tags and parent-task representation are conventions for this setup, not GTD requirements.
+The tags and parent-task representation are local conventions, not GTD requirements.
+Source: [GTD overview](https://gettingthingsdone.com/what-is-gtd/).
