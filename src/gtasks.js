@@ -1400,6 +1400,33 @@ async function presentMarkdown(md, { input, output } = {}) {
     }
 }
 
+// CLI filters return matches only; parent links stay intact in JSON.
+function filterListTasks(tasks, { status, search, token = [] }) {
+  const query = search?.toLowerCase();
+  return tasks.filter(task => {
+    const text = `${task.title ?? ""}\n${task.notes ?? ""}`;
+    const tokens = new Set(text.match(/(?<![\p{L}\p{N}_#@-])[#@][\p{L}\p{N}_-]+/gu) ?? []);
+    return (status === undefined || task.status === status)
+      && (query === undefined || text.toLowerCase().includes(query))
+      && token.every(value => tokens.has(value));
+  });
+}
+
+async function moveTask(api, list, id, { parent = null, previous = null }) {
+  const tasks = await api.list(list);
+  const byId = new Map(tasks.map(task => [task.id, task]));
+  if (!byId.has(id)) throw new Error(`No task with ID ${JSON.stringify(id)} in this list.`);
+  if (parent !== null && !byId.has(parent)) throw new Error(`No parent with ID ${JSON.stringify(parent)} in this list.`);
+  if (subtreeIds(tasks, [id]).has(parent)) throw new Error("Cannot move a task under itself or its descendants.");
+  if (previous !== null) {
+    const sibling = byId.get(previous);
+    if (previous === id || !sibling || (sibling.parent ?? null) !== parent) {
+      throw new Error("--previous must be another task in the destination's siblings.");
+    }
+  }
+  return api.move(list, id, { parent, previous });
+}
+
 const USAGE = `Usage: gtasks <command> [options]
 
   gtasks              Manage your default Google Tasks list
@@ -1407,17 +1434,25 @@ const USAGE = `Usage: gtasks <command> [options]
   gtasks list [list-id] [--cd NAME] [--json] [--raw] Read tasks or a parent's subtree
   gtasks add --title TEXT [--notes TEXT] [--due DATE] [--parent TASK-ID] [--list LIST-ID] [--json]
   gtasks edit TASK-ID [--title TEXT] [--notes TEXT] [--due DATE] [--list LIST-ID] [--json]
+  gtasks move TASK-ID (--parent PARENT-ID | --root) [--previous TASK-ID] [--list LIST-ID] [--json]
   gtasks done TASK-ID [--list LIST-ID] [--json]
   gtasks undone TASK-ID [--list LIST-ID] [--json]
   gtasks tui [list-id] [--cd NAME]          Open the TUI
   gtasks auth         Sign in and save a refresh token in the OS key store
   --cd <search>       Enter a unique matching task title; otherwise filter at root
+  --status STATUS     list: needsAction or completed (default: both)
+  --search TEXT       list: case-insensitive substring in title or notes
+  --token TOKEN       list: exact, case-sensitive #tag or @context; repeatable
   --raw               Print Markdown without glow
   --port <port>       OAuth callback port (default: random, for Desktop clients)
   -h, --help          Show help
 
 Lists default to @default. --list also works with list and tui.
 list --cd accepts a task ID or a unique title match, including completed tasks.
+List filters combine with AND after --cd resolution; only matches are returned, without ancestors.
+JSON retains IDs/parent links; Markdown promotes matches with omitted parents to the top level.
+Tokens contain Unicode letters, numbers, underscores or hyphens, bounded by punctuation/space.
+move preserves the task ID; omit --previous to place first among destination siblings.
 An exact title match takes precedence over substring matches; ambiguous names fail.
 --notes "" clears the description; --due "" clears the due date; omitted edit fields stay unchanged.
 --due accepts YYYY-MM-DD, today, or tomorrow. Google Tasks stores dates only.
@@ -1443,6 +1478,8 @@ export async function main(args = process.argv.slice(2), { createApi = createGoo
         args,
         allowPositionals: true,
         options: {
+            root: { type: "boolean" }, previous: { type: "string" },
+            status: { type: "string" }, search: { type: "string" }, token: { type: "string", multiple: true },
             help: { type: "boolean", short: "h" }, port: { type: "string" }, cd: { type: "string" },
             json: { type: "boolean" }, raw: { type: "boolean" }, list: { type: "string" }, title: { type: "string" }, notes: { type: "string" }, parent: { type: "string" }, due: { type: "string" },
         },
@@ -1451,18 +1488,22 @@ export async function main(args = process.argv.slice(2), { createApi = createGoo
     if (values.help) { print(USAGE); return; }
     const [command = "tui", target] = positionals;
     const allowed = {
-        tui: ["list", "cd", "port"], auth: ["port"], lists: ["json"], list: ["list", "cd", "json", "raw"],
+        tui: ["list", "cd", "port"], auth: ["port"], lists: ["json"], list: ["list", "cd", "json", "raw", "status", "search", "token"],
         add: ["list", "title", "notes", "due", "parent", "json"], edit: ["list", "title", "notes", "due", "json"],
+        move: ["list", "parent", "root", "previous", "json"],
         done: ["list", "json"], undone: ["list", "json"],
     };
     if (!allowed[command] || positionals.length > 2 || (["auth", "lists", "add"].includes(command) && target !== undefined)) throw new Error(USAGE);
     for (const key of Object.keys(values)) if (!allowed[command].includes(key)) throw new Error(`--${key} is not supported by ${command}.`);
-    if (["edit", "done", "undone"].includes(command) && !target?.trim()) throw new Error(`${command} requires a task ID.`);
+    if (["edit", "done", "undone", "move"].includes(command) && !target?.trim()) throw new Error(`${command} requires a task ID.`);
     if (command === "add" && values.title === undefined) throw new Error("add requires --title TEXT.");
     if (values.title !== undefined && !values.title.trim()) throw new Error("Task title cannot be empty.");
     if (command === "edit" && values.title === undefined && values.notes === undefined && values.due === undefined) throw new Error("edit requires --title, --notes, or --due.");
+    if (command === "move" && (values.parent !== undefined) === (values.root === true)) throw new Error("move requires exactly one of --parent PARENT-ID or --root.");
+    if (values.status !== undefined && !["needsAction", "completed"].includes(values.status)) throw new Error("--status must be needsAction or completed.");
+    for (const token of values.token ?? []) if (!/^[#@][\p{L}\p{N}_-]+$/u.test(token)) throw new Error("--token requires a #tag or @context containing letters, numbers, underscores or hyphens.");
     const due = values.due !== undefined ? parseDue(values.due) : undefined;
-    for (const key of ["list", "parent", "cd"]) if (values[key] !== undefined && !values[key].trim()) throw new Error(`--${key} cannot be empty.`);
+    for (const key of ["list", "parent", "cd", "previous", "search"]) if (values[key] !== undefined && !values[key].trim()) throw new Error(`--${key} cannot be empty.`);
     if (["list", "tui"].includes(command) && target !== undefined && values.list !== undefined) throw new Error("Use either a positional list ID or --list, not both.");
     const tasklist = values.list ?? (["list", "tui"].includes(command) ? target : undefined) ?? "@default";
     const port = values.port === undefined ? 0 : Number(values.port);
@@ -1485,10 +1526,17 @@ export async function main(args = process.argv.slice(2), { createApi = createGoo
         } else if (command === "list") {
             const items = await api.list(tasklist);
             const parent = values.cd === undefined ? null : matchTask(items, values.cd);
-            const tasks = parent ? visibleTasks(items, parent.id, "", true).map(({ depth, ...task }) => task) : items;
+            const scoped = parent ? visibleTasks(items, parent.id, "", true).map(({ depth, ...task }) => task) : items;
+            const tasks = filterListTasks(scoped, values);
             data = { listId: tasklist, parent, tasks };
-            md = viewMarkdown(items, parent?.id ?? null, "", true);
+            const filtered = values.status !== undefined || values.search !== undefined || values.token !== undefined;
+            if (filtered) {
+              const ids = new Set(tasks.map(task => task.id));
+              const display = tasks.map(task => ids.has(task.parent) ? task : { ...task, parent: parent?.id });
+              md = viewMarkdown(parent ? [parent, ...display] : display, parent?.id ?? null, "", true);
+            } else md = viewMarkdown(items, parent?.id ?? null, "", true);
         } else {
+            if (command === "move") data = await moveTask(api, tasklist, target, values);
             if (command === "add") data = await api.add(tasklist, values.title, values.parent ?? null, values.notes ?? "", undefined, due);
             if (command === "edit") data = await api.edit(tasklist, target, { title: values.title, notes: values.notes, due });
             if (command === "done" || command === "undone") data = await api.setDone(tasklist, target, command === "done");

@@ -2,7 +2,7 @@
 name: gtasks
 description: >
   Use the gtasks CLI in non-interactive mode to list, add, edit, complete, or
-  reopen Google Tasks. Use when asked to inspect or change Google Tasks,
+  reopen, move, or filter Google Tasks. Use when asked to inspect or change Google Tasks,
   including parent/child tasks, without opening the TUI.
 ---
 
@@ -25,10 +25,14 @@ user should see Markdown. Default `list` output uses glow on a TTY.
 gtasks lists --json
 gtasks list --json
 gtasks list --raw
+gtasks list --status needsAction --token "#next" --token "@computer" --json
+gtasks list --search "proposal" --json
 gtasks list --cd "Project" --json
 gtasks list --list LIST_ID --cd "Project" --json
 gtasks add --title "Task" --notes "Description" --due 2026-09-14 --parent TASK_ID --json
 gtasks edit TASK_ID --title "Updated" --notes "Updated description" --due tomorrow --json
+gtasks move TASK_ID --parent PARENT_ID --previous SIBLING_ID --json
+gtasks move TASK_ID --root --list LIST_ID --json
 gtasks done TASK_ID --json
 gtasks undone TASK_ID --json
 ```
@@ -42,7 +46,7 @@ All task commands default to `@default`. Use `--list LIST_ID` for another list.
 - `list --json` returns `{ "listId", "parent", "tasks" }`. `parent` is null at
   the root. `tasks` is a flat array with `id`, `title`, `notes`, `status`, `due`,
   and `parent`. With `--cd`, it is only descendants.
-- `add`, `edit`, `done`, and `undone` with `--json` return the Google task
+- `add`, `edit`, `move`, `done`, and `undone` with `--json` return the Google task
   object. Capture `id` from `add` before using `--parent` or mutations.
 - Mutation targets and `--parent` must be task IDs, not titles.
 - `list --cd NAME` matches a task ID, then a case-insensitive exact title, then
@@ -61,3 +65,36 @@ All task commands default to `@default`. Use `--list LIST_ID` for another list.
   notes.
 
 Find IDs with `list --json` before mutating; never invent a task ID.
+
+## List filters and moves
+
+`list` accepts `--status needsAction|completed` (default: both), `--search TEXT`
+(case-insensitive substring in title or notes), and repeatable `--token TOKEN`
+(exact, case-sensitive hashtag or context in title or notes). All filters combine
+with AND. Quote tokens in shells, for example `--token "#next" --token "@computer"`.
+Tokens start with `#` or `@`, followed by Unicode letters, numbers, underscores,
+or hyphens. Whitespace or punctuation separates tokens; letters, numbers,
+underscores, hyphens, `#`, and `@` do not start a new token. Thus `(#next)` matches
+`#next`, while `#next-step`, `#nextish`, and `mail@computer` do not match `#next`
+or `@computer`. Empty search strings and malformed tokens fail.
+
+Filters apply after `--cd` resolves against the full list and selects descendants.
+Only matching tasks are returned: unmatched ancestors and descendants are not
+included. JSON keeps the same `{ "listId", "parent", "tasks" }` shape and original
+IDs/parent links, even when a parent is absent from `tasks`. The selected `--cd`
+parent remains in `parent` and the Markdown heading regardless of filters.
+Markdown shows matches whose immediate parents were omitted at the top level;
+it nests matches whose parents also match. Without filters, output is unchanged.
+
+`move TASK_ID` requires exactly one destination: `--parent PARENT_ID` or `--root`.
+It uses Google's same-list move API, preserving the task ID. `--previous TASK_ID`
+places it after another sibling in the destination; omit it to place first.
+`--list LIST_ID` defaults to `@default`. All IDs must exist in that list. Self or
+descendant parenting, a missing task/parent, and a previous task that is the target
+or not a destination sibling fail before any write. Validation reads the current
+list first; concurrent changes and Google's task restrictions can still cause an
+API error. `--json` returns the server's task object; errors emit no success result.
+
+Tags such as `#next`, `#waiting`, `#someday`, `@computer`, and `@calls` are ordinary
+text conventions chosen by the user. The CLI imposes no GTD taxonomy, priorities,
+or additional metadata storage.
