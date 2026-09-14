@@ -17,9 +17,10 @@ sources = [
   "src/**/*.js",
   "../private/src/**/*.js",
 ]
+outputs = ["dist/**"]
 
 [tasks.clean]
-run = "fd --no-ignore -t f . dist -x rm"
+run = "rm -rf dist"
 
 [tasks.update-skills]
 description = "Update AI skills"

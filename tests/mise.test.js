@@ -1,9 +1,11 @@
 import { afterEach, beforeEach, expect, setDefaultTimeout, test } from "bun:test";
-import { writeFile } from "node:fs/promises";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { createMiseSandbox, globalConfig } from "./helpers/mise.js";
 
 const tasks = Bun.TOML.parse(await Bun.file(globalConfig).text()).tasks;
+const repoBuild = Bun.TOML.parse(await Bun.file(fileURLToPath(new URL("../mise.toml", import.meta.url))).text()).tasks.build;
 const windows = process.platform === "win32";
 let sandbox;
 
@@ -149,4 +151,28 @@ test("preset:default fails when no build system is recognized", async () => {
   const result = await sandbox.run(["run", "preset:default"]);
   expect(result.exitCode).not.toBe(0);
   expect(result.stderr).toContain("No recognizable build system found");
+});
+
+test("build reruns when dist is empty instead of skipping on auto-outputs", async () => {
+  await mkdir(join(sandbox.project, "src"), { recursive: true });
+  await Promise.all([
+    writeFile(join(sandbox.project, "package.json"), "{}"),
+    writeFile(join(sandbox.project, "bun.lock"), ""),
+    writeFile(join(sandbox.project, "build.js"), ""),
+    writeFile(join(sandbox.project, "src/hello.js"), ""),
+    writeFile(join(sandbox.project, "write-dist.js"), 'await Bun.write("dist/out", "built");\n'),
+  ]);
+  const outputs = repoBuild.outputs ? `outputs = ${JSON.stringify(repoBuild.outputs)}\n` : "";
+  await writeFile(
+    join(sandbox.project, "mise.toml"),
+    `[tasks.build]
+run = "bun write-dist.js"
+sources = ${JSON.stringify(repoBuild.sources)}
+${outputs}`,
+  );
+  await run("run", "build");
+  await rm(join(sandbox.project, "dist"), { recursive: true, force: true });
+  const output = await run("run", "build");
+  expect(output).not.toContain("sources up-to-date, skipping");
+  expect(await Bun.file(join(sandbox.project, "dist/out")).text()).toBe("built");
 });
