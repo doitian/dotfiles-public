@@ -1,6 +1,6 @@
 ---
 name: gtd
-description: Organize Google Tasks using GTD for capture, inbox clarification, next-action selection, and commitment reviews.
+description: Organize the default Google Tasks list using GTD for capture, inbox clarification, next-action selection, and commitment reviews.
 ---
 
 # GTD
@@ -12,6 +12,13 @@ action”, and “Run my weekly review”.
 For Google Tasks reads or changes, use the [gtasks skill](../gtasks/SKILL.md).
 For workflow advice alone, no tool instructions are needed. Reuse skills already
 loaded; the gtasks compatibility route does not require loading this file again.
+
+## Scope
+
+GTD reads and changes only the default Google Tasks list (`@default`). Use
+`gtasks list --json` to start; omit `--list` or use `--list @default` for task
+operations. Do not enumerate or inspect other lists as part of capture,
+triage, action selection, or reviews. Other lists remain outside this workflow.
 
 ## Choose the relevant workflow
 

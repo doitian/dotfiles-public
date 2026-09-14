@@ -1,7 +1,7 @@
 # Weekly review
 
 A useful review leaves the task system current and exposes decisions needed to
-move commitments forward. Cover the relevant lists and untagged work using
+move commitments forward. Cover the default list and its untagged work using
 current data, and adapt the order and depth to the user's situation.
 
 - Gather loose inputs and mental reminders; clarify the inbox using

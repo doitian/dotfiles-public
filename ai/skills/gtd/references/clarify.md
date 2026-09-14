@@ -1,6 +1,6 @@
 # Capture and clarify
 
-Capture requested thoughts promptly in the selected list or default list,
+Capture requested thoughts promptly in the default list,
 preserving meaning and source links. Capture does not require a project,
 context, estimate, or deadline.
 

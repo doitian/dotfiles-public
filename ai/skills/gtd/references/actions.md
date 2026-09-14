@@ -8,8 +8,8 @@ need not become mandatory fields or a universal priority score.
 Project containers, waiting items, someday items, and dependent future steps
 are not available actions. A context filter should return the actions themselves.
 Read enough project context to understand matches and untagged work; an empty
-tag query does not establish that there is nothing to do. Include relevant
-lists, and do not implicitly inherit a parent's state or context.
+tag query does not establish that there is nothing to do. Stay within the
+default list, and do not implicitly inherit a parent's state or context.
 
 When an action is completed, consider what becomes available next. Completing
 a child does not establish that the project's outcome is achieved. If an action
