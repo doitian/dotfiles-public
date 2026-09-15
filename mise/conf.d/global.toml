@@ -44,10 +44,7 @@ run = "bun install -g @github/copilot opencode-ai"
 hide = true
 description = "Install gh extensions"
 dir = "~"
-run = [
-  "gh extension install dlvhdr/gh-dash",
-  "gh extension install github/gh-stack",
-]
+run = ["gh extension install github/gh-stack"]
 
 [tasks."g:add:sprite"]
 hide = true
