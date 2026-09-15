@@ -81,6 +81,12 @@ test("g:up alias chooses the platform updater and then cleanup", async () => {
   expect(output.indexOf(update)).toBeLessThan(output.indexOf(clean));
 });
 
+test("g:up:all is raw so package managers can read the terminal", async () => {
+  const result = await sandbox.run(["tasks", "info", "g:up", "--json"]);
+  expect(result.exitCode, result.stderr).toBe(0);
+  expect(JSON.parse(result.stdout).raw).toBe(true);
+});
+
 test("preset:ide resolves all editor presets", async () => {
   const output = await run("run", "--dry-run", "preset:ide");
   for (const command of ["preset-neovim", "preset-vscode", "preset-claude"]) {

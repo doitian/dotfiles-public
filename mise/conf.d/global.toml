@@ -72,6 +72,7 @@ hide = true
 alias = "g:up"
 description = "Update all apps"
 dir = "~"
+raw = true
 depends_post = ["g:clean:all"]
 run = "g-up-all-linux"
 run_windows = "g-up-all-windows"
