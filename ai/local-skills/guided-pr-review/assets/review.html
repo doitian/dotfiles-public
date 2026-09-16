@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="review-token" content="__SAVE_TOKEN__">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!--#page-head-->
+<title>__TITLE__</title>
+<style>
+/* Light is the base palette. The dark tokens are repeated for the system
+   preference and for an explicit host theme attribute, so a host that stamps
+   data-theme on the root element wins over prefers-color-scheme either way. */
+:root{color-scheme:light;--bg:#fff;--panel:#f6f8fa;--text:#20252b;--muted:#59636e;--line:#d5dbe2;--accent:#1759ae;--added:#e6f5e9;--removed:#ffe9e9;--selected:#e7f0ff;--button:#273748;--button-text:#fff}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;--bg:#151719;--panel:#1d2024;--text:#e5e9ef;--muted:#a4aebb;--line:#343a43;--accent:#9bc4ff;--added:#172e24;--removed:#372024;--selected:#203347;--button:#e0e8f1;--button-text:#1e2935}}
+:root[data-theme=dark]{color-scheme:dark;--bg:#151719;--panel:#1d2024;--text:#e5e9ef;--muted:#a4aebb;--line:#343a43;--accent:#9bc4ff;--added:#172e24;--removed:#372024;--selected:#203347;--button:#e0e8f1;--button-text:#1e2935}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,sans-serif}button,select,textarea{font:inherit;color:inherit}button,select{border:1px solid var(--line);border-radius:6px;background:var(--bg);padding:6px 10px}button{cursor:pointer}button:hover{background:var(--selected)}button:disabled{opacity:.45;cursor:default}button.primary{background:var(--button);color:var(--button-text);border-color:var(--button)}a{color:var(--accent)}button:focus-visible,a:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}[hidden]{display:none!important}
+.topbar{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:12px}.brand strong{font-size:15px;font-weight:600}.muted{color:var(--muted)}.small{font-size:12px}.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.layout{display:grid;grid-template-columns:250px minmax(0,1fr)}.sidebar{position:sticky;top:61px;height:calc(100vh - 61px);overflow:auto;padding:16px 12px;border-right:1px solid var(--line);background:var(--panel)}.sidebar-label{padding:0 8px 10px;color:var(--muted);font-size:12px}.chunk-link{display:grid;grid-template-columns:24px minmax(0,1fr) 14px;gap:6px;width:100%;border:0;text-align:left;background:transparent;padding:8px;border-radius:5px;margin-bottom:2px}.chunk-link[aria-current=step]{background:var(--selected);color:var(--accent)}.chunk-num{color:var(--muted);font-variant-numeric:tabular-nums}.done-mark{color:var(--accent)}main{min-width:0;padding:24px 28px 60px;max-width:1800px;width:100%;margin:auto}h1{font-size:24px;line-height:1.25;margin:6px 0 12px;font-weight:600}.objective{font-size:15px;max-width:1000px;margin:0 0 16px}.review-focus{margin:10px 0 18px}.review-focus summary{cursor:pointer;color:var(--muted)}.review-focus ul{margin:8px 0;padding-left:22px}.chunk-actions{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:24px}.reviewed{display:flex;gap:8px;align-items:center}.reviewed input{width:16px;height:16px;accent-color:var(--accent)}.file-index{display:flex;gap:8px 16px;flex-wrap:wrap;margin:0 0 24px;padding:0;list-style:none;font-size:12px}.file-index a{overflow-wrap:anywhere}.file{margin:0 0 26px;border:1px solid var(--line);border-radius:7px;overflow:clip;scroll-margin-top:80px}.file-header{position:sticky;top:61px;z-index:5;background:var(--panel);border-bottom:1px solid var(--line);padding:10px 14px;display:flex;justify-content:space-between;align-items:start;gap:12px}.file-path{font:12px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere}.file-title{font-weight:600}.file-actions{display:flex;gap:10px;align-items:center;flex-shrink:0;font-size:12px}.diff{font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace}.diff-header,.diff-row{display:grid;grid-template-columns:47px 47px 21px minmax(0,1fr);align-items:start}.diff-header{color:var(--muted);background:var(--panel);font-size:11px}.diff-header span{padding:3px 6px}.diff-row.add{background:var(--added)}.diff-row.del{background:var(--removed)}.diff-row:has(.line-number:hover){box-shadow:inset 3px 0 var(--accent)}.diff-row.selected{box-shadow:inset 3px 0 var(--accent);background:var(--selected)}.line-number{font:inherit;padding:0 5px;min-height:22px;text-align:right;vertical-align:top;border:0;border-radius:0;background:transparent;color:var(--muted)}.sign{padding-top:1px;text-align:center;user-select:none}.source-line{margin:0;padding:1px 10px 1px 0;white-space:pre-wrap;overflow-wrap:anywhere;tab-size:2;font:inherit}.hunk,.meta-line{padding:6px 12px;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--panel);color:var(--muted)}.hunk{color:var(--accent)}.binary-note{padding:10px 14px;border-bottom:1px solid var(--line);font-size:12px}.long-line{min-width:0;padding-right:8px}.long-line summary{cursor:pointer;padding:2px 0;color:var(--accent)}.annotation{padding:14px 18px;background:var(--selected);border-block:1px solid var(--line);font:14px/1.5 system-ui,sans-serif}.annotation label{display:block;font-weight:600;margin-bottom:6px}.annotation textarea{width:100%;min-height:90px;padding:10px;border:1px solid var(--line);border-radius:5px;background:var(--bg);resize:vertical}.annotation .toolbar{margin-top:8px}.saved-note{padding:12px 18px;border-block:1px solid var(--line);background:var(--selected);font:14px/1.5 system-ui,sans-serif}.note-text{white-space:pre-wrap;overflow-wrap:anywhere;margin:5px 0 8px}.bottom-nav{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:20px 0}.bottom-nav span{overflow-wrap:anywhere}.mobile-picker{display:none;width:100%;max-width:100%}.banner{font-size:12px;color:var(--muted);max-width:1000px}dialog{background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:10px;width:min(760px,calc(100vw - 32px));max-height:85vh;padding:24px}dialog::backdrop{background:#0008}dialog h2{margin:0 0 12px;font-size:20px}dialog .question-item{padding:14px 0;border-bottom:1px solid var(--line)}dialog .question-item p{white-space:pre-wrap;overflow-wrap:anywhere}dialog textarea{width:100%;min-height:170px;font:12px/1.5 ui-monospace,monospace;padding:10px;background:var(--panel);border:1px solid var(--line);border-radius:5px}.dialog-head{display:flex;justify-content:space-between;align-items:center;gap:12px}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+@media(min-width:1600px){main{padding-inline:48px}.diff{font-size:13px}}
+@media(max-width:1000px){.layout{grid-template-columns:205px minmax(0,1fr)}main{padding:20px 18px}.sidebar{padding-inline:8px}.file-actions{flex-wrap:wrap;justify-content:flex-end}}
+@media(max-width:720px){.layout{display:block}.sidebar{display:none}.mobile-picker{display:block}.topbar{padding:10px 12px;position:static}.topbar .brand{flex-wrap:wrap;gap:8px}.file-header{position:static;flex-wrap:wrap}main{padding:18px 10px}.diff-header,.diff-row{grid-template-columns:36px 36px 17px minmax(0,1fr)}h1{font-size:21px}.toolbar{gap:6px}.file{scroll-margin-top:10px}.annotation,.saved-note{padding:12px}.diff{font-size:12px}}
+@media(pointer:coarse){button,select{min-height:40px}.line-number{min-height:32px}.annotation textarea{font-size:16px}}
+.related-context{margin:18px 0 22px;max-width:1100px}.related-context h2{font-size:15px;font-weight:600;margin:0 0 10px}.context-item{margin:0 0 14px;padding-left:14px;border-left:2px solid var(--line)}.context-item h3{font-size:14px;font-weight:600;margin:0 0 4px}.context-body{margin:0 0 6px;white-space:pre-wrap;overflow-wrap:anywhere}.context-links{display:flex;align-items:center;gap:6px 14px;flex-wrap:wrap;margin-top:6px;font-size:12px}.context-code{margin-top:8px}.context-code summary{cursor:pointer;color:var(--muted);font-size:12px}.context-code pre{font:12px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--panel);padding:10px;border-radius:5px}
+</style>
+<!--/page-head-->
+</head>
+<body>
+<!--#page-body-->
+<header class="topbar">
+  <div class="brand"><strong id="pr-label"></strong><span id="pr-title" class="muted small"></span><code id="head-label" class="small"></code></div>
+  <div class="toolbar"><span id="save-status" class="small muted" role="status" aria-live="polite"></span><button id="notes-button" type="button">Questions (0)</button><a id="pr-link" class="small" target="_blank" rel="noopener noreferrer">GitHub PR ↗</a></div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Review chunks"><div id="review-count" class="sidebar-label"></div><div id="chunks-nav"></div></nav>
+  <main id="main">
+    <label for="mobile-chunk" class="sr-only">Review chunk</label><select id="mobile-chunk" class="mobile-picker"></select>
+    <div id="chunk-meta" class="small muted"></div><h1 id="chunk-title"></h1><p id="objective" class="objective"></p>
+    <section id="related-context" class="related-context" aria-labelledby="context-heading" hidden><h2 id="context-heading">Related context</h2><div id="context-items"></div></section>
+    <details class="review-focus"><summary>Review focus</summary><ul id="focus"></ul></details>
+    <div class="chunk-actions"><div class="toolbar"><button id="previous" type="button">← Previous chunk</button><button id="next" type="button" class="primary">Next chunk →</button></div><label class="reviewed"><input id="reviewed" type="checkbox">Reviewed by me</label></div>
+    <ul id="file-index" class="file-index" aria-label="Files in this chunk"></ul>
+    <div id="files"></div>
+    <div class="bottom-nav"><button id="previous-bottom" type="button">← Previous chunk</button><span id="next-label" class="small muted"></span><button id="next-bottom" type="button" class="primary">Next chunk →</button></div>
+    <p id="notes-help" class="banner"></p>
+  </main>
+</div>
+<dialog id="questions-dialog" aria-labelledby="questions-title">
+  <div class="dialog-head"><h2 id="questions-title">Saved questions</h2><button id="close-questions" type="button">Close</button></div>
+  <p id="questions-help"></p>
+  <div class="toolbar"><button id="copy-questions" type="button" class="primary">Copy questions</button><button id="export-questions" type="button">Export notes</button></div>
+  <p id="copy-status" class="small muted" role="status"></p><div id="copy-fallback" hidden><label for="copy-text">Copy this text into the conversation</label><textarea id="copy-text" readonly></textarea></div>
+  <div id="questions-list"></div>
+</dialog>
+<script id="review-data" type="application/json">__DATA__</script>
+<script>
+(() => {
+'use strict';
+const data=JSON.parse(document.getElementById('review-data').textContent);
+const chunks=data.chunks;
+document.title=data.label+' · Guided review';
+document.getElementById('pr-label').textContent=data.label;
+document.getElementById('pr-title').textContent=data.title;
+document.getElementById('head-label').textContent=data.head.slice(0,10);
+document.getElementById('pr-link').href=data.url;
+document.getElementById('review-count').textContent='REVIEW ORDER · '+chunks.length+' CHUNKS';
+const storageKey='guided-pr-review-'+data.reviewId;
+const artifactMode=data.surface==='artifact';
+const token=document.querySelector('meta[name="review-token"]')?.content||'';
+const serverMode=!artifactMode && token!=='' && token!=='__'+'SAVE_TOKEN__' && location.protocol.startsWith('http');
+if(artifactMode)document.getElementById('export-questions').textContent='Show notes JSON';
+const $=id=>document.getElementById(id);
+let state={version:1,reviewId:data.reviewId,head:data.head,updatedAt:0,current:1,reviewed:[],notes:[],drafts:{}};
+let saveTimer=null,saveSequence=0,queue=Promise.resolve(),browserSaved=false;
+let hostStore=null,hostShape=null;
+let editor=null;
+const uid=()=>typeof crypto.randomUUID==='function'?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);
+const showText=text=>String(text).replaceAll('\u0000','␀');
+const current=()=>chunks[state.current-1];
+function create(tag,className,text){const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined)node.textContent=text;return node;}
+function button(label,action,className=''){const node=create('button',className,label);node.type='button';node.addEventListener('click',action);return node;}
+function savingLabel(){
+  if(serverMode)return 'Notes save locally';
+  if(hostStore)return 'Notes save with this review';
+  return browserSaved?'Notes save in this browser':'Notes kept in this page · copy before closing';
+}
+function describeSaving(){
+  const durable=serverMode||hostStore;
+  $('notes-help').textContent='Click a line number to add a question. '+(durable?'Notes save alongside this review; tell your assistant “answer my saved notes” when ready.':'Use Copy questions to send your notes into the conversation. Browser storage is used when available; otherwise copy your notes before closing.')+' The review checkbox only records progress here.';
+  $('questions-help').textContent=durable?'Tell your assistant “answer my saved notes for '+data.label+'”. Notes are saved alongside this review, with file and line context.':'Copy your questions into the conversation so the assistant can read them. Notes stay on this page if browser storage is unavailable.';
+  $('save-status').textContent=savingLabel();
+}
+// Drafts stay in browser storage: they change on every keystroke and an
+// assistant only needs saved questions.
+function hostRecord(){return {reviewId:state.reviewId,head:state.head,base:data.base,url:data.url,
+  updatedAt:state.updatedAt,current:state.current,reviewed:state.reviewed,notes:state.notes};}
+const hostShapeOf=record=>JSON.stringify({...record,updatedAt:0});
+function save(immediate=false){
+  state.updatedAt=Date.now();
+  try{localStorage.setItem(storageKey,JSON.stringify(state));browserSaved=true;}catch{browserSaved=false;}
+  clearTimeout(saveTimer);
+  $('save-status').textContent=serverMode||hostStore?'Saving…':browserSaved?'Saved in this browser':'Notes kept in this page · export before closing';
+  const write=()=>{
+    const sequence=++saveSequence;
+    if(hostStore){
+      // One write at a time, in order, and only when the record really changed.
+      const record=hostRecord(),shape=hostShapeOf(record);
+      if(shape===hostShape)$('save-status').textContent=savingLabel();
+      else{
+        hostShape=shape;
+        queue=queue.catch(()=>{}).then(async()=>{
+          await hostStore.set(record);
+          if(sequence===saveSequence)$('save-status').textContent='Saved with this review';
+        }).catch(()=>{$('save-status').textContent=browserSaved?'Saved in browser · shared save unavailable':'Shared save unavailable · copy notes before closing';});
+      }
+    }
+    if(!serverMode)return;
+    const body=JSON.stringify(state);
+    queue=queue.catch(()=>{}).then(async()=>{
+      const response=await fetch('/state',{method:'POST',headers:{'Content-Type':'application/json','X-Review-Token':token},body,keepalive:true});
+      if(!response.ok)throw Error('save failed');
+      if(sequence===saveSequence)$('save-status').textContent='Saved locally';
+    }).catch(()=>{$('save-status').textContent=browserSaved?'Saved in browser · file save unavailable':'File save unavailable · export notes before closing';});
+  };
+  if(immediate)write();else saveTimer=setTimeout(write,250);
+}
+function locationLabel(note){return note.side==='file'?'whole file':(note.side==='old'?'old':'new')+' line '+note.line;}
+function updateCounts(){$('notes-button').textContent='Questions ('+state.notes.length+')';}
+function renderNav(){
+  $('chunks-nav').replaceChildren();$('mobile-chunk').replaceChildren();
+  for(const chunk of chunks){
+    const entry=button('',()=>go(chunk.id),'chunk-link');entry.append(create('span','chunk-num',String(chunk.id).padStart(2,'0')),create('span','',chunk.title),create('span','done-mark',state.reviewed.includes(chunk.id)?'✓':''));
+    entry.dataset.chunk=chunk.id;if(chunk.id===state.current)entry.setAttribute('aria-current','step');$('chunks-nav').append(entry);
+    const option=create('option','',chunk.id+'. '+chunk.title);option.value=chunk.id;$('mobile-chunk').append(option);
+  }
+  $('mobile-chunk').value=state.current;
+}
+function go(id){if(id<1||id>chunks.length)return;state.current=id;render();save();window.scrollTo({top:0,behavior:'instant'});}
+function draftKey(file,side,line){return [state.current,file,side,line??'file'].join('|');}
+function openEditor(file,side,line,rowElement,note){
+  if(editor)editor.remove();document.querySelectorAll('.diff-row.selected').forEach(n=>n.classList.remove('selected'));
+  const key=draftKey(file.path,side,line);
+  const box=create('div','annotation');box.dataset.editor='true';editor=box;
+  const area=create('textarea');area.id='question-editor';area.value=note?note.text:(state.drafts[key]||'');area.placeholder='Ask a question or leave a review note…';
+  const label=create('label','',(note?'Edit question':'Add question')+' · '+(side==='file'?'whole file':side+' line '+line));label.htmlFor=area.id;box.append(label,area);
+  area.addEventListener('input',()=>{state.drafts[key]=area.value;save();});
+  const actions=create('div','toolbar');
+  actions.append(button('Save question',()=>{
+    const text=area.value.trim();if(!text){area.focus();return;}
+    const entry={id:note?.id||uid(),chunk:state.current,title:current().title,file:file.path,side,line:line??null,text,createdAt:note?.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString()};
+    if(note)state.notes=state.notes.map(n=>n.id===note.id?entry:n);else state.notes.push(entry);
+    delete state.drafts[key];save(true);renderFileNotes(file);box.remove();editor=null;updateCounts();
+  },'primary'),button('Cancel',()=>{box.remove();editor=null;document.querySelectorAll('.diff-row.selected').forEach(n=>n.classList.remove('selected'));}));
+  box.append(actions);
+  if(rowElement){rowElement.classList.add('selected');rowElement.after(box);}else document.getElementById(fileId(file)).querySelector('.file-header').after(box);
+  area.focus({preventScroll:true});box.scrollIntoView({block:'nearest'});
+}
+const fileId=file=>'file-'+current().files.indexOf(file);
+function renderFileNotes(file){
+  const section=document.getElementById(fileId(file));section.querySelectorAll('.saved-note').forEach(n=>n.remove());
+  for(const note of state.notes.filter(n=>n.chunk===state.current&&n.file===file.path)){
+    const box=create('div','saved-note');box.dataset.noteId=note.id;box.append(create('div','small muted','Question · '+locationLabel(note)),create('p','note-text',note.text));
+    const actions=create('div','toolbar');
+    const row=note.side==='file'?null:section.querySelector('[data-'+note.side+'="'+note.line+'"]');
+    actions.append(button('Edit',()=>openEditor(file,note.side,note.line,row,note)),button('Remove',()=>{state.notes=state.notes.filter(n=>n.id!==note.id);save(true);renderFileNotes(file);updateCounts();}));box.append(actions);
+    if(row)row.after(box);else section.querySelector('.file-header').after(box);
+  }
+}
+function renderFile(file,index){
+  const section=create('section','file');section.id='file-'+index;section.setAttribute('aria-label',file.path);
+  const header=create('div','file-header');const pathBox=create('div','file-path');const parts=file.short.split('/');const basename=parts.pop();pathBox.append(create('div','file-title',basename),create('div','muted',parts.join('/')+'/'));
+  const actions=create('div','file-actions');actions.append(create('span','',file.recovered?'Recovered text diff':'+'+file.additions+' / −'+file.deletions),button('Add question',()=>openEditor(file,'file',null,null)));
+  const link=create('a','','Source ↗');link.target='_blank';link.rel='noopener noreferrer';const deleted=file.deleted;link.href=data.repositoryUrl+'/blob/'+(deleted?data.base:data.head)+'/'+file.path.split('/').map(encodeURIComponent).join('/');actions.append(link);header.append(pathBox,actions);section.append(header);
+  if(file.recovered)section.append(create('div','binary-note','Git reports this UTF-8 file as binary. The full text diff is recovered below; ␀ marks any literal NUL byte.'));
+  const diff=create('div','diff');const heading=create('div','diff-header');for(const text of ['Old','New','','Diff'])heading.append(create('span','',text));diff.append(heading);
+  file.rows.forEach((line,rowIndex)=>{
+    if(line.kind==='hunk'||line.kind==='meta'){diff.append(create('div',line.kind==='hunk'?'hunk':'meta-line',showText(line.text)));return;}
+    const row=create('div','diff-row '+line.kind);row.dataset.row=rowIndex;
+    for(const side of ['old','new']){
+      if(line[side]===null){row.append(create('span'));continue;}
+      row.dataset[side]=line[side];const b=button(String(line[side]),()=>openEditor(file,side,line[side],row),'line-number');b.setAttribute('aria-label','Add question on '+file.path+' '+side+' line '+line[side]);row.append(b);
+    }
+    row.append(create('span','sign',line.kind==='add'?'+':line.kind==='del'?'−':' '));
+    const pre=create('pre','source-line');pre.append(create('code','',showText(line.text)||' '));
+    if(line.text.length>1600){const detail=create('details','long-line');detail.append(create('summary','',line.text.length.toLocaleString()+' characters · show full generated line'),pre);row.append(detail);}else row.append(pre);
+    diff.append(row);
+  });section.append(diff);return section;
+}
+function renderContext(chunk){
+  const blocks=chunk.context||[];$('related-context').hidden=blocks.length===0;$('context-items').replaceChildren();
+  for(const block of blocks){
+    const item=create('section','context-item');item.append(create('h3','',block.title),create('p','context-body',block.body));
+    if(block.links?.length){
+      const links=create('div','context-links');
+      for(const ref of block.links){
+        if(Number.isInteger(ref.chunk)){links.append(button(ref.label,()=>go(ref.chunk)));continue;}
+        try{const url=new URL(ref.url);if(!['http:','https:'].includes(url.protocol))continue;const link=create('a','',ref.label);link.href=url.href;link.target='_blank';link.rel='noopener noreferrer';links.append(link);}catch{}
+      }
+      item.append(links);
+    }
+    if(block.code){const detail=create('details','context-code');const pre=create('pre');pre.append(create('code','',showText(block.code)));detail.append(create('summary','',block.codeLabel||'Supporting excerpt'),pre);item.append(detail);}
+    $('context-items').append(item);
+  }
+}
+function render(){
+  editor=null;const chunk=current();renderNav();updateCounts();
+  $('chunk-meta').textContent='Chunk '+chunk.id+' of '+chunks.length+' · '+chunk.files.length+' files · +'+chunk.additions+' / −'+chunk.deletions;
+  $('chunk-title').textContent=chunk.title;$('objective').textContent=chunk.objective;
+  renderContext(chunk);
+  $('focus').replaceChildren(...chunk.focus.map(text=>create('li','',text)));
+  $('reviewed').checked=state.reviewed.includes(chunk.id);
+  for(const id of ['previous','previous-bottom'])$(id).disabled=chunk.id===1;
+  for(const id of ['next','next-bottom'])$(id).disabled=chunk.id===chunks.length;
+  $('next-label').textContent=chunk.id<chunks.length?'Up next: '+chunks[chunk.id].title:'End of review';
+  $('file-index').replaceChildren();$('files').replaceChildren();
+  for(const [index,file] of chunk.files.entries()){
+    const item=create('li');const a=create('a','',file.short.split('/').pop());a.href='#file-'+index;item.append(a);$('file-index').append(item);
+    $('files').append(renderFile(file,index));renderFileNotes(file);
+  }
+}
+function questionsText(){return data.label+' review questions\nSnapshot: '+data.head+'\nBase: '+data.base+'\n\n'+state.notes.map((n,i)=>(i+1)+'. Chunk '+n.chunk+' — '+n.title+'\n'+n.file+' · '+locationLabel(n)+'\n'+n.text).join('\n\n');}
+function showQuestions(){
+  $('questions-list').replaceChildren();$('copy-status').textContent='';$('copy-fallback').hidden=true;
+  if(!state.notes.length)$('questions-list').append(create('p','muted','No saved questions yet. Click a line number or Add question beside a file.'));
+  for(const note of state.notes){const item=create('div','question-item');item.append(create('div','small muted','Chunk '+note.chunk+' · '+note.file+' · '+locationLabel(note)),create('p','',note.text),button('Go to this question',()=>{$('questions-dialog').close();go(note.chunk);document.querySelector('[data-note-id="'+note.id+'"]').scrollIntoView({block:'center'});}));$('questions-list').append(item);}
+  $('questions-dialog').showModal();
+}
+for(const id of ['previous','previous-bottom'])$(id).addEventListener('click',()=>go(state.current-1));
+for(const id of ['next','next-bottom'])$(id).addEventListener('click',()=>go(state.current+1));
+$('mobile-chunk').addEventListener('change',e=>go(Number(e.target.value)));
+$('reviewed').addEventListener('change',e=>{state.reviewed=state.reviewed.filter(id=>id!==state.current);if(e.target.checked)state.reviewed.push(state.current);renderNav();save();});
+$('notes-button').addEventListener('click',showQuestions);$('close-questions').addEventListener('click',()=>$('questions-dialog').close());
+$('copy-questions').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(questionsText());$('copy-status').textContent='Copied with file and line context. Paste into this conversation.';}catch{$('copy-text').value=questionsText();$('copy-fallback').hidden=false;$('copy-text').select();}});
+$('export-questions').addEventListener('click',()=>{
+  const text=JSON.stringify({pr:data.url,reviewId:data.reviewId,head:data.head,base:data.base,notes:state.notes},null,2);
+  $('copy-text').value=text;$('copy-fallback').hidden=false;$('copy-status').textContent='Copy these notes with their snapshot and line context.';
+  if(artifactMode)return;
+  try{const url=URL.createObjectURL(new Blob([text],{type:'application/json'}));const a=create('a');a.href=url;a.download='pr-'+data.number+'-notes.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}catch{}
+});
+window.addEventListener('pagehide',()=>save(true));
+// Optional host document store, feature-detected and absent everywhere else.
+// A host that grants one keeps notes with the review so an assistant can read
+// them back; every other host keeps browser storage and the copy/export handoff.
+async function connectHostStore(){
+  if(serverMode||typeof window.claude?.use!=='function')return;
+  let store=null;
+  try{store=await window.claude.use('db');}catch{}
+  if(!store)return;
+  let reference=null,remote=null;
+  try{reference=store.doc('reviews/'+data.reviewId);const snapshot=await reference.get();remote=snapshot.exists?snapshot.data():null;}catch{return;}
+  hostStore=reference;
+  if(remote&&remote.reviewId===data.reviewId&&remote.head===data.head&&(remote.updatedAt||0)>(state.updatedAt||0)){
+    // Snapshot bodies can be frozen; the page mutates its own copies.
+    if(Array.isArray(remote.notes))state.notes=remote.notes.map(note=>({...note}));
+    if(Array.isArray(remote.reviewed))state.reviewed=[...remote.reviewed];
+    if(Number.isInteger(remote.current)&&remote.current>=1&&remote.current<=chunks.length)state.current=remote.current;
+    state.updatedAt=remote.updatedAt||0;
+    hostShape=hostShapeOf(hostRecord());
+    render();
+  }else if(state.notes.length||state.reviewed.length)save(true);
+  else hostShape=hostShapeOf(hostRecord());
+  describeSaving();
+}
+async function start(){
+  try{const probe=storageKey+':probe';localStorage.setItem(probe,'1');localStorage.removeItem(probe);browserSaved=true;const local=JSON.parse(localStorage.getItem(storageKey)||'null');if(local&&local.reviewId===data.reviewId)state={...state,...local};}catch{}
+  if(serverMode){try{const response=await fetch('/state',{headers:{'X-Review-Token':token}});if(response.ok){const saved=await response.json();if(saved&&saved.reviewId===data.reviewId&&(saved.updatedAt||0)>=(state.updatedAt||0))state={...state,...saved};}}catch{}}
+  if(!Number.isInteger(state.current)||state.current<1||state.current>chunks.length)state.current=1;
+  render();describeSaving();connectHostStore();
+}
+start();
+})();
+</script>
+<!--/page-body-->
+</body>
+</html>

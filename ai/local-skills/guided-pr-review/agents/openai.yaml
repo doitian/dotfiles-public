@@ -1,0 +1,4 @@
+interface:
+  display_name: "Guided PR Review"
+  short_description: "Review PRs in chunks with saved line annotations"
+  default_prompt: "Use $guided-pr-review to review this PR in a continuous HTML page with logical chunks and saved line annotations."
