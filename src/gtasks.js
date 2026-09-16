@@ -711,6 +711,19 @@ export class TasksView {
         this.linkSelected = 0;
     }
 
+  async copyPrompt() {
+    const selected = this.visualRows();
+    if (!selected.length) return;
+    const ids = selected.map(task => this.ids?.[task.id] ?? task.id).join(", ");
+    this.visual = null;
+    try {
+      await this.writeClipboard(`Work on gtasks item ${ids}.`);
+      this.message = "Prompt copied.";
+    } catch (error) {
+      this.message = error.message ?? String(error);
+    }
+  }
+
     copyMarkdown() {
         const selected = this.visual != null ? this.visualRows() : this.task ? flattenTasks(this.tasks, [this.task.id]) : [];
         if (!selected.length) return;
@@ -987,6 +1000,7 @@ export class TasksView {
             if (text === "g") this.selected = 0;
             else if (text === "x") return this.openWeb();
             else if (text === "f") return this.openFound();
+            else if (text === "p") return this.copyPrompt();
             this.clamp();
             return;
         }
@@ -1118,7 +1132,7 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
     else lines.push(...body.slice(start, start + pageSize));
     while (lines.length < height - 5) lines.push("");
     lines.push(`j/k move  V visual  Enter/l cd  h/Backspace up  / search  Esc clear  gx open  gf links  q quit`);
-    lines.push("a/o/O add  e edit  s due  , ids  y yank  Y copy  d cut  D delete  p/P paste  Space/x/u  . all  m print  r refresh");
+    lines.push("a/o/O add  e edit  s due  , ids  y yank  Y copy  gp prompt  d cut  D delete  p/P paste  Space/x/u  . all  m print  r refresh");
     let prompt = view.message || "";
     if (view.mode === "search") prompt = `/ ${view.input}  (Enter apply, Esc cancel)`;
     if (view.mode === "due") prompt = `Due: ${view.input}  (${view.message || "YYYY-MM-DD, today, tomorrow; empty clears; Enter save, Esc cancel"})`;
@@ -1465,6 +1479,7 @@ TUI: j/k or arrows move; V starts visual selection; Enter/l enters a task; h/Bac
 gg / G select first / last; gx opens the selected task in the default browser; gf opens found links, including a Keep note.
 a adds here; o after; O before; e edits; s sets due date; Enter inserts a newline; Ctrl+S saves; Esc cancels.
 y yanks; Y copies Markdown with IDs; d cuts; D deletes with confirmation; y/d/D/Y apply to the visual selection; p pastes after; P pastes before.
+gp copies a prompt for the current task or visual selection: Work on gtasks item ID1, ID2.
 Space toggles; x done; u undone.
 . toggles completed tasks (hidden by default). , toggles task IDs (^id).
 m prints the focused, filtered list as raw Markdown.

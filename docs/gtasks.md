@@ -155,6 +155,7 @@ prompt lets you reload Google's actual state.
 | gg / G | Select the first / last task |
 | gx | Open the selected task in the default browser |
 | gf | Open found links, including a Keep note; choose if several |
+| gp | Copy a prompt for the current task or visual selection: `Work on gtasks item ID1, ID2.` |
 | / | Search the current subtree, keeping matching tasks' ancestors visible |
 | Enter / Esc while searching | Keep / cancel the search |
 | V | Start visual selection; j/k extends it; V again leaves it |
