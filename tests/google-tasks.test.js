@@ -796,25 +796,27 @@ describe("Task navigation and actions", () => {
         expect(renderTasks(view)).not.toContain("- [ ] Project  ^google-p");
     });
 
-    test("gx opens the selected task in the browser", async () => {
+    test("gx opens the selected task in the browser", () => {
         const { view } = fixture();
         const opened = [];
-        view.openUrl = async url => { opened.push(url); };
+        let resume;
+        view.openUrl = url => new Promise(resolve => { opened.push(url); resume = resolve; });
         press(view, "g");
-        await press(view, "x");
+        expect(press(view, "x")).toBeUndefined();
         expect(view.message).toContain("No web link");
         expect(opened).toEqual([]);
         view.tasks.find(task => task.id === "p").webViewLink = "https://tasks.google.com/task/p";
         press(view, "g");
-        await press(view, "x");
+        expect(press(view, "x")).toBeUndefined();
         expect(opened).toEqual(["https://tasks.google.com/task/p"]);
         expect(view.message).toBe("Opened.");
+        resume();
         press(view, "g");
         press(view, "g");
         expect(view.selected).toBe(0);
     });
 
-    test("gf opens found links and asks when several", async () => {
+    test("gf opens found links and asks when several", () => {
         expect(taskLinks({
             title: "See [Docs](https://docs.example/a)",
             notes: "Also https://ex.com/b.",
@@ -830,14 +832,14 @@ describe("Task navigation and actions", () => {
         ]);
         const { view } = fixture();
         const opened = [];
-        view.openUrl = async url => { opened.push(url); };
+        view.openUrl = url => { opened.push(url); return new Promise(() => {}); };
         press(view, "g");
-        await press(view, "f");
+        expect(press(view, "f")).toBeUndefined();
         expect(view.message).toBe("No links.");
         expect(opened).toEqual([]);
         view.tasks.find(task => task.id === "p").notes = "Read https://ex.com/only";
         press(view, "g");
-        await press(view, "f");
+        expect(press(view, "f")).toBeUndefined();
         expect(opened).toEqual(["https://ex.com/only"]);
         expect(view.message).toBe("Opened.");
         view.tasks.find(task => task.id === "p").links = [{ type: "keep_note", link: "https://keep.google.com/n" }];
@@ -848,12 +850,12 @@ describe("Task navigation and actions", () => {
         expect(renderTasks(view)).toContain("Open 1/2: Keep Note");
         press(view, "j");
         expect(renderTasks(view)).toContain("Open 2/2: GitHub");
-        await press(view, "\r", "return");
+        expect(press(view, "\r", "return")).toBeUndefined();
         expect(opened).toEqual(["https://ex.com/only", "https://github.com/foo"]);
         expect(view.mode).toBe("browse");
         press(view, "g");
         press(view, "f");
-        await press(view, "1");
+        expect(press(view, "1")).toBeUndefined();
         expect(opened.at(-1)).toBe("https://keep.google.com/n");
         press(view, "g");
         press(view, "f");

@@ -593,10 +593,13 @@ export function formatId(id, ids) {
     return `^${ids?.[id] ?? id}`;
 }
 
-export async function openInBrowser(url) {
-    if (process.platform === "win32") await $`cmd /c start "" ${url}`.quiet();
-    else if (process.platform === "darwin") await $`open ${url}`.quiet();
-    else await $`xdg-open ${url}`.quiet();
+export function openInBrowser(url) {
+    const command = process.platform === "win32"
+        ? ["cmd", "/c", "start", "", url]
+        : process.platform === "darwin"
+            ? ["open", url]
+            : ["xdg-open", url];
+    Bun.spawn(command, { stdin: "ignore", stdout: "ignore", stderr: "ignore", detached: true }).unref();
 }
 
 export function taskLinks(task) {
@@ -695,7 +698,15 @@ export class TasksView {
             this.message = missing;
             return;
         }
-        return Promise.resolve(this.openUrl(url)).then(() => { this.message = "Opened."; }, error => { this.message = error.message ?? String(error); });
+        try {
+            const result = this.openUrl(url);
+            this.message = "Opened.";
+            if (result != null && typeof result.then === "function") {
+                void Promise.resolve(result).catch(error => { this.message = error.message ?? String(error); });
+            }
+        } catch (error) {
+            this.message = error.message ?? String(error);
+        }
     }
 
     openWeb() {
