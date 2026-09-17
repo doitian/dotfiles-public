@@ -9,32 +9,7 @@
       "skillFolderHash": "6bfe555e89a6b264e09d5ece7c4040226458c8e5",
       "installedAt": "2026-09-12T10:35:06.634Z",
       "updatedAt": "2026-09-12T10:35:06.634Z"
-    },
-    "tty7": {
-      "source": "l0ng-ai/tty7",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/l0ng-ai/tty7.git",
-      "skillPath": "skills/tty7/SKILL.md",
-      "skillFolderHash": "7f0529a43485babf51e0cee592c82184a6d29d45",
-      "installedAt": "2026-09-16T15:42:44.735Z",
-      "updatedAt": "2026-09-16T15:42:44.735Z"
     }
   },
-  "dismissed": {
-    "findSkillsPrompt": true
-  },
-  "lastSelectedAgents": [
-    "amp",
-    "cline",
-    "codex",
-    "cursor",
-    "droid",
-    "gemini-cli",
-    "github-copilot",
-    "kilo",
-    "kimi-code-cli",
-    "opencode",
-    "warp",
-    "zed"
-  ]
+  "dismissed": {}
 }
