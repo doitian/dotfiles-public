@@ -3,7 +3,7 @@
   "font_fallbacks": [
     "DejaVu Sans Mono",
     "Noto Sans CJK SC",
-    "Noto Color Emoji GPUI"
+    "Noto Color Emoji"
   ],
   "font_family_bold": null,
   "font_family_italic": null,
@@ -11,7 +11,7 @@
   "font_size": 15.0,
   "line_height": 1.4,
   "ui_font_size": 16.0,
-  "ui_font_family": "MesloLGM Nerd Font",
+  "ui_font_family": "CartographCF Nerd Font",
   "theme": "light",
   "theme_preset": "catppuccin_latte",
   "theme_follow_system": false,
@@ -27,7 +27,7 @@
     "SplitDown": "alt-_"
   },
   "keybinding_preset": "default",
-  "prefix": "ctrl-b",
+  "prefix": "ctrl-q",
   "shell": null,
   "custom_shells": [],
   "link_url": true,
