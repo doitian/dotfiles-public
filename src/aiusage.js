@@ -101,7 +101,7 @@ ConvertTo-Json -Compress -InputObject @($ports | Sort-Object -Unique)
 }
 
 export async function readInstances(port) {
-  const response = await fetch(`http://127.0.0.1:${port}/instances`, {
+  const response = await fetch(`http://127.0.0.1:${port}/usage/fetch`, {
     headers: { "X-Ulanzi-Bridge": "1" },
     signal: AbortSignal.timeout(3000),
     redirect: "error",
@@ -112,16 +112,56 @@ export async function readInstances(port) {
   return data.instances;
 }
 
+async function refreshUsage(port) {
+  const response = await fetch(`http://127.0.0.1:${port}/usage/refresh`, {
+    method: "POST",
+    headers: { "X-Ulanzi-Bridge": "1" },
+    signal: AbortSignal.timeout(65000),
+    redirect: "error",
+  });
+  if (!response.ok) throw new Error(`Ulanzi refresh returned HTTP ${response.status}`);
+  const data = await response.json();
+  if (!data?.providers || typeof data.providers !== "object" || Array.isArray(data.providers)
+    || !Number.isFinite(data.fetchedAt)) {
+    throw new Error("Ulanzi refresh returned invalid provider data");
+  }
+  return data;
+}
+
+function refreshedInstances(instances, data) {
+  return instances.map((instance) => {
+    if (!data || instance.fetchedAt >= data.fetchedAt) return instance;
+    const settings = instance.settings ?? {};
+    const provider = data.providers[settings.provider || "codex"];
+    const email = (settings.account || "").trim().toLowerCase();
+    const account = Array.isArray(provider?.accounts)
+      ? provider.accounts.find((row) => email ? (row.email || "").toLowerCase() === email : row.active === true)
+      || (provider.accounts.length === 1 && !provider.accounts[0].email ? provider.accounts[0] : null)
+      : (!email || (provider?.email || "").toLowerCase() === email ? provider : null);
+    const limit = !provider?.error && !account?.error && account?.limits?.[settings.limit || "five_hour"];
+    let usage = {};
+    if (Number.isFinite(limit?.remaining_amount)) {
+      usage = { remaining_amount: limit.remaining_amount, currency: limit.currency };
+    } else if (Number.isFinite(limit?.remaining_percent) || Number.isFinite(limit?.used_percent)) {
+      const remaining = Number.isFinite(limit.remaining_percent) ? limit.remaining_percent : 100 - limit.used_percent;
+      usage = { remaining_percent: Math.max(0, Math.min(100, remaining)), resets_at: limit.resets_at };
+    }
+    return { ...instance, usage, fetchedAt: data.fetchedAt };
+  });
+}
+
 export async function createUsageReader(cachePath, discoverPorts = findPorts) {
   const cached = await Bun.file(cachePath).json().catch(() => null);
   let port = Number.isInteger(cached) && cached > 0 && cached <= 65535 ? cached : undefined;
-  return async function refresh() {
+  let freshUsage;
+  async function read() {
     if (port) {
       try {
         return await readInstances(port);
       } catch {
         port = undefined;
-        await unlink(cachePath).catch(() => {});
+        freshUsage = undefined;
+        await unlink(cachePath).catch(() => { });
       }
     }
     const ports = await discoverPorts();
@@ -133,13 +173,19 @@ export async function createUsageReader(cachePath, discoverPorts = findPorts) {
         try {
           await mkdir(dirname(cachePath), { recursive: true });
           await Bun.write(cachePath, `${port}\n`);
-        } catch {}
+        } catch { }
         return instances;
       } catch (error) {
         errors.push(`${candidate}: ${error.message}`);
       }
     }
     throw new Error(`Could not read Ulanzi usage (${errors.join("; ")})`);
+  }
+  return async function refresh(force = false) {
+    const instances = await read();
+    if (force) freshUsage = await refreshUsage(port);
+    // Widget snapshots can lag the provider refresh by one minute.
+    return refreshedInstances(instances, freshUsage);
   };
 }
 
@@ -196,7 +242,7 @@ async function main() {
     },
   });
   if (values.help) {
-    console.log("Usage: aiusage [--once] [--refresh]\n\nShow Ulanzi AI usage, updating every 5 seconds. Press r to refresh, q or Ctrl+C to quit.\n--once     Print one snapshot (also used when stdout is redirected).\n--refresh  Refresh usage on launch (Linux fetches fresh provider data).\nWindows: Ulanzi Studio AI usage plugin. Linux: ulanzi-niri ai-usage --json.");
+    console.log("Usage: aiusage [--once] [--refresh]\n\nShow Ulanzi AI usage, updating every 5 seconds. Press r to refresh, q or Ctrl+C to quit.\n--once     Print one snapshot (also used when stdout is redirected).\n--refresh  Request fresh provider data on launch.\nWindows: Ulanzi Studio AI usage plugin. Linux: ulanzi-niri ai-usage --json.");
     return;
   }
   let refresh;
@@ -250,6 +296,7 @@ async function main() {
       if (refreshRequested) {
         refreshRequested = false;
         if (process.platform === "linux") await refreshLinuxUsage();
+        else force = true;
       }
       output = formatTable(await refresh(force));
     } catch (error) {
@@ -263,7 +310,7 @@ async function main() {
   await tick(values.refresh);
 }
 
-if (import.meta.main) {
+if (import.meta.main || Bun.isStandaloneExecutable) {
   await main().catch((error) => {
     console.error(`aiusage: ${singleLine(error.message)}`);
     process.exitCode = 1;
