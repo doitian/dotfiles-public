@@ -143,33 +143,81 @@ export async function createUsageReader(cachePath, discoverPorts = findPorts) {
   };
 }
 
+export function linuxInstances(data) {
+  const providers = data?.providers;
+  if (!providers || typeof providers !== "object" || Array.isArray(providers)) {
+    throw new Error("ulanzi-niri returned no providers object");
+  }
+  const labels = { claude: "Claude", codex: "Codex", "opencode-go": "OpenCode Go", moonshot: "Moonshot", xai: "xAI" };
+  const instances = [];
+  for (const [provider, details] of Object.entries(providers)) {
+    const accounts = Array.isArray(details?.accounts) && details.accounts.length ? details.accounts : [{}];
+    for (const account of accounts) {
+      const settings = { provider, label: labels[provider] ?? provider, account: account?.email };
+      const limits = account?.error ? null : account?.limits;
+      const entries = limits && typeof limits === "object" && !Array.isArray(limits) ? Object.entries(limits) : [];
+      if (!entries.length) instances.push({ settings: { ...settings, limit: "-" } });
+      for (const [limit, usage] of entries) {
+        instances.push({ settings: { ...settings, limit }, usage });
+      }
+    }
+  }
+  return instances;
+}
+
+export async function readLinuxInstances(refresh = false) {
+  const args = refresh ? ["--refresh", "--json"] : ["--json"];
+  const result = await $`ulanzi-niri ai-usage ${args}`.quiet().nothrow();
+  if (result.exitCode !== 0) {
+    throw new Error(`Could not read Ulanzi usage: ${result.stderr.toString().trim() || `ulanzi-niri exited with code ${result.exitCode}`}`);
+  }
+  let data;
+  try {
+    data = JSON.parse(result.stdout.toString());
+  } catch {
+    throw new Error("ulanzi-niri returned invalid JSON");
+  }
+  return linuxInstances(data);
+}
+
+async function refreshLinuxUsage() {
+  const result = await $`ulanzi-niri control refresh-ai-usage`.quiet().nothrow();
+  if (result.exitCode !== 0) {
+    throw new Error(`Could not refresh Ulanzi usage: ${result.stderr.toString().trim() || `ulanzi-niri exited with code ${result.exitCode}`}`);
+  }
+}
+
 async function main() {
   const { values } = parseArgs({
     options: {
       once: { type: "boolean" },
+      refresh: { type: "boolean" },
       help: { type: "boolean", short: "h" },
     },
   });
   if (values.help) {
-    console.log("Usage: aiusage [--once]\n\nShow Ulanzi AI usage, refreshing every 5 seconds. Press q or Ctrl+C to quit.\n--once  Print one snapshot (also used when stdout is redirected).\nWindows only; Linux support is deferred.");
+    console.log("Usage: aiusage [--once] [--refresh]\n\nShow Ulanzi AI usage, updating every 5 seconds. Press r to refresh, q or Ctrl+C to quit.\n--once     Print one snapshot (also used when stdout is redirected).\n--refresh  Refresh usage on launch (Linux fetches fresh provider data).\nWindows: Ulanzi Studio AI usage plugin. Linux: ulanzi-niri ai-usage --json.");
     return;
   }
-  if (process.platform !== "win32") {
-    throw new Error(process.platform === "linux"
-      ? "Linux support is deferred; ulanzi-niri ai-usage is not integrated yet."
-      : `Unsupported platform: ${process.platform}`);
+  let refresh;
+  if (process.platform === "linux") {
+    refresh = readLinuxInstances;
+  } else if (process.platform === "win32") {
+    const cachePath = join(process.env.LOCALAPPDATA || join(homedir(), "AppData", "Local"), "aiusage", "port.json");
+    refresh = await createUsageReader(cachePath);
+  } else {
+    throw new Error(`Unsupported platform: ${process.platform}`);
   }
 
-  const cachePath = join(process.env.LOCALAPPDATA || join(homedir(), "AppData", "Local"), "aiusage", "port.json");
-  const refresh = await createUsageReader(cachePath);
-
   if (values.once || !process.stdout.isTTY) {
-    console.log(formatTable(await refresh()));
+    console.log(formatTable(await refresh(values.refresh)));
     return;
   }
 
   let timer;
   let stopped = false;
+  let loading = false;
+  let refreshRequested = false;
   const wasRaw = process.stdin.isRaw;
   const stop = () => {
     stopped = true;
@@ -185,21 +233,34 @@ async function main() {
     process.stdin.resume();
     process.stdin.on("data", (data) => {
       if (/[qQ\x03]/.test(data.toString())) stop();
+      if (/[rR]/.test(data.toString())) {
+        refreshRequested = true;
+        if (!loading) {
+          clearTimeout(timer);
+          void tick();
+        }
+      }
     });
   }
   process.stdout.write("\x1b[?1049h\x1b[?25lLoading AI usage…\n");
-  async function tick() {
+  async function tick(force = false) {
+    loading = true;
     let output;
     try {
-      output = formatTable(await refresh());
+      if (refreshRequested) {
+        refreshRequested = false;
+        if (process.platform === "linux") await refreshLinuxUsage();
+      }
+      output = formatTable(await refresh(force));
     } catch (error) {
       output = colorize(singleLine(error.message), "red");
     }
+    loading = false;
     if (stopped) return;
-    process.stdout.write(`\x1b[H\x1b[2J${output}\n`);
-    timer = setTimeout(tick, 5000);
+    process.stdout.write(`\x1b[H\x1b[2J${output}\n\nr refresh · q quit\n`);
+    timer = setTimeout(tick, refreshRequested ? 0 : 5000);
   }
-  await tick();
+  await tick(values.refresh);
 }
 
 if (import.meta.main) {
