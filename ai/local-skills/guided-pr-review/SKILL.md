@@ -5,7 +5,7 @@ description: Help a user review a pull request one logical chunk at a time in an
 
 # Guided PR review
 
-Create a single continuous review surface. Each chunk has an objective, related context, and all its files visible together. Previous/Next and the chunk sidebar navigate immediately inside the page, without sending chat messages or waiting for the agent. Questions attach to actual old/new line numbers. Describe persistence according to the host's actual capabilities.
+Create a single continuous review surface. Each chunk has an objective and all its files visible together, with context and cross-references where they help explain what changed and why. Previous/Next and the chunk sidebar navigate immediately inside the page, without sending chat messages or waiting for the agent. Questions attach to actual old/new line numbers. Describe persistence according to the host's actual capabilities.
 
 The workflow and HTML are agent-neutral. The Python helpers are optional accelerators when a filesystem and shell are available; they use the standard library, Git, and authenticated `gh`. A connected repository tool or supplied diff can provide the same snapshot in other environments. `agents/openai.yaml` is optional Codex discovery metadata, not a runtime dependency.
 
@@ -37,9 +37,11 @@ The snapshot includes all changed paths, including generated files, deletions, a
 
 Group changes by behavior or dependency: data contract, serialization, data fetching, UI integration, persistence, shared changes, then generated output. Preserve the feature's dependency order where it helps understanding. Avoid a fixed chunk count. Prefer a few hundred changed lines per chunk when practical; split a large file by whole diff hunks when there is a meaningful boundary.
 
-For each new chunk, add concise **Related context** before the diff so the reviewer can understand the change without reconstructing the surrounding system. Explain the relevant existing behavior, caller/callee relationship, data flow, API or schema contract, dependency on another chunk, or rationale behind a constraint. Choose what helps this chunk; do not repeat a fixed checklist or the objective.
+Add concise **Related context** before a chunk's diff when it helps the reviewer understand what changed and why. Connect the relevant before/after behavior to the problem, requirement, or constraint it addresses. Include surrounding behavior, caller/callee relationships, data flow, or API/schema contracts only where they clarify the change. Omit context for self-explanatory chunks; do not repeat the objective or narrate every changed line.
 
-Read neighboring unchanged code and relevant tests when needed. Link repository evidence at the captured head/base commit and exact lines; link earlier chunks for dependencies. A short supporting code excerpt can clarify a relationship outside the diff—label its source and revision, and keep longer excerpts collapsed. State uncertainty or an inference when evidence is incomplete; do not invent design history or present the PR author's explanation as verified behavior. Context supplements the exact diff and does not count toward diff coverage.
+Read neighboring unchanged code and relevant tests when needed. Cross-reference related chunks, callers, implementations, tests, or documentation where the relationship helps explain this chunk. Describe that relationship in the context body and use descriptive link labels so reviewers know why to follow them. Link repository evidence at the captured head/base commit and exact lines; use chunk links for dependencies or related changes, including later chunks when useful. A short supporting code excerpt can clarify a relationship outside the diff—label its source and revision, and keep longer excerpts collapsed.
+
+Ground explanations in the captured code and available evidence. Distinguish an observed effect from an inferred rationale, and attribute rationale taken from the PR description or linked discussion. State uncertainty when evidence is incomplete; do not invent design history or present the PR author's explanation as verified behavior. Context supplements the exact diff and does not count toward diff coverage.
 
 Write `plan.json` as an array:
 
@@ -51,7 +53,7 @@ Write `plan.json` as an array:
     "context": [
       {
         "title": "How the page uses this hook",
-        "body": "The page keeps one cursor per column. A sort change must clear those cursors before requesting another page.",
+        "body": "Previously, a sort change reused each column's cursor from the old order. This chunk clears those cursors before requesting another page so pagination starts in the new order. The linked page passes the active sort to this hook.",
         "links": [{"label": "Board page", "url": "https://github.com/owner/repo/blob/HEAD_SHA/src/Board.tsx#L40"}]
       }
     ],
@@ -63,7 +65,7 @@ Write `plan.json` as an array:
 
 Paths are repository-relative. A string owns the whole file. An object owns the listed zero-based hunks from `inventory.json`; place its remaining hunks in another chunk. A file without text hunks must use the string form. The builder rejects missing or duplicate coverage. Do not discard changes just to shorten a chunk. Distinguish review prompts from confirmed findings; do not label user progress as approval.
 
-`context` is an array of blocks with required `title` and `body` strings. Optional `links` entries have a `label` and either an absolute `http(s)` `url` or a one-based `chunk` number. Optional `code` and `codeLabel` strings add a collapsible supporting excerpt. Context uses plain text, not raw HTML. Replace example paths and `HEAD_SHA` with verified sources. Older plans without `context` still build; adding or editing only context preserves the existing review identity and saved annotation anchors.
+`context` is an optional array of blocks with required `title` and `body` strings. Optional `links` entries have a `label` and either an absolute `http(s)` `url` or a one-based `chunk` number. For example, a later chunk can link back with `{"label": "Cursor reset before fetching", "chunk": 1}` and explain how it relies on that behavior. Optional `code` and `codeLabel` strings add a collapsible supporting excerpt. Context uses plain text, not raw HTML. Replace example paths and `HEAD_SHA` with verified sources. Plans without `context` still build; adding or editing only context preserves the existing review identity and saved annotation anchors.
 
 ```sh
 python3 scripts/prepare.py build --directory /path/to/review --plan /path/to/review/plan.json
@@ -85,7 +87,7 @@ Keep the server running in a tool-managed process session. It binds only to `127
 
 Open the returned URL with the environment's browser-opening tool; `open_in_codex` is one optional implementation. A normal browser also works. A standalone `file:` opening works too, but has only browser storage when available and requires Copy questions or Export notes to share them.
 
-Verify the actual page before delivery: related context matches the selected chunk, its references resolve to the intended source or chunk, all files in a chunk are visible, Previous/Next changes chunks locally, and a line question has the right file/side/line. Verify reload persistence only where storage is available; otherwise test copy/export and label the notes as session-only. Check representative wide and narrow layouts. Use isolated output for sample annotations so testing cannot overwrite user notes. Do not claim host-specific testing, PR tests, or type checks that were not run.
+Verify the actual page before delivery: any related context explains the selected chunk's change and rationale, its references resolve to the intended source or chunk and support the stated relationship, all files in a chunk are visible, Previous/Next changes chunks locally, and a line question has the right file/side/line. Verify reload persistence only where storage is available; otherwise test copy/export and label the notes as session-only. Check representative wide and narrow layouts. Use isolated output for sample annotations so testing cannot overwrite user notes. Do not claim host-specific testing, PR tests, or type checks that were not run.
 
 Open or link the actual review surface. Explain the working handoff: **“answer my saved notes”** for an agent-readable local notes file or a granted artifact store; **Copy questions** and paste into the conversation for a sandboxed artifact without one. Prefer native comments only when the host actually exposes them for this artifact. Keep generated source helpers out of the handoff.
 
