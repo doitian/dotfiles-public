@@ -28,8 +28,10 @@ Use IDs from current task data for mutations and parents, not titles or invented
 IDs. Reuse suitable current data rather than fetching it again for each step.
 
 Use noninteractive commands. Open the TUI (`gtasks`, `gtasks tui`) or start
-`gtasks auth` only when requested. If credentials are missing, tell the user to
-run `gtasks auth`; do not handle credentials yourself.
+`gtasks auth` only when requested. For missing-credential or keystore-access
+errors, read [references/troubleshooting.md](references/troubleshooting.md)
+before asking the user to authenticate. Its sandbox retry procedure is
+specific to Codex.
 
 Failures go to stderr and exit 1. Report the operation's result or specific
 failure; an unsuccessful command is not confirmation of a change.
