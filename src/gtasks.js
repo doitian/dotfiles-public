@@ -6,9 +6,9 @@ import { createInterface, emitKeypressEvents } from "node:readline";
 import { secrets, $ } from "bun";
 import { PassThrough } from "node:stream";
 import { Database } from "bun:sqlite";
-import { mkdir } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { homedir } from "node:os";
+import { homedir, tmpdir } from "node:os";
 import { SERVICE_NAME, getSecret } from "./lib/secrets.js";
 import { writeClipboard } from "./lib/io.js";
 
@@ -1143,7 +1143,7 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
     else lines.push(...body.slice(start, start + pageSize));
     while (lines.length < height - 5) lines.push("");
     lines.push(`j/k move  V visual  Enter/l cd  h/Backspace up  / search  Esc clear  gx open  gf links  q quit`);
-    lines.push("a/o/O add  e edit  s due  , ids  y yank  Y copy  gp prompt  d cut  D delete  p/P paste  Space/x/u  . all  m print  r refresh");
+    lines.push("a/o/O add  e edit  Ctrl+E $EDITOR  s due  , ids  y yank  Y copy  gp prompt  d cut  D delete  p/P paste  Space/x/u  . all  m print  r refresh");
     let prompt = view.message || "";
     if (view.mode === "search") prompt = `/ ${view.input}  (Enter apply, Esc cancel)`;
     if (view.mode === "due") prompt = `Due: ${view.input}  (${view.message || "YYYY-MM-DD, today, tomorrow; empty clears; Enter save, Esc cancel"})`;
@@ -1235,7 +1235,27 @@ export function readTaskInput(initial, { input = process.stdin, output = process
     });
 }
 
-export async function runTasksTui(api, list = "@default", { input = process.stdin, output = process.stdout, cd } = {}) {
+async function runTaskEditor(path, { editor, signal }) {
+  // Full-screen editors need inherited terminal descriptors, not Bun Shell's pipes.
+  const child = Bun.spawn([editor, path], { stdin: "inherit", stdout: "inherit", stderr: "inherit", signal });
+  const code = await child.exited;
+  if (code !== 0) throw new Error(`Editor exited with code ${code}; task unchanged.`);
+}
+
+export async function editTaskInEditor(initial, { editor = process.env.EDITOR || "nvim", signal, runEditor = runTaskEditor } = {}) {
+  const directory = await mkdtemp(join(tmpdir(), "gtasks-edit-"));
+  const path = join(directory, "task.md");
+  try {
+    await writeFile(path, `${initial}\n`, { mode: 0o600 });
+    await runEditor(path, { editor, signal });
+    const draft = await readFile(path, "utf8");
+    return draft === `${initial}\n` ? null : draft;
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+}
+
+export async function runTasksTui(api, list = "@default", { input = process.stdin, output = process.stdout, cd, editExternal = editTaskInEditor } = {}) {
     if (!input.isTTY || !output.isTTY) throw new Error("gtasks needs an interactive terminal. Use gtasks list for Markdown output.");
     const view = new TasksView(api, list);
     output.write("Loading Google Tasks...\n");
@@ -1246,12 +1266,14 @@ export async function runTasksTui(api, list = "@default", { input = process.stdi
     let busy = false;
     let closed = false;
     let editing = false;
+    let externalEditing = false;
     let refreshPending = false;
     let refreshing = false;
     let startupCdPending = Boolean(cd && api.localFirst && !api.state.initialized);
     const editorAbort = new AbortController();
     let finish;
     const done = new Promise(resolve => { finish = resolve; });
+    const onInterrupt = () => { if (!externalEditing) finish(); };
     const draw = () => {
         if (!busy && !editing && view.mode === "browse" && api.state?.askReset) view.mode = "reset";
         if (!closed && !editing) output.write(`\x1b[H\x1b[2J${renderTasks(view, output.columns, output.rows, busy)}`);
@@ -1290,7 +1312,32 @@ export async function runTasksTui(api, list = "@default", { input = process.stdi
                 }
                 return;
             }
-            const action = view.key(text, key);
+            const external = view.mode === "browse" && key.ctrl && key.name === "e" && view.task;
+            let action;
+            if (external) {
+                view.prefix = null;
+                view.openEditor("edit");
+                busy = editing = externalEditing = true;
+                input.pause();
+                input.setRawMode(false);
+                output.write("\x1b[?2004l\x1b[?25h\x1b[?1049l");
+                let draft;
+                try {
+                    draft = await editExternal(view.input, { signal: editorAbort.signal });
+                } finally {
+                    externalEditing = false;
+                    if (!closed) {
+                        input.setRawMode(true);
+                        input.resume();
+                        output.write("\x1b[?1049h\x1b[?25l\x1b[?2004h");
+                    }
+                }
+                if (draft === null || closed) view.mode = "browse";
+                else {
+                    try { await view.saveInput(draft); }
+                    catch (error) { view.message = error.message ?? String(error); }
+                }
+            } else action = view.key(text, key);
             if (view.mode === "add" || view.mode === "edit") {
                 busy = editing = true;
                 while (!closed && (view.mode === "add" || view.mode === "edit")) {
@@ -1329,7 +1376,7 @@ export async function runTasksTui(api, list = "@default", { input = process.stdi
         input.on("keypress", onKey);
         input.once("end", finish);
         output.on("resize", draw);
-        process.once("SIGINT", finish);
+        process.on("SIGINT", onInterrupt);
         process.once("SIGTERM", finish);
         draw();
         api.start?.();
@@ -1342,7 +1389,7 @@ export async function runTasksTui(api, list = "@default", { input = process.stdi
         input.off("keypress", onKey);
         input.off("end", finish);
         output.off("resize", draw);
-        process.off("SIGINT", finish);
+        process.off("SIGINT", onInterrupt);
         process.off("SIGTERM", finish);
         input.setRawMode(wasRaw);
         input.pause();
@@ -1488,7 +1535,7 @@ Errors go to stderr with exit code 1.
 TUI: j/k or arrows move; V starts visual selection; Enter/l enters a task; h/Backspace goes up.
 / searches the current subtree, keeping ancestors visible; Esc clears the filter, visual, and yank/cut.
 gg / G select first / last; gx opens the selected task in the default browser; gf opens found links, including a Keep note.
-a adds here; o after; O before; e edits; s sets due date; Enter inserts a newline; Ctrl+S saves; Esc cancels.
+a adds here; o after; O before; e edits; Ctrl+E edits in $EDITOR; s sets due date; Enter inserts a newline; Ctrl+S saves; Esc cancels.
 y yanks; Y copies Markdown with IDs; d cuts; D deletes with confirmation; y/d/D/Y apply to the visual selection; p pastes after; P pastes before.
 gp copies a prompt for the current task or visual selection: Work on gtasks item ID1, ID2.
 Space toggles; x done; u undone.

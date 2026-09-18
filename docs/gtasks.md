@@ -163,6 +163,7 @@ prompt lets you reload Google's actual state.
 | a | Add a task at the current level in the multiline editor |
 | o / O | Add a task after / before the selected task |
 | e | Edit the selected task's title and description in the same editor |
+| Ctrl+E | Edit the selected task's title and description in `$EDITOR` |
 | s | Set or clear the selected task's due date |
 | y | Yank (copy) the selected task(s) and their children |
 | Y | Copy the current task and children, or the visual selection, as Markdown with IDs |
@@ -186,6 +187,12 @@ Home/End, Backspace/Delete, Ctrl+A/E, and Ctrl+W/U. Up/Down moves between input
 lines, preserving the cursor column across short or blank lines. Editing prefills the existing
 title and description. Removing
 all description lines clears the saved description. Failed saves keep your draft.
+
+**Ctrl+E** while browsing opens the selected task in `$EDITOR` (default: `nvim`).
+Set `EDITOR` to the editor executable or a wrapper script. The first line is the
+title and the remaining lines are the description. Save and exit to apply changes;
+exiting without changes or with an error leaves the task unchanged. Invalid drafts
+and failed saves return to the built-in editor for correction or retry.
 
 Due dates appear as `[[YYYY-MM-DD]]` after the title. Press **s** to set one;
 **Enter** saves, **Esc** cancels, and an empty value clears it. `today` and
