@@ -7,6 +7,7 @@
 import { Glob } from "bun";
 import { mkdirSync, existsSync, readdirSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { buildHerdrPlugins } from "./scripts/build-herdr-plugins.js";
 
 const distDir = resolve(process.cwd(), "dist");
 if (!existsSync(distDir)) {
@@ -115,5 +116,7 @@ if (process.platform === "linux" && existsSync(niriScriptsSrcDir)) {
   }
   await buildIfStale(niriEntries, distDir);
 }
+
+await buildHerdrPlugins();
 
 console.log("Build done.");
