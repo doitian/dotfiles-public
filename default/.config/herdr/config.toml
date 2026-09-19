@@ -9,8 +9,10 @@ goto = "prefix+w"
 new_tab = ["prefix+c", "prefix+enter"]
 previous_tab = ["prefix+p", "prefix+ctrl+p"]
 next_tab = ["prefix+n", "prefix+ctrl+n"]
-previous_workspace = "prefix+("
-next_workspace = "prefix+)"
+previous_workspace = ["prefix+(", "prefix+shift+k"]
+next_workspace = ["prefix+)", "prefix+shift+j"]
+previous_agent = "prefix+up"
+next_agent = "prefix+down"
 cycle_pane_next = "prefix+o"
 open_notification_target = "prefix+shift+o"
 split_vertical = "prefix+%"
@@ -22,6 +24,18 @@ focus_pane_left = "prefix+ctrl+h"
 focus_pane_down = "prefix+ctrl+j"
 focus_pane_up = "prefix+ctrl+k"
 focus_pane_right = "prefix+ctrl+l"
+
+[[keys.command]]
+key = "prefix+l"
+type = "plugin_action"
+command = "dotfiles.last-tab.toggle"
+description = "last active tab"
+
+[[keys.command]]
+key = "prefix+tab"
+type = "plugin_action"
+command = "dotfiles.last-tab.toggle-workspace"
+description = "last active workspace"
 
 [theme]
 name = "catppuccin-latte"
