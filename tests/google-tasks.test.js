@@ -950,6 +950,43 @@ describe("Task navigation and actions", () => {
         expect(screen.split("\r\n").length).toBeLessThanOrEqual(15);
     });
 
+    test("long titles and notes wrap without losing Unicode text and reflow on resize", () => {
+        const { view } = fixture();
+        const title = "世界👩‍💻e\u0301".repeat(8);
+        const notes = "https://example.com/" + "a".repeat(70);
+        view.tasks = [{ id: "wrapped", title, notes }];
+        const narrow = renderTasks(view, 24, 50).split("\r\n");
+        const wide = renderTasks(view, 48, 50).split("\r\n");
+        const content = lines => lines.slice(4, -3).filter(Boolean);
+        for (const [lines, width] of [[narrow, 23], [wide, 47]]) {
+            expect(content(lines).map(line => line.startsWith(">") ? line.slice(8) : line.trimStart()).join("")).toBe(title + notes);
+            expect(lines.every(line => Bun.stringWidth(line) <= width)).toBe(true);
+        }
+        expect(content(narrow).length).toBeGreaterThan(content(wide).length);
+        expect(content(narrow).slice(1).every(line => line.startsWith("        "))).toBe(true);
+        view.tasks = [{ id: "words", title: "alpha beta gamma delta", notes: "one two three four five" }];
+        expect(content(renderTasks(view, 24, 50).split("\r\n"))).toEqual([
+            "> - [ ] alpha beta",
+            "        gamma delta",
+            "        one two three",
+            "        four five",
+        ]);
+    });
+
+    test("scrolling counts wrapped lines and keeps the selected task visible", () => {
+        const { view } = fixture();
+        view.tasks = Array.from({ length: 20 }, (_, index) => ({
+            id: String(index), title: `Task ${index} ${"long ".repeat(15)}`, position: String(index).padStart(2, "0"),
+        }));
+        view.selected = 19;
+        const lines = renderTasks(view, 40, 16).split("\r\n");
+        expect(lines.join("\n")).toContain("> - [ ] Task 19");
+        expect(lines).toHaveLength(14);
+        expect(lines.every(line => Bun.stringWidth(line) <= 39)).toBe(true);
+        view.selected = 0;
+        expect(renderTasks(view, 40, 16)).toContain("> - [ ] Task 0");
+    });
+
     test("descriptions sit beneath titles and scrolling keeps the selected task and footer visible", () => {
         const { view } = fixture();
         view.tasks.find(task => task.id === "p").notes = "Project details\nSecond line";

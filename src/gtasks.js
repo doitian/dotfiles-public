@@ -1108,6 +1108,36 @@ function fit(text, width) {
     return result;
 }
 
+function wrapTaskText(text, width, prefix) {
+  prefix = fit(prefix, Math.max(0, width - 2));
+  const indent = " ".repeat(Bun.stringWidth(prefix));
+  const lines = [];
+  let line = prefix;
+  let columns = Bun.stringWidth(prefix);
+  const segments = new Intl.Segmenter();
+  for (let word of terminalText(text).match(/\s*\S+|\s+$/gu) ?? []) {
+    if (columns > indent.length && columns + Bun.stringWidth(word) > width) {
+      lines.push(line);
+      line = indent;
+      columns = indent.length;
+      word = word.trimStart();
+    }
+    for (const { segment } of segments.segment(word)) {
+      const value = Bun.stringWidth(segment) > width ? "?" : segment;
+      const size = Bun.stringWidth(value);
+      if (columns + size > width) {
+        lines.push(line);
+        line = indent;
+        columns = indent.length;
+      }
+      line += value;
+      columns += size;
+    }
+  }
+  lines.push(line);
+  return lines;
+}
+
 export function renderTasks(view, columns = 80, height = 24, busy = false) {
     const width = Math.max(1, columns - 1);
     const rows = view.rows;
@@ -1141,9 +1171,10 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
         if (index === view.selected) selectedStart = body.length;
         const marked = clipIds.has(task.id);
         const gutter = index === view.selected && marked ? (clip.type === "cut" ? "D" : "Y") : index === view.selected ? ">" : marked ? (clip.type === "cut" ? "d" : "y") : index >= visualLo && index <= visualHi ? "*" : " ";
-        body.push(`${gutter} ${indent}- [${task.status === "completed" ? "x" : " "}] ${task.title || "(untitled)"}${task.due ? `  ${formatDue(task.due)}` : ""}${view.showIds ? `  ${formatId(task.id, view.ids)}` : ""}${children ? `  (${children} children)` : ""}`);
+        const prefix = `${gutter} ${indent}- [${task.status === "completed" ? "x" : " "}] `;
+        body.push(...wrapTaskText(`${task.title || "(untitled)"}${task.due ? `  ${formatDue(task.due)}` : ""}${view.showIds ? `  ${formatId(task.id, view.ids)}` : ""}${children ? `  (${children} children)` : ""}`, width, prefix));
         if (task.notes) {
-            for (const note of task.notes.split(/\r?\n/)) body.push(`        ${indent}${note}`);
+            for (const note of task.notes.split(/\r?\n/)) body.push(...wrapTaskText(note, width, `        ${indent}`));
         }
         if (index === view.selected) selectedEnd = Math.min(body.length, selectedStart + pageSize);
     }

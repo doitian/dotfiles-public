@@ -147,6 +147,9 @@ prompt lets you reload Google's actual state.
 
 ## Controls
 
+Task titles and descriptions wrap at word boundaries, with indented continuation lines.
+Words and URLs wider than the available space split across lines.
+
 | Key | Action |
 | --- | --- |
 | Up/Down or k/j | Select a task |
