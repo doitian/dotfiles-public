@@ -1,0 +1,43 @@
+id = "dotfiles.last-tab"
+name = "Last tab and workspace"
+version = "0.2.0"
+min_herdr_version = "0.9.1"
+description = "Toggle the last active tab or workspace"
+platforms = ["linux", "macos", "windows"]
+
+[[startup]]
+command = ["./plugin", "initialize"]
+
+[[actions]]
+id = "initialize"
+title = "Reset focus history"
+contexts = ["global"]
+command = ["./plugin", "initialize"]
+
+[[actions]]
+id = "toggle"
+title = "Last active tab"
+contexts = ["global", "workspace", "tab", "pane"]
+command = ["./plugin", "toggle"]
+
+[[actions]]
+id = "toggle-workspace"
+title = "Last active workspace"
+contexts = ["global", "workspace", "tab", "pane"]
+command = ["./plugin", "toggle-workspace"]
+
+[[events]]
+on = "workspace.focused"
+command = ["./plugin", "record"]
+
+[[events]]
+on = "tab.focused"
+command = ["./plugin", "record"]
+
+[[events]]
+on = "tab.closed"
+command = ["./plugin", "record"]
+
+[[events]]
+on = "workspace.closed"
+command = ["./plugin", "record"]
