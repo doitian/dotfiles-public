@@ -1,0 +1,31 @@
+onboarding = false
+
+[keys]
+prefix = "ctrl+q"
+detach = "prefix+d"
+settings = "prefix+shift+c"
+workspace_picker = "prefix+s"
+goto = "prefix+w"
+new_tab = ["prefix+c", "prefix+enter"]
+previous_tab = ["prefix+p", "prefix+ctrl+p"]
+next_tab = ["prefix+n", "prefix+ctrl+n"]
+previous_workspace = "prefix+("
+next_workspace = "prefix+)"
+cycle_pane_next = "prefix+o"
+open_notification_target = "prefix+shift+o"
+split_vertical = "prefix+%"
+split_horizontal = 'prefix+"'
+rename_tab = "prefix+comma"
+rename_workspace = "prefix+$"
+last_pane = "prefix+;"
+focus_pane_left = "prefix+ctrl+h"
+focus_pane_down = "prefix+ctrl+j"
+focus_pane_up = "prefix+ctrl+k"
+focus_pane_right = "prefix+ctrl+l"
+
+[theme]
+name = "catppuccin-latte"
+auto_switch = false
+
+[ui]
+status_indicators = "symbols"
