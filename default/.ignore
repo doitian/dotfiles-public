@@ -9,6 +9,7 @@
 .git
 .harper-dictionary.txt
 .lazy.lua
+.mise-auto
 .tags.in
 .target.shm
 .tmux-up.conf
