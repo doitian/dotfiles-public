@@ -40,5 +40,6 @@ description = "last active workspace"
 [theme]
 name = "catppuccin-latte"
 
+auto_switch = false
 [ui]
 status_indicators = "symbols"
