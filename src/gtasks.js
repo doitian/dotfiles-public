@@ -722,6 +722,17 @@ export class TasksView {
         this.linkSelected = 0;
     }
 
+  async copyTaskId() {
+    const task = this.task;
+    if (!task) return;
+    try {
+      await this.writeClipboard(this.ids?.[task.id] ?? task.id);
+      this.message = "Task ID copied.";
+    } catch (error) {
+      this.message = error.message ?? String(error);
+    }
+  }
+
   async copyPrompt() {
     const selected = this.visualRows();
     if (!selected.length) return;
@@ -1012,6 +1023,7 @@ export class TasksView {
             else if (text === "x") return this.openWeb();
             else if (text === "f") return this.openFound();
             else if (text === "p") return this.copyPrompt();
+            else if (text === ",") return this.copyTaskId();
             this.clamp();
             return;
         }
@@ -1143,7 +1155,7 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
     else lines.push(...body.slice(start, start + pageSize));
     while (lines.length < height - 5) lines.push("");
     lines.push(`j/k move  V visual  Enter/l cd  h/Backspace up  / search  Esc clear  gx open  gf links  q quit`);
-    lines.push("a/o/O add  e edit  Ctrl+E $EDITOR  s due  , ids  y yank  Y copy  gp prompt  d cut  D delete  p/P paste  Space/x/u  . all  m print  r refresh");
+    lines.push("a/o/O add  e edit  Ctrl+E $EDITOR  s due  , ids  g, copy ID  y yank  Y copy  gp prompt  d cut  D delete  p/P paste  Space/x/u  . all  m print  r refresh");
     let prompt = view.message || "";
     if (view.mode === "search") prompt = `/ ${view.input}  (Enter apply, Esc cancel)`;
     if (view.mode === "due") prompt = `Due: ${view.input}  (${view.message || "YYYY-MM-DD, today, tomorrow; empty clears; Enter save, Esc cancel"})`;
@@ -1539,7 +1551,7 @@ a adds here; o after; O before; e edits; Ctrl+E edits in $EDITOR; s sets due dat
 y yanks; Y copies Markdown with IDs; d cuts; D deletes with confirmation; y/d/D/Y apply to the visual selection; p pastes after; P pastes before.
 gp copies a prompt for the current task or visual selection: Work on gtasks item ID1, ID2.
 Space toggles; x done; u undone.
-. toggles completed tasks (hidden by default). , toggles task IDs (^id).
+. toggles completed tasks (hidden by default). , toggles task IDs (^id). g, copies the selected task ID.
 m prints the focused, filtered list as raw Markdown.
 r refreshes; q or Ctrl+C quits.
 
