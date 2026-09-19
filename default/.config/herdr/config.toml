@@ -25,7 +25,6 @@ focus_pane_right = "prefix+ctrl+l"
 
 [theme]
 name = "catppuccin-latte"
-auto_switch = false
 
 [ui]
 status_indicators = "symbols"
