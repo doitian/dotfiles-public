@@ -155,6 +155,8 @@ function localFixture(path = ":memory:") {
 }
 
 describe("Persistent local task queue", () => {
+    // FULL SQLite durability can exceed Bun's 5-second timeout on Windows CI disks.
+    const diskTimeout = 20_000;
     const stores = [];
     const files = [];
     const fixture = (path) => {
@@ -187,7 +189,7 @@ describe("Persistent local task queue", () => {
         expect(data.writes[2][1]).toBe("server-1");
         expect(reopened.state.queue).toHaveLength(0);
         expect((await reopened.list()).find(task => task.id === child.id)).toMatchObject({ parent: parent.id, title: "Edited child", status: "completed" });
-    });
+    }, diskTimeout);
 
     test("due dates queue locally and sync without wiping other fields", async () => {
         const { local, data } = fixture();
@@ -221,7 +223,7 @@ describe("Persistent local task queue", () => {
         files.push(path);
         const { remote } = fixture(path);
         expect(() => new LocalGoogleTasks(remote, "@default", path)).toThrow("another gtasks process");
-    });
+    }, diskTimeout);
 
     test("failed durable writes leave the queue unchanged and never send to Google", async () => {
         const { local, data } = fixture();
@@ -311,7 +313,7 @@ describe("Persistent local task queue", () => {
         for (let index = 0; index < 4; index++) await reopened.syncOnce({ force: true });
         expect(inserts).toBe(1);
         expect(reopened.state.askReset).toBe(true);
-    });
+    }, diskTimeout);
 
     test("delete is visible locally and a server-side missing task counts as synced", async () => {
         const { local, remote } = fixture();
