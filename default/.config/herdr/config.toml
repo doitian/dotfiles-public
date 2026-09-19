@@ -39,7 +39,8 @@ description = "last active workspace"
 
 [theme]
 name = "catppuccin-latte"
-
 auto_switch = false
+
 [ui]
+prompt_new_tab_name = false
 status_indicators = "symbols"
