@@ -989,6 +989,7 @@ describe("Task navigation and actions", () => {
 
     test("descriptions sit beneath titles and scrolling keeps the selected task and footer visible", () => {
         const { view } = fixture();
+        view.showHelp = true;
         view.tasks.find(task => task.id === "p").notes = "Project details\nSecond line";
         const screen = renderTasks(view, 100, 24);
         expect(screen).toContain("Project  (1 children)\r\n        Project details\r\n        Second line");
@@ -1023,12 +1024,73 @@ describe("Task navigation and actions", () => {
 
     test("long focused descriptions leave room for selected children and controls", () => {
         const { view } = fixture();
+        view.showHelp = true;
         view.tasks.find(task => task.id === "p").notes = "Context\n".repeat(40);
         view.enter();
         const screen = renderTasks(view, 100, 16);
         expect(screen).toContain("> - [ ] Project");
         expect(screen).toContain("q quit");
         expect(screen.split("\r\n").length).toBeLessThanOrEqual(15);
+    });
+
+    test("help is hidden by default and g? toggles it without hiding status messages", () => {
+        const { view } = fixture();
+        view.tasks = Array.from({ length: 20 }, (_, index) => ({ id: String(index), title: `Task ${index}`, position: String(index).padStart(2, "0") }));
+        view.message = "Saved.";
+        const hidden = renderTasks(view, 100, 16);
+        expect(hidden).not.toContain("g? help");
+        expect(hidden).toContain("Saved.");
+        expect(hidden).toContain("Task 8");
+        press(view, "g");
+        press(view, "?");
+        const shown = renderTasks(view, 100, 16);
+        expect(shown).toContain("g? help");
+        expect(shown).toContain("Ctrl+F/B page");
+        expect(shown).not.toContain("Task 8");
+        press(view, "g");
+        press(view, "?");
+        expect(renderTasks(view, 100, 16)).not.toContain("g? help");
+    });
+
+    test("page scrolling traverses long notes, stays put on redraw, and clamps at both ends", () => {
+        const { view } = fixture();
+        view.tasks = [{ id: "long", title: "Long task", notes: Array.from({ length: 30 }, (_, index) => `Note ${index}`).join("\n") }];
+        renderTasks(view, 40, 16);
+        view.key("\x06", { ctrl: true, name: "f" });
+        const next = renderTasks(view, 40, 16);
+        expect(next).toContain("Note 8\r\n");
+        expect(next).not.toContain("Long task");
+        expect(renderTasks(view, 40, 16)).toBe(next);
+        view.key("\x02", { ctrl: true, name: "b" });
+        expect(renderTasks(view, 40, 16)).toContain("> - [ ] Long task");
+        for (let i = 0; i < 6; i++) {
+            view.key("\x06", { ctrl: true, name: "f" });
+            renderTasks(view, 40, 16);
+        }
+        expect(renderTasks(view, 40, 16)).toContain("Note 29");
+        press(view, "g");
+        press(view, "g");
+        expect(renderTasks(view, 40, 16)).toContain("> - [ ] Long task");
+        view.key("\x02", { ctrl: true, name: "b" });
+        renderTasks(view, 40, 16);
+        expect(view.scrollTop).toBe(0);
+    });
+
+    test("paging moves selection with the viewport and ordinary navigation reveals the task", () => {
+        const { view } = fixture();
+        view.tasks = Array.from({ length: 30 }, (_, index) => ({ id: String(index), title: `Task ${index}`, position: String(index).padStart(2, "0") }));
+        renderTasks(view, 40, 16);
+        view.key("\x06", { ctrl: true, name: "f" });
+        expect(renderTasks(view, 40, 16)).toContain("> - [ ] Task 9");
+        press(view, "k");
+        expect(renderTasks(view, 40, 16)).toContain("> - [ ] Task 8");
+        view.key("\x02", { ctrl: true, name: "b" });
+        expect(renderTasks(view, 40, 16)).toContain("> - [ ] Task 0");
+        press(view, "g");
+        press(view, "?");
+        renderTasks(view, 40, 16);
+        view.key("\x06", { ctrl: true, name: "f" });
+        expect(renderTasks(view, 40, 16)).toContain("> - [ ] Task 7");
     });
 
     test("markdown dump uses the focused parent, search filter, and completed toggle", () => {

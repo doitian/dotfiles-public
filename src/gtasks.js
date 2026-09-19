@@ -661,7 +661,7 @@ export function parseDue(input, now = () => new Date()) {
 
 export class TasksView {
     constructor(api, list = "@default") {
-        Object.assign(this, { api, list, tasks: [], path: [], search: "", selected: 0, mode: "browse", input: "", showCompleted: false, showIds: false, prefix: null, openUrl: openInBrowser, writeClipboard, message: "", listTitle: "Default list", clipboard: null, visual: null });
+        Object.assign(this, { api, list, tasks: [], path: [], search: "", selected: 0, mode: "browse", input: "", showCompleted: false, showIds: false, showHelp: false, prefix: null, openUrl: openInBrowser, writeClipboard, message: "", listTitle: "Default list", clipboard: null, visual: null });
     }
 
     get parent() { return this.path.at(-1)?.id ?? null; }
@@ -686,6 +686,17 @@ export class TasksView {
         const to = Math.max(this.visual, this.selected);
         return this.rows.slice(from, to + 1);
     }
+
+  scrollPage(direction) {
+    if (!this.viewport || !this.rows.length) return;
+    const { pageSize, totalLines, rowStarts } = this.viewport;
+    this.scrollTop = Math.max(0, Math.min(
+      (this.scrollTop ?? 0) + direction * pageSize,
+      totalLines - pageSize,
+    ));
+    this.selected = Math.max(0, rowStarts.findLastIndex(start => start <= this.scrollTop));
+    this.scrolledTask = this.task?.id;
+  }
 
     operatorRoots() {
         const rows = this.visualRows();
@@ -1017,16 +1028,23 @@ export class TasksView {
             return;
         }
         this.message = "";
+        if (key.ctrl && (key.name === "f" || key.name === "b")) {
+            this.prefix = null;
+            this.scrollPage(key.name === "f" ? 1 : -1);
+            return;
+        }
         if (this.prefix === "g") {
             this.prefix = null;
-            if (text === "g") this.selected = 0;
+            if (text === "g") { this.selected = 0; this.scrolledTask = null; }
             else if (text === "x") return this.openWeb();
             else if (text === "f") return this.openFound();
             else if (text === "p") return this.copyPrompt();
             else if (text === ",") return this.copyTaskId();
+            else if (text === "?") this.showHelp = !this.showHelp;
             this.clamp();
             return;
         }
+        if (text !== "g") this.scrolledTask = null;
         if (key.name === "down" || text === "j") this.selected++;
         else if (key.name === "up" || text === "k") this.selected--;
         else if (key.name === "home") this.selected = 0;
@@ -1151,7 +1169,8 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
         "",
     );
     if (view.api.localFirst) lines.splice(lines.length - 1, 0, `Sync: ${view.api.storageError ?? view.api.syncStatus}`);
-    const pageSize = Math.max(1, height - lines.length - 5);
+    const footerSpace = view.showHelp ? 5 : 3;
+    const pageSize = Math.max(1, height - lines.length - footerSpace);
     const childCounts = new Map();
     for (const task of view.tasks) {
         if (task.parent && !task.deleted && (view.showCompleted || task.status !== "completed")) childCounts.set(task.parent, (childCounts.get(task.parent) ?? 0) + 1);
@@ -1162,10 +1181,12 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
     const visualLo = view.visual == null ? -1 : Math.min(view.visual, view.selected);
     const visualHi = view.visual == null ? -1 : Math.max(view.visual, view.selected);
     const body = [];
+    const rowStarts = [];
     let selectedStart = 0;
     let selectedEnd = 0;
     for (let index = 0; index < rows.length; index++) {
         const task = rows[index];
+        rowStarts.push(body.length);
         const children = childCounts.get(task.id) ?? 0;
         const indent = "  ".repeat(task.depth);
         if (index === view.selected) selectedStart = body.length;
@@ -1179,14 +1200,19 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
         if (index === view.selected) selectedEnd = Math.min(body.length, selectedStart + pageSize);
     }
     let start = Math.min(view.scrollTop ?? 0, Math.max(0, body.length - pageSize));
-    if (selectedStart < start) start = selectedStart;
-    else if (selectedEnd > start + pageSize) start = selectedEnd - pageSize;
+    if (!view.scrolledTask || view.scrolledTask !== view.task?.id) {
+        if (selectedStart < start) start = selectedStart;
+        else if (selectedEnd > start + pageSize) start = selectedEnd - pageSize;
+    }
     view.scrollTop = start;
+    view.viewport = { pageSize, totalLines: body.length, rowStarts };
     if (!rows.length) lines.push(view.search ? "  No matching tasks." : "  No tasks here. Press a to add one.");
     else lines.push(...body.slice(start, start + pageSize));
-    while (lines.length < height - 5) lines.push("");
-    lines.push(`j/k move  V visual  Enter/l cd  h/Backspace up  / search  Esc clear  gx open  gf links  q quit`);
-    lines.push("a/o/O add  e edit  Ctrl+E $EDITOR  s due  , ids  g, copy ID  y yank  Y copy  gp prompt  d cut  D delete  p/P paste  Space/x/u  . all  m print  r refresh");
+    while (lines.length < height - footerSpace) lines.push("");
+    if (view.showHelp) {
+        lines.push("g? help  Ctrl+F/B page  j/k move  V visual  Enter/l cd  h/Backspace up  / search  Esc clear  q quit");
+        lines.push("a/o/O add  e edit  Ctrl+E $EDITOR  s due  , ids  g, copy ID  gx open  gf links  y yank  Y copy  gp prompt  d cut  D delete  p/P paste  Space/x/u  . all  m print  r refresh");
+    }
     let prompt = view.message || "";
     if (view.mode === "search") prompt = `/ ${view.input}  (Enter apply, Esc cancel)`;
     if (view.mode === "due") prompt = `Due: ${view.input}  (${view.message || "YYYY-MM-DD, today, tomorrow; empty clears; Enter save, Esc cancel"})`;
@@ -1576,6 +1602,7 @@ JSON goes to stdout without Markdown rendering. list uses glow on a TTY unless -
 Errors go to stderr with exit code 1.
 
 TUI: j/k or arrows move; V starts visual selection; Enter/l enters a task; h/Backspace goes up.
+Ctrl+F / Ctrl+B scroll down / up one page. g? toggles help (hidden by default).
 / searches the current subtree, keeping ancestors visible; Esc clears the filter, visual, and yank/cut.
 gg / G select first / last; gx opens the selected task in the default browser; gf opens found links, including a Keep note.
 a adds here; o after; O before; e edits; Ctrl+E edits in $EDITOR; s sets due date; Enter inserts a newline; Ctrl+S saves; Esc cancels.

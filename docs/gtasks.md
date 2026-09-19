@@ -153,6 +153,8 @@ Words and URLs wider than the available space split across lines.
 | Key | Action |
 | --- | --- |
 | Up/Down or k/j | Select a task |
+| Ctrl+F / Ctrl+B | Scroll down / up one page, including within long descriptions |
+| g? | Toggle help (hidden by default) |
 | Enter, Right, or l | Enter the selected task and show its child hierarchy |
 | Backspace, Left, or h | Return to the parent level |
 | gg / G | Select the first / last task |
