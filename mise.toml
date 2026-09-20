@@ -14,8 +14,6 @@ sources = [
   "package.json",
   "bun.lock",
   "build.js",
-  "scripts/build-herdr-plugins.js",
-  "herdr-plugins/**/*",
   "src/**/*.js",
   "../private/src/**/*.js",
 ]
