@@ -2,7 +2,7 @@
   "Tmux ➤ tmux-up": {
     "prefix": "tu",
     "body": [
-      "send \"vim\" C-m",
+      "send \"vim\" Enter",
       "neww -n shell",
       "selectw 1"
     ]
@@ -10,7 +10,7 @@
   "Tmux ➤ tmux-up with mise": {
     "prefix": "tmise",
     "body": [
-      "send \"mact && vim\" C-m",
+      "send \"mact && vim\" Enter",
       "set default-command \"env TERM=xterm-256color mise en -s zsh\"",
       "neww -n shell",
       "selectw 1"
@@ -19,14 +19,14 @@
   "Tmux ➤ send": {
     "prefix": "send",
     "body": [
-      "send \"$1\" C-m"
+      "send \"$1\" Enter"
     ]
   },
   "Tmux ➤ New Window": {
     "prefix": "neww",
     "body": [
       "neww -n ${1:shell}",
-      "send \"$2\" C-m"
+      "send \"$2\" Enter"
     ]
   }
 }

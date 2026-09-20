@@ -42,7 +42,7 @@ async function configCommands(configPath) {
         );
     }
     const editor = process.env.EDITOR || "vim";
-    return `send '${editor}' C-m\nneww -n shell\nselectw -t 1\n\n`;
+    return `send '${editor}' Enter\nneww -n shell\nselectw -t 1\n\n`;
 }
 
 async function main() {
