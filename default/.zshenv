@@ -17,7 +17,7 @@ fi
 export GOPATH="$HOME/codebase/gopath"
 HOMEBREW_PREFIX=/home/linuxbrew/.linuxbrew
 PATH_SECTION_A="$HOME/.dotfiles/repos/public/dist:$HOME/bin"
-PATH_SECTION_B="$HOME/.cargo/bin:$GOPATH/bin:$HOME/.local/bin:$HOME/.bun/bin:$HOME/.local/share/nvim/mason/bin"
+PATH_SECTION_B="$HOME/.local/share/mbx/bin:$HOME/.cargo/bin:$GOPATH/bin:$HOME/.local/bin:$HOME/.bun/bin:$HOME/.local/share/nvim/mason/bin"
 if [[ "$OSTYPE" == "linux"* && -O "$HOMEBREW_PREFIX/bin/brew" ]]; then
   export HOMEBREW_CELLAR="$HOMEBREW_PREFIX/Cellar"
   export HOMEBREW_REPOSITORY="$HOMEBREW_PREFIX/Homebrew"
