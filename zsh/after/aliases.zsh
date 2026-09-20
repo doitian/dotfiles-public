@@ -124,6 +124,7 @@ function mact() {
   eval "$(mise activate "$@")"
 }
 alias kt="kitty --detach"
+alias ab="agent-berth"
 
 ##################################################
 # Skip History
