@@ -64,7 +64,7 @@ async function main() {
     const has = await $`tmux has-session -t ${target}`.quiet().nothrow();
     if (has.exitCode !== 0) {
         await $`tmux new -d -c ${rootDir} -s ${session}`;
-        const commands = await configCommands(join(rootDir, configFile));
+        const commands = (await configCommands(join(rootDir, configFile))) + "detach-client\n";
         const child = Bun.spawn(["tmux", "-C", "attach", "-t", target], {
             stdin: new Blob([commands]),
             stdout: "ignore",
