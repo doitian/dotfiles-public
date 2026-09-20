@@ -50,7 +50,7 @@ for pushes and pull requests.
 [fpass]: https://github.com/doitian/dotfiles-public/blob/master/src/fpass.js
 [gfw]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/gfw
 [git-multistatus]: https://github.com/doitian/dotfiles-public/blob/master/src/git-multistatus.js
-[tmux-up]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/tmux-up
+[tmux-up]: https://github.com/doitian/dotfiles-public/blob/master/src/tmux-up.js
 [tt]: https://github.com/doitian/dotfiles-public/blob/master/default/bin/tt
 
 ## Featured Configuration
