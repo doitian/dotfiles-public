@@ -6,6 +6,10 @@
  * Usage: git-wta [git-worktree-add-options...] <path> [<commit-ish>]
  *        git-wta --setup <source> <dest>
  *
+ * A <path> given as a bare name is rewritten to ../{REPO}.worktrees/{NAME},
+ * where {REPO} is the root worktree directory name. Pass ./NAME or any path
+ * containing a separator to use it as given.
+ *
  * After `git worktree add`, any untracked files in the root worktree matching
  * the patterns in .worktreeinclude (using .gitignore syntax) are copied into
  * the new worktree at the same relative paths. Then setup commands are executed
@@ -14,7 +18,7 @@
  * destination.
  */
 import { cp, mkdir } from "node:fs/promises";
-import { dirname, join, resolve } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { $ } from "bun";
 import { exists } from "./lib/fs.js";
@@ -110,6 +114,24 @@ async function setupWorktree(rootWorktreePath, worktreePath) {
   await runSetupCommands(rootWorktreePath, worktreePath);
 }
 
+// Index of the <path> positional in argv, skipping options and their values.
+function findPathArgIndex(args) {
+  const valueOptions = new Set(["-b", "-B", "--reason"]);
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--") {
+      return i + 1 < args.length ? i + 1 : -1;
+    }
+    if (args[i].startsWith("-")) {
+      if (valueOptions.has(args[i])) {
+        i++;
+      }
+      continue;
+    }
+    return i;
+  }
+  return -1;
+}
+
 async function main() {
   const { values, positionals } = parseArgs({
     args: process.argv.slice(2),
@@ -145,15 +167,26 @@ async function main() {
     process.exit(1);
   }
 
-  // Run git worktree add with all provided arguments
   const args = process.argv.slice(2);
+  const rootWorktreePath = await getRootWorktreePath();
+
+  // A bare name gets placed in a sibling "{REPO}.worktrees" directory; any
+  // path containing a separator is passed through untouched.
+  const pathIndex = findPathArgIndex(args);
+  if (pathIndex !== -1 && !/[/\\]/.test(args[pathIndex])) {
+    args[pathIndex] = join(
+      "..",
+      `${basename(rootWorktreePath)}.worktrees`,
+      args[pathIndex],
+    );
+  }
+
   const result = await $`git worktree add ${args}`.nothrow();
   if (result.exitCode !== 0) {
     process.exit(result.exitCode);
   }
 
-  const worktreePath = resolve(positionals[0]);
-  const rootWorktreePath = await getRootWorktreePath();
+  const worktreePath = resolve(args[pathIndex]);
   await setupWorktree(rootWorktreePath, worktreePath);
 }
 
