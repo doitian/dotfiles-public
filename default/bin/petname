@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Generate a multipass instance name.
-# See https://github.com/canonical/multipass/tree/main/src/petname
+# See https://github.com/canonical/multipass/tree/main/rxx/namegen
 
 set -e
 set -u
@@ -12,7 +12,7 @@ pick_from() {
   local NAMES_FILE="$1"
   local CACHE_FILE="$HOME/.cache/petname/$NAMES_FILE"
   if [ -z "$(find "$CACHE_FILE" -mtime -7 -print 2>/dev/null || true)" ]; then
-    curl -sL -o "$CACHE_FILE" "https://github.com/canonical/multipass/raw/main/src/petname/${NAMES_FILE}"
+    curl -sfL -o "$CACHE_FILE" "https://raw.githubusercontent.com/canonical/multipass/main/rxx/namegen/assets/${NAMES_FILE}"
   fi
 
   shuf -n 1 "$CACHE_FILE"
