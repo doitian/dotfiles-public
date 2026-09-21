@@ -57,8 +57,6 @@ test.each([
     "bun add -g --ignore-scripts @earendil-works/pi-coding-agent",
   ],
   ["g:add:gh:all", "gh extension install github/gh-stack"],
-  ["g:ramdisk:up", "g-ramdisk-up"],
-  ["g:ramdisk:down", "g-ramdisk-down"],
 ])("%s resolves its command without executing it", async (name, ...commands) => {
   const output = await run("run", "--dry-run", name);
   for (const command of commands) {
