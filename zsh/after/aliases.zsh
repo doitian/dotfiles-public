@@ -117,6 +117,7 @@ alias oc=opencode
 alias qianwen='opencode -m opencode-go/qwen3.8-max'
 alias deepseek='opencode -m opencode-go/deepseek-v4.1-flash'
 alias kimi-payg='opencode -m moonshotai-cn/kimi-k3'
+alias kimi-coding='pi --model kimi-coding/k3'
 alias bx="bun x.mjs"
 alias mx="mise x --"
 alias mr="mise run"
