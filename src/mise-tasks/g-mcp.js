@@ -5,7 +5,7 @@ import { exists } from "../lib/fs";
 
 const TEMPLATE = join(
   home(),
-  ".dotfiles/repos/public/ai/opencode/opencode.jsonc",
+  ".dotfiles/repos/public/ai/mcp.jsonc",
 );
 
 const AGENTS = ["opencode", "claude-desktop", "claude-code"];
