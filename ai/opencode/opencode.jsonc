@@ -1,11 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "mcp": {
-    "readwise": {
-      "type": "remote",
-      "url": "https://mcp2.readwise.io/mcp",
-      "enabled": false
-    },
     "grafana": {
       "type": "local",
       "command": [
