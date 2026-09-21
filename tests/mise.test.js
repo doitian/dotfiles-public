@@ -121,6 +121,28 @@ test("pi plugin removal is global", async () => {
     .toEqual(["remove", "git:github.com/EveryInc/compound-engineering-plugin"]);
 });
 
+test("opencode plugin installation is project-scoped", async () => {
+  await sandbox.recordCommand("opencode");
+  const plugin = "compound-engineering@git+https://github.com/EveryInc/compound-engineering-plugin.git";
+  await run("run", "p:opencode:ce:enable");
+  expect(await Bun.file(join(sandbox.project, "opencode-args.json")).json())
+    .toEqual(["plugin", plugin, "-f"]);
+});
+
+test("pi plugin installation is project-scoped", async () => {
+  await sandbox.recordCommand("pi");
+  await run("run", "p:pi:ce:enable");
+  expect(await Bun.file(join(sandbox.project, "pi-args.json")).json())
+    .toEqual(["install", "-l", "git:github.com/EveryInc/compound-engineering-plugin"]);
+});
+
+test("pi plugin removal is project-scoped", async () => {
+  await sandbox.recordCommand("pi");
+  await run("run", "p:pi:ce:disable");
+  expect(await Bun.file(join(sandbox.project, "pi-args.json")).json())
+    .toEqual(["remove", "-l", "git:github.com/EveryInc/compound-engineering-plugin"]);
+});
+
 test("g:mcp forwards valid arguments", async () => {
   expect(await run("run", "--dry-run", "g:mcp", "status", "claude-code", "test-server"))
     .toContain("g-mcp status claude-code test-server");

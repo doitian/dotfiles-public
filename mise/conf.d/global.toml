@@ -126,6 +126,37 @@ hide = true
 description = "Disable the compound-engineering plugin for pi"
 run = "pi remove git:github.com/EveryInc/compound-engineering-plugin"
 
+[tasks."p:opencode:ce:enable"]
+hide = true
+description = "Install the compound-engineering plugin for opencode (project)"
+run = "cd \"${MISE_ORIGINAL_CWD:-$PWD}\" && opencode plugin compound-engineering@git+https://github.com/EveryInc/compound-engineering-plugin.git -f"
+
+[tasks."p:opencode:ce:disable"]
+hide = true
+description = "Disable the compound-engineering plugin for opencode (project)"
+run = '''
+cd "${MISE_ORIGINAL_CWD:-$PWD}"
+PLUGIN="compound-engineering@git+https://github.com/EveryInc/compound-engineering-plugin.git"
+for FILE in opencode.jsonc opencode.json .opencode/opencode.jsonc .opencode/opencode.json; do
+  if [ -f "$FILE" ] && grep -qF "$PLUGIN" "$FILE"; then
+    jq --arg p "$PLUGIN" '.plugin = (.plugin | map(select(. != $p)))' "$FILE" > "$FILE.tmp" && mv "$FILE.tmp" "$FILE"
+    echo "compound-engineering plugin disabled"
+    exit 0
+  fi
+done
+echo "compound-engineering plugin already disabled"
+'''
+
+[tasks."p:pi:ce:enable"]
+hide = true
+description = "Install the compound-engineering plugin for pi (project)"
+run = "cd \"${MISE_ORIGINAL_CWD:-$PWD}\" && pi install -l git:github.com/EveryInc/compound-engineering-plugin"
+
+[tasks."p:pi:ce:disable"]
+hide = true
+description = "Disable the compound-engineering plugin for pi (project)"
+run = "cd \"${MISE_ORIGINAL_CWD:-$PWD}\" && pi remove -l git:github.com/EveryInc/compound-engineering-plugin"
+
 [tasks."g:mcp"]
 hide = true
 description = "Enable, disable, or check status of an MCP server for a code agent"
