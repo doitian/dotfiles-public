@@ -221,23 +221,24 @@ describe("CLI --git", () => {
     expect(f.calls.map(call => call.method ?? "GET")).toEqual(["GET"]);
   });
 
-  test("list --git creates a missing root task and scopes output to it", async () => {
+  test("list --git reports nothing and creates no root task when it is missing", async () => {
     const f = gitFixture();
     await f.run(["list", "--git", "--json"]);
-    expect(f.added).toEqual([{ id: "new-1", title: "owner/repo", notes: "", status: "needsAction" }]);
+    expect(f.added).toEqual([]);
+    expect(f.calls.map(call => call.method ?? "GET")).toEqual(["GET"]);
     const data = JSON.parse(f.text());
-    expect(data.parent).toEqual(f.added[0]);
+    expect(data.parent).toBeNull();
     expect(data.tasks).toEqual([]);
     const md = gitFixture();
     await md.run(["list", "--git", "--raw"]);
-    expect(md.text()).toBe("# owner/repo\n");
+    expect(md.text()).toBe("\n");
   });
 
   test("list --git matches root tasks only and combines with filters", async () => {
     const f = gitFixture({ items: [{ id: "c", parent: "p", title: "owner/repo", status: "needsAction" }] });
     await f.run(["list", "--git", "--json"]);
-    expect(f.added).toHaveLength(1);
-    expect(JSON.parse(f.text()).parent.id).toBe("new-1");
+    expect(f.added).toEqual([]);
+    expect(JSON.parse(f.text())).toMatchObject({ parent: null, tasks: [] });
     const filtered = gitFixture({ items: [...tasks, { id: "r", title: "owner/repo", status: "needsAction" }, { id: "rc", parent: "r", title: "Ship it #next", status: "needsAction" }] });
     await filtered.run(["list", "--git", "--token", "#next", "--json"]);
     expect(JSON.parse(filtered.text()).tasks.map(task => task.id)).toEqual(["rc"]);

@@ -23,9 +23,10 @@ included in matching. Ambiguous names fail with matching IDs to choose from.
 The selected task is in `parent`; only descendants are in `tasks`.
 
 `--git` selects the root task named after the current git repository
-(`owner/repo` for a GitHub remote, otherwise `hostname/directory`), creating it
-when missing, and scopes output to it like `--cd`. It cannot combine with
-`--cd`.
+(`owner/repo` for a GitHub remote, otherwise `hostname/directory`) and scopes
+output to it like `--cd`. It never creates that task: when it is missing,
+`parent` is null and `tasks` is empty (only `tui --git` creates it). It cannot
+combine with `--cd`.
 
 ## Filters
 

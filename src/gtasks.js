@@ -1592,7 +1592,7 @@ const USAGE = `Usage: gtasks <command> [options]
   gtasks tui [list-id] [--cd NAME | --git]  Open the TUI
   gtasks auth         Sign in and save a refresh token in the OS key store
   --cd <search>       Enter a unique matching task title; otherwise filter at root
-  --git               Focus the current git repo's root task, creating it if missing
+  --git               Focus the current git repo's root task (tui creates it if missing)
   --status STATUS     list: needsAction or completed (default: both)
   --search TEXT       list: case-insensitive substring in title or notes
   --token TOKEN       list: exact, case-sensitive #tag or @context; repeatable
@@ -1603,6 +1603,7 @@ const USAGE = `Usage: gtasks <command> [options]
 Lists default to @default. --list also works with list and tui.
 list --cd accepts a task ID or a unique title match, including completed tasks.
 --git names the root task owner/repo for a GitHub remote (origin preferred), else hostname/directory; it cannot combine with --cd.
+list --git reports nothing when that root task is missing; only tui creates it.
 List filters combine with AND after --cd resolution; only matches are returned, without ancestors.
 JSON retains IDs/parent links; Markdown promotes matches with omitted parents to the top level.
 Tokens contain Unicode letters, numbers, underscores or hyphens, bounded by punctuation/space.
@@ -1689,8 +1690,8 @@ export async function main(args = process.argv.slice(2), { createApi = createGoo
             let items = await api.list(tasklist);
             let parent;
             if (values.git) {
-                parent = await ensureRootTask(api, tasklist, items, gitName);
-                if (!items.some(task => task.id === parent.id)) items = [...items, parent];
+                parent = findRootTask(items, gitName) ?? null;
+                if (!parent) items = [];
             } else parent = values.cd === undefined ? null : matchTask(items, values.cd);
             const scoped = parent ? visibleTasks(items, parent.id, "", true).map(({ depth, ...task }) => task) : items;
             const tasks = filterListTasks(scoped, values);
@@ -1746,14 +1747,10 @@ function findRootTask(tasks, title) {
     return tasks.find(task => !task.parent && !task.deleted && (task.title ?? "").trim().toLowerCase() === query);
 }
 
-async function ensureRootTask(api, list, tasks, title) {
-    return findRootTask(tasks, title) ?? api.add(list, title, null, "");
-}
-
 export async function ensureGitTask(remote, local, list, title) {
     // local.list() overlays queued unsynced additions, so checking it first avoids creating a duplicate.
     const localMatch = local ? findRootTask(await local.list(), title) : null;
-    return localMatch ?? ensureRootTask(remote, list, await remote.list(list), title);
+    return localMatch ?? findRootTask(await remote.list(list), title) ?? remote.add(list, title, null, "");
 }
 
 export function matchTask(tasks, name) {
