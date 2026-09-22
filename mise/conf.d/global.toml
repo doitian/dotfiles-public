@@ -60,6 +60,17 @@ run_windows = [
   "$installer = Join-Path ([IO.Path]::GetTempPath()) 'sprite-install.ps1'; try { & $installer } finally { Remove-Item -LiteralPath $installer -Force -ErrorAction SilentlyContinue }",
 ]
 
+[tasks."g:add:plannotator"]
+hide = true
+description = "Install plannotator CLI only"
+dir = "~"
+shell = "{% if os() == 'windows' %}pwsh -NoLogo -NoProfile -ExecutionPolicy Bypass -Command{% else %}bash -c -o errexit{% endif %}"
+run = "curl -fsSL https://plannotator.ai/install.sh | bash -s -- --minimal"
+run_windows = [
+  "Invoke-WebRequest 'https://plannotator.ai/install.ps1' -OutFile (Join-Path ([IO.Path]::GetTempPath()) 'plannotator-install.ps1')",
+  "$installer = Join-Path ([IO.Path]::GetTempPath()) 'plannotator-install.ps1'; try { & $installer -Minimal } finally { Remove-Item -LiteralPath $installer -Force -ErrorAction SilentlyContinue }",
+]
+
 [tasks."g:clean:all"]
 hide = true
 dir = "~"
