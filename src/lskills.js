@@ -23,7 +23,7 @@ async function linkSkill(name) {
     const stat = await lstat(link).catch(() => null);
     if (stat) {
       if (!stat.isSymbolicLink()) {
-        console.error(`skills ladd: ${link} exists and is not a symlink`);
+        console.error(`lskills: ${link} exists and is not a symlink`);
         process.exit(1);
       }
       await unlink(link);
@@ -37,7 +37,7 @@ async function ladd() {
   const entries = await readdir(SKILLS_SRC, { withFileTypes: true });
   const skills = entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name).sort();
   if (skills.length === 0) {
-    console.error(`skills ladd: no skills found in ${SKILLS_SRC}`);
+    console.error(`lskills: no skills found in ${SKILLS_SRC}`);
     process.exit(1);
   }
 
@@ -55,21 +55,10 @@ async function ladd() {
 }
 
 async function main() {
-  const args = process.argv.slice(2);
-  if (args[0] === "ladd") {
-    await ladd();
-    return;
-  }
-
-  const bunx = Bun.spawn(["bunx", "skills", ...args], {
-    stdin: "inherit",
-    stdout: "inherit",
-    stderr: "inherit",
-  });
-  process.exit(await bunx.exited);
+  await ladd();
 }
 
 main().catch((error) => {
-  console.error(`skills: ${error.message}`);
+  console.error(`lskills: ${error.message}`);
   process.exit(1);
 });
