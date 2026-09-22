@@ -3,6 +3,14 @@ import { mkdir } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { home } from "../lib/env";
 
+/** mbx cache root: %LOCALAPPDATA%\mbx on Windows, ~/.cache/mbx elsewhere. */
+function mbxCacheRoot() {
+  if (process.platform === "win32") {
+    return join(process.env.LOCALAPPDATA || join(home(), "AppData", "Local"), "mbx");
+  }
+  return join(home(), ".cache/mbx");
+}
+
 async function patchCodex() {
   const path = join(home(), ".codex/config.toml");
   const file = Bun.file(path);
@@ -11,7 +19,7 @@ async function patchCodex() {
   const config = Bun.TOML.parse(await file.text());
   const sandbox = config.sandbox_workspace_write ??= {};
   const roots = sandbox.writable_roots ??= [];
-  const root = join(home(), ".cache/mbx");
+  const root = mbxCacheRoot();
   if (roots.includes(root)) return;
 
   roots.push(root);
