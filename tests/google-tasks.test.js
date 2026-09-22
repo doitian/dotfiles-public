@@ -1,4 +1,4 @@
-import { GoogleTasks, LocalGoogleTasks, authorize, createAuthorizationRequest, googleTasksSecrets, TasksView, renderTasks, runTasksTui, visibleTasks, renderMarkdown, viewMarkdown, parseTaskInput, parseDue, formatDue, formatId, readTaskInput, taskLinks } from "../src/gtasks.js";
+import { GoogleTasks, LocalGoogleTasks, authorize, createAuthorizationRequest, ensureGitTask, googleTasksSecrets, TasksView, renderTasks, runTasksTui, visibleTasks, renderMarkdown, viewMarkdown, parseTaskInput, parseDue, formatDue, formatId, readTaskInput, taskLinks } from "../src/gtasks.js";
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { main as importSecrets } from "../scripts/ev-secrets.js";
 import { createHash } from "node:crypto";
@@ -327,6 +327,17 @@ describe("Persistent local task queue", () => {
         expect(local.state.error).toBe("");
     });
 
+    test("ensureGitTask reuses queued unsynced additions before asking Google", async () => {
+        const { local, remote, data } = fixture();
+        const queued = await local.add("@default", "owner/repo");
+        const found = await ensureGitTask(remote, local, "@default", "owner/repo");
+        expect(found.id).toBe(queued.id);
+        expect(data.writes).toEqual([]);
+        const created = await ensureGitTask(remote, local, "@default", "owner/other");
+        expect(created.title).toBe("owner/other");
+        expect(data.writes).toEqual([["add", "owner/other", null, "", undefined, undefined]]);
+    });
+
     test("the TUI opens its cache offline, saves locally, and requires confirmation before reset", async () => {
         const { local, data } = fixture();
         await local.syncOnce();
@@ -380,6 +391,26 @@ describe("Persistent local task queue", () => {
         await new Promise(resolve => setImmediate(resolve));
         expect(local.state.queue).toEqual([]);
         expect(screen).toContain("Local cache reloaded from Google.");
+        input.write("q");
+        await pending;
+    });
+
+    test("the first background load honors focusId", async () => {
+        const { local, data } = fixture();
+        data.tasks.push({ id: "server-1", title: "owner/repo", status: "needsAction" });
+        const input = new PassThrough();
+        const output = new PassThrough();
+        input.isTTY = output.isTTY = true;
+        input.setRawMode = () => { };
+        output.columns = 110;
+        output.rows = 24;
+        let screen = "";
+        output.on("data", chunk => { screen += chunk; });
+        const pending = runTasksTui(local, "@default", { input, output, focusId: "server-1" });
+        await new Promise(resolve => setImmediate(resolve));
+        await local.syncOnce({ force: true });
+        await new Promise(resolve => setImmediate(resolve));
+        expect(screen).toContain("Google Tasks / My tasks / owner/repo");
         input.write("q");
         await pending;
     });
@@ -568,6 +599,20 @@ describe("Task navigation and actions", () => {
         expect(missing.parent).toBeNull();
         expect(missing.search).toBe("absent");
         expect(missing.rows).toEqual([]);
+    });
+
+    test("focusTask enters a task by ID, honoring queued local ID aliases", () => {
+        const { view } = fixture();
+        expect(view.focusTask("p")).toBe(true);
+        expect(view.parent).toBe("p");
+        expect(view.rows.map(task => task.id)).toEqual(["p", "c"]);
+        expect(view.focusTask("missing")).toBe(false);
+        expect(view.parent).toBe("p");
+        const aliased = fixture().view;
+        aliased.api.state = { ids: { "local:1": "server-1" } };
+        aliased.tasks = aliased.tasks.map(task => task.id === "p" ? { ...task, id: "local:1" } : task.parent === "p" ? { ...task, parent: "local:1" } : task);
+        expect(aliased.focusTask("server-1")).toBe(true);
+        expect(aliased.parent).toBe("local:1");
     });
 
     test("shows the subtree and keeps matching tasks' ancestors while searching", () => {

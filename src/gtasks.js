@@ -7,8 +7,8 @@ import { secrets, $ } from "bun";
 import { PassThrough } from "node:stream";
 import { Database } from "bun:sqlite";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
-import { join } from "node:path";
-import { homedir, tmpdir } from "node:os";
+import { basename, join } from "node:path";
+import { homedir, hostname, tmpdir } from "node:os";
 import { SERVICE_NAME, getSecret } from "./lib/secrets.js";
 import { writeClipboard } from "./lib/io.js";
 
@@ -877,6 +877,14 @@ export class TasksView {
         }
     }
 
+    focusTask(id) {
+        const index = this.rows.findIndex(task => task.id === id || this.ids?.[task.id] === id);
+        if (index === -1) return false;
+        this.selected = index;
+        this.enter();
+        return true;
+    }
+
     openEditor(mode, insert) {
         this.visual = null;
         this.mode = mode;
@@ -1324,7 +1332,7 @@ export async function editTaskInEditor(initial, { editor = process.env.EDITOR ||
   }
 }
 
-export async function runTasksTui(api, list = "@default", { input = process.stdin, output = process.stdout, cd, editExternal = editTaskInEditor } = {}) {
+export async function runTasksTui(api, list = "@default", { input = process.stdin, output = process.stdout, cd, focusId, editExternal = editTaskInEditor } = {}) {
     if (!input.isTTY || !output.isTTY) throw new Error("gtasks needs an interactive terminal. Use gtasks list for Markdown output.");
     const view = new TasksView(api, list);
     output.write("Loading Google Tasks...\n");
@@ -1332,6 +1340,7 @@ export async function runTasksTui(api, list = "@default", { input = process.stdi
     view.listTitle = metadata.title || "Default list";
     await view.refresh();
     view.startAt(cd);
+    let focusPending = Boolean(focusId) && !view.focusTask(focusId);
     let busy = false;
     let closed = false;
     let editing = false;
@@ -1360,6 +1369,7 @@ export async function runTasksTui(api, list = "@default", { input = process.stdi
                     startupCdPending = false;
                     view.startAt(cd);
                 }
+                if (focusPending && view.focusTask(focusId)) focusPending = false;
             }
         } catch (error) { view.message = error.message ?? String(error); }
         finally { refreshing = false; draw(); }
@@ -1368,6 +1378,7 @@ export async function runTasksTui(api, list = "@default", { input = process.stdi
     const onKey = async (text, key = {}) => {
         if (editing) return;
         startupCdPending = false;
+        focusPending = false;
         if ((key.ctrl && key.name === "c") || (view.mode === "browse" && text === "q")) { finish(); return; }
         if (busy || closed) return;
         try {
@@ -1572,15 +1583,16 @@ const USAGE = `Usage: gtasks <command> [options]
 
   gtasks              Manage your default Google Tasks list
   gtasks lists [--json]                    List all task lists (id and name)
-  gtasks list [list-id] [--cd NAME] [--json] [--raw] Read tasks or a parent's subtree
+  gtasks list [list-id] [--cd NAME | --git] [--json] [--raw] Read tasks or a parent's subtree
   gtasks add --title TEXT [--notes TEXT] [--due DATE] [--parent TASK-ID] [--list LIST-ID] [--json]
   gtasks edit TASK-ID [--title TEXT] [--notes TEXT] [--due DATE] [--list LIST-ID] [--json]
   gtasks move TASK-ID (--parent PARENT-ID | --root) [--previous TASK-ID] [--list LIST-ID] [--json]
   gtasks done TASK-ID [--list LIST-ID] [--json]
   gtasks undone TASK-ID [--list LIST-ID] [--json]
-  gtasks tui [list-id] [--cd NAME]          Open the TUI
+  gtasks tui [list-id] [--cd NAME | --git]  Open the TUI
   gtasks auth         Sign in and save a refresh token in the OS key store
   --cd <search>       Enter a unique matching task title; otherwise filter at root
+  --git               Focus the current git repo's root task, creating it if missing
   --status STATUS     list: needsAction or completed (default: both)
   --search TEXT       list: case-insensitive substring in title or notes
   --token TOKEN       list: exact, case-sensitive #tag or @context; repeatable
@@ -1590,6 +1602,7 @@ const USAGE = `Usage: gtasks <command> [options]
 
 Lists default to @default. --list also works with list and tui.
 list --cd accepts a task ID or a unique title match, including completed tasks.
+--git names the root task owner/repo for a GitHub remote (origin preferred), else hostname/directory; it cannot combine with --cd.
 List filters combine with AND after --cd resolution; only matches are returned, without ancestors.
 JSON retains IDs/parent links; Markdown promotes matches with omitted parents to the top level.
 Tokens contain Unicode letters, numbers, underscores or hyphens, bounded by punctuation/space.
@@ -1616,14 +1629,14 @@ r refreshes; q or Ctrl+C quits.
 Seed credentials: bun run ev-secrets --google-tasks
 See docs/gtasks.md for the gopass entry format and OAuth setup.`;
 
-export async function main(args = process.argv.slice(2), { createApi = createGoogleTasks, output = process.stdout, runGlow } = {}) {
+export async function main(args = process.argv.slice(2), { createApi = createGoogleTasks, output = process.stdout, runGlow, gitRepo = gitRepoName } = {}) {
     const { values, positionals } = parseArgs({
         args,
         allowPositionals: true,
         options: {
             root: { type: "boolean" }, previous: { type: "string" },
             status: { type: "string" }, search: { type: "string" }, token: { type: "string", multiple: true },
-            help: { type: "boolean", short: "h" }, port: { type: "string" }, cd: { type: "string" },
+            help: { type: "boolean", short: "h" }, port: { type: "string" }, cd: { type: "string" }, git: { type: "boolean" },
             json: { type: "boolean" }, raw: { type: "boolean" }, list: { type: "string" }, title: { type: "string" }, notes: { type: "string" }, parent: { type: "string" }, due: { type: "string" },
         },
     });
@@ -1631,7 +1644,7 @@ export async function main(args = process.argv.slice(2), { createApi = createGoo
     if (values.help) { print(USAGE); return; }
     const [command = "tui", target] = positionals;
     const allowed = {
-        tui: ["list", "cd", "port"], auth: ["port"], lists: ["json"], list: ["list", "cd", "json", "raw", "status", "search", "token"],
+        tui: ["list", "cd", "port", "git"], auth: ["port"], lists: ["json"], list: ["list", "cd", "git", "json", "raw", "status", "search", "token"],
         add: ["list", "title", "notes", "due", "parent", "json"], edit: ["list", "title", "notes", "due", "json"],
         move: ["list", "parent", "root", "previous", "json"],
         done: ["list", "json"], undone: ["list", "json"],
@@ -1648,16 +1661,22 @@ export async function main(args = process.argv.slice(2), { createApi = createGoo
     const due = values.due !== undefined ? parseDue(values.due) : undefined;
     for (const key of ["list", "parent", "cd", "previous", "search"]) if (values[key] !== undefined && !values[key].trim()) throw new Error(`--${key} cannot be empty.`);
     if (["list", "tui"].includes(command) && target !== undefined && values.list !== undefined) throw new Error("Use either a positional list ID or --list, not both.");
+    if (values.git && values.cd !== undefined) throw new Error("Use either --git or --cd, not both.");
     const tasklist = values.list ?? (["list", "tui"].includes(command) ? target : undefined) ?? "@default";
     const port = values.port === undefined ? 0 : Number(values.port);
     if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error("--port must be an integer from 0 to 65535.");
     if (command === "tui" && (!process.stdin.isTTY || !process.stdout.isTTY)) throw new Error("gtasks needs an interactive terminal. Use gtasks list for Markdown output.");
+    const gitName = values.git ? await gitRepo(process.cwd()) : undefined;
     const api = await createApi({ login: command === "auth", port, interactive: ["auth", "tui"].includes(command) });
     try {
         if (command === "auth") { print("Google Tasks sign-in saved in the OS key store."); return; }
         if (command === "tui") {
             const local = await LocalGoogleTasks.open(api, tasklist);
-            try { await runTasksTui(local, tasklist, { cd: values.cd }); }
+            try {
+                let focusId;
+                if (values.git) focusId = (await ensureGitTask(api, local, tasklist, gitName)).id;
+                await runTasksTui(local, tasklist, { cd: values.cd, focusId });
+            }
             finally { local.cancel(); }
             return;
         }
@@ -1667,8 +1686,12 @@ export async function main(args = process.argv.slice(2), { createApi = createGoo
             data = (await api.lists()).map(list => ({ id: list.id, name: list.title }));
             md = data.map(list => `- ${terminalText(list.name)} (${list.id})`).join("\n");
         } else if (command === "list") {
-            const items = await api.list(tasklist);
-            const parent = values.cd === undefined ? null : matchTask(items, values.cd);
+            let items = await api.list(tasklist);
+            let parent;
+            if (values.git) {
+                parent = await ensureRootTask(api, tasklist, items, gitName);
+                if (!items.some(task => task.id === parent.id)) items = [...items, parent];
+            } else parent = values.cd === undefined ? null : matchTask(items, values.cd);
             const scoped = parent ? visibleTasks(items, parent.id, "", true).map(({ depth, ...task }) => task) : items;
             const tasks = filterListTasks(scoped, values);
             data = { listId: tasklist, parent, tasks };
@@ -1691,6 +1714,46 @@ export async function main(args = process.argv.slice(2), { createApi = createGoo
     } finally {
         api.cancel?.();
     }
+}
+
+export function githubRepoName(url) {
+    const text = String(url ?? "").trim();
+    const match = text.match(/^(?:[a-z][a-z0-9+.-]*:\/\/)?(?:[^@\s/]+@)?github\.com(?::\d+)?[/:]([^/\s]+)\/([^/\s]+?)\/?$/i);
+    if (!match) return null;
+    const repo = match[2].replace(/\.git$/i, "");
+    return repo ? `${match[1]}/${repo}` : null;
+}
+
+async function gitStdout(args) {
+    const result = await $`git ${args}`.quiet().nothrow();
+    return result.exitCode === 0 ? result.stdout.toString().trim() : "";
+}
+
+export async function gitRepoName(cwd = process.cwd(), run = gitStdout) {
+    const top = await run(["-C", cwd, "rev-parse", "--show-toplevel"]);
+    if (!top) throw new Error("--git requires a git repository. Run gtasks inside one.");
+    const remotes = (await run(["-C", top, "remote"])).split("\n").map(name => name.trim()).filter(Boolean)
+        .sort((a, b) => Number(b === "origin") - Number(a === "origin"));
+    for (const remote of remotes) {
+        const name = githubRepoName(await run(["-C", top, "remote", "get-url", remote]));
+        if (name) return name;
+    }
+    return `${hostname()}/${basename(top)}`;
+}
+
+function findRootTask(tasks, title) {
+    const query = title.trim().toLowerCase();
+    return tasks.find(task => !task.parent && !task.deleted && (task.title ?? "").trim().toLowerCase() === query);
+}
+
+async function ensureRootTask(api, list, tasks, title) {
+    return findRootTask(tasks, title) ?? api.add(list, title, null, "");
+}
+
+export async function ensureGitTask(remote, local, list, title) {
+    // local.list() overlays queued unsynced additions, so checking it first avoids creating a duplicate.
+    const localMatch = local ? findRootTask(await local.list(), title) : null;
+    return localMatch ?? ensureRootTask(remote, list, await remote.list(list), title);
 }
 
 export function matchTask(tasks, name) {

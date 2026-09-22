@@ -5,6 +5,7 @@ gtasks lists --json
 gtasks list --json
 gtasks list --raw
 gtasks list --list LIST_ID --cd 'Project' --json
+gtasks list --git --json
 gtasks list --status needsAction --token '#next' --token '@computer' --json
 gtasks list --search 'proposal' --json
 ```
@@ -20,6 +21,11 @@ status, due dates, and parent IDs. Rebuild hierarchy from parent links.
 case-insensitive exact title, then a unique substring; completed tasks are
 included in matching. Ambiguous names fail with matching IDs to choose from.
 The selected task is in `parent`; only descendants are in `tasks`.
+
+`--git` selects the root task named after the current git repository
+(`owner/repo` for a GitHub remote, otherwise `hostname/directory`), creating it
+when missing, and scopes output to it like `--cd`. It cannot combine with
+`--cd`.
 
 ## Filters
 

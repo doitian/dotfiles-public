@@ -19,6 +19,16 @@ of task titles among the unfinished tasks. One match opens its child hierarchy;
 multiple matches keep you at the root with the search filter applied so you can
 select a parent. No matches also leaves the filter at the root; Esc clears it.
 
+Start in the current repository's root task with `gtasks --git` (also
+`gtasks list --git` and `gtasks tui <list-id> --git`; it cannot combine with
+`--cd`). The task is named `owner/repo` when the repository has a GitHub remote
+(origin is preferred), or `hostname/directory` otherwise. A root task with that
+exact name is reused case-insensitively; otherwise it is created first. The TUI
+checks its local cache, including queued unsynced additions, before creating a
+task on Google, and focuses the task by ID once it appears in the cache, so
+duplicate titles elsewhere do not matter. `list --git` reads and writes Google
+directly and scopes its output to the task like `--cd`.
+
 ## Agent commands
 
 ```powershell
@@ -29,6 +39,7 @@ gtasks list --raw
 gtasks list --status needsAction --token "#next" --token "@computer" --json
 gtasks list --search "proposal" --json
 gtasks list --cd "Project"
+gtasks list --git --json
 gtasks list --list LIST_ID --cd "Project" --json
 gtasks add --title "New task" --notes "Description" --due 2026-09-14 --parent PARENT_ID --json
 gtasks edit TASK_ID --title "Updated title" --notes "Updated description" --due tomorrow --json
