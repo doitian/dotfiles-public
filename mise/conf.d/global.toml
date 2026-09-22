@@ -97,6 +97,37 @@ cat > ~/.config/mise/github_tokens.toml <<EOF
 token = "$(gh auth token)"
 EOF
 '''
+
+[tasks."g:claude:ce:enable"]
+hide = true
+description = "Install the compound-engineering plugin for claude"
+run = [
+  "claude plugin marketplace add EveryInc/compound-engineering-plugin --scope user",
+  "claude plugin install compound-engineering@compound-engineering-plugin --scope user",
+]
+
+[tasks."g:claude:ce:disable"]
+hide = true
+description = "Disable the compound-engineering plugin for claude"
+run = "claude plugin disable compound-engineering@compound-engineering-plugin --scope user"
+
+[tasks."g:claude:plannotator:enable"]
+hide = true
+description = "Install the plannotator plugin and skills for claude"
+run = [
+  "claude plugin marketplace add backnotprop/plannotator --scope user",
+  "claude plugin install plannotator@plannotator --scope user",
+  "bunx skills add backnotprop/plannotator/apps/skills/core --agent claude-code --global --yes",
+]
+
+[tasks."g:claude:plannotator:disable"]
+hide = true
+description = "Disable the plannotator plugin and remove its skills for claude"
+run = [
+  "bunx skills remove plannotator plannotator-annotate plannotator-last plannotator-review --agent claude-code --global --yes",
+  "claude plugin disable plannotator@plannotator --scope user",
+]
+
 [tasks."g:opencode:ce:enable"]
 hide = true
 description = "Install the compound-engineering plugin for opencode"
@@ -125,6 +156,40 @@ run = "pi install git:github.com/EveryInc/compound-engineering-plugin"
 hide = true
 description = "Disable the compound-engineering plugin for pi"
 run = "pi remove git:github.com/EveryInc/compound-engineering-plugin"
+
+[tasks."p:claude:ce:enable"]
+hide = true
+description = "Install the compound-engineering plugin for claude (project)"
+dir = "{{cwd}}"
+run = [
+  "claude plugin marketplace add EveryInc/compound-engineering-plugin --scope local",
+  "claude plugin install compound-engineering@compound-engineering-plugin --scope local",
+]
+
+[tasks."p:claude:ce:disable"]
+hide = true
+description = "Disable the compound-engineering plugin for claude (project)"
+dir = "{{cwd}}"
+run = "claude plugin disable compound-engineering@compound-engineering-plugin --scope local"
+
+[tasks."p:claude:plannotator:enable"]
+hide = true
+description = "Install the plannotator plugin and skills for claude (project)"
+dir = "{{cwd}}"
+run = [
+  "claude plugin marketplace add backnotprop/plannotator --scope local",
+  "claude plugin install plannotator@plannotator --scope local",
+  "bunx skills add backnotprop/plannotator/apps/skills/core --agent claude-code --yes",
+]
+
+[tasks."p:claude:plannotator:disable"]
+hide = true
+description = "Disable the plannotator plugin and remove its skills for claude (project)"
+dir = "{{cwd}}"
+run = [
+  "bunx skills remove plannotator plannotator-annotate plannotator-last plannotator-review --agent claude-code --yes",
+  "claude plugin disable plannotator@plannotator --scope local",
+]
 
 [tasks."p:opencode:ce:enable"]
 hide = true
