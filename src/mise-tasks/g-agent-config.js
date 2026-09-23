@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+import { $ } from "bun";
 import { mkdir } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { home } from "../lib/env";
+import { exists } from "../lib/fs";
 
 /** mbx cache root: %LOCALAPPDATA%\mbx on Windows, ~/.cache/mbx elsewhere. */
 function mbxCacheRoot() {
@@ -42,9 +44,32 @@ async function patchClaude() {
   console.log(`Updated ${path}`);
 }
 
+async function grantCodexPermissions() {
+  if (process.platform !== "win32" || !Bun.which("codex")) return;
+
+  const path = join(home(), ".ignore");
+  if (await Bun.file(path).exists()) {
+    await $`icacls ${path} /grant CodexSandboxUsers:R`;
+    await $`icacls ${path} /L /grant CodexSandboxUsers:R`;
+  }
+
+  const localAppData = process.env.LOCALAPPDATA || join(home(), "AppData", "Local");
+  const toolDirectories = [
+    join(localAppData, "nvim-data", "mason"),
+    join(process.cwd(), "dist"),
+  ];
+  for (const directory of toolDirectories) {
+    if (!(await exists(directory))) continue;
+
+    await $`icacls ${directory} /grant "CodexSandboxUsers:(OI)(CI)(RX)" /T`.quiet();
+    console.log(`Granted Codex read and execute access to ${directory}`);
+  }
+}
+
 async function main() {
   await patchCodex();
   await patchClaude();
+  await grantCodexPermissions();
 }
 
 main().catch((err) => {
