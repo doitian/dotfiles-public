@@ -16,6 +16,10 @@ test("pickers work without shim files and reuse session lists for exact and fuzz
     expect(build.success).toBe(true);
     for (const name of ["tmux", "fzf"]) await copyFile(compiled, join(dir, name + suffix));
     const log = join(dir, "calls.jsonl");
+    const env = { ...process.env };
+    const pathKey = Object.keys(env).find((key) => key.toUpperCase() === "PATH") ?? "PATH";
+    env[pathKey] = dir + delimiter + (env[pathKey] ?? "");
+    Object.assign(env, { TMUX: "fixture", PSMUX_DATA_DIR: join(dir, "no-server"), PICKER_LOG: log });
     for (const [picker, args, expected] of [
       ["pane", ["-s", "-p"], [["list-panes", "-s"], ["switchc", "-t", "=work:@1.%1"]]],
       ["pane", ["work"], [["has-session", "-t", "=work"], ["switchc", "-t", "=work"]]],
@@ -30,10 +34,7 @@ test("pickers work without shim files and reuse session lists for exact and fuzz
       const child = Bun.spawn([
         process.execPath, fileURLToPath(new URL(`../src/tmux-fzf-${picker}.js`, import.meta.url)), ...args,
       ], {
-        env: {
-          ...process.env, PATH: dir + delimiter + process.env.PATH,
-          TMUX: "fixture", PSMUX_DATA_DIR: join(dir, "no-server"), PICKER_LOG: log,
-        },
+        env,
         stdin: "ignore", stdout: "pipe", stderr: "pipe",
       });
       const [code, stderr] = await Promise.all([child.exited, new Response(child.stderr).text()]);

@@ -154,7 +154,7 @@ async function main() {
   await attachOrSwitch(query);
 }
 
-if (import.meta.main) await main().catch((err) => {
+if (import.meta.main || Bun.isStandaloneExecutable) await main().catch((err) => {
   console.error(err.message ?? err);
   process.exit(1);
 });
