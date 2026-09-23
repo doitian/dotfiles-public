@@ -3,7 +3,6 @@ import { mkdir } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { home } from "../lib/env";
 import { exists } from "../lib/fs";
-import { grantCodexSandboxPermissions } from "../lib/codex-sandbox";
 
 /** mbx cache root: %LOCALAPPDATA%\mbx on Windows, ~/.cache/mbx elsewhere. */
 function mbxCacheRoot() {
@@ -111,7 +110,6 @@ async function main() {
   await patchCodex();
   await patchClaude();
   await scrubUlanziHooks();
-  await grantCodexSandboxPermissions();
 }
 
 main().catch((err) => {
