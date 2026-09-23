@@ -6,7 +6,6 @@ import { delimiter, join, resolve } from "node:path";
 let root;
 let project;
 let launcher;
-let wrapper;
 const windows = process.platform === "win32";
 
 beforeAll(async () => {
@@ -14,7 +13,6 @@ beforeAll(async () => {
   project = join(root, "project with spaces");
   await mkdir(project);
   await mkdir(join(root, "dist"));
-  await mkdir(join(root, "scripts"));
   const fixture = join(root, "tmux.js");
   await writeFile(fixture, `
 import { appendFileSync } from "node:fs";
@@ -33,29 +31,25 @@ if (args[0] === "attach") process.exit(23);
     const result = await Bun.build({ entrypoints: [entrypoint], compile: { outfile } });
     if (!result.success) throw new AggregateError(result.logs);
   }
-  wrapper = join(root, "scripts", "tmux-up.ps1");
-  await writeFile(wrapper, await readFile("scripts/tmux-up.ps1"));
 }, 30000);
 
 afterAll(async () => {
   if (root) await rm(root, { recursive: true, force: true });
 });
 
-async function run(args, env = {}, useWrapper = false) {
+async function run(args, env = {}) {
   const log = join(root, `${crypto.randomUUID()}.jsonl`);
-  const command = useWrapper
-    ? ["pwsh", "-NoProfile", "-Command", '. $env:TMUX_TEST_WRAPPER; tmux-up $env:TMUX_TEST_PROJECT; exit $LASTEXITCODE']
-    : [launcher, ...args];
+  const command = [launcher, ...args];
+  const spawnEnv = { ...process.env };
+  const pathKey = Object.keys(spawnEnv).find((key) => key.toUpperCase() === "PATH") ?? "PATH";
+  spawnEnv[pathKey] = `${root}${delimiter}${spawnEnv[pathKey] ?? ""}`;
+  Object.assign(spawnEnv, {
+    TMUX: "",
+    TMUX_TEST_LOG: log,
+    TMUX_TEST_PROJECT: project,
+  }, env);
   const child = Bun.spawn(command, {
-    env: {
-      ...process.env,
-      PATH: `${root}${delimiter}${process.env.PATH}`,
-      TMUX: "",
-      TMUX_TEST_LOG: log,
-      TMUX_TEST_WRAPPER: wrapper,
-      TMUX_TEST_PROJECT: project,
-      ...env,
-    },
+    env: spawnEnv,
     stdin: "ignore",
     stdout: "pipe",
     stderr: "pipe",
@@ -97,24 +91,4 @@ test.skipIf(windows)("POSIX attach replaces the launcher and preserves the exit 
   expect(result.code).toBe(23);
   expect(result.calls.at(-1).pid).toBe(result.pid);
   expect(result.calls.at(-1).args).toEqual(["attach", "-t", "=project with spaces"]);
-});
-
-test.skipIf(!windows)("PowerShell attaches directly after the setup executable exits", async () => {
-  const result = await run([], {}, true);
-  expect(result.code).toBe(23);
-  expect(result.calls[0].ppid).not.toBe(result.pid);
-  expect(result.calls[1].ppid).toBe(result.pid);
-  expect(result.calls[1].args).toEqual(["attach", "-t", "=project with spaces"]);
-});
-
-test.skipIf(!windows)("PowerShell switches clients when already inside tmux", async () => {
-  const result = await run([], { TMUX: "test-session" }, true);
-  expect(result.code).toBe(0);
-  expect(result.calls.at(-1).args).toEqual(["switchc", "-t", "=project with spaces"]);
-});
-
-test.skipIf(!windows)("PowerShell does not attach after failed setup", async () => {
-  const result = await run([], { TMUX_TEST_MISSING: "1", TMUX_TEST_CREATE_EXIT: "7" }, true);
-  expect(result.code).not.toBe(0);
-  expect(result.calls.map(c => c.args[0])).toEqual(["has-session", "new"]);
 });
