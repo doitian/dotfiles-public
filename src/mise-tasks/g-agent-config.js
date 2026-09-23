@@ -1,9 +1,9 @@
 #!/usr/bin/env bun
-import { $ } from "bun";
 import { mkdir } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { home } from "../lib/env";
 import { exists } from "../lib/fs";
+import { grantCodexSandboxPermissions } from "../lib/codex-sandbox";
 
 /** mbx cache root: %LOCALAPPDATA%\mbx on Windows, ~/.cache/mbx elsewhere. */
 function mbxCacheRoot() {
@@ -44,32 +44,74 @@ async function patchClaude() {
   console.log(`Updated ${path}`);
 }
 
-async function grantCodexPermissions() {
-  if (process.platform !== "win32" || !Bun.which("codex")) return;
+const ULANZI_HOOK_NAMES = new Set(["ulanzi-studio", "ai-tool-state-monitor"]);
+const ULANZI_HOOK_MARKER = "ai-tool-state-monitor/hooks/monitor-hook.js";
 
-  const path = join(home(), ".ignore");
-  if (await Bun.file(path).exists()) {
-    await $`icacls ${path} /grant CodexSandboxUsers:R`;
-    await $`icacls ${path} /L /grant CodexSandboxUsers:R`;
+/** The Ulanzi hook installer; while it exists, Ulanzi may (re)install hooks into agent configs. */
+function ulanziHookInstallerPath() {
+  const appData = process.env.APPDATA || join(home(), "AppData", "Roaming");
+  return join(
+    appData,
+    "Ulanzi/UlanziDeck/ustudio-cli/installers/install.js",
+  );
+}
+
+function hookCommands(entry) {
+  const commands = [];
+  for (const key of ["command", "bash", "powershell"]) {
+    if (typeof entry[key] === "string") commands.push(entry[key]);
   }
+  for (const hook of entry.hooks ?? []) commands.push(...hookCommands(hook));
+  return commands;
+}
 
-  const localAppData = process.env.LOCALAPPDATA || join(home(), "AppData", "Local");
-  const toolDirectories = [
-    join(localAppData, "nvim-data", "mason"),
-    join(process.cwd(), "dist"),
-  ];
-  for (const directory of toolDirectories) {
-    if (!(await exists(directory))) continue;
+function isUlanziHookEntry(entry) {
+  if (ULANZI_HOOK_NAMES.has(entry.name)) return true;
+  if ((entry.hooks ?? []).some(isUlanziHookEntry)) return true;
+  return hookCommands(entry).some(
+    (command) =>
+      command.includes(ULANZI_HOOK_MARKER) || command.includes("ustudio-cli"),
+  );
+}
 
-    await $`icacls ${directory} /grant "CodexSandboxUsers:(OI)(CI)(RX)" /T`.quiet();
-    console.log(`Granted Codex read and execute access to ${directory}`);
+function scrubHooks(hooks) {
+  let removed = 0;
+  for (const event of Object.keys(hooks)) {
+    const entries = hooks[event];
+    if (!Array.isArray(entries)) continue;
+    const kept = entries.filter((entry) => !isUlanziHookEntry(entry));
+    removed += entries.length - kept.length;
+    hooks[event] = kept;
   }
+  return removed;
+}
+
+async function scrubHooksFile(path) {
+  if (!(await exists(path))) return;
+
+  const settings = await Bun.file(path).json();
+  const hooks = settings.hooks;
+  if (hooks == null || typeof hooks !== "object") return;
+
+  const removed = scrubHooks(hooks);
+  if (removed === 0) return;
+
+  await Bun.write(path, `${JSON.stringify(settings, null, 2)}\n`);
+  console.log(`Removed ${removed} Ulanzi hook(s) from ${path}`);
+}
+
+async function scrubUlanziHooks() {
+  if (!(await exists(ulanziHookInstallerPath()))) return;
+
+  await scrubHooksFile(join(home(), ".claude/settings.json"));
+  await scrubHooksFile(join(home(), ".codex/hooks.json"));
 }
 
 async function main() {
   await patchCodex();
   await patchClaude();
-  await grantCodexPermissions();
+  await scrubUlanziHooks();
+  await grantCodexSandboxPermissions();
 }
 
 main().catch((err) => {

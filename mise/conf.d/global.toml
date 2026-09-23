@@ -248,6 +248,11 @@ arg "<name>" help="MCP server name"
 '''
 run = "g-mcp {{usage.action}} {{usage.agent}} {{usage.name}}"
 
+[tasks."g:codex:sandbox"]
+hide = true
+description = "Grant the Codex sandbox user read and execute access to tool directories"
+run = "g-codex-sandbox"
+
 # ============================================================================
 # Preset tasks (preset:*)
 # ============================================================================
