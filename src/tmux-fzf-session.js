@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
-/** Search, attach, create, or kill a tmux session via fzf. */
 import { parseArgs } from "node:util";
 import { $ } from "bun";
+import { resolveCommand, runFzf } from "./lib/tmux-fzf.js";
 
 const USAGE = `Usage: tmux-fzf-session [-k] [-p] [<query>]
 
@@ -11,70 +11,52 @@ Search a session using fzf and attach to it, or create one if not found.
 
 -p:  Show preview, which also can be opened using ctrl-t`;
 
-const PREVIEW = "tmux-fzf-session --preview-session {1}";
-const LIST_COMMAND = "tmux list-sessions";
+const PREVIEW = "tmux capture-pane -p -e -t {1}";
+const FORMAT = "#{session_name}\t#{window_id}\t#{window_name}\t#{window_active}\t#{window_last_flag}\t#{session_windows} windows (created #{t:session_created})#{?session_attached, (attached),}";
 
-async function previewOrigin() {
-  if (!process.env.TMUX) return {};
-  const pane = process.env.TMUX_PANE;
-  const args = pane ? ["-t", pane] : [];
-  const format = "#{session_name}\t#{window_id}\t#{window_name}";
-  const current = await $`tmux display-message -p ${args} ${format}`.text();
-  const [session, currentWindow, name] = current.trimEnd().split("\t");
-  let window = currentWindow;
-  if (name === "TMUX_FZF_WIN") {
-    const format = "#{window_id}\t#{window_active}\t#{window_last_flag}";
-    const windows = await $`tmux list-windows -t ${`=${session}`} -F ${format}`.text();
-    const candidates = windows.split(/\r?\n/)
-      .map((line) => line.split("\t"))
-      .filter(([id]) => id && id !== currentWindow);
-    window = candidates.find(([, active]) => active === "1")?.[0]
-      ?? candidates.find(([, , last]) => last === "1")?.[0]
-      ?? currentWindow;
-    await $`tmux select-window -t ${`=${session}:${currentWindow}`}`;
+export function sessionsFromWindows(output) {
+  const sessions = new Map();
+  for (const line of output.split(/\r?\n/)) {
+    if (!line) continue;
+    const [session, window, name, active, last, description] = line.split("\t");
+    const rank = name === "TMUX_FZF_WIN" ? 0 : active === "1" ? 3 : last === "1" ? 2 : 1;
+    if (!sessions.has(session) || rank > sessions.get(session).rank) {
+      sessions.set(session, {
+        rank,
+        line: `=${session}:${window}\t${session}:\t${description}`,
+      });
+    }
   }
-  return {
-    TMUX_FZF_PREVIEW_SESSION: session,
-    TMUX_FZF_PREVIEW_WINDOW: window,
-  };
+  return [...sessions.values()].map(({ line }) => line).join("\n");
 }
 
-async function runFzf(args) {
-  const origin = await previewOrigin();
-  process.stdin.pause?.();
-  const fzf = Bun.spawn(["fzf", ...args], {
-    stdin: "inherit",
-    stdout: "pipe",
-    stderr: "inherit",
-    env: { ...process.env, ...origin, FZF_DEFAULT_COMMAND: LIST_COMMAND },
-  });
-  const stdout = await new Response(fzf.stdout).text();
-  const code = await fzf.exited;
-  return { code, stdout };
+async function listSessions() {
+  const tmux = await resolveCommand("tmux");
+  const result = await $`${tmux} list-windows -a -F ${FORMAT}`.nothrow().quiet();
+  return sessionsFromWindows(result.stdout.toString());
 }
 
 function previewWindow(show) {
   return show ? "up:80%" : "up:80%:hidden";
 }
 
-async function hasSession(name) {
-  const r = await $`tmux has-session -t ${`=${name}`}`.nothrow().quiet();
-  return r.exitCode === 0;
-}
-
 async function attachOrSwitch(name) {
   const target = `=${name}`;
+  const tmux = await resolveCommand("tmux");
   if (process.env.TMUX) {
-    await $`tmux switchc -t ${target}`;
+    await $`${tmux} switchc -t ${target}`;
   } else {
-    await $`tmux attach -t ${target}`;
+    await $`${tmux} attach -t ${target}`;
   }
 }
 
-function sessionFromFzf(stdout) {
-  const lines = stdout.replace(/\n$/, "").split("\n");
-  const last = lines.at(-1) ?? "";
-  return last.split(":")[0];
+export function sessionFromRow(line) {
+  return line.split("\t")[1]?.slice(0, -1) ?? "";
+}
+
+export function sessionFromFzf(stdout) {
+  const [query = "", selected = ""] = stdout.replace(/\r?\n$/, "").split(/\r?\n/);
+  return { query, session: sessionFromRow(selected) };
 }
 
 async function main() {
@@ -95,10 +77,10 @@ async function main() {
 
   if (values["preview-session"] !== undefined) {
     const session = values["preview-session"];
-    const window = session === process.env.TMUX_FZF_PREVIEW_SESSION
-      ? process.env.TMUX_FZF_PREVIEW_WINDOW ?? ""
-      : "";
-    await $`tmux capture-pane -p -e -t ${`=${session}:${window}`}`;
+    const rows = (await listSessions()).split("\n");
+    const target = rows.find((line) => sessionFromRow(line) === session)?.split("\t")[0];
+    const tmux = await resolveCommand("tmux");
+    if (target) await $`${tmux} capture-pane -p -e -t ${target}`;
     return;
   }
 
@@ -106,8 +88,9 @@ async function main() {
   const window = previewWindow(values.preview);
 
   if (values.kill) {
-    const { stdout } = await runFzf([
-      "-d:",
+    const { code, stdout } = await runFzf([
+      "--delimiter", "\t",
+      "--with-nth", "2..",
       "-n1",
       "-0",
       "-m",
@@ -119,46 +102,59 @@ async function main() {
       window,
       "--bind",
       "ctrl-t:toggle-preview",
-    ]);
-    for (const line of stdout.split("\n")) {
+    ], listSessions);
+    if (code !== 0) process.exit(code);
+    const tmux = await resolveCommand("tmux");
+    for (const line of stdout.split(/\r?\n/)) {
       if (!line) continue;
-      const name = line.split(":")[0];
+      const name = sessionFromRow(line);
       if (!name) continue;
-      await $`tmux kill-session -t ${`=${name}`}`;
+      await $`${tmux} kill-session -t ${`=${name}`}`;
     }
     return;
   }
 
-  if (!query || !(await hasSession(query))) {
-    const fzfArgs = [
-      "-d:",
-      "-n1",
-      "-0",
-      "--print-query",
-      "-q",
-      query,
-      "--preview",
-      PREVIEW,
-      "--preview-window",
-      window,
-      "--bind",
-      "ctrl-t:toggle-preview",
-      "+m",
-    ];
-    if (query) fzfArgs.splice(3, 0, "-1");
-    const { stdout } = await runFzf(fzfArgs);
-    query = sessionFromFzf(stdout);
+  let sessions;
+  if (query) {
+    sessions = await listSessions();
+    if (sessions.split("\n").some((line) => sessionFromRow(line) === query)) {
+      await attachOrSwitch(query);
+      return;
+    }
   }
+
+  const fzfArgs = [
+    "--delimiter", "\t",
+    "--with-nth", "2..",
+    "-n1",
+    "-0",
+    "--print-query",
+    "-q",
+    query,
+    "--preview",
+    PREVIEW,
+    "--preview-window",
+    window,
+    "--bind",
+    "ctrl-t:toggle-preview",
+    "+m",
+  ];
+  if (query) fzfArgs.push("-1");
+  const { code, stdout } = await runFzf(fzfArgs, () => sessions ?? listSessions());
+  if (code !== 0 && code !== 1) process.exit(code);
+  const result = sessionFromFzf(stdout);
+  query = result.session || result.query;
 
   if (!query) return;
 
-  if (!(await hasSession(query))) {
-    await $`tmux new-session -s ${query} -d`;
+  if (!result.session) {
+    const tmux = await resolveCommand("tmux");
+    await $`${tmux} new-session -s ${query} -d`;
   }
   await attachOrSwitch(query);
 }
 
-main().catch((err) => {
+if (import.meta.main) await main().catch((err) => {
   console.error(err.message ?? err);
   process.exit(1);
 });

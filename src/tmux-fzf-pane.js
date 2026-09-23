@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 import { parseArgs } from "node:util";
 import { $ } from "bun";
+import { resolveCommand, runFzf } from "./lib/tmux-fzf.js";
 
 const USAGE = `Usage: tmux-fzf-pane [-k] [-p] [-a|-s] [<query>]
 
@@ -26,35 +27,26 @@ function firstField(line) {
 }
 
 async function listPanes(flags, format) {
-  const output = await $`tmux list-panes ${flags} -F ${format}`.text();
+  const tmux = await resolveCommand("tmux");
+  const output = await $`${tmux} list-panes ${flags} -F ${format}`.text();
   return output
     .split(/\r?\n/)
     .filter((line) => line && !/[0-9]\.TMUX_FZF_WIN/.test(line))
     .join("\n");
 }
 
-async function runFzf(args, flags, format) {
-  const panes = await listPanes(flags, format);
-  const fzf = Bun.spawn(["fzf", ...args], {
-    stdin: new Blob([panes]),
-    stdout: "pipe",
-    stderr: "inherit",
-  });
-  const stdout = await new Response(fzf.stdout).text();
-  const code = await fzf.exited;
-  return { code, stdout };
-}
-
 async function hasTarget(target) {
-  const r = await $`tmux has-session -t ${target}`.nothrow().quiet();
+  const tmux = await resolveCommand("tmux");
+  const r = await $`${tmux} has-session -t ${target}`.nothrow().quiet();
   return r.exitCode === 0;
 }
 
 async function attachOrSwitch(target) {
+  const tmux = await resolveCommand("tmux");
   if (process.env.TMUX) {
-    await $`tmux switchc -t ${target}`;
+    await $`${tmux} switchc -t ${target}`;
   } else {
-    await $`tmux attach -t ${target}`;
+    await $`${tmux} attach -t ${target}`;
   }
 }
 
@@ -111,15 +103,15 @@ async function main() {
         "--bind",
         "ctrl-t:toggle-preview",
       ],
-      flags,
-      format,
+      () => listPanes(flags, format),
     );
     if (code !== 0) process.exit(code);
+    const tmux = await resolveCommand("tmux");
     for (const line of stdout.split("\n")) {
       if (!line) continue;
       const id = firstField(line);
       if (!id) continue;
-      await $`tmux kill-pane -t ${id}`;
+      await $`${tmux} kill-pane -t ${id}`;
     }
     return;
   }
@@ -143,17 +135,17 @@ async function main() {
       "enter:accept,ctrl-t:toggle-preview",
     ];
     if (query) fzfArgs.splice(2, 0, "-1");
-    const { code, stdout } = await runFzf(fzfArgs, flags, format);
+    const { code, stdout } = await runFzf(fzfArgs, () => listPanes(flags, format));
     if (code !== 0) process.exit(code);
     target = firstField(stdout);
   }
 
-  if (target && (await hasTarget(target))) {
+  if (target) {
     await attachOrSwitch(target);
   }
 }
 
-main().catch((err) => {
+await main().catch((err) => {
   console.error(err.message ?? err);
   process.exit(1);
 });

@@ -2,87 +2,111 @@
 /** Create or attach a tmux session for a project directory. */
 import { stat } from "node:fs/promises";
 import { basename, dirname, join, resolve } from "node:path";
+import { parseArgs } from "node:util";
 import { $ } from "bun";
 
 const DEFAULT_CONFIG_FILE = ".tmux-up.conf";
 
 async function isFile(path) {
-    try {
-        return (await stat(path)).isFile();
-    } catch {
-        return false;
-    }
+  try {
+    return (await stat(path)).isFile();
+  } catch {
+    return false;
+  }
 }
 
 async function isDirectory(path) {
-    try {
-        return (await stat(path)).isDirectory();
-    } catch {
-        return false;
-    }
+  try {
+    return (await stat(path)).isDirectory();
+  } catch {
+    return false;
+  }
 }
 
 function sessionName(rootDir, configFile) {
-    let session = basename(rootDir).replace(/^\./, "");
-    if (configFile !== DEFAULT_CONFIG_FILE) {
-        const extra = configFile.replace(/^\.tmux-/, "").replace(/\.conf$/, "");
-        session = `${session}/${extra}`;
-    }
-    return session.replaceAll(/[.:]/g, "_");
+  let session = basename(rootDir).replace(/^\./, "");
+  if (configFile !== DEFAULT_CONFIG_FILE) {
+    const extra = configFile.replace(/^\.tmux-/, "").replace(/\.conf$/, "");
+    session = `${session}/${extra}`;
+  }
+  return session.replaceAll(/[.:]/g, "_");
 }
 
 async function configCommands(configPath) {
-    if (await isFile(configPath)) {
-        const text = await Bun.file(configPath).text();
-        return (
-            text
-                .split(/\n/)
-                .filter((line) => line.length > 0)
-                .join("\n") + "\n\n"
-        );
-    }
-    const editor = process.env.EDITOR || "vim";
-    return `send '${editor}' Enter\nneww -n shell\nselectw -t 1\n\n`;
+  if (await isFile(configPath)) {
+    const text = await Bun.file(configPath).text();
+    return (
+      text
+        .split(/\n/)
+        .filter((line) => line.length > 0)
+        .join("\n") + "\n\n"
+    );
+  }
+  const editor = process.env.EDITOR || "vim";
+  return `send '${editor}' Enter\nneww -n shell\nselectw -t 1\n\n`;
 }
 
 async function main() {
-    let rootDir = process.argv[2] ?? process.cwd();
-    let configFile = DEFAULT_CONFIG_FILE;
+  const { values, positionals } = parseArgs({
+    allowPositionals: true,
+    options: {
+      "print-target": { type: "boolean" },
+      help: { type: "boolean", short: "h" },
+    },
+  });
+  if (values.help) {
+    console.log(`Usage: tmux-up [--print-target] [directory|config-file]
 
-    if (await isFile(rootDir)) {
-        configFile = basename(rootDir);
-        rootDir = dirname(rootDir);
-    } else if (!(await isDirectory(rootDir))) {
-        console.error(`${rootDir} does not exist!`);
-        process.exit(1);
-    }
+--print-target  Prepare the session, print its exact target, and exit.
 
-    rootDir = resolve(rootDir);
-    const session = sessionName(rootDir, configFile);
-    const target = `=${session}`;
+On Windows, source scripts/tmux-up.ps1 in your PowerShell profile to
+attach without keeping the setup executable running.`);
+    return;
+  }
+  if (positionals.length > 1) throw new Error("Expected at most one directory or config file");
+  let rootDir = positionals[0] ?? process.cwd();
+  let configFile = DEFAULT_CONFIG_FILE;
 
-    const has = await $`tmux has-session -t ${target}`.quiet().nothrow();
-    if (has.exitCode !== 0) {
-        await $`tmux new -d -c ${rootDir} -s ${session}`.quiet();
-        const commands = (await configCommands(join(rootDir, configFile))) + "detach-client\n";
-        const child = Bun.spawn(["tmux", "-C", "attach", "-t", target], {
-            stdin: new Blob([commands]),
-            stdout: "ignore",
-            stderr: "inherit",
-            env: { ...process.env, TMUX: "" },
-        });
-        const code = await child.exited;
-        if (code !== 0) process.exit(code);
-    }
+  if (await isFile(rootDir)) {
+    configFile = basename(rootDir);
+    rootDir = dirname(rootDir);
+  } else if (!(await isDirectory(rootDir))) {
+    console.error(`${rootDir} does not exist!`);
+    process.exit(1);
+  }
 
-    if (process.env.TMUX) {
-        await $`tmux switchc -t ${target}`;
-    } else {
-        await $`tmux attach -t ${target}`;
-    }
+  rootDir = resolve(rootDir);
+  const session = sessionName(rootDir, configFile);
+  const target = `=${session}`;
+
+  const has = await $`tmux has-session -t ${target}`.quiet().nothrow();
+  if (has.exitCode !== 0) {
+    await $`tmux new -d -c ${rootDir} -s ${session}`.quiet();
+    const commands = (await configCommands(join(rootDir, configFile))) + "detach-client\n";
+    const child = Bun.spawn(["tmux", "-C", "attach", "-t", target], {
+      stdin: new Blob([commands]),
+      stdout: "ignore",
+      stderr: "inherit",
+      env: { ...process.env, TMUX: "" },
+    });
+    const code = await child.exited;
+    if (code !== 0) process.exit(code);
+  }
+
+  if (values["print-target"]) {
+    console.log(target);
+  } else if (process.env.TMUX) {
+    await $`tmux switchc -t ${target}`;
+  } else if (process.platform !== "win32") {
+    const tmux = Bun.which("tmux");
+    if (!tmux) throw new Error("tmux not found on PATH");
+    process.execve(tmux, [tmux, "attach", "-t", target], process.env);
+  } else {
+    await $`tmux attach -t ${target}`;
+  }
 }
 
 main().catch((err) => {
-    console.error(err.message ?? err);
-    process.exit(1);
+  console.error(err.message ?? err);
+  process.exit(1);
 });
