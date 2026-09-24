@@ -1,7 +1,6 @@
 #!/usr/bin/env bun
 /**
  * Nested menu for niri (Mod+Shift+P), powered by rofi script mode.
- * Menu tree is defined in ~/.config/niri/menu.js — edit without rebuilding.
  * Rofi keeps one window open across levels (no respawn blink); a leaf action
  * prints nothing, which tells rofi to quit. Menu path is passed between rofi
  * callbacks via the data header (ROFI_DATA). Ctrl+T goes up one level
@@ -18,10 +17,8 @@ import { $ } from "bun";
 import { rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { pathToFileURL } from "node:url";
 import { home } from "../lib/env.js";
 
-const CONFIG_PATH = join(home(), ".config", "niri", "menu.js");
 const SUBMENU = Symbol("submenu");
 const submenu = (fn) => ({ [SUBMENU]: fn });
 
@@ -67,17 +64,52 @@ async function fail(msg) {
   process.exit(1);
 }
 
-let defineMenu;
-try {
-  defineMenu = (await import(pathToFileURL(CONFIG_PATH).href)).default;
-} catch (e) {
-  await fail(`cannot load ${CONFIG_PATH}: ${e.message}`);
-}
-if (typeof defineMenu !== "function") {
-  await fail(`${CONFIG_PATH} must export default a function`);
-}
-
-const root = await defineMenu({ $, spawnDetached, submenu, afterClose });
+const root = {
+  "\u{F009}  Niri": submenu(async () => ({
+    "\u{F011}  Exit": async () => {
+      await $`niri msg action quit`.quiet().nothrow();
+    },
+    "\u{F11C}  Shortcuts": submenu(async () => {
+      const kdl = await Bun.file(join(home(), ".config", "niri", "config.kdl")).text();
+      const binds = kdl.match(/^\s*binds\s*\{([\s\S]*?)^\s*\}/m)?.[1] ?? "";
+      const entries = {};
+      for (const line of binds.split("\n")) {
+        if (line.trimStart().startsWith("//")) continue;
+        const m = line.match(
+          /^\s*(\S+)\s+([^{]*)\{\s*([\w-]+)\s*(.*?);?\s*\}\s*$/,
+        );
+        if (!m) continue;
+        // KDL args are already shell-quoted; `--` keeps them from being read as flags
+        const [, key, attrs, action, args] = m;
+        if (/hotkey-overlay-title=null/.test(attrs)) continue;
+        const title = attrs.match(/hotkey-overlay-title="([^"]+)"/)?.[1]
+          ?? `${action} ${args}`.trim();
+        const cmd = `niri msg action ${action}${args ? ` -- ${args}` : ""}`;
+        entries[`${key.padEnd(22)} ${title}`] = () => afterClose(cmd);
+      }
+      return entries;
+    }),
+  })),
+  "\u{F1DE}  Waybar": submenu(async () => {
+    const entries = {
+      "\u{F021}  Restart": async () => {
+        await $`killall waybar`.quiet().nothrow();
+        spawnDetached("waybar");
+      },
+    };
+    const r = await $`waybar-optional status`.quiet().nothrow();
+    if (r.exitCode === 0) {
+      for (const line of r.stdout.toString().trim().split("\n")) {
+        const [name, state] = line.split(": ");
+        if (!name || !state) continue;
+        entries[`\u{F21B}  ${name} (${state})`] = async () => {
+          await $`waybar-optional toggle ${name}`.quiet().nothrow();
+        };
+      }
+    }
+    return entries;
+  }),
+};
 
 async function resolveNode(path) {
   let node = root;
