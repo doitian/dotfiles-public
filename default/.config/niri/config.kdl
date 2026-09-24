@@ -262,7 +262,8 @@ binds {
     Mod+Ctrl+G hotkey-overlay-title=null { move-workspace-to-index 1; }
 
     Mod+P hotkey-overlay-title="Run an Application" { spawn "rofi" "-show" "drun" "-show-icons" "-terminal" "kitty"; }
-    Mod+Shift+P hotkey-overlay-title="Copy a Password" { spawn "rofi" "-show" "pass" "-modes" "pass:fpass --rofi"; }
+    Mod+Shift+P hotkey-overlay-title="Menu" { spawn "niri-menu"; }
+    Mod+Shift+8 hotkey-overlay-title="Copy a Password" { spawn "rofi" "-show" "pass" "-modes" "pass:fpass --rofi"; }
     Mod+Ctrl+P hotkey-overlay-title="Window Focus" { spawn "rofi" "-show" "window" "-show-icons"; }
     Mod+V hotkey-overlay-title="Clipboard History" { spawn "clipman" "pick" "-t" "rofi"; }
     Mod+Shift+V hotkey-overlay-title=null { spawn "clipman" "clear" "-a"; }

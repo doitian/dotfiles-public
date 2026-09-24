@@ -5,4 +5,6 @@ configuration {
   matching: "fuzzy,normal,prefix,regex";
   kb-matcher-up: "Control+equal";
   kb-matcher-down: "Control+minus";
+  // niri-menu: go up one menu level (rofi custom keybinding 1)
+  kb-custom-1: "Control+t";
 }
