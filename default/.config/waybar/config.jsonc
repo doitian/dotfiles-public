@@ -17,6 +17,7 @@
   "modules-right": [
     "mpd",
     "idle_inhibitor",
+    // Optional: defined by a modules/ fragment, toggle via niri-menu (waybar-optional)
     "custom/agent-berth",
     "pulseaudio",
     "network",
@@ -32,7 +33,11 @@
     "clock",
     "tray",
     "custom/hyprwhspr",
-    "custom/power"
+    "custom/power",
+    // Drop-in slots, defined by fragments in ~/.config/waybar/modules/*.jsonc
+    "custom/dropin-1",
+    "custom/dropin-2",
+    "custom/dropin-3"
   ],
   // Modules configuration
   "niri/workspaces": {
@@ -213,14 +218,10 @@
       "hibernate": "systemctl hibernate"
     }
   },
-  "custom/agent-berth": {
-    "exec-if": "command -v agent-berth",
-    "exec": "$HOME/.config/waybar/agent-berth.sh",
-    "return-type": "json",
-    "interval": 5,
-    "on-click": "kitty --class tui-popup agent-berth tui"
-  },
+  // custom/agent-berth is defined by ~/.config/waybar/modules/agent-status.jsonc
+  // (waybar-optional toggle agent-status)
   "include": [
-    "$HOME/.config/waybar/hyprwhspr-module.jsonc"
+    "$HOME/.config/waybar/hyprwhspr-module.jsonc",
+    "$HOME/.config/waybar/modules/*.jsonc"
   ]
 }
