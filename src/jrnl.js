@@ -60,7 +60,6 @@ async function ensureJournalFile(journalFile) {
 Date: "[[${date}]]"
 Next: "[[Journal ${tomorrow(date)}]]"
 Prev: "[[Journal ${yesterday(date)}]]"
-Kind: "#journal"
 tags:
   - journal
 ---

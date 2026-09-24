@@ -78,7 +78,7 @@ test.each([
   expect(result.code).toBe(0);
   expect(result.out).toBe(join(f.dir, `Journal ${day}.md`));
   const text = await readFile(result.out, "utf8");
-  expect(properties(text)).toEqual({ Date: `[[${day}]]`, Next: `[[Journal ${next}]]`, Prev: `[[Journal ${previous}]]`, Kind: "#journal", tags: ["journal"] });
+  expect(properties(text)).toEqual({ Date: `[[${day}]]`, Next: `[[Journal ${next}]]`, Prev: `[[Journal ${previous}]]`, tags: ["journal"] });
   expect(text).toMatch(/---\n# Journal on .+\n\n## Journal\n$/);
   expect(text).not.toContain("::");
 });
