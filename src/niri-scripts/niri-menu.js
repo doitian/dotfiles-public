@@ -36,9 +36,22 @@ function findEntry(entries, selection) {
   return undefined;
 }
 
+// Rofi script-mode vars (ROFI_*) and our own NIRI_MENU_* must not leak into
+// detached children: a waybar respawned from here would otherwise pass
+// ROFI_RETV down to every niri-menu it launches, making them run as rofi modi
+// callbacks that print menu rows and exit instead of opening rofi.
+function cleanEnv() {
+  const env = { ...process.env };
+  for (const key of Object.keys(env)) {
+    if (key.startsWith("ROFI_") || key.startsWith("NIRI_MENU_")) delete env[key];
+  }
+  return env;
+}
+
 function spawnDetached(cmd, args = []) {
   if (Bun.which(cmd)) {
     Bun.spawn([cmd, ...args], {
+      env: cleanEnv(),
       detached: true,
       stdout: "ignore",
       stderr: "ignore",
@@ -92,10 +105,9 @@ const root = {
   })),
   "\u{F1DE}  Waybar": submenu(async () => {
     const entries = {
-      "\u{F021}  Restart": async () => {
-        await $`killall waybar`.quiet().nothrow();
-        spawnDetached("waybar");
-      },
+      // Defer until rofi has closed: killing waybar now would make waybar's
+      // teardown SIGTERM this menu's own process group before we respawn it.
+      "\u{F021}  Restart": () => afterClose("killall waybar; exec waybar"),
     };
     const r = await $`waybar-optional status`.quiet().nothrow();
     if (r.exitCode === 0) {
