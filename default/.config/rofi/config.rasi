@@ -1,0 +1,8 @@
+configuration {
+  // Start in fuzzy (first entry); Ctrl+= / Ctrl+- (kb-matcher-up/down) cycles
+  // the listed matchers at runtime. Rofi defaults (Super+=/-) conflict with
+  // niri column resizing, so use Ctrl+=/- instead.
+  matching: "fuzzy,normal,prefix,regex";
+  kb-matcher-up: "Control+equal";
+  kb-matcher-down: "Control+minus";
+}

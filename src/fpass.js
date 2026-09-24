@@ -1,15 +1,14 @@
 #!/usr/bin/env bun
 /**
- * gopass + fzf/rofi/fuzzel. Port of default/bin/fpass.
+ * gopass + fzf/rofi. Port of default/bin/fpass.
  */
 import { $ } from "bun";
 
 const args = process.argv.slice(2);
 const isRofi = args[0] === "--rofi";
-const isFuzzel = args[0] === "--fuzzel";
 const isCpi = args[0] === "cpi";
 const isShowCi = args[0] === "show" && args[1] === "-ci";
-const rest = isRofi || isFuzzel ? args.slice(1) : args;
+const rest = isRofi ? args.slice(1) : args;
 
 function copyFieldLoop(entry, fields) {
   return new Promise((resolve) => {
@@ -156,22 +155,6 @@ async function main() {
     });
     proc.unref();
     return;
-  }
-
-  if (isFuzzel) {
-    const listR = await $`gopass list -f`.quiet().nothrow();
-    if (listR.exitCode !== 0) process.exit(listR.exitCode);
-    const list = { stdout: (listR.stdout?.toString() ?? "").trim() };
-    const fuzzelR = await $`fuzzel --dmenu -w 50 < ${new Response(list.stdout)}`
-      .quiet()
-      .nothrow();
-    const fuzzel = {
-      code: fuzzelR.exitCode,
-      stdout: (fuzzelR.stdout?.toString() ?? "").trim(),
-    };
-    if (fuzzel.code !== 0 || !fuzzel.stdout) process.exit(fuzzel.code ?? 1);
-    const r = await $`gopass show -c ${fuzzel.stdout}`.nothrow();
-    process.exit(r.exitCode ?? 0);
   }
 
   if (isCpi || isShowCi) {
