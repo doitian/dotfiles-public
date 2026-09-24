@@ -470,9 +470,10 @@ binds {
     // Mod+Space       { switch-layout "next"; }
     // Mod+Shift+Space { switch-layout "prev"; }
 
-    Print { screenshot; }
-    Ctrl+Print { screenshot-screen; }
-    Alt+Print { screenshot-window; }
+    Print hotkey-overlay-title="Screenshot & Annotate" { spawn "niri-screenshot" "screenshot" "--annotate"; }
+    Ctrl+Print hotkey-overlay-title="Screenshot Screen & Annotate" { spawn "niri-screenshot" "screenshot" "--screen" "--annotate"; }
+    Alt+Print hotkey-overlay-title="Screenshot Window & Annotate" { spawn "niri-screenshot" "screenshot" "--window" "--annotate"; }
+    Mod+Print hotkey-overlay-title="Annotate Last Screenshot" { spawn "niri-screenshot" "annotate"; }
 
     // Applications such as remote-desktop clients and software KVM switches may
     // request that niri stops processing the keyboard shortcuts defined here
