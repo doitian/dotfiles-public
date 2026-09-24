@@ -24,7 +24,11 @@ async function findJournalDir() {
 }
 
 function formatDate(date) {
-  return date.toISOString().slice(0, 10);
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, "0"),
+    String(date.getDate()).padStart(2, "0"),
+  ].join("-");
 }
 
 function formatDateLong(dateStr) {
@@ -52,14 +56,15 @@ function yesterday(dateStr) {
 async function ensureJournalFile(journalFile) {
   if (await exists(journalFile)) return;
   const date = journalFile.replace(/^.*\s([\d-]+)\.md$/, "$1");
-  const content = `# Journal on ${formatDateLong(date)}
-
-## Metadata
-
-**Date**:: [[${date}]]
-**Next**:: [[Journal ${tomorrow(date)}]]
-**Prev**:: [[Journal ${yesterday(date)}]]
-**Kind**:: #journal
+  const content = `---
+Date: "[[${date}]]"
+Next: "[[Journal ${tomorrow(date)}]]"
+Prev: "[[Journal ${yesterday(date)}]]"
+Kind: "#journal"
+tags:
+  - journal
+---
+# Journal on ${formatDateLong(date)}
 
 ## Journal
 `;
