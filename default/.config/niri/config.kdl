@@ -96,9 +96,8 @@ layout {
     // preset-window-heights { }
 
     // You can change the default width of the new windows.
-    default-column-width { proportion 0.5; }
     // If you leave the brackets empty, the windows themselves will decide their initial width.
-    // default-column-width {}
+    default-column-width { proportion 0.5; }
 
     focus-ring {
         // Uncomment this line to disable the focus ring.
@@ -199,6 +198,14 @@ window-rule {
     }
 }
 
+// Floating TUI popups (wiremix, bluetui, lazydocker, btop, ...)
+window-rule {
+    match app-id="^tui-popup$"
+    open-floating true
+    default-column-width { proportion 0.5; }
+    default-window-height { fixed 700; }
+}
+
 spawn-at-startup "niri-startup"
 
 binds {
@@ -258,7 +265,7 @@ binds {
     Mod+Ctrl+P hotkey-overlay-title="Fuzzel Focus" { spawn "niri-fuzzel-focus"; }
     Mod+V hotkey-overlay-title="Clipboard History" { spawn "clipman" "pick" "-t" "CUSTOM" "-T" "fuzzel --dmenu -w 78"; }
     Mod+Shift+V hotkey-overlay-title=null { spawn "clipman" "clear" "-a"; }
-    Mod+Ctrl+V hotkey-overlay-title=null { spawn "pavucontrol"; }
+    Mod+Ctrl+V hotkey-overlay-title="Audio Mixer" { spawn "kitty" "--class" "tui-popup" "wiremix" "-v" "output"; }
     Mod+T hotkey-overlay-title="Toggle Waybar" { spawn "killall" "-SIGUSR1" "waybar"; }
     Mod+Shift+T hotkey-overlay-title=null { spawn-sh "killall waybar; exec waybar"; }
 
