@@ -127,6 +127,7 @@ button:hover {
 #power-profiles-daemon,
 #mpd,
 #custom-power,
+#custom-agent-berth,
 #custom-hyprwhspr {
     padding: 0 10px;
     color: @subtext1;
@@ -283,6 +284,23 @@ menu separator {
 
 #mpd.paused {
     color: @subtext0;
+}
+
+/* Custom agent-berth */
+#custom-agent-berth.running {
+    color: @green;
+}
+
+#custom-agent-berth.waiting {
+    color: @yellow;
+}
+
+#custom-agent-berth.idle {
+    color: @overlay0;
+}
+
+#custom-agent-berth.done {
+    color: @blue;
 }
 
 /* Custom hyprwhspr */

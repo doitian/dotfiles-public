@@ -17,6 +17,7 @@
   "modules-right": [
     "mpd",
     "idle_inhibitor",
+    "custom/agent-berth",
     "pulseaudio",
     "network",
     "power-profiles-daemon",
@@ -211,6 +212,13 @@
       "suspend": "systemctl suspend",
       "hibernate": "systemctl hibernate"
     }
+  },
+  "custom/agent-berth": {
+    "exec-if": "command -v agent-berth",
+    "exec": "$HOME/.config/waybar/agent-berth.sh",
+    "return-type": "json",
+    "interval": 5,
+    "on-click": "kitty --class tui-popup agent-berth tui"
   },
   "include": [
     "$HOME/.config/waybar/hyprwhspr-module.jsonc"
