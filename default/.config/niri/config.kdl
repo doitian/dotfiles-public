@@ -209,7 +209,7 @@ window-rule {
 spawn-at-startup "niri-startup"
 
 binds {
-    Mod+Shift+Slash { show-hotkey-overlay; }
+    Mod+Shift+Slash hotkey-overlay-title="Shortcuts" { spawn "niri-menu" "Niri" "Shortcuts"; }
     Mod+Slash hotkey-overlay-title="Rename Workspace" { spawn "niri-set-workspace-name"; }
 
     Mod+Return hotkey-overlay-title="Open a Terminal" { spawn "kitty"; }

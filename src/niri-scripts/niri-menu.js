@@ -8,6 +8,9 @@
  * (rofi custom keybinding 1, requires use-hot-keys).
  * afterClose(cmd) queues a shell command that the launcher runs once rofi has
  * exited, since rofi holds a pidfile lock and a nested rofi would fail.
+ * `niri-menu [label...]` opens at a submenu path, e.g. `niri-menu Niri Shortcuts`
+ * (plain labels, icons omitted); the path reaches the first rofi call via
+ * NIRI_MENU_START since ROFI_DATA is unset until the script sets it.
  * `niri-menu --print` previews the menu tree without launching rofi.
  */
 
@@ -117,7 +120,7 @@ if (process.argv[2] === "--print") {
 if (process.env.ROFI_RETV !== undefined) {
   let path = [];
   try {
-    path = JSON.parse(process.env.ROFI_DATA || "[]");
+    path = JSON.parse(process.env.ROFI_DATA || process.env.NIRI_MENU_START || "[]");
   } catch (_) { }
   const node = await resolveNode(path);
   if (!node) process.exit(0);
@@ -143,9 +146,14 @@ if (process.env.ROFI_RETV !== undefined) {
   process.exit(0);
 }
 
+const start = process.argv.slice(2);
+if (start.length > 0 && !(await resolveNode(start))) {
+  await fail(`no submenu at path: ${start.join(" > ")}`);
+}
+
 const pending = join(process.env.XDG_RUNTIME_DIR || tmpdir(), `niri-menu-${process.pid}.sh`);
 const r = await $`rofi -show niri -modes ${"niri:niri-menu"}`
-  .env({ ...process.env, NIRI_MENU_PENDING: pending })
+  .env({ ...process.env, NIRI_MENU_PENDING: pending, NIRI_MENU_START: JSON.stringify(start) })
   .quiet()
   .nothrow();
 const queued = Bun.file(pending);
