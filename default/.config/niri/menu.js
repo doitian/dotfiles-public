@@ -2,12 +2,14 @@
  * niri-menu config (~/.config/niri/menu.js), loaded at runtime by `niri-menu`.
  * Edit and save — no rebuild needed. Preview with: niri-menu --print
  *
- * Default-export a function receiving { $, spawnDetached, submenu } and
- * returning the menu tree. Leaves are async actions; nest with plain objects
+ * Default-export a function receiving { $, spawnDetached, submenu, afterClose }
+ * and returning the menu tree. Leaves are async actions; nest with plain objects
  * or submenu(async () => ({ ... })) for lazily-built (fresh state) levels.
+ * Use afterClose(shellCmd) for actions that must run after rofi exits (e.g.
+ * anything that opens rofi again).
  * Presented as a true nested menu via rofi script mode.
  */
-export default ({ $, spawnDetached, submenu }) => ({
+export default ({ $, spawnDetached, submenu, afterClose }) => ({
   "\u{F009}  Niri": submenu(async () => ({
     "\u{F011}  Exit": async () => {
       await $`niri msg action quit`.quiet().nothrow();
@@ -16,9 +18,14 @@ export default ({ $, spawnDetached, submenu }) => ({
       const kdl = await Bun.file(`${process.env.HOME}/.config/niri/config.kdl`).text();
       const entries = {};
       for (const line of kdl.split("\n")) {
-        const m = line.match(/^\s*(\S+)\s+hotkey-overlay-title="([^"]+)"/);
-        // no-op leaf: selecting an entry just closes rofi
-        if (m) entries[`${m[1].padEnd(22)} ${m[2]}`] = async () => {};
+        const m = line.match(
+          /^\s*(\S+)\s+hotkey-overlay-title="([^"]+)"[^{]*\{\s*([\w-]+)\s*(.*?);?\s*\}\s*$/,
+        );
+        if (!m) continue;
+        // KDL args are already shell-quoted; `--` keeps them from being read as flags
+        const [, key, title, action, args] = m;
+        const cmd = `niri msg action ${action}${args ? ` -- ${args}` : ""}`;
+        entries[`${key.padEnd(22)} ${title}`] = () => afterClose(cmd);
       }
       return entries;
     }),

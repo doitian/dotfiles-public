@@ -6,10 +6,14 @@
  * prints nothing, which tells rofi to quit. Menu path is passed between rofi
  * callbacks via the data header (ROFI_DATA). Ctrl+T goes up one level
  * (rofi custom keybinding 1, requires use-hot-keys).
+ * afterClose(cmd) queues a shell command that the launcher runs once rofi has
+ * exited, since rofi holds a pidfile lock and a nested rofi would fail.
  * `niri-menu --print` previews the menu tree without launching rofi.
  */
 
 import { $ } from "bun";
+import { rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { home } from "../lib/env.js";
@@ -43,6 +47,15 @@ function spawnDetached(cmd, args = []) {
   }
 }
 
+async function afterClose(cmd) {
+  const pending = process.env.NIRI_MENU_PENDING;
+  if (pending) {
+    await Bun.write(pending, cmd);
+  } else {
+    spawnDetached("sh", ["-c", cmd]);
+  }
+}
+
 async function fail(msg) {
   console.error(`niri-menu: ${msg}`);
   if (Bun.which("notify-send")) {
@@ -61,7 +74,7 @@ if (typeof defineMenu !== "function") {
   await fail(`${CONFIG_PATH} must export default a function`);
 }
 
-const root = await defineMenu({ $, spawnDetached, submenu });
+const root = await defineMenu({ $, spawnDetached, submenu, afterClose });
 
 async function resolveNode(path) {
   let node = root;
@@ -130,5 +143,15 @@ if (process.env.ROFI_RETV !== undefined) {
   process.exit(0);
 }
 
-const r = await $`rofi -show niri -modes ${"niri:niri-menu"}`.quiet().nothrow();
+const pending = join(process.env.XDG_RUNTIME_DIR || tmpdir(), `niri-menu-${process.pid}.sh`);
+const r = await $`rofi -show niri -modes ${"niri:niri-menu"}`
+  .env({ ...process.env, NIRI_MENU_PENDING: pending })
+  .quiet()
+  .nothrow();
+const queued = Bun.file(pending);
+if (await queued.exists()) {
+  const cmd = await queued.text();
+  await rm(pending, { force: true });
+  spawnDetached("sh", ["-c", cmd]);
+}
 process.exit(r.exitCode ?? 0);
