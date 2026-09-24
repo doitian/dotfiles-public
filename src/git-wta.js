@@ -4,7 +4,8 @@
  * commands from .agents/worktrees.json or .cursor/worktrees.json.
  *
  * Usage: git-wta [git-worktree-add-options...] <path> [<commit-ish>]
- *        git-wta --setup <source> <dest>
+ *        git-wta --setup [<dest> | <source> <dest>]
+ *        git-wta --setup-all
  *
  * A <path> given as a bare name is rewritten to ../{REPO}.worktrees/{NAME},
  * where {REPO} is the root worktree directory name. Pass ./NAME or any path
@@ -15,7 +16,9 @@
  * the new worktree at the same relative paths. Then setup commands are executed
  * inside the new worktree with ROOT_WORKTREE_PATH set to the root worktree
  * path. Pass --setup to perform only the copy and setup steps for an existing
- * destination.
+ * destination; source defaults to the root worktree and dest defaults to
+ * ../{REPO}.worktrees/{YYYY-MM-DD} for the current day. Pass --setup-all to
+ * run setup in every worktree except the root worktree.
  */
 import { cp, mkdir } from "node:fs/promises";
 import { basename, dirname, join, resolve } from "node:path";
@@ -24,16 +27,40 @@ import { $ } from "bun";
 import { exists } from "./lib/fs.js";
 
 const usage = `Usage: git-wta [git-worktree-add-options...] <path> [<commit-ish>]
-       git-wta --setup <source> <dest>`;
+       git-wta --setup [<dest> | <source> <dest>]
+       git-wta --setup-all`;
 
-async function getRootWorktreePath() {
+async function getWorktreePaths() {
   // `git worktree list --porcelain` lists worktrees; the first one is the root.
+  const paths = [];
   for await (const line of $`git worktree list --porcelain`.lines()) {
     if (line.startsWith("worktree ")) {
-      return line.replace("worktree ", "");
+      paths.push(line.replace("worktree ", ""));
     }
   }
-  throw new Error("Could not determine root worktree path");
+  if (paths.length === 0) {
+    throw new Error("Could not determine root worktree path");
+  }
+  return paths;
+}
+
+async function getRootWorktreePath() {
+  return (await getWorktreePaths())[0];
+}
+
+// Local date as YYYY-MM-DD.
+function currentWorkDay() {
+  const now = new Date();
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+}
+
+function defaultDestPath(rootWorktreePath) {
+  return join(
+    dirname(rootWorktreePath),
+    `${basename(rootWorktreePath)}.worktrees`,
+    currentWorkDay(),
+  );
 }
 
 /**
@@ -147,17 +174,45 @@ async function main() {
       b: { type: "string", short: "b" },
       B: { type: "string", short: "B" },
       setup: { type: "boolean" },
+      "setup-all": { type: "boolean" },
     },
     strict: false,
   });
 
-  if (values.setup) {
-    if (positionals.length !== 2) {
+  if (values["setup-all"]) {
+    if (positionals.length !== 0) {
       console.error(usage);
       process.exit(1);
     }
 
-    const [source, dest] = positionals.map((path) => resolve(path));
+    const [rootWorktreePath, ...worktreePaths] = await getWorktreePaths();
+    for (const worktreePath of worktreePaths) {
+      console.log(`Setting up ${worktreePath}…`);
+      await setupWorktree(rootWorktreePath, worktreePath);
+    }
+    return;
+  }
+
+  if (values.setup) {
+    if (positionals.length > 2) {
+      console.error(usage);
+      process.exit(1);
+    }
+
+    const rootWorktreePath = await getRootWorktreePath();
+    const [source, dest] =
+      positionals.length === 2
+        ? positionals.map((path) => resolve(path))
+        : [
+            rootWorktreePath,
+            positionals[0]
+              ? resolve(positionals[0])
+              : defaultDestPath(rootWorktreePath),
+          ];
+    if (!(await exists(dest))) {
+      console.error(`Destination does not exist: ${dest}`);
+      process.exit(1);
+    }
     await setupWorktree(source, dest);
     return;
   }
