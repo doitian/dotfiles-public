@@ -59,3 +59,30 @@ test("gopassToEnv returns empty when nothing is exportable", () => {
     }),
   ).toBe("");
 });
+
+test("gopassToEnv emits PowerShell assignments when requested", () => {
+  expect(
+    gopassToEnv(
+      {
+        password: "it's secret",
+        fields: new Map([
+          ["export_as", "KIMI_API_KEY"],
+          ["BASE_URL", "https://api.example.com"],
+        ]),
+      },
+      "powershell",
+    ),
+  ).toBe("$env:KIMI_API_KEY='it''s secret'\n$env:BASE_URL='https://api.example.com'\n");
+});
+
+test("gopassToEnv returns empty for PowerShell when nothing is exportable", () => {
+  expect(
+    gopassToEnv(
+      {
+        password: "pass",
+        fields: new Map([["username", "ian"]]),
+      },
+      "powershell",
+    ),
+  ).toBe("");
+});

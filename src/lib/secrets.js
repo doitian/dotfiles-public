@@ -102,20 +102,32 @@ function isExportableField(name) {
   return ENV_FIELD_NAME.test(name) && /[A-Z]/.test(name);
 }
 
-function shellQuote(value) {
+function posixQuote(value) {
   return `'${String(value).replaceAll("'", `'\\''`)}'`;
 }
 
-export function gopassToEnv({ password, fields }) {
+function powerShellQuote(value) {
+  return `'${String(value).replaceAll("'", "''")}'`;
+}
+
+/**
+ * Render gopass fields as shell assignments for `eval`.
+ * @param {{ password: string|null, fields: Map<string, string> }} entry
+ * @param {"posix"|"powershell"} [shell] Target shell syntax.
+ */
+export function gopassToEnv({ password, fields }, shell = "posix") {
+  const powerShell = shell === "powershell";
+  const prefix = powerShell ? "$env:" : "";
+  const quote = powerShell ? powerShellQuote : posixQuote;
   const lines = [];
   const exportAs = fields.get("export_as")?.trim();
   if (exportAs) {
-    lines.push(`${exportAs}=${shellQuote(password ?? "")}`);
+    lines.push(`${prefix}${exportAs}=${quote(password ?? "")}`);
   }
   for (const [key, value] of fields) {
     if (key === "export_as") continue;
     if (isExportableField(key)) {
-      lines.push(`${key}=${shellQuote(value)}`);
+      lines.push(`${prefix}${key}=${quote(value)}`);
     }
   }
   return lines.length ? `${lines.join("\n")}\n` : "";

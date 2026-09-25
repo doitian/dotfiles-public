@@ -1,23 +1,24 @@
 #!/usr/bin/env bun
 /**
- * Pick a gopass entry via fzf and print dotenv for `eval $(fpdotenv)`.
+ * Print dotenv for a gopass entry for `eval $(fpdotenv [entry])` (POSIX) or
+ * `fpdotenv [entry] | Invoke-Expression` (PowerShell). The shell is detected
+ * automatically; picks the entry via fzf when none is given.
  */
 import { $ } from "bun";
+import { isPowerShell } from "./lib/env.js";
 import { gopass, gopassToEnv } from "./lib/secrets.js";
 
-async function main() {
-  process.env.GPG_TTY =
-    process.env.GPG_TTY || (process.platform !== "win32" ? "/dev/tty" : "");
+async function pickEntry() {
   const listR = await $`gopass list -f`.quiet().nothrow();
   if (listR.exitCode !== 0) process.exit(listR.exitCode);
-  const list = { stdout: (listR.stdout?.toString() ?? "").trim() };
+  const list = (listR.stdout?.toString() ?? "").trim();
   const fzfProc = Bun.spawn(["fzf"], {
     stdin: "pipe",
     stdout: "pipe",
     stderr: "inherit",
     env: process.env,
   });
-  fzfProc.stdin.write(list.stdout);
+  fzfProc.stdin.write(list);
   fzfProc.stdin.end();
   const fzfCode = await fzfProc.exited;
   const fzfOut = fzfProc.stdout
@@ -25,8 +26,17 @@ async function main() {
     : "";
   const fzfSelected = fzfOut.trim();
   if (fzfCode !== 0 || !fzfSelected) process.exit(fzfCode ?? 1);
-  const entry = fzfSelected.split("\n")[0];
-  const env = gopassToEnv(await gopass(entry));
+  return fzfSelected.split("\n")[0];
+}
+
+async function main() {
+  process.env.GPG_TTY =
+    process.env.GPG_TTY || (process.platform !== "win32" ? "/dev/tty" : "");
+  const entry = process.argv[2] ?? (await pickEntry());
+  const env = gopassToEnv(
+    await gopass(entry),
+    isPowerShell() ? "powershell" : "posix",
+  );
   if (env) await Bun.stdout.write(env);
 }
 

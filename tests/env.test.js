@@ -1,10 +1,14 @@
 import { afterEach, beforeEach, expect, test } from "bun:test";
-import { home } from "../src/lib/env.js";
+import { home, isPowerShell } from "../src/lib/env.js";
 
 let original;
 
 beforeEach(() => {
-  original = { USERPROFILE: process.env.USERPROFILE, HOME: process.env.HOME };
+  original = {
+    USERPROFILE: process.env.USERPROFILE,
+    HOME: process.env.HOME,
+    PSModulePath: process.env.PSModulePath,
+  };
 });
 
 afterEach(() => {
@@ -36,4 +40,20 @@ test("home returns an empty string when neither variable is available", () => {
   delete process.env.USERPROFILE;
   delete process.env.HOME;
   expect(home()).toBe("");
+});
+
+test("isPowerShell detects a populated PSModulePath", () => {
+  const sep = process.platform === "win32" ? ";" : ":";
+  process.env.PSModulePath = ["a", "b", "c"].join(sep);
+  expect(isPowerShell()).toBe(true);
+});
+
+test("isPowerShell ignores a bare or missing PSModulePath", () => {
+  delete process.env.PSModulePath;
+  expect(isPowerShell()).toBe(false);
+  process.env.PSModulePath = "";
+  expect(isPowerShell()).toBe(false);
+  const sep = process.platform === "win32" ? ";" : ":";
+  process.env.PSModulePath = ["a", "b"].join(sep);
+  expect(isPowerShell()).toBe(false);
 });

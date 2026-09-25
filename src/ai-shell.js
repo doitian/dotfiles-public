@@ -4,6 +4,7 @@
  * Adds a system prompt for shell generation and attaches OS & shell context.
  */
 import { parseArgs as parseArgsUtil } from "node:util";
+import { isPowerShell } from "./lib/env.js";
 import { OpenAI, runOneshot } from "./lib/openai.js";
 import { getOpenAICredentials } from "./lib/secrets.js";
 
@@ -37,17 +38,6 @@ function parseArgs() {
     noThinking: values["no-thinking"] ?? false,
     prompt: positionals.join(" ").trim(),
   };
-}
-
-/**
- * On Windows, COMSPEC is always cmd.exe even in PowerShell. Detect PowerShell
- * via PSModulePath: PowerShell sets it to 3+ entries; cmd/system has at most 2.
- */
-function isPowerShell() {
-  if (process.platform !== "win32") return false;
-  const psModulePath = process.env.PSModulePath ?? "";
-  const count = psModulePath.split(";").filter(Boolean).length;
-  return count >= 3;
 }
 
 function getOsInfo() {
