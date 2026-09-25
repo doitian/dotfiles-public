@@ -4,7 +4,7 @@
     "body": [
       "send \"vim\" Enter",
       "neww -n shell",
-      "selectw 1"
+      "selectw -t :1"
     ]
   },
   "Tmux ➤ tmux-up with mise": {
@@ -13,7 +13,7 @@
       "send \"mact && vim\" Enter",
       "set default-command \"env TERM=xterm-256color mise en -s zsh\"",
       "neww -n shell",
-      "selectw 1"
+      "selectw -t :1"
     ]
   },
   "Tmux ➤ send": {
