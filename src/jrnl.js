@@ -57,10 +57,10 @@ async function ensureJournalFile(journalFile) {
   if (await exists(journalFile)) return;
   const date = journalFile.replace(/^.*\s([\d-]+)\.md$/, "$1");
   const content = `---
-Date: "[[${date}]]"
-Next: "[[Journal ${tomorrow(date)}]]"
-Prev: "[[Journal ${yesterday(date)}]]"
-tags:
+date: "[[${date}]]"
+next: "[[Journal ${tomorrow(date)}]]"
+prev: "[[Journal ${yesterday(date)}]]"
+kind:
   - journal
 ---
 # Journal on ${formatDateLong(date)}
