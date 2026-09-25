@@ -957,7 +957,7 @@ export class TasksView {
         this.mode = mode;
         this.editingTask = mode === "edit" ? this.task : null;
         this.insert = insert;
-        this.input = this.editingTask ? `${this.editingTask.title ?? ""}${this.editingTask.notes ? `\n${this.editingTask.notes}` : ""}` : "";
+        this.input = this.editingTask ? `${this.editingTask.title ?? ""}${this.editingTask.notes ? `\n\n${this.editingTask.notes}` : ""}` : "";
         this.message = "";
     }
 
@@ -970,6 +970,13 @@ export class TasksView {
             else await this.api.add(this.list, fields.title, this.insert ? this.insert.parent : this.parent, fields.notes, this.insert?.previous);
             this.search = "";
         });
+    }
+
+    saveTitle(input) {
+        const title = String(input).split("\n")[0].trim();
+        this.input = title;
+        if (!title) throw new Error("The first line must contain a title.");
+        return this.mutate(() => this.api.edit(this.list, this.editingTask.id, { title }));
     }
 
     async refresh() {
@@ -1132,9 +1139,9 @@ export class TasksView {
             else if (text === "C") this.setFold(true, true);
             else if (text === "o") this.setFold(false, false);
             else if (text === "O") this.setFold(false, true);
-            else if (text === "m") this.setFoldLevel(this.foldLevel + 1);
+            else if (text === "m") this.setFoldLevel(this.foldLevel - 1);
             else if (text === "M") this.setFoldLevel(2);
-            else if (text === "r") this.setFoldLevel(this.foldLevel - 1);
+            else if (text === "r") this.setFoldLevel(this.foldLevel + 1);
             else if (text === "R") this.setFoldLevel(0);
             this.clamp();
             return;
@@ -1314,8 +1321,8 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
     while (lines.length < height - footerSpace) lines.push("");
     if (view.showHelp) {
         lines.push("g? help  Ctrl+F/B page  j/k move  V visual  Enter/l cd  h/Backspace up  / search  Esc clear  q quit");
-        lines.push("a/o/O add  e edit  Ctrl+E $EDITOR  s due  , ids  g, copy ID  gx open  gf links  y yank  Y copy  gp prompt  d cut  D delete  p/P paste  Space/x/u  . all  m print  r refresh");
-        lines.push("za toggle fold  zc/zo close/open  zA/zC/zO recursive  zm/zr fold level  zM/zR fold all/none");
+        lines.push("a/o/O add  e title  Ctrl+E $EDITOR  s due  , ids  g, copy ID  gx open  gf links  y yank  Y copy  gp prompt  d cut  D delete  p/P paste  Space/x/u  . all  m print  r refresh");
+        lines.push("za toggle fold  zc/zo close/open  zA/zC/zO recursive  zm fold less  zr fold more  zM/zR fold all/none");
     }
     let prompt = view.message || "";
     if (view.mode === "search") prompt = `/ ${view.input}  (Enter apply, Esc cancel)`;
@@ -1330,7 +1337,7 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
     return lines.slice(0, Math.max(1, height - 1)).map(line => fit(line, width)).join("\r\n");
 }
 
-export function readTaskInput(initial, { input = process.stdin, output = process.stdout, signal, message = "" } = {}) {
+export function readTaskInput(initial, { input = process.stdin, output = process.stdout, signal, message = "", singleLine = false } = {}) {
     return new Promise((resolve, reject) => {
         const source = new PassThrough();
         const rl = createInterface({ input: source, output, terminal: true, historySize: 0, prompt: "> " });
@@ -1383,14 +1390,29 @@ export function readTaskInput(initial, { input = process.stdin, output = process
                 if (key.name === "paste-start") { paste = ""; return; }
                 if (paste != null) {
                     if (key.name !== "paste-end") { paste += key.sequence ?? text ?? ""; return; }
-                    insertMultiline(paste.replace(/\r\n?/g, "\n").replace(/[\x00-\x08\x0b-\x1f\x7f-\x9f]/g, ""));
+                    const value = paste.replace(/\r\n?/g, "\n").replace(/[\x00-\x08\x0b-\x1f\x7f-\x9f]/g, "");
+                    insertMultiline(singleLine ? value.replace(/\n/g, " ") : value);
                     paste = null;
+                    return;
+                }
+                if (key.ctrl && !key.meta && key.name === "g") { finish({ external: true, text: rl.line }); return; }
+                if (key.name === "home" || key.name === "end" || (key.ctrl && !key.meta && (key.name === "a" || key.name === "e"))) {
+                    if (key.name === "home" || key.name === "a") rl.cursor = rl.cursor === 0 ? 0 : rl.line.lastIndexOf("\n", rl.cursor - 1) + 1;
+                    else {
+                        const end = rl.line.indexOf("\n", rl.cursor);
+                        rl.cursor = end === -1 ? rl.line.length : end;
+                    }
+                    rl.prompt(true);
                     return;
                 }
                 if (key.name === "escape" || (key.ctrl && key.name === "c")) { cancel(); return; }
                 if (key.ctrl && key.name === "s") { finish(rl.line); return; }
-                if (key.name === "return" || key.name === "enter") { insertMultiline("\n"); return; }
-                if (key.ctrl || key.meta || ["left", "right", "up", "down", "home", "end", "backspace", "delete"].includes(key.name)) rl.write(null, key);
+                if (key.name === "return" || key.name === "enter") {
+                    if (singleLine) finish(rl.line);
+                    else insertMultiline("\n");
+                    return;
+                }
+                if (key.ctrl || key.meta || ["left", "right", "up", "down", "backspace", "delete"].includes(key.name)) rl.write(null, key);
                 else if (text && !/[\x00-\x1f\x7f-\x9f]/.test(text)) rl.write(text);
             } catch (error) { finish(null, error); }
         };
@@ -1400,10 +1422,14 @@ export function readTaskInput(initial, { input = process.stdin, output = process
         input.once("end", cancel);
         signal?.addEventListener("abort", cancel, { once: true });
         if (signal?.aborted) { cancel(); return; }
-        output.write("\x1b[H\x1b[2J\x1b[?25hTitle on first line; description below. Enter newline, Ctrl+S save, Esc/Ctrl+C cancel.\r\n");
-        if (message) output.write(`${terminalText(message)}\r\n`);
         rl.line = initial.replace(/\r\n?/g, "\n").split("\n").map(terminalText).join("\n");
-        rl.cursor = rl.line.length;
+        const titleEnd = rl.line.indexOf("\n");
+        rl.cursor = titleEnd === -1 ? rl.line.length : titleEnd;
+        const banner = singleLine
+            ? "Edit title. Enter/Ctrl+S save, Esc cancel. Ctrl+G edits the description."
+            : "Title on first line; description below. Enter newline, Ctrl+S save, Ctrl+G $EDITOR, Esc cancel.";
+        output.write(`\x1b[H\x1b[2J\x1b[?25h${banner}\r\n`);
+        if (message) output.write(`${terminalText(message)}\r\n`);
         rl.prompt(true);
     });
 }
@@ -1411,8 +1437,7 @@ export function readTaskInput(initial, { input = process.stdin, output = process
 async function runTaskEditor(path, { editor, signal }) {
   // Full-screen editors need inherited terminal descriptors, not Bun Shell's pipes.
   const child = Bun.spawn([editor, path], { stdin: "inherit", stdout: "inherit", stderr: "inherit", signal });
-  const code = await child.exited;
-  if (code !== 0) throw new Error(`Editor exited with code ${code}; task unchanged.`);
+  return await child.exited;
 }
 
 export async function editTaskInEditor(initial, { editor = process.env.EDITOR || "nvim", signal, runEditor = runTaskEditor } = {}) {
@@ -1420,7 +1445,8 @@ export async function editTaskInEditor(initial, { editor = process.env.EDITOR ||
   const path = join(directory, "task.md");
   try {
     await writeFile(path, `${initial}\n`, { mode: 0o600 });
-    await runEditor(path, { editor, signal });
+    const code = await runEditor(path, { editor, signal });
+    if (code) return null;
     const draft = await readFile(path, "utf8");
     return draft === `${initial}\n` ? null : draft;
   } finally {
@@ -1448,6 +1474,22 @@ export async function runTasksTui(api, list = "@default", { input = process.stdi
     let finish;
     const done = new Promise(resolve => { finish = resolve; });
     const onInterrupt = () => { if (!externalEditing) finish(); };
+    const editInExternal = async (text) => {
+        externalEditing = true;
+        input.pause();
+        input.setRawMode(false);
+        output.write("\x1b[?2004l\x1b[?25h\x1b[?1049l");
+        try {
+            return await editExternal(text, { signal: editorAbort.signal });
+        } finally {
+            externalEditing = false;
+            if (!closed) {
+                input.setRawMode(true);
+                input.resume();
+                output.write("\x1b[?1049h\x1b[?25l\x1b[?2004h");
+            }
+        }
+    };
     const draw = () => {
         if (!busy && !editing && view.mode === "browse" && api.state?.askReset) view.mode = "reset";
         if (!closed && !editing) output.write(`\x1b[H\x1b[2J${renderTasks(view, output.columns, output.rows, busy)}`);
@@ -1478,7 +1520,7 @@ export async function runTasksTui(api, list = "@default", { input = process.stdi
         if ((key.ctrl && key.name === "c") || (view.mode === "browse" && text === "q")) { finish(); return; }
         if (busy || closed) return;
         try {
-            if (view.mode === "browse" && text === "m") {
+            if (view.mode === "browse" && text === "m" && !view.prefix) {
                 busy = true;
                 input.off("keypress", onKey);
                 try {
@@ -1493,22 +1535,15 @@ export async function runTasksTui(api, list = "@default", { input = process.stdi
             if (external) {
                 view.prefix = null;
                 view.openEditor("edit");
-                busy = editing = externalEditing = true;
-                input.pause();
-                input.setRawMode(false);
-                output.write("\x1b[?2004l\x1b[?25h\x1b[?1049l");
-                let draft;
+                busy = editing = true;
+                let draft = null;
                 try {
-                    draft = await editExternal(view.input, { signal: editorAbort.signal });
-                } finally {
-                    externalEditing = false;
-                    if (!closed) {
-                        input.setRawMode(true);
-                        input.resume();
-                        output.write("\x1b[?1049h\x1b[?25l\x1b[?2004h");
-                    }
+                    draft = await editInExternal(view.input);
+                } catch (error) {
+                    view.mode = "browse";
+                    view.message = error.message ?? String(error);
                 }
-                if (draft === null || closed) view.mode = "browse";
+                if (draft == null || closed) view.mode = "browse";
                 else {
                     try { await view.saveInput(draft); }
                     catch (error) { view.message = error.message ?? String(error); }
@@ -1516,11 +1551,32 @@ export async function runTasksTui(api, list = "@default", { input = process.stdi
             } else action = view.key(text, key);
             if (view.mode === "add" || view.mode === "edit") {
                 busy = editing = true;
+                const titleOnly = view.mode === "edit";
                 while (!closed && (view.mode === "add" || view.mode === "edit")) {
-                    const draft = await readTaskInput(view.input, { input, output, signal: editorAbort.signal, message: view.message });
+                    const initial = titleOnly ? view.input.split("\n")[0] : view.input;
+                    const draft = await readTaskInput(initial, { input, output, signal: editorAbort.signal, message: view.message, singleLine: titleOnly });
                     if (draft === null || closed) { view.mode = "browse"; break; }
-                    try { await view.saveInput(draft); }
-                    catch (error) { view.message = error.message ?? String(error); }
+                    if (draft.external) {
+                        const typed = String(draft.text ?? "");
+                        const notes = view.editingTask?.notes ?? "";
+                        const full = titleOnly ? `${typed.split("\n")[0]}${notes ? `\n\n${notes}` : ""}` : typed;
+                        let externalDraft;
+                        try {
+                            externalDraft = await editInExternal(full);
+                        } catch (error) {
+                            view.mode = "browse";
+                            view.message = error.message ?? String(error);
+                            break;
+                        }
+                        if (externalDraft === null || closed) { view.mode = "browse"; break; }
+                        try { await view.saveInput(externalDraft); }
+                        catch (error) { view.message = error.message ?? String(error); }
+                        break;
+                    }
+                    try {
+                        if (titleOnly) await view.saveTitle(draft);
+                        else await view.saveInput(draft);
+                    } catch (error) { view.message = error.message ?? String(error); }
                 }
                 editing = false;
                 if (!closed) output.write("\x1b[?25l");
@@ -1715,12 +1771,12 @@ TUI: j/k or arrows move; V starts visual selection; Enter/l enters a task; h/Bac
 Ctrl+F / Ctrl+B scroll down / up one page. g? toggles help (hidden by default).
 / searches the current subtree, keeping ancestors visible; Esc clears the filter, visual, and yank/cut.
 gg / G select first / last; gx opens the selected task in the default browser; gf opens found links, including a Keep note.
-a adds here; o after; O before; e edits; Ctrl+E edits in $EDITOR; s sets due date; Enter inserts a newline; Ctrl+S saves; Esc cancels.
+a adds here; o after; O before; e edits the title; Ctrl+E edits title and description in $EDITOR; s sets due date; Enter inserts a newline; Ctrl+S saves; Esc cancels.
 y yanks; Y copies Markdown with IDs; d cuts; D deletes with confirmation; y/d/D/Y apply to the visual selection; p pastes after; P pastes before.
 gp copies a prompt for the current task or visual selection: Work on gtasks item ID1, ID2.
 Space toggles; x done; u undone.
 za toggles a fold; zc/zo close/open; zA/zC/zO apply recursively. A folded task shows two description lines and hides its children.
-zm/zM fold by level (0 none, 1 child tasks, 2 all); zr/zR fold less/open all; level changes reset per-task folds.
+zm reduces the fold level; zr folds more; zM folds all; zR opens all. Level changes reset per-task folds.
 . toggles completed tasks (hidden by default). , toggles task IDs (^id). g, copies the selected task ID.
 m prints the focused, filtered list as raw Markdown.
 r refreshes; q or Ctrl+C quits.

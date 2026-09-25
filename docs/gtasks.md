@@ -126,8 +126,9 @@ revocation or expiry. No credentials are written into the repository.
 
 The `GWS_CLIENT_ID`, `GWS_CLIENT_SECRET`, and optional
 `GOOGLE_TASKS_REFRESH_TOKEN` environment variables override stored credentials,
-unless `NO_SECRET_ENV_VAR` is set. `fpdotenv` emits POSIX shell assignments; on
-PowerShell, use the key store importer above.
+unless `NO_SECRET_ENV_VAR` is set. `fpdotenv` detects the invoking shell and
+emits POSIX assignments or PowerShell `$env:` assignments accordingly; the key
+store importer above is the alternative that avoids environment variables.
 
 `bun run build` compiles the command to `dist/gtasks.exe` on Windows (or
 `dist/gtasks` elsewhere). With `dist` on PATH, launch it as `gtasks`.
@@ -179,7 +180,7 @@ Words and URLs wider than the available space split across lines.
 | Esc while browsing | Clear the filter, visual selection, and yank/cut buffer |
 | a | Add a task at the current level in the multiline editor |
 | o / O | Add a task after / before the selected task |
-| e | Edit the selected task's title and description in the same editor |
+| e | Edit the selected task's title. Enter or Ctrl+S saves; the description is unchanged |
 | Ctrl+E | Edit the selected task's title and description in `$EDITOR` |
 | s | Set or clear the selected task's due date |
 | y | Yank (copy) the selected task(s) and their children |
@@ -195,19 +196,23 @@ Words and URLs wider than the available space split across lines.
 | r | Retry pending changes and refresh from Google |
 | q or Ctrl+C | Quit |
 
-The editor uses one input: its first line is the title, and the remaining lines
-are the description. Leading and trailing blank lines are removed from the
-description; internal blank lines and indentation are preserved. **Enter** adds
-a newline, **Ctrl+S** saves, and **Esc** or **Ctrl+C** cancels editing. Node's
-readline handles text editing and terminal redraw, including Left/Right,
-Home/End, Backspace/Delete, Ctrl+A/E, and Ctrl+W/U. Up/Down moves between input
-lines, preserving the cursor column across short or blank lines. Editing prefills the existing
-title and description. Removing
-all description lines clears the saved description. Failed saves keep your draft.
+**e** edits the title only. The line is prefilled and the cursor starts at the end.
+**Enter** or **Ctrl+S** saves; **Esc** or **Ctrl+C** cancels. The description is left
+unchanged. Home/End and Ctrl+A/E move to the start or end of the title. **Ctrl+G**
+opens `$EDITOR` with the current title and the existing description.
 
-**Ctrl+E** while browsing opens the selected task in `$EDITOR` (default: `nvim`).
-Set `EDITOR` to the editor executable or a wrapper script. The first line is the
-title and the remaining lines are the description. Save and exit to apply changes;
+**a**, **o**, and **O** use one input: the first line is the title, and the remaining
+lines are the description. Leading and trailing blank lines are removed from the
+description; internal blank lines and indentation are preserved. **Enter** adds a
+newline and **Ctrl+S** saves. Up/Down moves between input lines, preserving the
+cursor column across short or blank lines. Removing all description lines clears
+the saved description. Failed saves keep your draft.
+
+**Ctrl+E** while browsing opens the selected task in `$EDITOR` (default: `nvim`)
+to edit the title and description together. From a text prompt, **Ctrl+G** does the same
+with the text typed so far. Set `EDITOR` to the editor executable
+or a wrapper script. The first line is the title and the remaining lines are the
+description, with a blank line between them. Save and exit to apply changes;
 exiting without changes or with an error leaves the task unchanged. Invalid drafts
 and failed saves return to the built-in editor for correction or retry.
 

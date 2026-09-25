@@ -438,6 +438,28 @@ describe("Persistent local task queue", () => {
         input.write("q");
         await pending;
     });
+
+    test("zm reduces the fold level instead of printing Markdown", async () => {
+        const { local } = fixture();
+        await local.syncOnce();
+        const input = new PassThrough();
+        const output = new PassThrough();
+        input.isTTY = output.isTTY = true;
+        input.setRawMode = value => { input.isRaw = value; };
+        output.columns = 110;
+        output.rows = 24;
+        let screen = "";
+        output.on("data", chunk => { screen += chunk; });
+        const pending = runTasksTui(local, "@default", { input, output });
+        await new Promise(resolve => setImmediate(resolve));
+        screen = "";
+        input.write("zm");
+        await new Promise(resolve => setImmediate(resolve));
+        expect(screen).not.toContain("Press any key to return.");
+        expect(screen).toContain("Existing");
+        input.write("q");
+        await pending;
+    });
 });
 
 function mockClient(replies) {
@@ -544,6 +566,18 @@ const press = (view, text, name = text) => view.key(text, { name });
 const save = view => view.saveInput(view.input);
 
 describe("Task navigation and actions", () => {
+    test("zm reduces the fold level and zr folds more", () => {
+        const { view } = fixture();
+        view.setFoldLevel(2);
+        press(view, "z");
+        press(view, "m");
+        expect(view.foldLevel).toBe(1);
+        expect(view.prefix).toBeNull();
+        press(view, "z");
+        press(view, "r");
+        expect(view.foldLevel).toBe(2);
+    });
+
     test("single input keeps the title on line one and trims only blank description edges", () => {
         expect(parseTaskInput(" Title \r\n \r\n\r\n  Indented\r\n\r\nLast  \r\n\t\r\n")).toEqual({ title: "Title", notes: "  Indented\n\nLast  " });
         expect(parseTaskInput("Title\n\n  \n")).toEqual({ title: "Title", notes: "" });
@@ -1199,6 +1233,8 @@ describe("Credentials and terminal lifecycle", () => {
         input.emit("keypress", "", { ctrl: true, name: "a" });
         input.emit("keypress", "New ", {});
         input.emit("keypress", "", { ctrl: true, name: "e" });
+        input.emit("keypress", "", { name: "down" });
+        input.emit("keypress", "", { name: "end" });
         input.emit("keypress", "", { ctrl: true, name: "w" });
         input.emit("keypress", "text", {});
         input.emit("keypress", "\r", { name: "return" });
@@ -1208,13 +1244,36 @@ describe("Credentials and terminal lifecycle", () => {
         expect(input.listenerCount("keypress")).toBe(0);
     });
 
+    test("readline Home/End and Ctrl+A/E move within the current line", async () => {
+        const input = new PassThrough();
+        const output = new PassThrough();
+        output.columns = 80;
+        output.isTTY = true;
+        output.on("data", () => { });
+        const pending = readTaskInput("Title\nMiddle line\nLast", { input, output });
+        input.emit("keypress", "!", {});
+        input.emit("keypress", "", { name: "down" });
+        input.emit("keypress", "", { name: "home" });
+        input.emit("keypress", "<", {});
+        input.emit("keypress", "", { name: "end" });
+        input.emit("keypress", ">", {});
+        input.emit("keypress", "", { name: "down" });
+        input.emit("keypress", "", { ctrl: true, name: "a" });
+        input.emit("keypress", "(", {});
+        input.emit("keypress", "", { ctrl: true, name: "e" });
+        input.emit("keypress", ")", {});
+        input.emit("keypress", "", { ctrl: true, name: "s" });
+        expect(await pending).toBe("Title!\n<Middle line>\n(Last)");
+        expect(input.listenerCount("keypress")).toBe(0);
+    });
+
     test.each([
         ["Title\nNotes", ["up"], "Title!\nNotes"],
-        ["Long title\nx\n\nNotes", ["up", "up", "up"], "Long !title\nx\n\nNotes"],
+        ["Long title\nx\n\nNotes", ["down", "down", "down", "up", "up", "up"], "Long title!\nx\n\nNotes"],
         ["Title\nx\nNotes", ["up", "up", "down", "down"], "Title\nx\nNotes!"],
         ["Title\nNotes", ["down"], "Title\nNotes!"],
         ["Title", ["up", "down"], "Title!"],
-        ["A😀BC\n123", ["up"], "A😀B!C\n123"],
+        ["A😀BC\n123", ["down", "up"], "A😀BC!\n123"],
         ["\nNotes", ["up", "up"], "!\nNotes"],
     ])("readline Up/Down moves within a multiline draft: %s", async (initial, keys, expected) => {
         const input = new PassThrough();
@@ -1227,6 +1286,34 @@ describe("Credentials and terminal lifecycle", () => {
         input.emit("keypress", "!", {});
         input.emit("keypress", "", { ctrl: true, name: "s" });
         expect(await pending).toBe(expected);
+        expect(input.listenerCount("keypress")).toBe(0);
+    });
+
+    test("readline Ctrl+G hands the current text to $EDITOR", async () => {
+        const input = new PassThrough();
+        const output = new PassThrough();
+        output.columns = 80;
+        output.isTTY = true;
+        output.on("data", () => { });
+        const pending = readTaskInput("Title", { input, output, singleLine: true });
+        input.emit("keypress", "X", {});
+        input.emit("keypress", "", { ctrl: true, name: "g" });
+        expect(await pending).toEqual({ external: true, text: "TitleX" });
+        expect(input.listenerCount("keypress")).toBe(0);
+    });
+
+    test("readline title edit saves on Enter and ignores a pasted newline", async () => {
+        const input = new PassThrough();
+        const output = new PassThrough();
+        output.columns = 80;
+        output.isTTY = true;
+        output.on("data", () => { });
+        const pending = readTaskInput("Title", { input, output, singleLine: true });
+        input.emit("keypress", "", { name: "paste-start" });
+        input.emit("keypress", "X\nY", { sequence: "X\nY" });
+        input.emit("keypress", "", { name: "paste-end" });
+        input.emit("keypress", "\r", { name: "return" });
+        expect(await pending).toBe("TitleX Y");
         expect(input.listenerCount("keypress")).toBe(0);
     });
 
@@ -1248,7 +1335,11 @@ describe("Credentials and terminal lifecycle", () => {
         const { view, api, calls } = fixture();
         view.selected = 1;
         press(view, "e");
-        expect(view.input).toBe("Child\nFind ME");
+        expect(view.input).toBe("Child\n\nFind ME");
+        await view.saveTitle("Renamed\nignored");
+        expect(calls).toEqual([["edit", "@default", "c", { title: "Renamed" }]]);
+        calls.length = 0;
+        press(view, "e");
         await view.saveInput("Edited\n\nDescription\n\n");
         expect(calls).toEqual([["edit", "@default", "c", { title: "Edited", notes: "Description" }]]);
         press(view, "e");
@@ -1315,6 +1406,86 @@ describe("Credentials and terminal lifecycle", () => {
         expect((await fetch(redirect, { signal: AbortSignal.timeout(2000) })).status).toBe(200);
         expect((await rejection).message).toContain("declined");
         await expect(fetch(redirect, { signal: AbortSignal.timeout(2000) })).rejects.toThrow();
+    });
+
+    test("TUI Ctrl+E treats a non-zero editor exit as cancel", async () => {
+        const { local, data } = localFixture();
+        data.tasks.push({ id: "noted", title: "Short", notes: "keep me", status: "needsAction" });
+        await local.syncOnce();
+        const input = new PassThrough();
+        const output = new PassThrough();
+        input.isTTY = output.isTTY = true;
+        input.isRaw = false;
+        input.setRawMode = value => { input.isRaw = value; };
+        output.columns = 80;
+        output.rows = 24;
+        output.on("data", () => { });
+        const pending = runTasksTui(local, "@default", {
+            input, output,
+            editExternal: async () => { throw new Error("Editor exited with code 1; task unchanged."); },
+        });
+        await new Promise(resolve => setImmediate(resolve));
+        input.write("j\x05");
+        await new Promise(resolve => setImmediate(resolve));
+        await new Promise(resolve => setImmediate(resolve));
+        const saved = (await local.list()).find(task => task.id === "noted");
+        expect(saved.title).toBe("Short");
+        expect(saved.notes).toBe("keep me");
+        input.write("q");
+        await pending;
+    });
+
+    test("TUI readline Ctrl+G opens $EDITOR with the current title and description", async () => {
+        const { local, data } = localFixture();
+        data.tasks.push({ id: "noted", title: "Short", notes: "keep me", status: "needsAction" });
+        await local.syncOnce();
+        const input = new PassThrough();
+        const output = new PassThrough();
+        input.isTTY = output.isTTY = true;
+        input.isRaw = false;
+        input.setRawMode = value => { input.isRaw = value; };
+        output.columns = 80;
+        output.rows = 24;
+        output.on("data", () => { });
+        const opened = [];
+        const pending = runTasksTui(local, "@default", {
+            input, output,
+            editExternal: async (text) => { opened.push(text); return "ShortX\n\nchanged"; },
+        });
+        await new Promise(resolve => setImmediate(resolve));
+        input.write("jeX\x07");
+        await new Promise(resolve => setImmediate(resolve));
+        await new Promise(resolve => setImmediate(resolve));
+        expect(opened).toEqual(["ShortX\n\nkeep me"]);
+        const saved = (await local.list()).find(task => task.id === "noted");
+        expect(saved.title).toBe("ShortX");
+        expect(saved.notes).toBe("changed");
+        input.write("q");
+        await pending;
+    });
+
+    test("TUI e edits the title and keeps the description", async () => {
+        const { local, data } = localFixture();
+        data.tasks.push({ id: "noted", title: "Short", notes: "keep me", status: "needsAction" });
+        await local.syncOnce();
+        const input = new PassThrough();
+        const output = new PassThrough();
+        input.isTTY = output.isTTY = true;
+        input.isRaw = false;
+        input.setRawMode = value => { input.isRaw = value; };
+        output.columns = 80;
+        output.rows = 24;
+        output.on("data", () => { });
+        const pending = runTasksTui(local, "@default", { input, output });
+        await new Promise(resolve => setImmediate(resolve));
+        input.write("jeX\r");
+        await new Promise(resolve => setImmediate(resolve));
+        await new Promise(resolve => setImmediate(resolve));
+        const saved = (await local.list()).find(task => task.id === "noted");
+        expect(saved.title).toBe("ShortX");
+        expect(saved.notes).toBe("keep me");
+        input.write("q");
+        await pending;
     });
 
     test("TUI handles a chunk of typed text and restores terminal state on quit", async () => {

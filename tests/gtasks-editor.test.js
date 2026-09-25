@@ -21,6 +21,7 @@ test("external editor round-trips multiline drafts and removes temporary files",
 
 test("unchanged drafts are cancelled and editor failures clean up", async () => {
   expect(await editTaskInEditor("Title", { runEditor: async () => {} })).toBeNull();
+  expect(await editTaskInEditor("Title", { runEditor: async () => 1 })).toBeNull();
   let editedPath;
   await expect(editTaskInEditor("Title", {
     runEditor: async path => {
