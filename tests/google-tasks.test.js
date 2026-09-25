@@ -1137,7 +1137,7 @@ describe("Task navigation and actions", () => {
         press(view, "?");
         renderTasks(view, 40, 16);
         view.key("\x06", { ctrl: true, name: "f" });
-        expect(renderTasks(view, 40, 16)).toContain("> - [ ] Task 7");
+        expect(renderTasks(view, 40, 16)).toContain("> - [ ] Task 6");
     });
 
     test("markdown dump uses the focused parent, search filter, and completed toggle", () => {

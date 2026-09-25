@@ -533,8 +533,9 @@ export function googleTasksSecrets({ password, fields }) {
     return entries;
 }
 
-export function visibleTasks(tasks, parent = null, search = "", showCompleted = false, ids, maxDepth = Infinity) {
+export function visibleTasks(tasks, parent = null, search = "", showCompleted = false, ids, maxDepth = Infinity, folds) {
     const query = search.trim().toLocaleLowerCase();
+    if (parent && !query && folds?.has(parent)) return [];
     const children = new Map();
     for (const task of tasks.filter(task => !task.deleted)
         .sort((a, b) => (a.position ?? "").localeCompare(b.position ?? ""))) {
@@ -550,6 +551,7 @@ export function visibleTasks(tasks, parent = null, search = "", showCompleted = 
         if (seen.has(task.id)) continue;
         seen.add(task.id);
         rows.push(task);
+        if (!query && folds?.has(task.id)) continue;
         for (const child of [...(children.get(task.id) ?? [])].reverse()) {
             pending.push({ ...child, depth: task.depth + 1 });
         }
@@ -661,19 +663,84 @@ export function parseDue(input, now = () => new Date()) {
 
 export class TasksView {
     constructor(api, list = "@default") {
-        Object.assign(this, { api, list, tasks: [], path: [], search: "", selected: 0, mode: "browse", input: "", showCompleted: false, showIds: false, showHelp: false, prefix: null, openUrl: openInBrowser, writeClipboard, message: "", listTitle: "Default list", clipboard: null, visual: null });
+        Object.assign(this, { api, list, tasks: [], path: [], search: "", selected: 0, mode: "browse", input: "", showCompleted: false, showIds: false, showHelp: false, prefix: null, openUrl: openInBrowser, writeClipboard, message: "", listTitle: "Default list", clipboard: null, visual: null, folds: new Set(), unfolds: new Set(), foldLevel: 0 });
     }
 
     get parent() { return this.path.at(-1)?.id ?? null; }
     get ids() { return this.api.state?.ids; }
     get rows() {
-        const kids = visibleTasks(this.tasks, this.parent, this.search, this.showCompleted, this.ids, this.parent ? 0 : 1);
+        const kids = visibleTasks(this.tasks, this.parent, this.search, this.showCompleted, this.ids, this.parent ? 0 : 1, this.foldedIds);
         const focused = this.parent ? this.tasks.find(task => task.id === this.parent && !task.deleted) : null;
         if (!focused) return kids;
         return [{ ...focused, depth: 0 }, ...kids.map(task => ({ ...task, depth: task.depth + 1 }))];
     }
     get task() { return this.rows[this.selected]; }
     markdown() { return viewMarkdown(this.tasks, this.parent, this.search, this.showCompleted); }
+
+    displayDepths() {
+        const byId = new Map(this.tasks.map(task => [task.id, task]));
+        const depths = new Map();
+        const depth = id => {
+            if (depths.has(id)) return depths.get(id);
+            depths.set(id, 0);
+            if (id === this.parent) return 0;
+            const parent = byId.get(id)?.parent ?? null;
+            const value = parent && byId.has(parent) ? depth(parent) + 1 : 0;
+            depths.set(id, value);
+            return value;
+        };
+        for (const task of this.tasks) depth(task.id);
+        return depths;
+    }
+
+    get foldedIds() {
+        if (!this.foldLevel) return this.folds;
+        const folded = new Set(this.folds);
+        const parents = new Set();
+        for (const task of this.tasks) if (!task.deleted && task.parent) parents.add(task.parent);
+        const depths = this.displayDepths();
+        for (const task of this.tasks) {
+            if (task.deleted || this.unfolds.has(task.id) || (!task.notes && !parents.has(task.id))) continue;
+            const depth = depths.get(task.id) ?? 0;
+            if (this.foldLevel >= (depth === 0 ? 2 : 1)) folded.add(task.id);
+        }
+        return folded;
+    }
+
+    hasFoldContent(task) {
+        return Boolean(task && (task.notes || this.tasks.some(child => !child.deleted && (child.parent ?? null) === task.id)));
+    }
+
+    setFold(close, recursive) {
+        const task = this.task;
+        if (!task) return;
+        if (close && !this.hasFoldContent(task)) {
+            this.message = "Nothing to fold.";
+            return;
+        }
+        const parents = new Set();
+        if (recursive) for (const item of this.tasks) if (!item.deleted && item.parent) parents.add(item.parent);
+        const ids = recursive ? subtreeIds(this.tasks, [task.id]) : [task.id];
+        for (const id of ids) {
+            if (close && id !== task.id) {
+                const target = this.tasks.find(item => item.id === id);
+                if (!target?.notes && !parents.has(id)) continue;
+            }
+            if (close) { this.folds.add(id); this.unfolds.delete(id); }
+            else { this.folds.delete(id); this.unfolds.add(id); }
+        }
+    }
+
+    toggleFold(recursive) {
+        if (!this.task) return;
+        this.setFold(!this.foldedIds.has(this.task.id), recursive);
+    }
+
+    setFoldLevel(level) {
+        this.foldLevel = Math.max(0, Math.min(2, level));
+        this.folds.clear();
+        this.unfolds.clear();
+    }
 
     clamp() {
         this.selected = Math.max(0, Math.min(this.selected, this.rows.length - 1));
@@ -916,6 +983,9 @@ export class TasksView {
         }
         const index = this.rows.findIndex(task => task.id === selectedId);
         if (index !== -1) this.selected = index;
+        const alive = new Set(tasks.map(task => task.id));
+        for (const id of [...this.folds]) if (!alive.has(id)) this.folds.delete(id);
+        for (const id of [...this.unfolds]) if (!alive.has(id)) this.unfolds.delete(id);
         this.clamp();
     }
 
@@ -933,6 +1003,8 @@ export class TasksView {
         }
         for (const [index, ancestor] of ancestors.entries()) {
             if (index) this.selected = Math.max(0, this.rows.findIndex(task => task.id === ancestor.id));
+            this.folds.delete(ancestor.id);
+            this.unfolds.add(ancestor.id);
             this.path.push({ id: ancestor.id, title: ancestor.title, search: this.search, selected: this.selected });
             this.search = "";
             this.selected = 0;
@@ -1052,6 +1124,21 @@ export class TasksView {
             this.clamp();
             return;
         }
+        if (this.prefix === "z") {
+            this.prefix = null;
+            if (text === "a") this.toggleFold(false);
+            else if (text === "A") this.toggleFold(true);
+            else if (text === "c") this.setFold(true, false);
+            else if (text === "C") this.setFold(true, true);
+            else if (text === "o") this.setFold(false, false);
+            else if (text === "O") this.setFold(false, true);
+            else if (text === "m") this.setFoldLevel(this.foldLevel + 1);
+            else if (text === "M") this.setFoldLevel(2);
+            else if (text === "r") this.setFoldLevel(this.foldLevel - 1);
+            else if (text === "R") this.setFoldLevel(0);
+            this.clamp();
+            return;
+        }
         if (text !== "g") this.scrolledTask = null;
         if (key.name === "down" || text === "j") this.selected++;
         else if (key.name === "up" || text === "k") this.selected--;
@@ -1059,6 +1146,10 @@ export class TasksView {
         else if (key.name === "end" || text === "G") this.selected = this.rows.length - 1;
         else if (text === "g") {
             this.prefix = "g";
+            return;
+        }
+        else if (text === "z") {
+            this.prefix = "z";
             return;
         }
         else if (key.name === "return" || key.name === "right" || text === "l") this.enter();
@@ -1177,13 +1268,14 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
         "",
     );
     if (view.api.localFirst) lines.splice(lines.length - 1, 0, `Sync: ${view.api.storageError ?? view.api.syncStatus}`);
-    const footerSpace = view.showHelp ? 5 : 3;
+    const footerSpace = view.showHelp ? 6 : 3;
     const pageSize = Math.max(1, height - lines.length - footerSpace);
     const childCounts = new Map();
     for (const task of view.tasks) {
         if (task.parent && !task.deleted && (view.showCompleted || task.status !== "completed")) childCounts.set(task.parent, (childCounts.get(task.parent) ?? 0) + 1);
     }
     const clip = view.clipboard;
+    const foldedIds = view.foldedIds;
     const clipRoots = clip?.roots ?? (clip?.root ? [clip.root] : []);
     const clipIds = clip?.type === "yank" ? new Set(clip.tasks.map(task => task.id)) : subtreeIds(view.tasks, clipRoots);
     const visualLo = view.visual == null ? -1 : Math.min(view.visual, view.selected);
@@ -1201,9 +1293,12 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
         const marked = clipIds.has(task.id);
         const gutter = index === view.selected && marked ? (clip.type === "cut" ? "D" : "Y") : index === view.selected ? ">" : marked ? (clip.type === "cut" ? "d" : "y") : index >= visualLo && index <= visualHi ? "*" : " ";
         const prefix = `${gutter} ${indent}- [${task.status === "completed" ? "x" : " "}] `;
-        body.push(...wrapTaskText(`${task.title || "(untitled)"}${task.due ? `  ${formatDue(task.due)}` : ""}${view.showIds ? `  ${formatId(task.id, view.ids)}` : ""}${children ? `  (${children} children)` : ""}`, width, prefix));
+        const folded = foldedIds.has(task.id);
+        body.push(...wrapTaskText(`${task.title || "(untitled)"}${task.due ? `  ${formatDue(task.due)}` : ""}${view.showIds ? `  ${formatId(task.id, view.ids)}` : ""}${children ? `  (${children} children)` : ""}${folded ? "  …" : ""}`, width, prefix));
         if (task.notes) {
-            for (const note of task.notes.split(/\r?\n/)) body.push(...wrapTaskText(note, width, `        ${indent}`));
+            const notes = task.notes.split(/\r?\n/);
+            for (const note of folded ? notes.slice(0, 2) : notes) body.push(...wrapTaskText(note, width, `        ${indent}`));
+            if (folded && notes.length > 2) body.push(fit(`        ${indent}…`, width));
         }
         if (index === view.selected) selectedEnd = Math.min(body.length, selectedStart + pageSize);
     }
@@ -1220,6 +1315,7 @@ export function renderTasks(view, columns = 80, height = 24, busy = false) {
     if (view.showHelp) {
         lines.push("g? help  Ctrl+F/B page  j/k move  V visual  Enter/l cd  h/Backspace up  / search  Esc clear  q quit");
         lines.push("a/o/O add  e edit  Ctrl+E $EDITOR  s due  , ids  g, copy ID  gx open  gf links  y yank  Y copy  gp prompt  d cut  D delete  p/P paste  Space/x/u  . all  m print  r refresh");
+        lines.push("za toggle fold  zc/zo close/open  zA/zC/zO recursive  zm/zr fold level  zM/zR fold all/none");
     }
     let prompt = view.message || "";
     if (view.mode === "search") prompt = `/ ${view.input}  (Enter apply, Esc cancel)`;
@@ -1623,6 +1719,8 @@ a adds here; o after; O before; e edits; Ctrl+E edits in $EDITOR; s sets due dat
 y yanks; Y copies Markdown with IDs; d cuts; D deletes with confirmation; y/d/D/Y apply to the visual selection; p pastes after; P pastes before.
 gp copies a prompt for the current task or visual selection: Work on gtasks item ID1, ID2.
 Space toggles; x done; u undone.
+za toggles a fold; zc/zo close/open; zA/zC/zO apply recursively. A folded task shows two description lines and hides its children.
+zm/zM fold by level (0 none, 1 child tasks, 2 all); zr/zR fold less/open all; level changes reset per-task folds.
 . toggles completed tasks (hidden by default). , toggles task IDs (^id). g, copies the selected task ID.
 m prints the focused, filtered list as raw Markdown.
 r refreshes; q or Ctrl+C quits.
