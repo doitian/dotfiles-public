@@ -27,10 +27,10 @@
 	wip = commit -n -m WIP
 	print-commit-message = log --pretty="format:%B"
 	cgen = "!f() { git-mgen | git commit -F - -e; }; f"
-	cqw = "!opencode -m opencode-go/qwen3.8-max run /git-commit"
-	sqw = "!opencode -m opencode-go/qwen3.8-max --mini --prompt /split-commit"
-	cds = "!opencode -m opencode-go/deepseek-v4.1-flash run /git-commit"
-	sds = "!opencode -m opencode-go/deepseek-v4.1-flash --mini --prompt /split-commit"
+	cqw = "!MSYS_NO_PATHCONV=1 opencode -m opencode-go/qwen3.8-max run /git-commit"
+	sqw = "!MSYS_NO_PATHCONV=1 opencode -m opencode-go/qwen3.8-max --mini --prompt /split-commit"
+	cds = "!MSYS_NO_PATHCONV=1 opencode -m opencode-go/deepseek-v4.1-flash run /git-commit"
+	sds = "!MSYS_NO_PATHCONV=1 opencode -m opencode-go/deepseek-v4.1-flash --mini --prompt /split-commit"
 
 	co = checkout
 	cb = checkout -b
