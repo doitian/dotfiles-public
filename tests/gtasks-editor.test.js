@@ -63,7 +63,7 @@ test.each(["save", "unchanged", "failure", "invalid", "save failure"])("Ctrl+E r
   const pending = runTasksTui(api, "list", {
     input, output,
     editExternal: async initial => {
-      expect(initial).toBe("Second\nNotes");
+      expect(initial).toBe("Second\n\nNotes");
       expect(input.isRaw).toBe(false);
       expect(input.isPaused()).toBe(true);
       expect(screen).toEndWith("\x1b[?2004l\x1b[?25h\x1b[?1049l");

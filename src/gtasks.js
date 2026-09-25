@@ -1532,7 +1532,9 @@ export async function runTasksTui(api, list = "@default", { input = process.stdi
             }
             const external = view.mode === "browse" && key.ctrl && key.name === "e" && view.task;
             let action;
+            let fullEdit = false;
             if (external) {
+                fullEdit = true;
                 view.prefix = null;
                 view.openEditor("edit");
                 busy = editing = true;
@@ -1551,7 +1553,7 @@ export async function runTasksTui(api, list = "@default", { input = process.stdi
             } else action = view.key(text, key);
             if (view.mode === "add" || view.mode === "edit") {
                 busy = editing = true;
-                const titleOnly = view.mode === "edit";
+                const titleOnly = view.mode === "edit" && !fullEdit;
                 while (!closed && (view.mode === "add" || view.mode === "edit")) {
                     const initial = titleOnly ? view.input.split("\n")[0] : view.input;
                     const draft = await readTaskInput(initial, { input, output, signal: editorAbort.signal, message: view.message, singleLine: titleOnly });
