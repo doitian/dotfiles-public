@@ -44,8 +44,9 @@
     "prefix": "docklet",
     "body": [
       "---",
-      "status: i",
-      "zettel: fleeting",
+      "tags:",
+      "  - i",
+      "  - zettel/fleeting",
       "created: \"[[$CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE]]\"",
       "---",
       "# $TM_FILENAME_BASE",

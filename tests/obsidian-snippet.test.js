@@ -29,8 +29,7 @@ describe("Obsidian Docklet snippet", () => {
         .replaceAll("$TM_FILENAME_BASE", "中文 Docklet");
       expect(text.startsWith("---\n")).toBe(true);
       expect(Bun.YAML.parse(text.split("---\n")[1])).toEqual({
-        status: "i",
-        zettel: "fleeting",
+        tags: ["i", "zettel/fleeting"],
         created: `[[${date}]]`,
       });
       expect(text).toEndWith("# 中文 Docklet\n\n## Synopsis");

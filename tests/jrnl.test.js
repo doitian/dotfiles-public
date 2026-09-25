@@ -78,7 +78,7 @@ test.each([
   expect(result.code).toBe(0);
   expect(result.out).toBe(join(f.dir, `Journal ${day}.md`));
   const text = await readFile(result.out, "utf8");
-  expect(properties(text)).toEqual({ date: `[[${day}]]`, next: `[[Journal ${next}]]`, prev: `[[Journal ${previous}]]`, kind: ["journal"] });
+  expect(properties(text)).toEqual({ date: `[[${day}]]`, next: `[[Journal ${next}]]`, prev: `[[Journal ${previous}]]`, tags: ["kind/journal"] });
   expect(text).toMatch(/---\n# Journal on .+\n\n## Journal\n$/);
   expect(text).not.toContain("::");
 });
@@ -130,6 +130,19 @@ test("existing enum properties, kind order, topic tags and line endings are pres
   expect(await readFile(file, "utf8")).toBe(original + "\n### 10:23 Title\n\nBody\n");
 });
 
+test("existing classification tags retain their order during no-op and append", async () => {
+  const f = await fixture();
+  const file = join(f.dir, "Journal 2026-09-24.md");
+  const original = '---\ntags: [kind/journal, obsidian/help, now, zettel/index, topic]\n---\n# Existing\r\nKeep [[Link]] ^block\n';
+  await writeFile(file, original);
+  const before = await stat(file, { bigint: true });
+  expect((await run(f)).code).toBe(0);
+  expect(await readFile(file, "utf8")).toBe(original);
+  expect((await stat(file, { bigint: true })).mtimeNs).toBe(before.mtimeNs);
+  expect((await run(f, ["Title"], { input: "Body\n" })).code).toBe(0);
+  expect(await readFile(file, "utf8")).toBe(original + "\n### 10:23 Title\n\nBody\n");
+});
+
 test("appends titled stdin without rewriting an existing journal", async () => {
   const f = await fixture();
   const file = join(f.dir, "Journal 2026-09-24.md");
@@ -145,8 +158,8 @@ test("empty stdin moves the title into the body", async () => {
   const result = await run(f, ["Title", "only"]);
   expect(result.code).toBe(0);
   const text = await readFile(result.out, "utf8");
-  expect(properties(text).kind).toEqual(["journal"]);
-  expect(properties(text)).not.toHaveProperty("tags");
+  expect(properties(text).tags).toEqual(["kind/journal"]);
+  expect(properties(text)).not.toHaveProperty("kind");
   expect(text.endsWith("\n### 10:23\n\nTitle only\n")).toBe(true);
 });
 

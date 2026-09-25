@@ -60,8 +60,8 @@ async function ensureJournalFile(journalFile) {
 date: "[[${date}]]"
 next: "[[Journal ${tomorrow(date)}]]"
 prev: "[[Journal ${yesterday(date)}]]"
-kind:
-  - journal
+tags:
+  - kind/journal
 ---
 # Journal on ${formatDateLong(date)}
 
