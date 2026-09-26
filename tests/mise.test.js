@@ -53,7 +53,7 @@ test.each([
   ["g:up:bun", "bun update -g --ignore-scripts --latest"],
   [
     "g:add:bun:all",
-    "bun add -g --ignore-scripts @github/copilot opencode-ai",
+    "bun add -g --ignore-scripts @opencode/cli",
     "bun add -g --ignore-scripts @earendil-works/pi-coding-agent",
   ],
   ["g:add:gh:all", "gh extension install github/gh-stack"],
