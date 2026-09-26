@@ -34,10 +34,10 @@ user taxonomy; otherwise use these plain-text conventions in titles:
 
 | Meaning | Representation |
 | --- | --- |
-| Unprocessed input | `#inbox`, normally at the list root |
+| Unprocessed input | `#i`, normally at the list root |
 | Finishable outcome requiring multiple actions | Parent with `#project`; completion criteria in notes |
-| Concrete action available now | `#next`, under its project or standalone |
-| Dependency on another person or event | `#waiting`; notes record who/what, requested date, and known follow-up date |
+| Concrete action available now | `#now`, under its project or standalone |
+| Dependency on another person or event | `#later`; notes record who/what, requested date, and known follow-up date |
 | Possible future commitment | `#someday` |
 | Place, tool, or person needed | Optional `@computer`, `@calls`, `@home`, `@errands`, or user-chosen context |
 
