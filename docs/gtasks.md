@@ -5,8 +5,8 @@ Markdown-style list with `- [ ]` and `- [x]` checkboxes. The TUI shows two
 levels at a time: the current tasks and their direct children. Enter a task to
 see the next level. Child tasks use two spaces of indentation per level, without
 tree connector lines. Parent tasks appear above their children, with descriptions
-indented beneath each task's title. Descriptions show at most two wrapped lines,
-skipping blank lines; the focused task shows its full description. A blank line
+indented beneath each task's title. Descriptions show at most two
+lines with blank lines trimmed; the focused task shows its full description. A blank line
 separates tasks. `gtasks tui <list-id>`
 opens another list, and `gtasks list [list-id]` prints a nested Markdown todo list.
 Both use Google OAuth directly; `gws` is no longer required.

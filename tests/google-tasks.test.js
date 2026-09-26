@@ -996,7 +996,7 @@ describe("Task navigation and actions", () => {
         expect(focused).not.toContain("…");
     });
 
-    test("truncation counts wrapped lines and skips blank description lines", () => {
+    test("truncation counts wrapped lines and trims blank lines within the first two", () => {
         const { view } = fixture();
         view.tasks = [{ id: "long", title: "Task", notes: "alpha beta gamma delta epsilon\n\nsecond\nthird" }];
         const screen = renderTasks(view, 24, 24);
@@ -1010,6 +1010,20 @@ describe("Task navigation and actions", () => {
         expect(focused).toContain("third");
         expect(focused).not.toContain("…");
         expect(focused).not.toContain("epsilon\r\n\r\n");
+    });
+
+    test("a blank second description line stops the collapsed preview at the first line", () => {
+        const { view } = fixture();
+        view.tasks = [{ id: "blank", title: "Task", notes: "first\n\nsecond" }];
+        const screen = renderTasks(view, 80, 24);
+        expect(screen).toContain("        first\r\n");
+        expect(screen).not.toContain("second");
+        expect(screen).toContain("…");
+        view.path = [{ id: "blank", title: "Task" }];
+        const focused = renderTasks(view, 80, 24);
+        expect(focused).toContain("first\r\n        \r\n");
+        expect(focused).toContain("second");
+        expect(focused).not.toContain("…");
     });
 
     test("a blank line separates tasks", () => {

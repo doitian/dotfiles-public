@@ -1078,17 +1078,19 @@ function taskBody(view, width) {
         const prefix = `${gutter} ${indent}- [${task.status === "completed" ? "x" : " "}] `;
         body.push(...wrapTaskText(`${task.title || "(untitled)"}${task.due ? `  ${formatDue(task.due)}` : ""}${view.showIds ? `  ${formatId(task.id, view.ids)}` : ""}${children ? `  (${children} children)` : ""}`, width, prefix));
         if (task.notes) {
-            const notes = task.notes.split(/\r?\n/).filter(note => note.trim());
-            const limit = task.id === view.parent ? Infinity : 2;
+            const focused = task.id === view.parent;
+            const raw = task.notes.split(/\r?\n/);
+            const notes = focused ? raw : raw.slice(0, 2).filter(note => note.trim());
+            const limit = focused ? Infinity : 2;
             let shown = 0;
-            let more = false;
+            let more = !focused && raw.slice(2).some(note => note.trim());
             for (const note of notes) {
                 for (const line of wrapTaskText(note, width, `        ${indent}`)) {
                     if (shown >= limit) { more = true; break; }
                     body.push(line);
                     shown++;
                 }
-                if (more) break;
+                if (shown >= limit) break;
             }
             if (more) body.push(fit(`        ${indent}…`, width));
         }
@@ -1437,7 +1439,7 @@ a adds here; o after; O before; e or Ctrl+E edits title and description in $EDIT
 y yanks; Y copies Markdown with IDs; d cuts; D deletes with confirmation; y/d/D/Y apply to the visual selection; p pastes after; P pastes before.
 gp copies a prompt for the current task or visual selection: Work on gtasks item ID1, ID2.
 Space toggles; x done; u undone.
-Descriptions show at most two wrapped lines, skipping blank lines; the focused task shows its full description.
+Descriptions show at most two lines with blank lines trimmed; the focused task shows its full description.
 A blank line separates tasks.
 . toggles completed tasks (hidden by default). , toggles task IDs (^id). g, copies the selected task ID.
 m prints the focused, filtered list as raw Markdown.
