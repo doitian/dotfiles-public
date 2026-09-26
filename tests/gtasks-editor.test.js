@@ -57,19 +57,19 @@ test.each(["save", "unchanged", "failure", "invalid", "save failure"])("Ctrl+E r
       edits.push(args);
     },
   };
+  const drafts = [];
   let release;
   let opened;
-  const ready = new Promise(resolve => { opened = resolve; });
+  let ready = new Promise(resolve => { opened = resolve; });
   const pending = runTasksTui(api, "list", {
     input, output,
     editExternal: async initial => {
-      expect(initial).toBe("Second\n\nNotes");
+      drafts.push(initial);
       expect(input.isRaw).toBe(false);
       expect(input.isPaused()).toBe(true);
       expect(screen).toEndWith("\x1b[?2004l\x1b[?25h\x1b[?1049l");
-      const wait = new Promise(resolve => { release = resolve; });
       opened();
-      await wait;
+      await new Promise(resolve => { release = resolve; });
       if (scenario === "failure") throw new Error("Editor failed");
       if (scenario === "unchanged") return null;
       if (scenario === "invalid") return "\nNotes only";
@@ -80,14 +80,23 @@ test.each(["save", "unchanged", "failure", "invalid", "save failure"])("Ctrl+E r
     await tick();
     input.write("j\x05");
     await ready;
+    expect(drafts).toEqual(["Second\n\nNotes"]);
     input.emit("keypress", "q", { name: "q" });
     release();
     await tick();
     expect(input.isRaw).toBe(true);
     expect(input.isPaused()).toBe(false);
     if (scenario === "invalid" || scenario === "save failure") {
-      expect(screen).toContain(scenario === "invalid" ? "first line must contain a title" : "Save failed");
-      expect(screen).toContain(scenario === "invalid" ? "Notes only" : "Updated");
+      const error = scenario === "invalid" ? "first line must contain a title" : "Save failed";
+      const draft = scenario === "invalid" ? "\nNotes only" : "Updated\n\nDescription\n";
+      expect(screen).toContain(error);
+      ready = new Promise(resolve => { opened = resolve; });
+      input.emit("keypress", "e", { name: "e" });
+      await ready;
+      expect(drafts.at(-1)).toBe(draft);
+      release();
+      await tick();
+      expect(screen).toContain(error);
       input.emit("keypress", "", { name: "escape" });
       await tick();
     }
@@ -98,7 +107,8 @@ test.each(["save", "unchanged", "failure", "invalid", "save failure"])("Ctrl+E r
     input.emit("end");
     await pending;
   }
-  expect(modes).toEqual([true, false, true, false]);
+  expect(modes.slice(0, 4)).toEqual([true, false, true, false]);
+  expect(modes.at(-1)).toBe(false);
   expect(input.listenerCount("keypress")).toBe(0);
   expect(screen).toEndWith("\x1b[?2004l\x1b[?25h\x1b[?1049l");
 });

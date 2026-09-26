@@ -5,7 +5,9 @@ Markdown-style list with `- [ ]` and `- [x]` checkboxes. The TUI shows two
 levels at a time: the current tasks and their direct children. Enter a task to
 see the next level. Child tasks use two spaces of indentation per level, without
 tree connector lines. Parent tasks appear above their children, with descriptions
-indented beneath each task's title. `gtasks tui <list-id>`
+indented beneath each task's title. Descriptions show at most two wrapped lines,
+skipping blank lines; the focused task shows its full description. A blank line
+separates tasks. `gtasks tui <list-id>`
 opens another list, and `gtasks list [list-id]` prints a nested Markdown todo list.
 Both use Google OAuth directly; `gws` is no longer required.
 The root shows the list ID as `^id` beneath the breadcrumb. When you enter a
@@ -19,16 +21,6 @@ of task titles among the unfinished tasks. One match opens its child hierarchy;
 multiple matches keep you at the root with the search filter applied so you can
 select a parent. No matches also leaves the filter at the root; Esc clears it.
 
-Start in the current repository's root task with `gtasks --git` (also
-`gtasks list --git` and `gtasks tui <list-id> --git`; it cannot combine with
-`--cd`). The task is named `owner/repo` when the repository has a GitHub remote
-(origin is preferred), or `hostname/directory` otherwise. A root task with that
-exact name is reused case-insensitively; otherwise it is created first. The TUI
-checks its local cache, including queued unsynced additions, before creating a
-task on Google, and focuses the task by ID once it appears in the cache, so
-duplicate titles elsewhere do not matter. `list --git` reads and writes Google
-directly and scopes its output to the task like `--cd`.
-
 ## Agent commands
 
 ```powershell
@@ -39,7 +31,6 @@ gtasks list --raw
 gtasks list --status needsAction --token "#next" --token "@computer" --json
 gtasks list --search "proposal" --json
 gtasks list --cd "Project"
-gtasks list --git --json
 gtasks list --list LIST_ID --cd "Project" --json
 gtasks add --title "New task" --notes "Description" --due 2026-09-14 --parent PARENT_ID --json
 gtasks edit TASK_ID --title "Updated title" --notes "Updated description" --due tomorrow --json
@@ -73,10 +64,10 @@ fields; `--notes ""` clears the description; `--due ""` clears the due date.
 only. Markdown shows due dates as `[[YYYY-MM-DD]]`. `add` requires `--title`; omit
 `--parent` to add at the root. Mutation targets and `--parent` use task IDs.
 
-These commands read and write Google directly and wait for confirmation; they
-do not read or modify the TUI's pending local queue. A running TUI picks up
-server changes on its next refresh; pending local edits can overwrite those
-same fields when synced. Agent commands never prompt for credentials or launch
+These commands read and write Google directly and wait for confirmation, while
+the TUI applies changes locally first and syncs them in the background. A
+running TUI picks up server changes on its next refresh; pending local edits
+can overwrite those same fields when synced. Agent commands never prompt for credentials or launch
 sign-in: run `gtasks auth` separately first. JSON goes only to stdout, without
 glow. Failures go to stderr and exit with code 1.
 
@@ -134,28 +125,17 @@ store importer above is the alternative that avoids environment variables.
 `dist/gtasks` elsewhere). With `dist` on PATH, launch it as `gtasks`.
 `bun run clear-secrets google-tasks` removes its stored credentials.
 
-## Local storage and sync
+## Local updates and sync
 
-The TUI opens its local cache immediately. Adds, edits, completion changes, and
-deletions are saved to SQLite before appearing as saved, then sent to Google in
-order by a background queue. Pending changes survive quitting and restarting.
-SQLite is built into Bun; no extra dependency is required. The first launch
-downloads the list in the background, and later launches can use it offline.
+The TUI applies adds, edits, completion changes, moves, and deletions to its
+in-memory copy immediately, then sends them to Google in order in the
+background, so the interface never blocks on the network. Pending changes live
+in memory only; quitting before they sync discards them. The first launch
+downloads the list in the background.
 
-Caches live in `%LOCALAPPDATA%\gtasks` on Windows, or
-`$XDG_DATA_HOME/gtasks` (default `~/.local/share/gtasks`) elsewhere. Each sign-in
-and task list has a separate cache; only one TUI can open that cache at a time.
-Signing in again with a different refresh token creates a separate cache.
-`gtasks list` reads directly from Google, so it excludes pending local changes.
-
-The sync status shows queued changes and errors. Failed requests retry with
-increasing delays. After five consecutive failures, syncing pauses and asks
-whether to reset the cache. **y** discards pending changes only after a fresh
-server copy is fetched successfully. **n**, Enter, or Esc keeps your local data
-and leaves syncing paused; **r** retries. Resetting does not clear credentials.
-If a task insertion may have reached Google before its connection failed, it
-is not sent again automatically, to avoid creating a duplicate. The same reset
-prompt lets you reload Google's actual state.
+The sync status line shows queued changes and errors. After a failure, syncing
+stops; fix the problem and press **r** to retry. `gtasks list` reads directly
+from Google, so it excludes pending local changes.
 
 ## Controls
 
@@ -178,10 +158,9 @@ Words and URLs wider than the available space split across lines.
 | Enter / Esc while searching | Keep / cancel the search |
 | V | Start visual selection; j/k extends it; V again leaves it |
 | Esc while browsing | Clear the filter, visual selection, and yank/cut buffer |
-| a | Add a task at the current level in the multiline editor |
-| o / O | Add a task after / before the selected task |
-| e | Edit the selected task's title. Enter or Ctrl+S saves; the description is unchanged |
-| Ctrl+E | Edit the selected task's title and description in `$EDITOR` |
+| a | Add a task at the current level in `$EDITOR` |
+| o / O | Add a task after / before the selected task in `$EDITOR` |
+| e or Ctrl+E | Edit the selected task's title and description in `$EDITOR` |
 | s | Set or clear the selected task's due date |
 | y | Yank (copy) the selected task(s) and their children |
 | Y | Copy the current task and children, or the visual selection, as Markdown with IDs |
@@ -193,28 +172,17 @@ Words and URLs wider than the available space split across lines.
 | . | Toggle between undone tasks only and all tasks |
 | , | Toggle task IDs (`^id`) on each row |
 | m | Print the focused, filtered list as raw Markdown |
-| r | Retry pending changes and refresh from Google |
+| r | Retry failed syncs and refresh from Google |
 | q or Ctrl+C | Quit |
 
-**e** edits the title only. The line is prefilled and the cursor starts at the end.
-**Enter** or **Ctrl+S** saves; **Esc** or **Ctrl+C** cancels. The description is left
-unchanged. Home/End and Ctrl+A/E move to the start or end of the title. **Ctrl+G**
-opens `$EDITOR` with the current title and the existing description.
-
-**a**, **o**, and **O** use one input: the first line is the title, and the remaining
-lines are the description. Leading and trailing blank lines are removed from the
-description; internal blank lines and indentation are preserved. **Enter** adds a
-newline and **Ctrl+S** saves. Up/Down moves between input lines, preserving the
-cursor column across short or blank lines. Removing all description lines clears
-the saved description. Failed saves keep your draft.
-
-**Ctrl+E** while browsing opens the selected task in `$EDITOR` (default: `nvim`)
-to edit the title and description together. From a text prompt, **Ctrl+G** does the same
-with the text typed so far. Set `EDITOR` to the editor executable
-or a wrapper script. The first line is the title and the remaining lines are the
-description, with a blank line between them. Save and exit to apply changes;
-exiting without changes or with an error leaves the task unchanged. Invalid drafts
-and failed saves return to the built-in editor for correction or retry.
+**a**, **o**, **O**, **e**, and **Ctrl+E** open `$EDITOR` (default: `nvim`). The
+first line is the title and the remaining lines are the description, with a blank
+line between them. Leading and trailing blank lines are removed from the
+description; internal blank lines and indentation are preserved. Save and exit to
+apply changes; exiting without changes or with an error leaves the task
+unchanged. After a failed save, press any key to retry the preserved draft in
+`$EDITOR`, or **Esc** to discard it. Set `EDITOR` to the editor executable or a
+wrapper script.
 
 Due dates appear as `[[YYYY-MM-DD]]` after the title. Press **s** to set one;
 **Enter** saves, **Esc** cancels, and an empty value clears it. `today` and

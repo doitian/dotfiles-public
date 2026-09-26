@@ -1,12 +1,9 @@
-import { GoogleTasks, LocalGoogleTasks, authorize, createAuthorizationRequest, ensureGitTask, googleTasksSecrets, TasksView, renderTasks, runTasksTui, visibleTasks, renderMarkdown, viewMarkdown, parseTaskInput, parseDue, formatDue, formatId, readTaskInput, taskLinks } from "../src/gtasks.js";
+import { GoogleTasks, OptimisticGoogleTasks, authorize, createAuthorizationRequest, googleTasksSecrets, TasksView, renderTasks, runTasksTui, visibleTasks, renderMarkdown, viewMarkdown, parseTaskInput, parseDue, formatDue, formatId, taskLinks } from "../src/gtasks.js";
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { main as importSecrets } from "../scripts/ev-secrets.js";
 import { createHash } from "node:crypto";
 import { PassThrough } from "node:stream";
 import { gopassToEnv } from "../src/lib/secrets.js";
-import { join } from "node:path";
-import { tmpdir } from "node:os";
-import { unlink } from "node:fs/promises";
 import { main as runCommand, matchTask } from "../src/gtasks.js";
 
 describe("Agent commands", () => {
@@ -111,7 +108,7 @@ describe("Agent commands", () => {
     });
 });
 
-function localFixture(path = ":memory:") {
+function localFixture() {
     const data = { tasks: [{ id: "existing", title: "Existing", status: "needsAction" }], writes: [], offline: false };
     const remote = {
         token: async () => {
@@ -150,92 +147,67 @@ function localFixture(path = ":memory:") {
             return task;
         },
     };
-    const local = new LocalGoogleTasks(remote, "@default", path);
+    const local = new OptimisticGoogleTasks(remote, "@default");
     return { local, remote, data };
 }
 
-describe("Persistent local task queue", () => {
-    // FULL SQLite durability can exceed Bun's 5-second timeout on Windows CI disks.
-    const diskTimeout = 20_000;
+describe("Optimistic local updates", () => {
     const stores = [];
-    const files = [];
-    const fixture = (path) => {
-        const value = localFixture(path);
+    const fixture = () => {
+        const value = localFixture();
         stores.push(value.local);
         return value;
     };
-    afterEach(async () => {
+    afterEach(() => {
         for (const store of stores.splice(0)) store.cancel();
-        for (const file of files.splice(0)) await unlink(file);
     });
 
-    test("offline edits are durable before sync and replay in order with stable parent IDs", async () => {
-        const path = join(tmpdir(), `gtasks-${crypto.randomUUID()}.sqlite`);
-        files.push(path);
-        const { local, remote, data } = fixture(path);
+    test("queued edits are visible locally and replay in order with stable parent IDs", async () => {
+        const { local, data } = fixture();
         const parent = await local.add("@default", "Parent", null, "Context");
         const child = await local.add("@default", "Child", parent.id, "Notes");
         await local.edit("@default", child.id, { title: "Edited child", notes: "Updated" });
         await local.setDone("@default", child.id, true);
         expect(data.writes).toEqual([]);
         expect((await local.list()).find(task => task.id === child.id)).toMatchObject({ title: "Edited child", parent: parent.id, status: "completed" });
-        local.cancel();
-        const reopened = new LocalGoogleTasks(remote, "@default", path);
-        stores.push(reopened);
-        expect(reopened.state.queue).toHaveLength(4);
-        await reopened.syncOnce();
+        await local.start();
         expect(data.writes.map(write => write[0])).toEqual(["add", "add", "edit", "done"]);
         expect(data.writes[1][2]).toBe("server-0");
         expect(data.writes[2][1]).toBe("server-1");
-        expect(reopened.state.queue).toHaveLength(0);
-        expect((await reopened.list()).find(task => task.id === child.id)).toMatchObject({ parent: parent.id, title: "Edited child", status: "completed" });
-    }, diskTimeout);
+        expect(local.queue).toHaveLength(0);
+        expect((await local.list()).find(task => task.id === child.id)).toMatchObject({ parent: parent.id, title: "Edited child", status: "completed" });
+    });
 
     test("due dates queue locally and sync without wiping other fields", async () => {
         const { local, data } = fixture();
-        await local.syncOnce();
+        await local.start();
         await local.edit("@default", "existing", { due: "2026-09-14T00:00:00.000Z" });
         expect((await local.list())[0]).toMatchObject({ title: "Existing", due: "2026-09-14T00:00:00.000Z" });
-        await local.syncOnce();
+        await local.sync();
         expect(data.writes).toEqual([["edit", "existing", { due: "2026-09-14T00:00:00.000Z" }]]);
         const dated = await local.add("@default", "Dated", null, "", undefined, "2026-09-15T00:00:00.000Z");
-        await local.syncOnce();
+        await local.sync();
         expect(data.writes.at(-1)).toEqual(["add", "Dated", null, "", null, "2026-09-15T00:00:00.000Z"]);
         expect((await local.list()).find(task => task.id === dated.id).due).toBe("2026-09-15T00:00:00.000Z");
         expect(dated.id.startsWith("local:")).toBe(true);
-        expect(formatId(dated.id, local.state.ids)).toBe("^server-1");
+        expect(formatId(dated.id, local.ids)).toBe("^server-1");
     });
 
     test("cut paste moves a task locally and syncs with previous sibling", async () => {
         const { local, data } = fixture();
-        await local.syncOnce();
+        await local.start();
         const child = await local.add("@default", "Child", "existing");
         await local.move("@default", child.id, { parent: null, previous: "existing" });
         const listed = await local.list();
         expect(listed.find(task => task.id === child.id)).toMatchObject({ parent: undefined });
         expect(listed.sort((a, b) => (a.position ?? "").localeCompare(b.position ?? "")).map(task => task.id)).toEqual(["existing", child.id]);
-        await local.syncOnce();
+        await local.sync();
         expect(data.writes[1]).toEqual(["move", "server-0", null, "existing"]);
-    });
-
-    test("a second process cannot overwrite an open cache", () => {
-        const path = join(tmpdir(), `gtasks-${crypto.randomUUID()}.sqlite`);
-        files.push(path);
-        const { remote } = fixture(path);
-        expect(() => new LocalGoogleTasks(remote, "@default", path)).toThrow("another gtasks process");
-    }, diskTimeout);
-
-    test("failed durable writes leave the queue unchanged and never send to Google", async () => {
-        const { local, data } = fixture();
-        local.db.close();
-        expect(() => local.add("@default", "Unsaved")).toThrow();
-        expect(local.state.queue).toEqual([]);
-        expect(data.writes).toEqual([]);
     });
 
     test("local changes made during a pull overlay the arriving server snapshot", async () => {
         const { local, remote } = fixture();
-        await local.syncOnce();
+        await local.start();
         let release;
         remote.list = () => new Promise(resolve => { release = resolve; });
         const pull = local.pull();
@@ -244,104 +216,54 @@ describe("Persistent local task queue", () => {
         release([{ id: "existing", title: "Server title", status: "needsAction" }]);
         await pull;
         expect((await local.list())[0].title).toBe("Local title");
-        expect(local.state.queue).toHaveLength(1);
+        expect(local.queue).toHaveLength(1);
     });
 
     test("edits queued during an upload remain pending after its acknowledgement", async () => {
         const { local, remote } = fixture();
-        await local.syncOnce();
+        await local.start();
         const parent = await local.add("@default", "Parent");
         let release;
         remote.add = () => new Promise(resolve => { release = resolve; });
-        const upload = local.push(structuredClone(local.state.queue[0]));
+        const upload = local.push(local.queue[0]);
         await local.edit("@default", parent.id, { title: "New parent title", notes: "" });
         release({ id: "parent-on-server", title: "Parent" });
         await upload;
-        expect(local.state.queue).toHaveLength(1);
+        expect(local.queue).toHaveLength(1);
         expect((await local.list()).find(task => task.id === parent.id).title).toBe("New parent title");
     });
 
-    test("five consecutive failures pause sync and request reset without deleting local changes", async () => {
+    test("a failed sync keeps the queue, reports the error, and retry resumes it", async () => {
         const { local, data } = fixture();
         const task = await local.add("@default", "Offline task");
         data.offline = true;
-        for (let index = 0; index < 5; index++) await local.syncOnce({ force: true });
-        expect(local.state.failures).toBe(5);
-        expect(local.state.paused).toBe(true);
-        expect(local.state.askReset).toBe(true);
+        await local.start();
+        expect(local.error).toContain("Offline");
+        expect(local.queue).toHaveLength(1);
         expect((await local.list())[0].id).toBe(task.id);
-        local.declineReset();
-        expect(local.state.askReset).toBe(false);
-        expect(local.state.queue).toHaveLength(1);
-        await expect(local.resetFromServer()).rejects.toThrow("Offline");
-        expect(local.state.queue).toHaveLength(1);
         data.offline = false;
-        await local.resetFromServer();
-        expect(local.state.queue).toEqual([]);
-        expect((await local.list()).map(task => task.id)).toEqual(["existing"]);
+        await local.retry();
+        expect(local.queue).toHaveLength(0);
+        expect(local.error).toBe("");
+        expect(data.writes.map(write => write[0])).toEqual(["add"]);
     });
-
-    test("retries respect backoff, and r-style retry resumes the preserved queue", async () => {
-        const { local, data } = fixture();
-        data.offline = true;
-        await local.syncOnce();
-        const deadline = local.state.nextRetryAt;
-        await local.syncOnce();
-        expect(local.state.failures).toBe(1);
-        expect(local.state.nextRetryAt).toBe(deadline);
-        await local.add("@default", "Offline task");
-        data.offline = false;
-        local.retry();
-        await local.syncOnce();
-        expect(local.state.queue).toHaveLength(0);
-        expect(local.state.error).toBe("");
-    });
-
-    test("an uncertain insertion is never posted twice, even after reopening", async () => {
-        const path = join(tmpdir(), `gtasks-${crypto.randomUUID()}.sqlite`);
-        files.push(path);
-        const { local, remote } = fixture(path);
-        await local.syncOnce();
-        let inserts = 0;
-        remote.add = async () => { inserts++; throw new Error("Connection lost after sending"); };
-        await local.add("@default", "Possibly saved");
-        await local.syncOnce();
-        expect(local.state.queue[0].started).toBe(true);
-        local.cancel();
-        const reopened = new LocalGoogleTasks(remote, "@default", path);
-        stores.push(reopened);
-        for (let index = 0; index < 4; index++) await reopened.syncOnce({ force: true });
-        expect(inserts).toBe(1);
-        expect(reopened.state.askReset).toBe(true);
-    }, diskTimeout);
 
     test("delete is visible locally and a server-side missing task counts as synced", async () => {
         const { local, remote } = fixture();
-        await local.syncOnce();
+        await local.start();
         await local.delete("@default", "existing");
         expect(await local.list()).toEqual([]);
         remote.delete = async () => { throw Object.assign(new Error("Missing"), { status: 404 }); };
         remote.list = async () => [];
-        await local.syncOnce();
-        expect(local.state.queue).toEqual([]);
-        expect(local.state.error).toBe("");
+        await local.sync();
+        expect(local.queue).toEqual([]);
+        expect(local.error).toBe("");
     });
 
-    test("ensureGitTask reuses queued unsynced additions before asking Google", async () => {
-        const { local, remote, data } = fixture();
-        const queued = await local.add("@default", "owner/repo");
-        const found = await ensureGitTask(remote, local, "@default", "owner/repo");
-        expect(found.id).toBe(queued.id);
-        expect(data.writes).toEqual([]);
-        const created = await ensureGitTask(remote, local, "@default", "owner/other");
-        expect(created.title).toBe("owner/other");
-        expect(data.writes).toEqual([["add", "owner/other", null, "", undefined, undefined]]);
-    });
-
-    test("the TUI opens its cache offline, saves locally, and requires confirmation before reset", async () => {
+    test("the TUI opens offline, saves locally, and syncs once back online", async () => {
         const { local, data } = fixture();
-        await local.syncOnce();
         data.offline = true;
+        await local.start();
         const input = new PassThrough();
         const output = new PassThrough();
         input.isTTY = output.isTTY = true;
@@ -350,26 +272,26 @@ describe("Persistent local task queue", () => {
         output.rows = 24;
         let screen = "";
         output.on("data", chunk => { screen += chunk; });
-        const pending = runTasksTui(local, "@default", { input, output });
+        const pending = runTasksTui(local, "@default", {
+            input, output,
+            editExternal: async () => "Offline title",
+        });
         await new Promise(resolve => setImmediate(resolve));
-        expect(screen).toContain("Existing");
-        input.write("aOffline title\x13");
+        expect(screen).toContain("Offline");
+        input.write("a");
         await new Promise(resolve => setImmediate(resolve));
-        expect(local.state.queue).toHaveLength(1);
+        await new Promise(resolve => setImmediate(resolve));
+        expect(local.queue).toHaveLength(1);
         expect(screen).toContain("Saved locally.");
-        local.change(state => { state.paused = true; state.askReset = true; state.failures = 5; });
-        await new Promise(resolve => setImmediate(resolve));
-        expect(screen).toContain("Reset local cache? [y/N] Discard 1 queued changes");
-        input.write("n");
-        await new Promise(resolve => setImmediate(resolve));
-        expect(local.state.askReset).toBe(false);
-        expect(local.state.queue).toHaveLength(1);
         expect(data.writes).toEqual([]);
+        data.offline = false;
+        await local.sync();
+        expect(data.writes.map(write => write[0])).toEqual(["add"]);
         input.write("q");
         await pending;
     });
 
-    test("the first background load honors startup cd and a confirmed reset reloads the view", async () => {
+    test("the first background load honors startup cd", async () => {
         const { local } = fixture();
         const input = new PassThrough();
         const output = new PassThrough();
@@ -381,43 +303,17 @@ describe("Persistent local task queue", () => {
         output.on("data", chunk => { screen += chunk; });
         const pending = runTasksTui(local, "@default", { input, output, cd: "Existing" });
         await new Promise(resolve => setImmediate(resolve));
-        await local.syncOnce({ force: true });
+        await local.sync();
+        await new Promise(resolve => setImmediate(resolve));
         await new Promise(resolve => setImmediate(resolve));
         expect(screen).toContain("/ Existing");
-        await local.add("@default", "Discard me");
-        local.change(state => { state.paused = true; state.askReset = true; });
-        await new Promise(resolve => setImmediate(resolve));
-        input.write("y");
-        await new Promise(resolve => setImmediate(resolve));
-        expect(local.state.queue).toEqual([]);
-        expect(screen).toContain("Local cache reloaded from Google.");
-        input.write("q");
-        await pending;
-    });
-
-    test("the first background load honors focusId", async () => {
-        const { local, data } = fixture();
-        data.tasks.push({ id: "server-1", title: "owner/repo", status: "needsAction" });
-        const input = new PassThrough();
-        const output = new PassThrough();
-        input.isTTY = output.isTTY = true;
-        input.setRawMode = () => { };
-        output.columns = 110;
-        output.rows = 24;
-        let screen = "";
-        output.on("data", chunk => { screen += chunk; });
-        const pending = runTasksTui(local, "@default", { input, output, focusId: "server-1" });
-        await new Promise(resolve => setImmediate(resolve));
-        await local.syncOnce({ force: true });
-        await new Promise(resolve => setImmediate(resolve));
-        expect(screen).toContain("Google Tasks / My tasks / owner/repo");
         input.write("q");
         await pending;
     });
 
     test("TUI m prints raw Markdown", async () => {
         const { local } = fixture();
-        await local.syncOnce();
+        await local.start();
         const input = new PassThrough();
         const output = new PassThrough();
         input.isTTY = output.isTTY = true;
@@ -435,28 +331,6 @@ describe("Persistent local task queue", () => {
         expect(screen).toContain("Press any key to return.");
         input.write("x");
         await new Promise(resolve => setImmediate(resolve));
-        input.write("q");
-        await pending;
-    });
-
-    test("zm reduces the fold level instead of printing Markdown", async () => {
-        const { local } = fixture();
-        await local.syncOnce();
-        const input = new PassThrough();
-        const output = new PassThrough();
-        input.isTTY = output.isTTY = true;
-        input.setRawMode = value => { input.isRaw = value; };
-        output.columns = 110;
-        output.rows = 24;
-        let screen = "";
-        output.on("data", chunk => { screen += chunk; });
-        const pending = runTasksTui(local, "@default", { input, output });
-        await new Promise(resolve => setImmediate(resolve));
-        screen = "";
-        input.write("zm");
-        await new Promise(resolve => setImmediate(resolve));
-        expect(screen).not.toContain("Press any key to return.");
-        expect(screen).toContain("Existing");
         input.write("q");
         await pending;
     });
@@ -566,18 +440,6 @@ const press = (view, text, name = text) => view.key(text, { name });
 const save = view => view.saveInput(view.input);
 
 describe("Task navigation and actions", () => {
-    test("zm reduces the fold level and zr folds more", () => {
-        const { view } = fixture();
-        view.setFoldLevel(2);
-        press(view, "z");
-        press(view, "m");
-        expect(view.foldLevel).toBe(1);
-        expect(view.prefix).toBeNull();
-        press(view, "z");
-        press(view, "r");
-        expect(view.foldLevel).toBe(2);
-    });
-
     test("single input keeps the title on line one and trims only blank description edges", () => {
         expect(parseTaskInput(" Title \r\n \r\n\r\n  Indented\r\n\r\nLast  \r\n\t\r\n")).toEqual({ title: "Title", notes: "  Indented\n\nLast  " });
         expect(parseTaskInput("Title\n\n  \n")).toEqual({ title: "Title", notes: "" });
@@ -633,20 +495,6 @@ describe("Task navigation and actions", () => {
         expect(missing.parent).toBeNull();
         expect(missing.search).toBe("absent");
         expect(missing.rows).toEqual([]);
-    });
-
-    test("focusTask enters a task by ID, honoring queued local ID aliases", () => {
-        const { view } = fixture();
-        expect(view.focusTask("p")).toBe(true);
-        expect(view.parent).toBe("p");
-        expect(view.rows.map(task => task.id)).toEqual(["p", "c"]);
-        expect(view.focusTask("missing")).toBe(false);
-        expect(view.parent).toBe("p");
-        const aliased = fixture().view;
-        aliased.api.state = { ids: { "local:1": "server-1" } };
-        aliased.tasks = aliased.tasks.map(task => task.id === "p" ? { ...task, id: "local:1" } : task.parent === "p" ? { ...task, parent: "local:1" } : task);
-        expect(aliased.focusTask("server-1")).toBe(true);
-        expect(aliased.parent).toBe("local:1");
     });
 
     test("shows the subtree and keeps matching tasks' ancestors while searching", () => {
@@ -816,7 +664,7 @@ describe("Task navigation and actions", () => {
         expect(copied[2]).not.toContain("Project  ^p");
         expect(view.message).toBe("Copied 2 tasks.");
         expect(view.visual).toBeNull();
-        view.api.state = { ids: { p: "google-p" } };
+        view.api.ids = { p: "google-p" };
         view.selected = 0;
         await press(view, "Y");
         expect(copied[3]).toContain("^google-p");
@@ -871,7 +719,7 @@ describe("Task navigation and actions", () => {
         expect(renderTasks(view)).not.toContain("^p");
         press(view, ",");
         expect(renderTasks(view)).toContain("- [ ] Project  ^p");
-        view.api.state = { ids: { p: "google-p" } };
+        view.api.ids = { p: "google-p" };
         expect(renderTasks(view)).toContain("- [ ] Project  ^google-p");
         press(view, ",");
         expect(renderTasks(view)).not.toContain("- [ ] Project  ^google-p");
@@ -1036,6 +884,7 @@ describe("Task navigation and actions", () => {
         const title = "世界👩‍💻e\u0301".repeat(8);
         const notes = "https://example.com/" + "a".repeat(70);
         view.tasks = [{ id: "wrapped", title, notes }];
+        view.path = [{ id: "wrapped", title }];
         const narrow = renderTasks(view, 24, 50).split("\r\n");
         const wide = renderTasks(view, 48, 50).split("\r\n");
         const content = lines => lines.slice(4, -3).filter(Boolean);
@@ -1046,6 +895,7 @@ describe("Task navigation and actions", () => {
         expect(content(narrow).length).toBeGreaterThan(content(wide).length);
         expect(content(narrow).slice(1).every(line => line.startsWith("        "))).toBe(true);
         view.tasks = [{ id: "words", title: "alpha beta gamma delta", notes: "one two three four five" }];
+        view.path = [{ id: "words", title: "words" }];
         expect(content(renderTasks(view, 24, 50).split("\r\n"))).toEqual([
             "> - [ ] alpha beta",
             "        gamma delta",
@@ -1121,26 +971,61 @@ describe("Task navigation and actions", () => {
         const hidden = renderTasks(view, 100, 16);
         expect(hidden).not.toContain("g? help");
         expect(hidden).toContain("Saved.");
-        expect(hidden).toContain("Task 8");
+        expect(hidden).toContain("Task 4");
         press(view, "g");
         press(view, "?");
         const shown = renderTasks(view, 100, 16);
         expect(shown).toContain("g? help");
         expect(shown).toContain("Ctrl+F/B page");
-        expect(shown).not.toContain("Task 8");
+        expect(shown).not.toContain("Task 4");
         press(view, "g");
         press(view, "?");
         expect(renderTasks(view, 100, 16)).not.toContain("g? help");
     });
 
+    test("long descriptions truncate to two wrapped lines unless the task is focused", () => {
+        const { view } = fixture();
+        view.tasks = [{ id: "long", title: "Long task", notes: "Note 0\nNote 1\nNote 2\nNote 3" }];
+        const screen = renderTasks(view, 80, 24);
+        expect(screen).toContain("Note 1");
+        expect(screen).not.toContain("Note 2");
+        expect(screen).toContain("…");
+        view.path = [{ id: "long", title: "Long task" }];
+        const focused = renderTasks(view, 80, 24);
+        expect(focused).toContain("Note 3");
+        expect(focused).not.toContain("…");
+    });
+
+    test("truncation counts wrapped lines and skips blank description lines", () => {
+        const { view } = fixture();
+        view.tasks = [{ id: "long", title: "Task", notes: "alpha beta gamma delta epsilon\n\nsecond\nthird" }];
+        const screen = renderTasks(view, 24, 24);
+        expect(screen).toContain("gamma delta");
+        expect(screen).not.toContain("epsilon");
+        expect(screen).not.toContain("second");
+        view.path = [{ id: "long", title: "Task" }];
+        const focused = renderTasks(view, 24, 24);
+        expect(focused).toContain("epsilon");
+        expect(focused).toContain("second");
+        expect(focused).toContain("third");
+        expect(focused).not.toContain("…");
+        expect(focused).not.toContain("epsilon\r\n\r\n");
+    });
+
+    test("a blank line separates tasks", () => {
+        const { view } = fixture();
+        expect(renderTasks(view, 80, 24)).toContain("(1 children)\r\n\r\n    - [ ] Child");
+    });
+
     test("page scrolling traverses long notes, stays put on redraw, and clamps at both ends", () => {
         const { view } = fixture();
         view.tasks = [{ id: "long", title: "Long task", notes: Array.from({ length: 30 }, (_, index) => `Note ${index}`).join("\n") }];
+        view.path = [{ id: "long", title: "Long task" }];
         renderTasks(view, 40, 16);
         view.key("\x06", { ctrl: true, name: "f" });
         const next = renderTasks(view, 40, 16);
         expect(next).toContain("Note 8\r\n");
-        expect(next).not.toContain("Long task");
+        expect(next).not.toContain("- [ ] Long task");
         expect(renderTasks(view, 40, 16)).toBe(next);
         view.key("\x02", { ctrl: true, name: "b" });
         expect(renderTasks(view, 40, 16)).toContain("> - [ ] Long task");
@@ -1162,16 +1047,16 @@ describe("Task navigation and actions", () => {
         view.tasks = Array.from({ length: 30 }, (_, index) => ({ id: String(index), title: `Task ${index}`, position: String(index).padStart(2, "0") }));
         renderTasks(view, 40, 16);
         view.key("\x06", { ctrl: true, name: "f" });
-        expect(renderTasks(view, 40, 16)).toContain("> - [ ] Task 9");
+        expect(renderTasks(view, 40, 16)).toContain("> - [ ] Task 5");
         press(view, "k");
-        expect(renderTasks(view, 40, 16)).toContain("> - [ ] Task 8");
+        expect(renderTasks(view, 40, 16)).toContain("> - [ ] Task 4");
         view.key("\x02", { ctrl: true, name: "b" });
         expect(renderTasks(view, 40, 16)).toContain("> - [ ] Task 0");
         press(view, "g");
         press(view, "?");
         renderTasks(view, 40, 16);
         view.key("\x06", { ctrl: true, name: "f" });
-        expect(renderTasks(view, 40, 16)).toContain("> - [ ] Task 6");
+        expect(renderTasks(view, 40, 16)).toContain("> - [ ] Task 4");
     });
 
     test("markdown dump uses the focused parent, search filter, and completed toggle", () => {
@@ -1223,123 +1108,11 @@ describe("Credentials and terminal lifecycle", () => {
         if (previousTerm === undefined) delete process.env.TERM;
         else process.env.TERM = previousTerm;
     });
-    test("readline edits a prefilled multiline draft using native cursor and word deletion keys", async () => {
-        const input = new PassThrough();
-        const output = new PassThrough();
-        output.columns = 80;
-        output.isTTY = true;
-        output.on("data", () => { });
-        const pending = readTaskInput("Title\nDescription words", { input, output });
-        input.emit("keypress", "", { ctrl: true, name: "a" });
-        input.emit("keypress", "New ", {});
-        input.emit("keypress", "", { ctrl: true, name: "e" });
-        input.emit("keypress", "", { name: "down" });
-        input.emit("keypress", "", { name: "end" });
-        input.emit("keypress", "", { ctrl: true, name: "w" });
-        input.emit("keypress", "text", {});
-        input.emit("keypress", "\r", { name: "return" });
-        input.emit("keypress", "世界", {});
-        input.emit("keypress", "", { ctrl: true, name: "s" });
-        expect(await pending).toBe("New Title\nDescription text\n世界");
-        expect(input.listenerCount("keypress")).toBe(0);
-    });
-
-    test("readline Home/End and Ctrl+A/E move within the current line", async () => {
-        const input = new PassThrough();
-        const output = new PassThrough();
-        output.columns = 80;
-        output.isTTY = true;
-        output.on("data", () => { });
-        const pending = readTaskInput("Title\nMiddle line\nLast", { input, output });
-        input.emit("keypress", "!", {});
-        input.emit("keypress", "", { name: "down" });
-        input.emit("keypress", "", { name: "home" });
-        input.emit("keypress", "<", {});
-        input.emit("keypress", "", { name: "end" });
-        input.emit("keypress", ">", {});
-        input.emit("keypress", "", { name: "down" });
-        input.emit("keypress", "", { ctrl: true, name: "a" });
-        input.emit("keypress", "(", {});
-        input.emit("keypress", "", { ctrl: true, name: "e" });
-        input.emit("keypress", ")", {});
-        input.emit("keypress", "", { ctrl: true, name: "s" });
-        expect(await pending).toBe("Title!\n<Middle line>\n(Last)");
-        expect(input.listenerCount("keypress")).toBe(0);
-    });
-
-    test.each([
-        ["Title\nNotes", ["up"], "Title!\nNotes"],
-        ["Long title\nx\n\nNotes", ["down", "down", "down", "up", "up", "up"], "Long title!\nx\n\nNotes"],
-        ["Title\nx\nNotes", ["up", "up", "down", "down"], "Title\nx\nNotes!"],
-        ["Title\nNotes", ["down"], "Title\nNotes!"],
-        ["Title", ["up", "down"], "Title!"],
-        ["A😀BC\n123", ["down", "up"], "A😀BC!\n123"],
-        ["\nNotes", ["up", "up"], "!\nNotes"],
-    ])("readline Up/Down moves within a multiline draft: %s", async (initial, keys, expected) => {
-        const input = new PassThrough();
-        const output = new PassThrough();
-        output.columns = 80;
-        output.isTTY = true;
-        output.on("data", () => { });
-        const pending = readTaskInput(initial, { input, output });
-        for (const name of keys) input.emit("keypress", "", { name });
-        input.emit("keypress", "!", {});
-        input.emit("keypress", "", { ctrl: true, name: "s" });
-        expect(await pending).toBe(expected);
-        expect(input.listenerCount("keypress")).toBe(0);
-    });
-
-    test("readline Ctrl+G hands the current text to $EDITOR", async () => {
-        const input = new PassThrough();
-        const output = new PassThrough();
-        output.columns = 80;
-        output.isTTY = true;
-        output.on("data", () => { });
-        const pending = readTaskInput("Title", { input, output, singleLine: true });
-        input.emit("keypress", "X", {});
-        input.emit("keypress", "", { ctrl: true, name: "g" });
-        expect(await pending).toEqual({ external: true, text: "TitleX" });
-        expect(input.listenerCount("keypress")).toBe(0);
-    });
-
-    test("readline title edit saves on Enter and ignores a pasted newline", async () => {
-        const input = new PassThrough();
-        const output = new PassThrough();
-        output.columns = 80;
-        output.isTTY = true;
-        output.on("data", () => { });
-        const pending = readTaskInput("Title", { input, output, singleLine: true });
-        input.emit("keypress", "", { name: "paste-start" });
-        input.emit("keypress", "X\nY", { sequence: "X\nY" });
-        input.emit("keypress", "", { name: "paste-end" });
-        input.emit("keypress", "\r", { name: "return" });
-        expect(await pending).toBe("TitleX Y");
-        expect(input.listenerCount("keypress")).toBe(0);
-    });
-
-    test("readline cancellation and abort leave no input listeners", async () => {
-        for (const cancel of ["escape", "ctrl-c", "abort"]) {
-            const input = new PassThrough();
-            const output = new PassThrough();
-            output.on("data", () => { });
-            const controller = new AbortController();
-            const pending = readTaskInput("Title\nNotes", { input, output, signal: controller.signal });
-            if (cancel === "abort") controller.abort();
-            else input.emit("keypress", "", cancel === "escape" ? { name: "escape" } : { name: "c", ctrl: true });
-            expect(await pending).toBeNull();
-            expect(input.listenerCount("keypress")).toBe(0);
-        }
-    });
-
     test("editing saves both fields and keeps failed drafts for retry", async () => {
         const { view, api, calls } = fixture();
         view.selected = 1;
         press(view, "e");
         expect(view.input).toBe("Child\n\nFind ME");
-        await view.saveTitle("Renamed\nignored");
-        expect(calls).toEqual([["edit", "@default", "c", { title: "Renamed" }]]);
-        calls.length = 0;
-        press(view, "e");
         await view.saveInput("Edited\n\nDescription\n\n");
         expect(calls).toEqual([["edit", "@default", "c", { title: "Edited", notes: "Description" }]]);
         press(view, "e");
@@ -1411,7 +1184,7 @@ describe("Credentials and terminal lifecycle", () => {
     test("TUI Ctrl+E treats a non-zero editor exit as cancel", async () => {
         const { local, data } = localFixture();
         data.tasks.push({ id: "noted", title: "Short", notes: "keep me", status: "needsAction" });
-        await local.syncOnce();
+        await local.start();
         const input = new PassThrough();
         const output = new PassThrough();
         input.isTTY = output.isTTY = true;
@@ -1435,10 +1208,10 @@ describe("Credentials and terminal lifecycle", () => {
         await pending;
     });
 
-    test("TUI readline Ctrl+G opens $EDITOR with the current title and description", async () => {
+    test("TUI e opens $EDITOR with the current title and description", async () => {
         const { local, data } = localFixture();
         data.tasks.push({ id: "noted", title: "Short", notes: "keep me", status: "needsAction" });
-        await local.syncOnce();
+        await local.start();
         const input = new PassThrough();
         const output = new PassThrough();
         input.isTTY = output.isTTY = true;
@@ -1453,10 +1226,10 @@ describe("Credentials and terminal lifecycle", () => {
             editExternal: async (text) => { opened.push(text); return "ShortX\n\nchanged"; },
         });
         await new Promise(resolve => setImmediate(resolve));
-        input.write("jeX\x07");
+        input.write("je");
         await new Promise(resolve => setImmediate(resolve));
         await new Promise(resolve => setImmediate(resolve));
-        expect(opened).toEqual(["ShortX\n\nkeep me"]);
+        expect(opened).toEqual(["Short\n\nkeep me"]);
         const saved = (await local.list()).find(task => task.id === "noted");
         expect(saved.title).toBe("ShortX");
         expect(saved.notes).toBe("changed");
@@ -1467,7 +1240,7 @@ describe("Credentials and terminal lifecycle", () => {
     test("TUI e edits the title and keeps the description", async () => {
         const { local, data } = localFixture();
         data.tasks.push({ id: "noted", title: "Short", notes: "keep me", status: "needsAction" });
-        await local.syncOnce();
+        await local.start();
         const input = new PassThrough();
         const output = new PassThrough();
         input.isTTY = output.isTTY = true;
@@ -1476,9 +1249,12 @@ describe("Credentials and terminal lifecycle", () => {
         output.columns = 80;
         output.rows = 24;
         output.on("data", () => { });
-        const pending = runTasksTui(local, "@default", { input, output });
+        const pending = runTasksTui(local, "@default", {
+            input, output,
+            editExternal: async text => text.replace("Short", "ShortX"),
+        });
         await new Promise(resolve => setImmediate(resolve));
-        input.write("jeX\r");
+        input.write("je");
         await new Promise(resolve => setImmediate(resolve));
         await new Promise(resolve => setImmediate(resolve));
         const saved = (await local.list()).find(task => task.id === "noted");
@@ -1488,7 +1264,7 @@ describe("Credentials and terminal lifecycle", () => {
         await pending;
     });
 
-    test("TUI handles a chunk of typed text and restores terminal state on quit", async () => {
+    test("TUI adds from $EDITOR and restores terminal state on quit", async () => {
         const { api, calls } = fixture();
         const input = new PassThrough();
         const output = new PassThrough();
@@ -1500,14 +1276,18 @@ describe("Credentials and terminal lifecycle", () => {
         output.rows = 24;
         let screen = "";
         output.on("data", chunk => { screen += chunk; });
-        const pending = runTasksTui(api, "@default", { input, output });
+        const pending = runTasksTui(api, "@default", {
+            input, output,
+            editExternal: async () => "Hello world\n\nNotes",
+        });
         await new Promise(resolve => setImmediate(resolve));
-        input.write("a\x1b[200~Hello world\r\n\r\nNotes\r\n\x1b[201~\x13");
+        input.write("a");
+        await new Promise(resolve => setImmediate(resolve));
         await new Promise(resolve => setImmediate(resolve));
         input.write("q");
         await pending;
         expect(calls).toEqual([["add", "@default", "Hello world", null, "Notes"]]);
-        expect(modes).toEqual([true, false]);
+        expect(modes).toEqual([true, false, true, false]);
         expect(input.listenerCount("keypress")).toBe(0);
         expect(screen).toContain("\x1b[?1049h");
         expect(screen).toEndWith("\x1b[?25h\x1b[?1049l");

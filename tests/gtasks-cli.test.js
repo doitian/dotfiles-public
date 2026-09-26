@@ -1,6 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { hostname } from "node:os";
-import { GoogleTasks, githubRepoName, gitRepoName, main } from "../src/gtasks.js";
+import { GoogleTasks, main } from "../src/gtasks.js";
 
 const tasks = [
   { id: "p", title: "Project", status: "completed" },
@@ -133,114 +132,10 @@ describe("CLI filters", () => {
       ["list", "--token", "#next @calls"], ["list", "--token", "#"],
       ["list", "--search", " "], ["done", "c", "--status", "completed"],
       ["edit", "c", "--root"], ["list", "--previous", "c"],
-      ["list", "--git", "--cd", "p"], ["tui", "--git", "--cd", "p"],
-      ["add", "--title", "t", "--git"], ["done", "c", "--git"], ["lists", "--git"],
     ]) {
       let accessed = false;
       await expect(main(args, { createApi: async () => { accessed = true; } })).rejects.toThrow();
       expect(accessed).toBe(false);
     }
-  });
-});
-
-describe("git repo names", () => {
-  test("githubRepoName parses owner/repo from GitHub remote URLs", () => {
-    expect(githubRepoName("https://github.com/owner/repo.git")).toBe("owner/repo");
-    expect(githubRepoName("https://github.com/owner/repo")).toBe("owner/repo");
-    expect(githubRepoName("https://github.com/owner/repo/")).toBe("owner/repo");
-    expect(githubRepoName("git@github.com:owner/repo.git")).toBe("owner/repo");
-    expect(githubRepoName("ssh://git@github.com/owner/repo")).toBe("owner/repo");
-    expect(githubRepoName("https://user@GitHub.com/Owner/Repo.git")).toBe("Owner/Repo");
-    expect(githubRepoName("ssh://git@github.com:22/owner/repo.git")).toBe("owner/repo");
-    expect(githubRepoName("https://gitlab.com/owner/repo.git")).toBeNull();
-    expect(githubRepoName("https://github.com/owner")).toBeNull();
-    expect(githubRepoName("")).toBeNull();
-    expect(githubRepoName(undefined)).toBeNull();
-  });
-
-  function fakeGit({ top = "/home/ian/repos/repo", remotes = "", urls = {} } = {}) {
-    return async args => {
-      const command = args.slice(2).join(" ");
-      if (command === "rev-parse --show-toplevel") return top;
-      if (command === "remote") return remotes;
-      const name = command.match(/^remote get-url (.+)$/)?.[1];
-      return name ? (urls[name] ?? "") : "";
-    };
-  }
-
-  test("gitRepoName prefers origin and falls back to another GitHub remote", async () => {
-    const urls = { origin: "git@github.com:o/r.git", upstream: "git@github.com:up/r.git" };
-    expect(await gitRepoName("/x", fakeGit({ remotes: "upstream\norigin", urls }))).toBe("o/r");
-    const fork = { upstream: "git@github.com:up/r.git", origin: "https://gitlab.com/o/r.git" };
-    expect(await gitRepoName("/x", fakeGit({ remotes: "origin\nupstream", urls: fork }))).toBe("up/r");
-  });
-
-  test("gitRepoName falls back to hostname/directory without a GitHub remote", async () => {
-    expect(await gitRepoName("/x", fakeGit({ remotes: "origin", urls: { origin: "git@gitlab.com:o/r.git" } }))).toBe(`${hostname()}/repo`);
-    expect(await gitRepoName("/x", fakeGit())).toBe(`${hostname()}/repo`);
-  });
-
-  test("gitRepoName requires a git repository", async () => {
-    await expect(gitRepoName("/x", fakeGit({ top: "" }))).rejects.toThrow("--git requires a git repository");
-  });
-});
-
-describe("CLI --git", () => {
-  function gitFixture({ repo = "owner/repo", items = tasks } = {}) {
-    const calls = [];
-    const added = [];
-    let output = "";
-    const api = new GoogleTasks({ fetchImpl: async (url, options) => {
-      calls.push({ url, ...options });
-      if (options.method === "POST") {
-        const created = { id: `new-${added.length + 1}`, ...JSON.parse(options.body), status: "needsAction" };
-        added.push(created);
-        return Response.json(created);
-      }
-      return Response.json({ items });
-    } });
-    api.accessToken = "mock";
-    api.expiresAt = Infinity;
-    return {
-      calls, added, api, text: () => output,
-      run: args => main(args, {
-        createApi: async () => api,
-        output: { write: chunk => { output += chunk; } },
-        gitRepo: async () => repo,
-      }),
-    };
-  }
-
-  test("list --git reuses a root task matching the repo name case-insensitively", async () => {
-    const f = gitFixture({ items: [...tasks, { id: "r", title: "Owner/Repo", status: "needsAction" }, { id: "rc", parent: "r", title: "Repo child", status: "needsAction" }] });
-    await f.run(["list", "--git", "--json"]);
-    const data = JSON.parse(f.text());
-    expect(data.parent.id).toBe("r");
-    expect(data.tasks.map(task => task.id)).toEqual(["rc"]);
-    expect(f.added).toEqual([]);
-    expect(f.calls.map(call => call.method ?? "GET")).toEqual(["GET"]);
-  });
-
-  test("list --git reports nothing and creates no root task when it is missing", async () => {
-    const f = gitFixture();
-    await f.run(["list", "--git", "--json"]);
-    expect(f.added).toEqual([]);
-    expect(f.calls.map(call => call.method ?? "GET")).toEqual(["GET"]);
-    const data = JSON.parse(f.text());
-    expect(data.parent).toBeNull();
-    expect(data.tasks).toEqual([]);
-    const md = gitFixture();
-    await md.run(["list", "--git", "--raw"]);
-    expect(md.text()).toBe("\n");
-  });
-
-  test("list --git matches root tasks only and combines with filters", async () => {
-    const f = gitFixture({ items: [{ id: "c", parent: "p", title: "owner/repo", status: "needsAction" }] });
-    await f.run(["list", "--git", "--json"]);
-    expect(f.added).toEqual([]);
-    expect(JSON.parse(f.text())).toMatchObject({ parent: null, tasks: [] });
-    const filtered = gitFixture({ items: [...tasks, { id: "r", title: "owner/repo", status: "needsAction" }, { id: "rc", parent: "r", title: "Ship it #next", status: "needsAction" }] });
-    await filtered.run(["list", "--git", "--token", "#next", "--json"]);
-    expect(JSON.parse(filtered.text()).tasks.map(task => task.id)).toEqual(["rc"]);
   });
 });
