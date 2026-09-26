@@ -57,7 +57,7 @@ async function ensureJournalFile(journalFile) {
   if (await exists(journalFile)) return;
   const date = journalFile.replace(/^.*\s([\d-]+)\.md$/, "$1");
   const content = `---
-date: "${date}"
+created: "[[${date}]]"
 next: "[[Journal ${tomorrow(date)}]]"
 prev: "[[Journal ${yesterday(date)}]]"
 tags:
