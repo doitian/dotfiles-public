@@ -39,7 +39,7 @@ hide = true
 description = "Install all bun global packages"
 dir = "~"
 run = [
-  "bun add -g --ignore-scripts @github/copilot opencode-ai",
+  "bun add -g --ignore-scripts @opencode/cli",
   "bun add -g --ignore-scripts @earendil-works/pi-coding-agent",
 ]
 
