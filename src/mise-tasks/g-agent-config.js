@@ -43,6 +43,18 @@ async function patchClaude() {
   console.log(`Updated ${path}`);
 }
 
+async function patchPi() {
+  const path = join(home(), ".pi/agent/settings.json");
+  const file = Bun.file(path);
+  const settings = (await file.exists()) ? await file.json() : {};
+  if (settings.defaultThinkingLevel === "high") return;
+
+  settings.defaultThinkingLevel = "high";
+  await mkdir(dirname(path), { recursive: true });
+  await Bun.write(path, `${JSON.stringify(settings, null, 2)}\n`);
+  console.log(`Updated ${path}`);
+}
+
 const ULANZI_HOOK_NAMES = new Set(["ulanzi-studio", "ai-tool-state-monitor"]);
 const ULANZI_HOOK_MARKER = "ai-tool-state-monitor/hooks/monitor-hook.js";
 
@@ -109,6 +121,7 @@ async function scrubUlanziHooks() {
 async function main() {
   await patchCodex();
   await patchClaude();
+  await patchPi();
   await scrubUlanziHooks();
 }
 
