@@ -3,10 +3,15 @@ import { basename } from "node:path";
 
 const tool = basename(process.execPath).replace(/\.exe$/, "");
 const args = process.argv.slice(2);
-appendFileSync(process.env.PICKER_LOG, JSON.stringify({ tool, args }) + "\n");
+if (tool !== "fzf") appendFileSync(process.env.PICKER_LOG, JSON.stringify({ tool, args }) + "\n");
 
 if (tool === "fzf") {
   const output = await new Response(Bun.stdin.stream()).text();
+  appendFileSync(process.env.PICKER_LOG, JSON.stringify({ tool, args, input: output }) + "\n");
+  if (process.env.PICKER_FZF_SELECTION !== undefined) {
+    console.log(process.env.PICKER_FZF_SELECTION);
+    process.exit(0);
+  }
   const rows = output.split("\n").slice(args.includes("--header-lines=1") ? 1 : 0).filter(Boolean);
   if (!rows.length) process.exit(1);
   console.log(rows[0]);

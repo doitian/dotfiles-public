@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import { $ } from "bun";
 import { queryHistoryFile } from "./lib/fzf.js";
 import { findModelOption } from "./lib/model-option.js";
 
@@ -14,38 +15,14 @@ async function main() {
   if (option && (!option.value || option.value.startsWith("-"))) {
     fail(`${option.flag} requires a model filter`);
   }
-  const filter = option ? option.value.toLowerCase() : "";
-
-  const models = Bun.spawn(["opencode", "models"], {
-    stdin: "ignore",
-    stdout: "pipe",
-    stderr: "inherit",
-  });
-  const output = await new Response(models.stdout).text();
-  const modelsCode = await models.exited;
-  if (modelsCode !== 0) process.exit(modelsCode);
-
-  const matches = output
-    .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => line && line.toLowerCase().includes(filter));
-  if (matches.length === 0) fail(option ? `no models match "${option.value}"` : "no models found");
-
-  let selected;
-  if (option && matches.length === 1) {
-    selected = matches[0];
-  } else {
-    const history = await queryHistoryFile("foc");
-    const fzf = Bun.spawn(["fzf", "--no-multi", `--history=${history}`], {
-      stdin: new Blob([matches.join("\n")]),
-      stdout: "pipe",
-      stderr: "inherit",
-    });
-    selected = (await new Response(fzf.stdout).text()).trim();
-    const code = await fzf.exited;
-    if (code !== 0) process.exit(code);
-    if (!selected) process.exit(1);
-  }
+  const history = await queryHistoryFile("foc");
+  const fzfArgs = ["--no-multi", "--ignore-case", `--history=${history}`];
+  if (option) fzfArgs.push(`--query=${option.value}`, "--select-1", "--exit-0");
+  const result = await $`opencode models | fzf ${fzfArgs}`.quiet().nothrow();
+  process.stderr.write(result.stderr);
+  if (result.exitCode !== 0) process.exit(result.exitCode);
+  const selected = result.stdout.toString().trim();
+  if (!selected) process.exit(1);
 
   const rest = option
     ? args.slice(0, option.index).concat(args.slice(option.index + option.span))
