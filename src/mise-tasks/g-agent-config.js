@@ -3,6 +3,7 @@ import { mkdir } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { home } from "../lib/env";
 import { exists } from "../lib/fs";
+import { getOpenAICredentials } from "../lib/secrets";
 
 /** mbx cache root: %LOCALAPPDATA%\mbx on Windows, ~/.cache/mbx elsewhere. */
 function mbxCacheRoot() {
@@ -52,6 +53,27 @@ async function patchPi() {
   settings.defaultThinkingLevel = "high";
   await mkdir(dirname(path), { recursive: true });
   await Bun.write(path, `${JSON.stringify(settings, null, 2)}\n`);
+  console.log(`Updated ${path}`);
+}
+
+/** Point the alibaba-cn provider at Aliyun's OpenAI-compatible endpoint when the secret is one. */
+async function patchOpencode() {
+  const { baseURL } = await getOpenAICredentials();
+  if (!baseURL?.includes("aliyuncs")) return;
+
+  const path = join(home(), ".config/opencode/opencode.jsonc");
+  const file = Bun.file(path);
+  const config = (await file.exists())
+    ? await file.json()
+    : { $schema: "https://opencode.ai/config.json", mcp: {}, plugin: [] };
+  const providers = config.providers ??= {};
+  const provider = providers["alibaba-cn"] ??= {};
+  const settings = provider.settings ??= {};
+  if (settings.baseURL === baseURL) return;
+
+  settings.baseURL = baseURL;
+  await mkdir(dirname(path), { recursive: true });
+  await Bun.write(path, `${JSON.stringify(config, null, 2)}\n`);
   console.log(`Updated ${path}`);
 }
 
@@ -122,6 +144,7 @@ async function main() {
   await patchCodex();
   await patchClaude();
   await patchPi();
+  await patchOpencode();
   await scrubUlanziHooks();
 }
 
