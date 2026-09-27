@@ -153,7 +153,7 @@ async function windowsCli(dir, args, interactive = false, executable = null) {
     process.execPath, ...(interactive ? ["--preload", preload] : []), "src/aiusage.js", ...args,
   ], {
     cwd: fileURLToPath(new URL("../", import.meta.url)),
-    env: { ...process.env, LOCALAPPDATA: dir }, stdin: "pipe", stdout: "pipe", stderr: "pipe",
+    env: { ...process.env, LOCALAPPDATA: dir, NO_COLOR: "1", FORCE_COLOR: "0" }, stdin: "pipe", stdout: "pipe", stderr: "pipe",
   });
   cleanups.push(async () => { child.kill(); await child.exited; });
   let output = "";
@@ -167,13 +167,14 @@ async function windowsCli(dir, args, interactive = false, executable = null) {
 
 test.skipIf(process.platform !== "win32")("Windows CLI refreshes at launch with --once and redirected stdout", async () => {
   const { dir, requests } = await bridge((request, path) => Response.json(path === "/usage/refresh" ? fresh : { instances: snapshot }));
-  for (const args of [["--once"], [], ["--once", "--refresh"], ["--refresh"]]) {
+  for (const args of [["--once"], [], ["--once", "--refresh"], ["--refresh"], ["--once", "--color"], ["--color", "--refresh", "--bar"]]) {
     requests.length = 0;
     const run = await windowsCli(dir, args);
     expect(await run.child.exited).toBe(0);
     await run.drained;
     expect(await run.stderr).toBe("");
     expect(run.output()).toContain(args.includes("--refresh") ? "85%" : "10%");
+    expect(run.output() !== Bun.stripANSI(run.output())).toBe(args.includes("--color"));
     expect(requests).toEqual(args.includes("--refresh")
       ? ["GET /usage/fetch", "POST /usage/refresh"] : ["GET /usage/fetch"]);
   }
@@ -306,6 +307,24 @@ test("Linux usage renders accounts, balances, missing values, and sorted limits"
   ]);
 });
 
+test("forced colors cover usage thresholds and balances without changing table alignment", () => {
+  const cases = [
+    [{ remaining_percent: 20 }, "20%", "red"],
+    [{ remaining_percent: 50 }, "50%", "orange"],
+    [{ remaining_percent: 85 }, "85%", "green"],
+    [{ remaining_amount: 0, currency: "CNY" }, "0.00 CNY", "red"],
+    [{ remaining_amount: 12.5, currency: "CNY" }, "12.50 CNY", "green"],
+  ];
+  const instances = cases.map(([usage]) => ({ settings: { provider: "Test" }, usage }));
+  for (const bar of [false, true]) {
+    const output = formatTable(instances, 0, { bar, color: true });
+    for (const [, text, color] of cases) {
+      expect(output).toContain(`${Bun.color(color, "ansi-16m")}${text}\x1b[0m`);
+    }
+    expect(Bun.stripANSI(output)).toBe(Bun.stripANSI(formatTable(instances, 0, { bar })));
+  }
+});
+
 test("optional bars overlay remaining usage and time for fixed-duration limits", () => {
   const now = Date.parse("2026-09-18T15:00:00Z");
   for (const [limit, hours] of [["five_hour", 5], ["rolling", 5], ["seven_day", 168], ["seven_day_fable", 168], ["weekly", 168], ["monthly", 720]]) {
@@ -377,7 +396,7 @@ test.skipIf(process.platform !== "linux")("Linux CLI uses JSON without touching 
     async function run(output, error = "", exit = 0, args = ["--once"]) {
       const child = Bun.spawn([process.execPath, "src/aiusage.js", ...args], {
         cwd: new URL("../", import.meta.url).pathname,
-        env: { ...process.env, PATH: dir, LOCALAPPDATA: dir, USAGE_OUTPUT: output, USAGE_ERROR: error, USAGE_EXIT: String(exit), USAGE_ARGS: args.includes("--refresh") ? "ai-usage --refresh --json" : "ai-usage --json" },
+        env: { ...process.env, PATH: dir, LOCALAPPDATA: dir, NO_COLOR: "1", FORCE_COLOR: "0", USAGE_OUTPUT: output, USAGE_ERROR: error, USAGE_EXIT: String(exit), USAGE_ARGS: args.includes("--refresh") ? "ai-usage --refresh --json" : "ai-usage --json" },
         stdout: "pipe", stderr: "pipe",
       });
       const [exitCode, stdout, stderr] = await Promise.all([
@@ -386,11 +405,12 @@ test.skipIf(process.platform !== "linux")("Linux CLI uses JSON without touching 
       expect(await Bun.file(cache).text()).toBe("12345\n");
       return { exitCode, stdout, stderr };
     }
-    for (const args of [["--once"], [], ["--once", "--refresh"], ["--refresh"], ["--once", "--bar"], ["--bar", "--refresh"]]) {
+    for (const args of [["--once"], [], ["--once", "--refresh"], ["--refresh"], ["--once", "--bar"], ["--bar", "--refresh"], ["--once", "--color"], ["--color", "--bar", "--refresh"]]) {
       const result = await run('{"providers":{"codex":{"accounts":[{"limits":{"seven_day":{"remaining_percent":39}}}]}}}', "", 0, args);
       expect(result.exitCode).toBe(0);
       expect(result.stdout).toContain("Codex");
       expect(result.stdout).toContain("39%");
+      expect(result.stdout !== Bun.stripANSI(result.stdout)).toBe(args.includes("--color"));
       expect(result.stdout.includes("[" + "⠒".repeat(8) + " ".repeat(12) + "]")).toBe(args.includes("--bar"));
       expect(result.stderr).toBe("");
     }

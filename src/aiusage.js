@@ -24,8 +24,8 @@ const LIMIT_ORDER = {
   balance: 3,
 };
 
-function colorize(text, color) {
-  let prefix = Bun.color(color, "ansi");
+function colorize(text, color, force = false) {
+  let prefix = Bun.color(color, force ? "ansi-16m" : "ansi");
   if (prefix && color === "orange") prefix = Bun.color(color, "ansi-16m");
   return prefix ? `${prefix}${text}\x1b[0m` : text;
 }
@@ -62,7 +62,7 @@ function usageBar(settings, usage, now) {
   return `[${Array.from({ length: width }, (_, i) => i < upper ? (i < lower ? "⠶" : "⠒") : (i < lower ? "⠤" : " ")).join("")}]`;
 }
 
-function formatRow(instance, now, bar) {
+function formatRow(instance, now, bar, color) {
   const settings = instance.settings ?? {};
   const usage = instance.usage ?? {};
   const provider = settings.label || settings.provider || "unknown";
@@ -71,10 +71,10 @@ function formatRow(instance, now, bar) {
   let value;
   if (typeof usage.remaining_percent === "number" && Number.isFinite(usage.remaining_percent)) {
     const percent = usage.remaining_percent;
-    value = colorize(`${Number(percent.toFixed(1))}%`, percent <= 20 ? "red" : percent <= 50 ? "orange" : "green");
+    value = colorize(`${Number(percent.toFixed(1))}%`, percent <= 20 ? "red" : percent <= 50 ? "orange" : "green", color);
   } else if (typeof usage.remaining_amount === "number" && Number.isFinite(usage.remaining_amount)) {
     const amount = usage.remaining_amount;
-    value = colorize(`${amount.toFixed(2)} ${singleLine(usage.currency || "")}`.trim(), amount <= 0 ? "red" : "green");
+    value = colorize(`${amount.toFixed(2)} ${singleLine(usage.currency || "")}`.trim(), amount <= 0 ? "red" : "green", color);
   } else {
     value = "-";
   }
@@ -84,11 +84,11 @@ function formatRow(instance, now, bar) {
   return row;
 }
 
-export function formatTable(instances, now = Date.now(), { bar = false } = {}) {
+export function formatTable(instances, now = Date.now(), { bar = false, color = false } = {}) {
   if (!instances.length) return "No AI usage buttons found.";
   const rows = [
     ["Provider", "Limit", "Remaining", "Resets in", ...(bar ? ["Remaining"] : [])],
-    ...instances.map((instance) => formatRow(instance, now, bar))
+    ...instances.map((instance) => formatRow(instance, now, bar, color))
       .sort((a, b) => a[0].localeCompare(b[0], undefined, { sensitivity: "base" })
         || (LIMIT_ORDER[a[1]] ?? 4) - (LIMIT_ORDER[b[1]] ?? 4)),
   ];
@@ -258,12 +258,13 @@ async function main() {
     options: {
       once: { type: "boolean" },
       bar: { type: "boolean" },
+      color: { type: "boolean" },
       refresh: { type: "boolean" },
       help: { type: "boolean", short: "h" },
     },
   });
   if (values.help) {
-    console.log("Usage: aiusage [--once] [--refresh] [--bar]\n\nShow Ulanzi AI usage, updating every 5 seconds. Press r to refresh, q or Ctrl+C to quit.\n--once     Print one snapshot (also used when stdout is redirected).\n--refresh  Request fresh provider data on launch.\n--bar      Add a bar: upper = usage remaining, lower = time remaining.\n           Time uses 5h (including rolling), 7d, or 30d (monthly) windows with a reset timestamp; balances have no bar.\nWindows: Ulanzi Studio AI usage plugin. Linux: ulanzi-niri ai-usage --json.");
+    console.log("Usage: aiusage [--once] [--refresh] [--bar] [--color]\n\nShow Ulanzi AI usage, updating every 5 seconds. Press r to refresh, q or Ctrl+C to quit.\n--once     Print one snapshot (also used when stdout is redirected).\n--refresh  Request fresh provider data on launch.\n--bar      Add a bar: upper = usage remaining, lower = time remaining.\n           Time uses 5h (including rolling), 7d, or 30d (monthly) windows with a reset timestamp; balances have no bar.\n--color    Force color output, even when stdout is redirected.\nWindows: Ulanzi Studio AI usage plugin. Linux: ulanzi-niri ai-usage --json.");
     return;
   }
   let refresh;
@@ -321,7 +322,7 @@ async function main() {
       }
       output = formatTable(await refresh(force), Date.now(), values);
     } catch (error) {
-      output = colorize(singleLine(error.message), "red");
+      output = colorize(singleLine(error.message), "red", values.color);
     }
     loading = false;
     if (stopped) return;
