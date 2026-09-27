@@ -190,6 +190,7 @@
     "format-muted": " {format_source}",
     "format-source": "{volume}% ",
     "format-source-muted": "",
+    "tooltip-format": "<b>Output</b>\n{desc} ({volume}%)\n<b>Input</b>\n{source_desc} ({source_volume}%)",
     "format-icons": {
       "headphone": "",
       "hands-free": "",
