@@ -44,7 +44,25 @@ function resetTime(value, now) {
   return "<1m";
 }
 
-function formatRow(instance, now) {
+function usageBar(settings, usage, now) {
+  if (!Number.isFinite(usage.remaining_percent)) return "-";
+  const duration = {
+    five_hour: 5 * 3600000,
+    rolling: 5 * 3600000,
+    seven_day: 7 * 86400000,
+    seven_day_fable: 7 * 86400000,
+    weekly: 7 * 86400000,
+    monthly: 30 * 86400000,
+  }[settings.limit];
+  const time = duration ? (Date.parse(usage.resets_at) - now) / duration : NaN;
+  const width = 20;
+  const cells = (fraction) => Number.isFinite(fraction) ? Math.round(Math.max(0, Math.min(1, fraction)) * width) : 0;
+  const upper = cells(usage.remaining_percent / 100);
+  const lower = cells(time);
+  return `[${Array.from({ length: width }, (_, i) => i < upper ? (i < lower ? "⠶" : "⠒") : (i < lower ? "⠤" : " ")).join("")}]`;
+}
+
+function formatRow(instance, now, bar) {
   const settings = instance.settings ?? {};
   const usage = instance.usage ?? {};
   const provider = settings.label || settings.provider || "unknown";
@@ -61,14 +79,16 @@ function formatRow(instance, now) {
     value = "-";
   }
   const reset = usage.resets_at ? resetTime(usage.resets_at, now) : "-";
-  return [`${singleLine(provider)}${account}`, singleLine(limit), value, reset];
+  const row = [`${singleLine(provider)}${account}`, singleLine(limit), value, reset];
+  if (bar) row.push(usageBar(settings, usage, now));
+  return row;
 }
 
-export function formatTable(instances, now = Date.now()) {
+export function formatTable(instances, now = Date.now(), { bar = false } = {}) {
   if (!instances.length) return "No AI usage buttons found.";
   const rows = [
-    ["Provider", "Limit", "Remaining", "Resets in"],
-    ...instances.map((instance) => formatRow(instance, now))
+    ["Provider", "Limit", "Remaining", "Resets in", ...(bar ? ["Remaining"] : [])],
+    ...instances.map((instance) => formatRow(instance, now, bar))
       .sort((a, b) => a[0].localeCompare(b[0], undefined, { sensitivity: "base" })
         || (LIMIT_ORDER[a[1]] ?? 4) - (LIMIT_ORDER[b[1]] ?? 4)),
   ];
@@ -237,12 +257,13 @@ async function main() {
   const { values } = parseArgs({
     options: {
       once: { type: "boolean" },
+      bar: { type: "boolean" },
       refresh: { type: "boolean" },
       help: { type: "boolean", short: "h" },
     },
   });
   if (values.help) {
-    console.log("Usage: aiusage [--once] [--refresh]\n\nShow Ulanzi AI usage, updating every 5 seconds. Press r to refresh, q or Ctrl+C to quit.\n--once     Print one snapshot (also used when stdout is redirected).\n--refresh  Request fresh provider data on launch.\nWindows: Ulanzi Studio AI usage plugin. Linux: ulanzi-niri ai-usage --json.");
+    console.log("Usage: aiusage [--once] [--refresh] [--bar]\n\nShow Ulanzi AI usage, updating every 5 seconds. Press r to refresh, q or Ctrl+C to quit.\n--once     Print one snapshot (also used when stdout is redirected).\n--refresh  Request fresh provider data on launch.\n--bar      Add a bar: upper = usage remaining, lower = time remaining.\n           Time uses 5h (including rolling), 7d, or 30d (monthly) windows with a reset timestamp; balances have no bar.\nWindows: Ulanzi Studio AI usage plugin. Linux: ulanzi-niri ai-usage --json.");
     return;
   }
   let refresh;
@@ -256,7 +277,7 @@ async function main() {
   }
 
   if (values.once || !process.stdout.isTTY) {
-    console.log(formatTable(await refresh(values.refresh)));
+    console.log(formatTable(await refresh(values.refresh), Date.now(), values));
     return;
   }
 
@@ -298,7 +319,7 @@ async function main() {
         if (process.platform === "linux") await refreshLinuxUsage();
         else force = true;
       }
-      output = formatTable(await refresh(force));
+      output = formatTable(await refresh(force), Date.now(), values);
     } catch (error) {
       output = colorize(singleLine(error.message), "red");
     }

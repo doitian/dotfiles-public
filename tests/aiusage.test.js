@@ -306,6 +306,58 @@ test("Linux usage renders accounts, balances, missing values, and sorted limits"
   ]);
 });
 
+test("optional bars overlay remaining usage and time for fixed-duration limits", () => {
+  const now = Date.parse("2026-09-18T15:00:00Z");
+  for (const [limit, hours] of [["five_hour", 5], ["rolling", 5], ["seven_day", 168], ["seven_day_fable", 168], ["weekly", 168], ["monthly", 720]]) {
+    for (const [percent, timeFraction, expected] of [
+      [70, 0.4, "⠶".repeat(8) + "⠒".repeat(6) + " ".repeat(6)],
+      [40, 0.7, "⠶".repeat(8) + "⠤".repeat(6) + " ".repeat(6)],
+      [100, 1, "⠶".repeat(20)],
+      [0, 0, " ".repeat(20)],
+      [150, 2, "⠶".repeat(20)],
+      [-10, -1, " ".repeat(20)],
+    ]) {
+      const instances = [{
+        settings: { provider: "Test", limit }, usage: {
+          remaining_percent: percent, resets_at: new Date(now + hours * 3600000 * timeFraction).toISOString(),
+        }
+      }];
+      const output = Bun.stripANSI(formatTable(instances, now, { bar: true }));
+      expect(output.split("\n")[0]).toEndWith("Remaining");
+      expect(output.split("\n")[0]).not.toContain("(");
+      expect(output.split("\n")[1]).toEndWith(`[${expected}]`);
+      expect(formatTable(instances, now)).not.toMatch(/[⠶⠒⠤]/);
+    }
+  }
+});
+
+test("bar mode keeps rows compact without blank lines", () => {
+  const instances = [snapshot[0], snapshot[0]];
+  const lines = formatTable(instances, 0, { bar: true }).split("\n");
+  expect(lines).toHaveLength(3);
+  expect(lines[1]).toContain("⠒");
+  expect(lines[2]).toContain("⠒");
+  expect(formatTable(instances, 0).split("\n")).toHaveLength(3);
+});
+
+test("bars handle unknown durations, missing resets, balances, and invalid usage", () => {
+  const now = Date.parse("2026-09-18T15:00:00Z");
+  for (const [limit, usage, expected] of [
+    ["five_hour", { remaining_percent: 50 }, `[${"⠒".repeat(10)}${" ".repeat(10)}]`],
+    ["five_hour", { remaining_percent: 50, resets_at: "invalid" }, `[${"⠒".repeat(10)}${" ".repeat(10)}]`],
+    ["monthly", { remaining_percent: 50 }, `[${"⠒".repeat(10)}${" ".repeat(10)}]`],
+    ["unknown", { remaining_percent: 50, resets_at: "2026-09-18T16:00:00Z" }, `[${"⠒".repeat(10)}${" ".repeat(10)}]`],
+    ["balance", { remaining_amount: 12, currency: "CNY" }, "-"],
+    ["five_hour", {}, "-"],
+    ["five_hour", { remaining_percent: NaN }, "-"],
+    ["five_hour", { remaining_percent: Infinity }, "-"],
+  ]) {
+    const output = formatTable([{ settings: { limit }, usage }], now, { bar: true });
+    expect(output.split("\n")[1]).toEndWith(`  ${expected}`);
+  }
+  expect(formatTable([], now, { bar: true })).toBe("No AI usage buttons found.");
+});
+
 test("Linux usage rejects invalid payloads and accepts an empty provider map", () => {
   for (const data of [null, {}, { providers: [] }, { providers: "invalid" }]) {
     expect(() => linuxInstances(data)).toThrow("no providers object");
@@ -334,11 +386,12 @@ test.skipIf(process.platform !== "linux")("Linux CLI uses JSON without touching 
       expect(await Bun.file(cache).text()).toBe("12345\n");
       return { exitCode, stdout, stderr };
     }
-    for (const args of [["--once"], [], ["--once", "--refresh"], ["--refresh"]]) {
+    for (const args of [["--once"], [], ["--once", "--refresh"], ["--refresh"], ["--once", "--bar"], ["--bar", "--refresh"]]) {
       const result = await run('{"providers":{"codex":{"accounts":[{"limits":{"seven_day":{"remaining_percent":39}}}]}}}', "", 0, args);
       expect(result.exitCode).toBe(0);
       expect(result.stdout).toContain("Codex");
       expect(result.stdout).toContain("39%");
+      expect(result.stdout.includes("[" + "⠒".repeat(8) + " ".repeat(12) + "]")).toBe(args.includes("--bar"));
       expect(result.stderr).toBe("");
     }
     const failed = await run("null", "driver not running", 1);
