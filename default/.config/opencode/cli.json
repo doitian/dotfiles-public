@@ -1,0 +1,24 @@
+{
+  "$schema": "https://opencode.ai/v2/cli.json",
+  "theme": {
+    "name": "catppuccin",
+    "mode": "light"
+  },
+  "keybinds": {
+    "prompt.editor": "ctrl+g"
+  },
+  "diffs": {
+    "wrap": "word"
+  },
+  "session": {
+    "sidebar": "hide",
+    "scrollbar": true,
+    "thinking": "show"
+  },
+  "animations": false,
+  "tabs": {
+    "mode": "on",
+    "indicators": "status",
+    "layout": "horizontal"
+  }
+}
