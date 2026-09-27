@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import { queryHistoryFile } from "./lib/fzf.js";
 import { findModelOption } from "./lib/model-option.js";
 
 function fail(message) {
@@ -30,7 +31,8 @@ async function main() {
         .filter((line) => line && line.toLowerCase().includes(filter));
     if (matches.length === 0) fail(option ? `no models match "${option.value}"` : "no models found");
 
-    const fzf = Bun.spawn(["fzf", "--no-multi"], {
+    const history = await queryHistoryFile("foc");
+    const fzf = Bun.spawn(["fzf", "--no-multi", `--history=${history}`], {
         stdin: new Blob([matches.join("\n")]),
         stdout: "pipe",
         stderr: "inherit",

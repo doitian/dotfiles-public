@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import { queryHistoryFile } from "./lib/fzf.js";
 import { findModelOption } from "./lib/model-option.js";
 
 function fail(message) {
@@ -24,7 +25,8 @@ async function main() {
     const modelsCode = await models.exited;
     if (modelsCode !== 0) process.exit(modelsCode);
 
-    const fzf = Bun.spawn(["fzf", "--no-multi", "--header-lines=1"], {
+    const history = await queryHistoryFile("fpi");
+    const fzf = Bun.spawn(["fzf", "--no-multi", "--header-lines=1", `--history=${history}`], {
         stdin: new Blob([output]),
         stdout: "pipe",
         stderr: "inherit",
