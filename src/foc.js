@@ -1,22 +1,9 @@
 #!/usr/bin/env bun
+import { findModelOption } from "./lib/model-option.js";
 
 function fail(message) {
     console.error(`foc: ${message}`);
     process.exit(1);
-}
-
-function findModelOption(args, separator) {
-    const limit = separator === -1 ? args.length : separator;
-    for (let index = 0; index < limit; index++) {
-        const arg = args[index];
-        if (arg.startsWith("--model=")) {
-            return { index, span: 1, flag: "--model", value: arg.slice("--model=".length) };
-        }
-        if (arg === "-m" || arg === "--model") {
-            return { index, span: 2, flag: arg, value: args[index + 1] };
-        }
-    }
-    return null;
 }
 
 async function main() {

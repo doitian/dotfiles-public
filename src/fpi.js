@@ -1,16 +1,19 @@
 #!/usr/bin/env bun
+import { findModelOption } from "./lib/model-option.js";
+
+function fail(message) {
+    console.error(`fpi: ${message}`);
+    process.exit(1);
+}
 
 async function main() {
     const args = process.argv.slice(2);
     const separator = args.indexOf("--");
-    const modelIndex = args.findIndex(
-        (arg, index) => arg === "--model" && (separator === -1 || index < separator),
-    );
-    const filter = modelIndex === -1 ? [] : [args[modelIndex + 1]];
-    if (modelIndex !== -1 && (!filter[0] || filter[0].startsWith("-"))) {
-        console.error("fpi: --model requires a model filter");
-        process.exit(1);
+    const option = findModelOption(args, separator);
+    if (option && (!option.value || option.value.startsWith("-"))) {
+        fail(`${option.flag} requires a model filter`);
     }
+    const filter = option ? [option.value] : [];
 
     const models = Bun.spawn(["pi", "--list-models", ...filter], {
         stdin: "ignore",
@@ -34,13 +37,12 @@ async function main() {
     const [provider, name] = selected.split(/\s+/);
     const model = `${provider}/${name}`;
 
-    if (modelIndex === -1) {
-        args.unshift("--model", model);
-    } else {
-        args[modelIndex + 1] = model;
-    }
+    const rest = option
+        ? args.slice(0, option.index).concat(args.slice(option.index + option.span))
+        : args.slice();
+    rest.splice(option ? option.index : 0, 0, "--model", model);
 
-    const pi = Bun.spawn(["pi", ...args], {
+    const pi = Bun.spawn(["pi", ...rest], {
         stdin: "inherit",
         stdout: "inherit",
         stderr: "inherit",
