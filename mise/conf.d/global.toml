@@ -26,7 +26,7 @@ run = "uv tool update --all"
 hide = true
 description = "Update all bun global packages"
 dir = "~"
-run = "bun update -g --ignore-scripts --latest"
+run = "bun update -g --latest"
 
 [tasks."g:add:uv:all"]
 hide = true
@@ -39,7 +39,7 @@ hide = true
 description = "Install all bun global packages"
 dir = "~"
 run = [
-  "bun add -g --ignore-scripts @opencode/cli",
+  "bun add -g @opencode/cli",
   "bun add -g --ignore-scripts @earendil-works/pi-coding-agent",
 ]
 
