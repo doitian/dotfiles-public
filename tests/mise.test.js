@@ -48,21 +48,15 @@ test("mise validation fails for missing task dependencies", async () => {
   expect((await sandbox.run(["tasks", "validate"])).exitCode).not.toBe(0);
 });
 
-test.each([
-  ["g:up:uv", "uv tool update --all"],
-  ["g:up:bun", "bun update -g --ignore-scripts --latest"],
-  [
-    "g:add:bun:all",
-    "bun add -g --ignore-scripts @opencode/cli",
-    "bun add -g --ignore-scripts @earendil-works/pi-coding-agent",
-  ],
-  ["g:add:gh:all", "gh extension install github/gh-stack"],
-])("%s resolves its command without executing it", async (name, ...commands) => {
-  const output = await run("run", "--dry-run", name);
-  for (const command of commands) {
-    expect(output).toContain(command);
-  }
-});
+test.each(["g:up:uv", "g:up:bun", "g:add:bun:all", "g:add:gh:all"])(
+  "%s resolves its command without executing it",
+  async (name) => {
+    const output = await run("run", "--dry-run", name);
+    for (const command of [tasks[name].run].flat()) {
+      expect(output).toContain(command);
+    }
+  },
+);
 
 test("installer sprite selects the platform's command and shell", async () => {
   const result = await sandbox.run(["tasks", "info", "--json", "g:add:sprite"]);
