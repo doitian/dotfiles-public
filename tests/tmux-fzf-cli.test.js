@@ -50,6 +50,7 @@ test("pickers work without shim files and reuse session lists for exact and fuzz
       }
     }
   } finally {
-    await rm(dir, { recursive: true, force: true });
+    // Windows briefly keeps the spawned fixture executables locked after exit
+    await rm(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
   }
 }, 15000);
