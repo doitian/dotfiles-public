@@ -17,7 +17,7 @@
   "modules-right": [
     "mpd",
     "idle_inhibitor",
-    // Optional: defined by a modules/ fragment, toggle via niri-menu (waybar-optional)
+    // Optional widget: fragment in waybar/optional/, toggled by waybar-optional (niri-menu > Waybar)
     "custom/agent-berth",
     "pulseaudio",
     "network",
@@ -33,11 +33,7 @@
     "clock",
     "tray",
     "custom/hyprwhspr",
-    "custom/power",
-    // Drop-in slots, defined by fragments in ~/.config/waybar/modules/*.jsonc
-    "custom/dropin-1",
-    "custom/dropin-2",
-    "custom/dropin-3"
+    "custom/power"
   ],
   // Modules configuration
   "niri/workspaces": {
@@ -220,8 +216,9 @@
       "hibernate": "systemctl hibernate"
     }
   },
-  // custom/agent-berth is defined by ~/.config/waybar/modules/agent-status.jsonc
-  // (waybar-optional toggle agent-status)
+  // Optional widgets are fragments in waybar/optional/ (dotfiles repo);
+  // waybar-optional symlinks the enabled ones into modules/ (agent-status
+  // defines custom/agent-berth above)
   "include": [
     "$HOME/.config/waybar/hyprwhspr-module.jsonc",
     "$HOME/.config/waybar/modules/*.jsonc"

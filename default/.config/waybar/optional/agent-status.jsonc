@@ -1,0 +1,14 @@
+// -*- mode: jsonc -*-
+// Optional waybar widget, toggled by waybar-optional (niri-menu > Waybar).
+// Enabling symlinks this file into ~/.config/waybar/modules/, which
+// config.jsonc globs into its includes; custom/agent-berth must stay
+// listed in a modules-* array there.
+{
+  "custom/agent-berth": {
+    "exec-if": "command -v agent-berth",
+    "exec": "$HOME/.config/waybar/agent-berth.sh",
+    "return-type": "json",
+    "interval": 5,
+    "on-click": "kitty --class tui-popup agent-berth tui"
+  }
+}
