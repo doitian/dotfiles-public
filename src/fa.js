@@ -1,5 +1,8 @@
 #!/usr/bin/env bun
+import { join } from "node:path";
 import { $ } from "bun";
+import { readCache, writeCache } from "./lib/cache.js";
+import { stateDir } from "./lib/env.js";
 import { queryHistoryFile } from "./lib/fzf.js";
 
 function fail(message) {
@@ -13,6 +16,8 @@ function output(result) {
   if (result.exitCode !== 0) process.exit(result.exitCode);
   return result.stdout.toString();
 }
+
+const MODEL_CACHE_TTL_MS = 60 * 60 * 1000;
 
 const AGENTS = [
   {
@@ -95,11 +100,18 @@ function resolveAgent(value) {
   return agent;
 }
 
-async function listModels(agents, explicit) {
+async function listModels(agents, explicit, refresh) {
   const results = await Promise.all(
     agents.map(async (agent) => {
       if (!Bun.which(agent.bin)) return { agent, missing: true };
-      return { agent, models: await agent.models() };
+      const cachePath = join(stateDir(), "fa", `${agent.name}-models.json`);
+      if (!refresh) {
+        const cached = await readCache(cachePath, MODEL_CACHE_TTL_MS);
+        if (cached) return { agent, models: cached };
+      }
+      const models = await agent.models();
+      await writeCache(cachePath, models);
+      return { agent, models };
     }),
   );
   const lines = [];
@@ -126,9 +138,12 @@ async function main() {
   }
   const agents = option ? [resolveAgent(option.value)] : AGENTS;
   if (option) before.splice(option.index, option.span);
+  const refreshIndex = before.indexOf("-r");
+  const refresh = refreshIndex !== -1;
+  if (refresh) before.splice(refreshIndex, 1);
   const query = before.join(" ").trim();
 
-  const lines = await listModels(agents, Boolean(option));
+  const lines = await listModels(agents, Boolean(option), refresh);
   if (!lines.length) fail("no models found");
 
   const history = await queryHistoryFile("fa");

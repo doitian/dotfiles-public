@@ -1,10 +1,22 @@
 /**
  * Environment helpers shared by CLI scripts.
  */
+import { join } from "node:path";
 
 /** User home directory (USERPROFILE on Windows, HOME otherwise). */
 export function home() {
   return process.env.USERPROFILE || process.env.HOME || "";
+}
+
+/**
+ * Base directory for per-user state: %LOCALAPPDATA% on Windows and
+ * $XDG_STATE_HOME (or ~/.local/state) elsewhere.
+ * @returns {string}
+ */
+export function stateDir() {
+  return process.platform === "win32"
+    ? process.env.LOCALAPPDATA || join(home(), "AppData", "Local")
+    : process.env.XDG_STATE_HOME || join(home(), ".local", "state");
 }
 
 /**

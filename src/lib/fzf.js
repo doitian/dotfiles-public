@@ -3,7 +3,7 @@
  */
 import { mkdir } from "node:fs/promises";
 import { dirname, join } from "node:path";
-import { home } from "./env.js";
+import { stateDir } from "./env.js";
 
 /**
  * Path to a named fzf query history file. The parent directory is created so
@@ -12,11 +12,7 @@ import { home } from "./env.js";
  * @returns {Promise<string>}
  */
 export async function queryHistoryFile(name) {
-  const stateDir =
-    process.platform === "win32"
-      ? process.env.LOCALAPPDATA || join(home(), "AppData", "Local")
-      : process.env.XDG_STATE_HOME || join(home(), ".local", "state");
-  const path = join(stateDir, "fzf", `${name}-history`);
+  const path = join(stateDir(), "fzf", `${name}-history`);
   await mkdir(dirname(path), { recursive: true });
   return path;
 }
