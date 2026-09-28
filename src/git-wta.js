@@ -6,6 +6,7 @@
  * Usage: git-wta [git-worktree-add-options...] <path> [<commit-ish>]
  *        git-wta --setup [<dest> | <source> <dest>]
  *        git-wta --setup-all
+ *        git-wta --run [--] <command> [args...]
  *
  * A <path> given as a bare name is rewritten to ../{REPO}.worktrees/{NAME},
  * where {REPO} is the root worktree directory name. Pass ./NAME or any path
@@ -18,7 +19,9 @@
  * path. Pass --setup to perform only the copy and setup steps for an existing
  * destination; source defaults to the root worktree and dest defaults to
  * ../{REPO}.worktrees/{YYYY-MM-DD} for the current day. Pass --setup-all to
- * run setup in every worktree except the root worktree.
+ * run setup in every worktree except the root worktree. Pass --run to run a
+ * command in every worktree (including the root and current); all remaining
+ * arguments are passed to the command, with any `--` separator removed.
  */
 import { cp, mkdir } from "node:fs/promises";
 import { basename, dirname, join, resolve } from "node:path";
@@ -28,7 +31,8 @@ import { exists } from "./lib/fs.js";
 
 const usage = `Usage: git-wta [git-worktree-add-options...] <path> [<commit-ish>]
        git-wta --setup [<dest> | <source> <dest>]
-       git-wta --setup-all`;
+       git-wta --setup-all
+       git-wta --run [--] <command> [args...]`;
 
 async function getWorktreePaths() {
   // `git worktree list --porcelain` lists worktrees; the first one is the root.
@@ -141,6 +145,20 @@ async function setupWorktree(rootWorktreePath, worktreePath) {
   await runSetupCommands(rootWorktreePath, worktreePath);
 }
 
+async function runInAllWorktrees(command) {
+  let failed = false;
+  for (const worktreePath of await getWorktreePaths()) {
+    console.log(`\n==> ${worktreePath}`);
+    const result = await $`${command}`.cwd(worktreePath).nothrow();
+    if (result.exitCode !== 0) {
+      failed = true;
+    }
+  }
+  if (failed) {
+    process.exit(1);
+  }
+}
+
 // Index of the <path> positional in argv, skipping options and their values.
 function findPathArgIndex(args) {
   const valueOptions = new Set(["-b", "-B", "--reason"]);
@@ -160,8 +178,23 @@ function findPathArgIndex(args) {
 }
 
 async function main() {
+  const rawArgs = process.argv.slice(2);
+
+  // --run takes over the rest of the command line, so it is handled before
+  // option parsing; otherwise command flags would be consumed by parseArgs.
+  const runIndex = rawArgs.indexOf("--run");
+  if (runIndex !== -1) {
+    const command = rawArgs.slice(runIndex + 1).filter((arg) => arg !== "--");
+    if (command.length === 0) {
+      console.error(usage);
+      process.exit(1);
+    }
+    await runInAllWorktrees(command);
+    return;
+  }
+
   const { values, positionals } = parseArgs({
-    args: process.argv.slice(2),
+    args: rawArgs,
     allowPositionals: true,
     options: {
       f: { type: "boolean", short: "f" },
@@ -222,7 +255,7 @@ async function main() {
     process.exit(1);
   }
 
-  const args = process.argv.slice(2);
+  const args = rawArgs;
   const rootWorktreePath = await getRootWorktreePath();
 
   // A bare name gets placed in a sibling "{REPO}.worktrees" directory; any
