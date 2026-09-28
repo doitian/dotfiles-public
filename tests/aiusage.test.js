@@ -350,6 +350,25 @@ test("optional bars overlay remaining usage and time for fixed-duration limits",
   }
 });
 
+test("bars color only the longer, non-overlapping segment", () => {
+  const now = Date.parse("2026-09-18T15:00:00Z");
+  const green = `${Bun.color("green", "ansi-16m")}${"⠒".repeat(6)}\x1b[0m`;
+  const red = `${Bun.color("red", "ansi-16m")}${"⠤".repeat(6)}\x1b[0m`;
+  for (const [percent, timeFraction, bar] of [
+    [70, 0.4, `[${"⠶".repeat(8)}${green}${" ".repeat(6)}]`],
+    [40, 0.7, `[${"⠶".repeat(8)}${red}${" ".repeat(6)}]`],
+    [100, 1, `[${"⠶".repeat(20)}]`],
+  ]) {
+    const instances = [{
+      settings: { provider: "Test", limit: "five_hour" }, usage: {
+        remaining_percent: percent, resets_at: new Date(now + 5 * 3600000 * timeFraction).toISOString(),
+      }
+    }];
+    const output = formatTable(instances, now, { bar: true, color: true });
+    expect(output.split("\n")[1]).toEndWith(bar);
+  }
+});
+
 test("bar mode keeps rows compact without blank lines", () => {
   const instances = [snapshot[0], snapshot[0]];
   const lines = formatTable(instances, 0, { bar: true }).split("\n");
@@ -371,7 +390,7 @@ test("bars handle unknown durations, missing resets, balances, and invalid usage
     ["five_hour", { remaining_percent: NaN }, "-"],
     ["five_hour", { remaining_percent: Infinity }, "-"],
   ]) {
-    const output = formatTable([{ settings: { limit }, usage }], now, { bar: true });
+    const output = Bun.stripANSI(formatTable([{ settings: { limit }, usage }], now, { bar: true }));
     expect(output.split("\n")[1]).toEndWith(`  ${expected}`);
   }
   expect(formatTable([], now, { bar: true })).toBe("No AI usage buttons found.");
@@ -411,7 +430,7 @@ test.skipIf(process.platform !== "linux")("Linux CLI uses JSON without touching 
       expect(result.stdout).toContain("Codex");
       expect(result.stdout).toContain("39%");
       expect(result.stdout !== Bun.stripANSI(result.stdout)).toBe(args.includes("--color"));
-      expect(result.stdout.includes("[" + "⠒".repeat(8) + " ".repeat(12) + "]")).toBe(args.includes("--bar"));
+      expect(Bun.stripANSI(result.stdout).includes("[" + "⠒".repeat(8) + " ".repeat(12) + "]")).toBe(args.includes("--bar"));
       expect(result.stderr).toBe("");
     }
     const failed = await run("null", "driver not running", 1);

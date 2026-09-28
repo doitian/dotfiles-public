@@ -44,7 +44,7 @@ function resetTime(value, now) {
   return "<1m";
 }
 
-function usageBar(settings, usage, now) {
+function usageBar(settings, usage, now, color) {
   if (!Number.isFinite(usage.remaining_percent)) return "-";
   const duration = {
     five_hour: 5 * 3600000,
@@ -59,7 +59,10 @@ function usageBar(settings, usage, now) {
   const cells = (fraction) => Number.isFinite(fraction) ? Math.round(Math.max(0, Math.min(1, fraction)) * width) : 0;
   const upper = cells(usage.remaining_percent / 100);
   const lower = cells(time);
-  return `[${Array.from({ length: width }, (_, i) => i < upper ? (i < lower ? "⠶" : "⠒") : (i < lower ? "⠤" : " ")).join("")}]`;
+  const overlap = Math.min(upper, lower);
+  const longer = upper > lower ? colorize("⠒".repeat(upper - lower), "green", color)
+    : upper < lower ? colorize("⠤".repeat(lower - upper), "red", color) : "";
+  return `[${"⠶".repeat(overlap)}${longer}${" ".repeat(width - Math.max(upper, lower))}]`;
 }
 
 function formatRow(instance, now, bar, color) {
@@ -80,7 +83,7 @@ function formatRow(instance, now, bar, color) {
   }
   const reset = usage.resets_at ? resetTime(usage.resets_at, now) : "-";
   const row = [`${singleLine(provider)}${account}`, singleLine(limit), value, reset];
-  if (bar) row.push(usageBar(settings, usage, now));
+  if (bar) row.push(usageBar(settings, usage, now, color));
   return row;
 }
 
@@ -264,7 +267,7 @@ async function main() {
     },
   });
   if (values.help) {
-    console.log("Usage: aiusage [--once] [--refresh] [--bar] [--color]\n\nShow Ulanzi AI usage, updating every 5 seconds. Press r to refresh, q or Ctrl+C to quit.\n--once     Print one snapshot (also used when stdout is redirected).\n--refresh  Request fresh provider data on launch.\n--bar      Add a bar: upper = usage remaining, lower = time remaining.\n           Time uses 5h (including rolling), 7d, or 30d (monthly) windows with a reset timestamp; balances have no bar.\n--color    Force color output, even when stdout is redirected.\nWindows: Ulanzi Studio AI usage plugin. Linux: ulanzi-niri ai-usage --json.");
+    console.log("Usage: aiusage [--once] [--refresh] [--bar] [--color]\n\nShow Ulanzi AI usage, updating every 5 seconds. Press r to refresh, q or Ctrl+C to quit.\n--once     Print one snapshot (also used when stdout is redirected).\n--refresh  Request fresh provider data on launch.\n--bar      Add a bar: upper = usage remaining, lower = time remaining.\n           Time uses 5h (including rolling), 7d, or 30d (monthly) windows with a reset timestamp; balances have no bar.\n           The longer of the two is colored: green when usage remaining is longer, red when time is longer.\n--color    Force color output, even when stdout is redirected.\nWindows: Ulanzi Studio AI usage plugin. Linux: ulanzi-niri ai-usage --json.");
     return;
   }
   let refresh;
