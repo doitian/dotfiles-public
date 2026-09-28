@@ -51,6 +51,18 @@ Use `due` for actual deadlines or genuinely day-specific actions. Appointments
 with times belong in a calendar. Keep a follow-up/review date explicit in notes
 when it is not a deadline. Do not invent dates, readiness, or commitments.
 
+## Task wording
+
+Polish every task you capture, clarify, review, or create. Write a brief SMART
+title: a specific verb and object, a measurable finish line, achievable in one
+action or project, and relevant to its project or goal. Make it time-bound
+with a date the user or source supplies, recorded in `due` or notes rather
+than the title; never invent one. Keep workflow tags and unrelated labels.
+Notes hold a concise description of why the task matters, what done looks
+like, and key facts, followed by source links.
+Rewording must preserve meaning; ask when the intent is unclear. For a task
+that is only a URL, follow [references/clarify.md](references/clarify.md).
+
 ## Decisions and shared state
 
 Apply clear requested changes through completion. Ask for missing intent when
