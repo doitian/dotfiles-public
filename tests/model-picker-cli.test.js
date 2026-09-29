@@ -174,10 +174,65 @@ test("fa lists models, forwards args, and caches per agent", async () => {
         query: "",
         expect: { tool: "opencode", args: ["--standalone"], config: { model: "test/alpha" } },
       },
+      {
+        args: ["-a", "opencode"],
+        sequence: { OPENCODE: ["fail", "ok"] },
+        selection: "opencode\ttest/alpha",
+        listing: ["opencode", "opencode"],
+        picker: ["opencode\ttest/alpha", "opencode\ttest/shared"],
+        query: "",
+        expect: { tool: "opencode", args: ["--standalone"], config: { model: "test/alpha" } },
+        expectCache: { opencode: OPENCODE_MODELS },
+      },
+      {
+        args: ["-a", "opencode"],
+        sequence: { OPENCODE: ["empty", "ok"] },
+        selection: "opencode\ttest/shared",
+        listing: ["opencode", "opencode"],
+        picker: ["opencode\ttest/alpha", "opencode\ttest/shared"],
+        query: "",
+        expect: { tool: "opencode", args: ["--standalone"], config: { model: "test/shared" } },
+        expectCache: { opencode: OPENCODE_MODELS },
+      },
+      {
+        args: ["-a", "opencode"],
+        sequence: { OPENCODE: ["empty"] },
+        code: 1,
+        stderr: "no models found",
+        listing: ["opencode", "opencode"],
+        picker: null,
+        expectNoCache: "opencode",
+      },
+      {
+        args: ["-a", "opencode"],
+        sequence: { OPENCODE: ["fail"] },
+        code: 1,
+        stderr: "models unavailable",
+        listing: ["opencode", "opencode"],
+        picker: null,
+        expectNoCache: "opencode",
+      },
+      {
+        args: ["-a", "opencode"],
+        prep: () => seedCache("opencode", []),
+        selection: "opencode\ttest/alpha",
+        listing: ["opencode"],
+        picker: ["opencode\ttest/alpha", "opencode\ttest/shared"],
+        query: "",
+        expect: { tool: "opencode", args: ["--standalone"], config: { model: "test/alpha" } },
+        expectCache: { opencode: OPENCODE_MODELS },
+      },
     ];
 
     for (const scenario of cases) {
       await Bun.write(log, "");
+      for (const key of ["OPENCODE", "PI"]) {
+        delete env[`PICKER_SEQUENCE_${key}`];
+        await Bun.write(`${log}.${key}.count`, "0");
+      }
+      for (const [key, sequence] of Object.entries(scenario.sequence ?? {})) {
+        env[`PICKER_SEQUENCE_${key}`] = JSON.stringify(sequence);
+      }
       const prep = scenario.prep ?? clearCache;
       if (prep !== "keep") await prep();
       if ("selection" in scenario) env.PICKER_FZF_SELECTION = scenario.selection;
@@ -213,6 +268,9 @@ test("fa lists models, forwards args, and caches per agent", async () => {
         const entry = JSON.parse(await Bun.file(cacheFile(agent)).text());
         expect(entry.value, label).toEqual(models);
         expect(Date.now() - entry.updated, label).toBeLessThan(HOUR_MS);
+      }
+      if (scenario.expectNoCache) {
+        expect(await Bun.file(cacheFile(scenario.expectNoCache)).exists(), label).toBe(false);
       }
 
       const fzf = calls.find(({ tool }) => tool === "fzf");

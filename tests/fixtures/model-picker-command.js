@@ -1,4 +1,4 @@
-import { appendFileSync } from "node:fs";
+import { appendFileSync, readFileSync, writeFileSync } from "node:fs";
 import { basename } from "node:path";
 
 const tool = basename(process.execPath).replace(/\.exe$/, "");
@@ -22,8 +22,27 @@ if (tool === "fzf") {
   if (!rows.length) process.exit(1);
   console.log(rows[0]);
 } else if (args[0] === "models" || args[0] === "--list-models") {
+  const key = tool.toUpperCase();
+  const sequence = JSON.parse(process.env[`PICKER_SEQUENCE_${key}`] ?? "null");
+  if (sequence) {
+    const counterPath = `${process.env.PICKER_LOG}.${key}.count`;
+    let call = 0;
+    try {
+      call = Number(readFileSync(counterPath, "utf8")) || 0;
+    } catch { }
+    writeFileSync(counterPath, String(call + 1));
+    const outcome = sequence[Math.min(call, sequence.length - 1)];
+    if (outcome === "fail") {
+      console.error(`${tool} models unavailable`);
+      process.exit(1);
+    }
+    if (outcome === "empty") {
+      if (tool === "pi") console.log("provider  model  context  max-out  thinking  images");
+      process.exit(0);
+    }
+  }
   const models = JSON.parse(
-    process.env[`PICKER_MODELS_${tool.toUpperCase()}`] ?? process.env.PICKER_MODELS,
+    process.env[`PICKER_MODELS_${key}`] ?? process.env.PICKER_MODELS,
   );
   if (tool === "pi") {
     console.log("provider  model  context  max-out  thinking  images");

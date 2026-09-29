@@ -10,10 +10,12 @@ function fail(message) {
   process.exit(1);
 }
 
-/** Forward captured stderr and exit with the command's status when it failed. */
+/** Return stdout of a successful command, forwarding its stderr; throws otherwise. */
 function output(result) {
+  if (result.exitCode !== 0) {
+    throw new Error(result.stderr.toString().trim() || `command exited with code ${result.exitCode}`);
+  }
   process.stderr.write(result.stderr);
-  if (result.exitCode !== 0) process.exit(result.exitCode);
   return result.stdout.toString();
 }
 
@@ -100,6 +102,19 @@ function resolveAgent(value) {
   return agent;
 }
 
+/** Fetch an agent's models, retrying once when the command fails or returns none. */
+async function fetchModels(agent) {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const models = await agent.models();
+      if (models.length) return models;
+    } catch (error) {
+      if (attempt === 1) throw error;
+    }
+  }
+  return [];
+}
+
 async function listModels(agents, explicit, refresh) {
   const results = await Promise.all(
     agents.map(async (agent) => {
@@ -107,10 +122,10 @@ async function listModels(agents, explicit, refresh) {
       const cachePath = join(stateDir(), "fa", `${agent.name}-models.json`);
       if (!refresh) {
         const cached = await readCache(cachePath, MODEL_CACHE_TTL_MS);
-        if (cached) return { agent, models: cached };
+        if (Array.isArray(cached) && cached.length) return { agent, models: cached };
       }
-      const models = await agent.models();
-      await writeCache(cachePath, models);
+      const models = await fetchModels(agent);
+      if (models.length) await writeCache(cachePath, models);
       return { agent, models };
     }),
   );
