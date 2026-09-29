@@ -38,7 +38,7 @@ function copyFieldLoop(entry, fields) {
         start = Math.max(0, fields.length - maxVisible);
 
       const out = ["\x1b[?25l\x1b[H\x1b[2J"];
-      out.push(`${entry}  (j/k move · Enter copy · q quit)`);
+      out.push(`${entry}  (j/k/Tab move · Enter copy · q quit)`);
       const visible = fields.slice(start, start + maxVisible);
       for (let i = 0; i < visible.length; i++) {
         const idx = start + i;
@@ -89,6 +89,9 @@ function copyFieldLoop(entry, fields) {
         } else if (ch === "k") {
           selected = Math.max(0, selected - 1);
           render();
+        } else if (ch === "\t") {
+          selected = (selected + 1) % fields.length;
+          render();
         } else if (ch === "\r" || ch === "\n") {
           copy();
           return;
@@ -134,11 +137,19 @@ async function interactiveCopy() {
   const showR = await $`gopass show ${entry}`.quiet().nothrow();
   if (showR.exitCode !== 0) process.exit(showR.exitCode);
   const lines = (showR.stdout?.toString() ?? "").split("\n");
-  const fields = [{ label: "password", key: null }];
+  const password = { label: "password", key: null };
+  const extras = [];
+  let username = null;
   for (const line of lines.slice(1)) {
     const match = line.match(/^([^:]+):\s*(.*)$/);
-    if (match) fields.push({ label: match[1], key: match[1] });
+    if (!match) continue;
+    const field = { label: match[1], key: match[1] };
+    if (match[1].toLowerCase() === "username") username = field;
+    else extras.push(field);
   }
+  const fields = username
+    ? [username, password, ...extras]
+    : [password, ...extras];
   await copyFieldLoop(entry, fields);
 }
 
