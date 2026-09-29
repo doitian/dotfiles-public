@@ -1,0 +1,2 @@
+# Terminals fill the usable screen; title buttons restore normal window sizing.
+kitty.startMaximized: 1

@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 077
+
+config_dir="${XDG_CONFIG_HOME:-$HOME/.config}"
+runtime_dir="${XDG_RUNTIME_DIR:?A systemd user session is required}/ipad-vnc"
+lan_interface="${VNC_INTERFACE:-wlan0}"
+geometry="${VNC_GEOMETRY:-1600x1200}"
+dpi="${VNC_DPI:-144}"
+if [[ ! "$dpi" =~ ^[1-9][0-9]{1,2}$ ]] || (( dpi < 72 || dpi > 384 )); then
+    echo 'VNC_DPI must be an integer between 72 and 384.' >&2
+    exit 1
+fi
+passwd_file="$config_dir/tigervnc/passwd"
+test -s "$passwd_file" || { echo 'Set a VNC password with vncpasswd first.' >&2; exit 1; }
+
+# Bind only to an RFC1918 address on the selected LAN interface, never the VPN.
+lan_ip="$(ip -j -4 address show dev "$lan_interface" | python3 -c '
+import ipaddress, json, sys
+nets = [ipaddress.ip_network(n) for n in ("10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16")]
+for interface in json.load(sys.stdin):
+    for address in interface.get("addr_info", []):
+        value = address["local"]
+        if address.get("scope") == "global" and any(ipaddress.ip_address(value) in n for n in nets):
+            print(value)
+            sys.exit(0)
+sys.exit("No private IPv4 address on the VNC LAN interface")
+')"
+
+mkdir -p "$runtime_dir"
+export DISPLAY=:1
+export XAUTHORITY="$runtime_dir/Xauthority"
+touch "$XAUTHORITY"
+xauth -f "$XAUTHORITY" add "$DISPLAY" . "$(mcookie)"
+unset SESSION_MANAGER DBUS_SESSION_BUS_ADDRESS WAYLAND_DISPLAY I3SOCK SWAYSOCK DESKTOP_STARTUP_ID
+# The service resets PATH, so Kitty shells must rebuild it through ~/.zshenv.
+unset SHELL_ENV_LOADED
+export XDG_SESSION_TYPE=x11 XDG_CURRENT_DESKTOP=ICEWM XDG_SESSION_DESKTOP=icewm
+export ICEWM_PRIVCFG="$config_dir/icewm-vnc"
+export GDK_BACKEND=x11 QT_QPA_PLATFORM=xcb SDL_VIDEODRIVER=x11 MOZ_ENABLE_WAYLAND=0
+export ELECTRON_OZONE_PLATFORM_HINT=x11
+
+xvnc_pid=''
+desktop_pid=''
+xsettings_pid=''
+taskbar_pid=''
+resolution_pid=''
+cleanup() {
+    trap - EXIT
+    test -z "$desktop_pid" || kill "$desktop_pid" 2>/dev/null || true
+    test -z "$taskbar_pid" || kill "$taskbar_pid" 2>/dev/null || true
+    test -z "$resolution_pid" || kill "$resolution_pid" 2>/dev/null || true
+    test -z "$xsettings_pid" || kill "$xsettings_pid" 2>/dev/null || true
+    test -z "$xvnc_pid" || kill "$xvnc_pid" 2>/dev/null || true
+    wait 2>/dev/null || true
+}
+trap cleanup EXIT
+trap 'exit 0' TERM INT
+
+Xvnc "$DISPLAY" -geometry "$geometry" -depth 24 -dpi "$dpi" \
+    -auth "$XAUTHORITY" -nolisten tcp \
+    -interface "$lan_ip" -UseIPv6=0 -localhost=0 -rfbport 5901 \
+    -SecurityTypes TLSVnc,VncAuth -PasswordFile "$passwd_file" \
+    -AlwaysShared -AcceptSetDesktopSize=1 -desktop 'iPad - IceWM' &
+xvnc_pid=$!
+
+ready=false
+for ((attempt = 0; attempt < 50; attempt++)); do
+    kill -0 "$xvnc_pid" 2>/dev/null || { wait "$xvnc_pid"; exit 1; }
+    if xdpyinfo >/dev/null 2>&1; then ready=true; break; fi
+    sleep 0.1
+done
+"$ready" || { echo 'VNC X display did not become ready.' >&2; exit 1; }
+
+# Publish the same font DPI to Xft, GTK, and Qt on this X display only.
+printf 'Xft.dpi: %s\n' "$dpi" | xrdb -merge
+printf 'Xft/DPI %s\n' "$((dpi * 1024))" > "$runtime_dir/xsettingsd.conf"
+xsettingsd -c "$runtime_dir/xsettingsd.conf" &
+xsettings_pid=$!
+settings_ready=false
+for ((attempt = 0; attempt < 50; attempt++)); do
+    kill -0 "$xsettings_pid" 2>/dev/null || { wait "$xsettings_pid"; exit 1; }
+    if dump_xsettings 2>/dev/null | grep -qx "Xft/DPI $((dpi * 1024))"; then
+        settings_ready=true
+        break
+    fi
+    sleep 0.1
+done
+"$settings_ready" || { echo 'VNC font DPI settings did not become ready.' >&2; exit 1; }
+
+"$(dirname "${BASH_SOURCE[0]}")/ipad-vnc-taskbar" &
+taskbar_pid=$!
+
+"$(dirname "${BASH_SOURCE[0]}")/ipad-vnc-resolution" \
+    --server-pid "$xvnc_pid" --address "$lan_ip" --geometry "$geometry" --dpi "$dpi" &
+resolution_pid=$!
+
+dbus-run-session -- bash -c '
+    xset s off
+    xsetroot -solid "#24273a"
+    kitty -o linux_display_server=x11 -o font_size=11.0 -o hide_window_decorations=no --title "iPad terminal" &
+    exec icewm
+' &
+desktop_pid=$!
+wait -n "$xvnc_pid" "$desktop_pid" "$xsettings_pid"

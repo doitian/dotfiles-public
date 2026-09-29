@@ -1,0 +1,18 @@
+[Unit]
+Description=LAN VNC desktop with IceWM for iPad
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Environment=PATH=%h/bin:%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+Environment=VNC_INTERFACE=wlan0
+Environment=VNC_GEOMETRY=1600x1200
+EnvironmentFile=-%h/.config/icewm-vnc/environment
+ExecStart=%h/.dotfiles/repos/public/vnc-server/ipad-vnc-session
+Restart=always
+RestartSec=10
+TimeoutStopSec=10
+UMask=0077
+
+[Install]
+WantedBy=default.target

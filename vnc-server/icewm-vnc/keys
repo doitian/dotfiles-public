@@ -1,0 +1,4 @@
+# Magic Keyboard application shortcuts. Control+Option is Ctrl+Alt over VNC.
+# Keep Command/Globe and hardware media keys for iPadOS.
+key "Alt+Ctrl+Return"       kitty -o linux_display_server=x11 -o font_size=11.0 -o hide_window_decorations=no
+key "Alt+Ctrl+p"            rofi -show combi -modes combi -combi-modes drun,run -show-icons -font "Sarasa UI SC 12" -dpi 0 -display-combi "Launch" -display-drun "App" -display-run "Command" -terminal "kitty -o linux_display_server=x11 -o font_size=11.0 -o hide_window_decorations=no"

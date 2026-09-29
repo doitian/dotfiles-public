@@ -1,0 +1,1 @@
+prog "Terminal" ipad-terminal-dark kitty -o linux_display_server=x11 -o font_size=11.0 -o hide_window_decorations=no

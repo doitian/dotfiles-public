@@ -1,0 +1,26 @@
+# Keep fonts and controls compact even if a theme is selected from the menu.
+TitleFontNameXft="Sarasa UI SC:size=12,Font Awesome 7 Free:size=12,sans-serif:size=12"
+MenuFontNameXft="Sarasa UI SC:size=11,Font Awesome 7 Free:size=11,sans-serif:size=11"
+NormalTaskBarFontNameXft="Sarasa UI SC:size=10,Font Awesome 7 Free:size=10,sans-serif:size=10"
+ActiveTaskBarFontNameXft="Sarasa UI SC:size=10:medium,Font Awesome 7 Free:size=10:medium,sans-serif:size=10:medium"
+ToolButtonFontNameXft="Sarasa UI SC:size=10,Font Awesome 7 Free:size=10,sans-serif:size=10"
+NormalWorkspaceFontNameXft="Sarasa UI SC:size=10,Font Awesome 7 Free:size=10,sans-serif:size=10"
+ActiveWorkspaceFontNameXft="Sarasa UI SC:size=10:medium,Font Awesome 7 Free:size=10:medium,sans-serif:size=10:medium"
+ClockFontNameXft="Sarasa UI SC:size=10,Font Awesome 7 Free:size=10,sans-serif:size=10"
+NormalButtonFontNameXft="Sarasa UI SC:size=11,Font Awesome 7 Free:size=11,sans-serif:size=11"
+ActiveButtonFontNameXft="Sarasa UI SC:size=11,Font Awesome 7 Free:size=11,sans-serif:size=11"
+InputFontNameXft="Sarasa UI SC:size=11,Font Awesome 7 Free:size=11,sans-serif:size=11"
+LabelFontNameXft="Sarasa UI SC:size=11,Font Awesome 7 Free:size=11,sans-serif:size=11"
+ListBoxFontNameXft="Sarasa UI SC:size=11,Font Awesome 7 Free:size=11,sans-serif:size=11"
+ToolTipFontNameXft="Sarasa UI SC:size=10,Font Awesome 7 Free:size=10,sans-serif:size=10"
+QuickSwitchFontNameXft="Sarasa UI SC:size=12,Font Awesome 7 Free:size=12,sans-serif:size=12"
+StatusFontNameXft="Sarasa UI SC:size=11,Font Awesome 7 Free:size=11,sans-serif:size=11"
+TitleBarHeight=32
+BorderSizeX=2
+BorderSizeY=2
+SmallIconSize=32
+MenuIconSize=24
+# The clock uses the graph-applet height; fill the 40px taskbar content row.
+TaskBarGraphHeight=40
+TitleButtonsLeft="s"
+TitleButtonsRight="xmi"

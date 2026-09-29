@@ -1,0 +1,54 @@
+# Dedicated remote desktop with Magic Keyboard shortcuts and mouse controls.
+ClickToFocus=1
+AutoRaise=0
+WorkspaceNames=" 1 ", " 2 ", " 3 "
+EdgeSwitch=0
+# Leave Command/Super to iPadOS; Option is Alt in the VNC client.
+Win95Keys=0
+ModSuperIsCtrlAlt=0
+# Custom shortcuts are limited to Control+Option+Return, P, and Q.
+# Other window actions and workspace navigation retain IceWM defaults.
+# Open Start with the taskbar button; reserve keyboard launching for Rofi.
+KeySysMenu=""
+# Control+Option+P is assigned to Rofi in keys.
+KeySysAddressBar=""
+KeyWinClose="Ctrl+Alt+q"
+ConsiderSizeHintsMaximized=0
+HideBordersMaximized=1
+HideTitleBarWhenMaximized=0
+
+# Center the top bar; ipad-vnc-taskbar shifts it 4px left for iPadOS icons.
+TaskBarAtTop=1
+TaskBarWidthPercentage=80
+TaskBarJustify="center"
+TaskBarAutoHide=0
+TaskBarDoubleHeight=0
+TaskBarShowStartMenu=1
+TaskBarShowWindows=1
+TaskBarShowWindowIcons=0
+TaskBarShowAllWindows=1
+TaskBarShowWindowListMenu=0
+TaskBarShowWorkspaces=1
+PagerShowPreview=0
+TaskBarShowCPUStatus=0
+TaskBarShowMEMStatus=0
+TaskBarShowNetStatus=0
+TaskBarShowAPMAuto=0
+TaskBarShowAPMStatus=0
+TaskBarShowMailboxStatus=0
+TaskBarShowTray=0
+TaskBarEnableSystemTray=0
+TaskBarShowClock=1
+# Spaces give the desktop-colored clock breathing room on each side.
+TimeFormat=" %H:%M "
+ShowAddressBar=0
+TerminalCommand="kitty -o linux_display_server=x11 -o font_size=11.0 -o hide_window_decorations=no"
+
+# The remote desktop should not offer power controls for the host machine.
+ShowLogoutMenu=0
+ShowHelp=0
+ShowAbout=0
+ShutdownCommand=""
+RebootCommand=""
+SuspendCommand=""
+HibernateCommand=""

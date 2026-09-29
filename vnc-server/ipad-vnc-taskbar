@@ -1,0 +1,90 @@
+#!/usr/bin/env python3
+"""Keep the VNC taskbar four pixels left of center across IceWM reloads."""
+
+import fcntl
+import os
+from pathlib import Path
+
+from Xlib import X, display, error, protocol
+
+
+def main():
+    # One helper per display, including when the window manager is reloaded.
+    lock_path = Path(os.environ["XDG_RUNTIME_DIR"]) / "ipad-vnc"
+    lock_path.mkdir(mode=0o700, exist_ok=True)
+    lock = (lock_path / f"taskbar-{os.environ['DISPLAY'].replace('/', '_')}.lock").open("w")
+    try:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        return
+
+    connection = display.Display()
+    root = connection.screen().root
+    move_atom = connection.intern_atom("_NET_MOVERESIZE_WINDOW")
+    root.change_attributes(event_mask=X.SubstructureNotifyMask | X.StructureNotifyMask)
+    bar = None
+    frame = None
+
+    def find_bar(window, depth=0):
+        if window.get_wm_class() == ("icewm", "TaskBar"):
+            return window
+        if depth < 3:
+            for child in window.query_tree().children:
+                try:
+                    found = find_bar(child, depth + 1)
+                    if found is not None:
+                        return found
+                except error.BadWindow:
+                    pass
+        return None
+
+    def update():
+        nonlocal bar, frame
+        if bar is None:
+            candidate = find_bar(root)
+            if candidate is None:
+                return
+            bar = candidate
+            bar.change_attributes(event_mask=X.StructureNotifyMask)
+        # IceWM reparents the taskbar while starting/reloading; follow its frame.
+        ancestor = bar
+        while True:
+            parent = ancestor.query_tree().parent
+            if not parent:
+                bar = frame = None
+                return
+            if parent.id == root.id:
+                break
+            ancestor = parent
+        if ancestor.id == bar.id:
+            return
+        if frame is None or ancestor.id != frame.id:
+            frame = ancestor
+            frame.change_attributes(event_mask=X.StructureNotifyMask)
+        outer = frame.get_geometry()
+        x = max(0, (root.get_geometry().width - outer.width) // 2 - 4)
+        if outer.x != x:
+            # Ask IceWM to move its client so its cached geometry stays in sync.
+            root.send_event(protocol.event.ClientMessage(
+                window=bar, client_type=move_atom,
+                data=(32, [X.StaticGravity | (1 << 8) | (2 << 12), x, 0, 0, 0]),
+            ), event_mask=X.SubstructureRedirectMask)
+
+    while True:
+        try:
+            update()
+            connection.flush()
+        except (error.BadWindow, error.BadDrawable):
+            bar = frame = None
+            continue
+        connection.next_event()
+        # Coalesce layout events; no polling or repeated relative movements.
+        while connection.pending_events():
+            connection.next_event()
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except error.ConnectionClosedError:
+        pass

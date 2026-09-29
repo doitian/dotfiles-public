@@ -1,0 +1,138 @@
+#!/usr/bin/env python3
+"""Restore the iPad resolution when this Xvnc server has no TCP viewers."""
+
+import argparse
+import fcntl
+import ipaddress
+import os
+import re
+import select
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+from Xlib import display, error
+
+
+def connected(server_pid, address, port):
+    # Inspect this server's sockets, not unrelated processes on the same port.
+    # Count handshakes too: never reset while a viewer is authenticating.
+    proc = Path("/proc") / str(server_pid)
+    endpoint = f"{int.from_bytes(address.packed, sys.byteorder):08X}:{port:04X}"
+    sockets = set()
+    for fd in (proc / "fd").iterdir():
+        try:
+            target = fd.readlink().as_posix()
+        except FileNotFoundError:
+            continue  # A socket may close during the snapshot.
+        if target.startswith("socket:["):
+            sockets.add(target[8:-1])
+    for line in (proc / "net/tcp").read_text().splitlines()[1:]:
+        fields = line.split()
+        # LISTEN and closing sockets are not viewers. CLOSE_WAIT still
+        # belongs to Xvnc until it processes the peer's disconnect.
+        if (
+            fields[1] == endpoint
+            and fields[9] in sockets
+            and fields[3] in {"01", "02", "03", "08"}
+        ):
+            return True
+    return False
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--server-pid", type=int, required=True)
+    parser.add_argument("--address", type=ipaddress.IPv4Address, required=True)
+    parser.add_argument("--port", type=int, default=5901)
+    parser.add_argument("--geometry", default="1600x1200")
+    parser.add_argument("--dpi", type=int, default=144)
+    args = parser.parse_args()
+    if not re.fullmatch(r"[1-9][0-9]{1,4}x[1-9][0-9]{1,4}", args.geometry):
+        parser.error("geometry must be WIDTHxHEIGHT")
+    width, height = map(int, args.geometry.split("x"))
+    if max(width, height) > 16384 or not 72 <= args.dpi <= 384:
+        parser.error("geometry must be at most 16384x16384; DPI must be 72–384")
+    if args.server_pid <= 0 or not 1 <= args.port <= 65535:
+        parser.error("invalid server PID or TCP port")
+
+    runtime = Path(os.environ["XDG_RUNTIME_DIR"]) / "ipad-vnc"
+    runtime.mkdir(mode=0o700, exist_ok=True)
+    lock_name = f"resolution-{os.environ['DISPLAY'].replace('/', '_')}.lock"
+    with (runtime / lock_name).open("w") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            return
+
+        # A pidfd also prevents attaching to a reused PID after Xvnc exits.
+        server_fd = os.pidfd_open(args.server_pid)
+        connection = display.Display()
+        root = connection.screen().root
+        idle_since = None
+        restored = False
+        last_error = float("-inf")
+        print(
+            f"iPad resolution fallback ready: {args.geometry}, {args.dpi} DPI",
+            flush=True,
+        )
+        try:
+            while not select.select([server_fd], [], [], 0.25)[0]:
+                try:
+                    if connected(args.server_pid, args.address, args.port):
+                        idle_since = None
+                        restored = False
+                        continue
+                    if idle_since is None:
+                        idle_since = time.monotonic()
+                    # Debounce brief reconnects, then restore once per idle period.
+                    if restored or time.monotonic() - idle_since < 0.5:
+                        continue
+                    geometry = root.get_geometry()
+                    if (geometry.width, geometry.height) != (width, height):
+                        # Recheck after talking to X, in case a viewer arrived.
+                        if connected(args.server_pid, args.address, args.port):
+                            idle_since = None
+                            continue
+                        subprocess.run(
+                            [
+                                "xrandr",
+                                "--output",
+                                "VNC-0",
+                                "--mode",
+                                args.geometry,
+                                "--dpi",
+                                str(args.dpi),
+                            ],
+                            check=True,
+                            timeout=5,
+                            capture_output=True,
+                            text=True,
+                        )
+                        print(
+                            f"No VNC viewers; restored {args.geometry} at {args.dpi} DPI",
+                            flush=True,
+                        )
+                    restored = True
+                except (OSError, subprocess.SubprocessError) as exc:
+                    # An unreadable socket table is NOT evidence of no viewers.
+                    idle_since = None
+                    if time.monotonic() - last_error >= 30:
+                        detail = getattr(exc, "stderr", None) or str(exc)
+                        print(
+                            f"iPad resolution fallback deferred: {detail.strip()}",
+                            file=sys.stderr,
+                            flush=True,
+                        )
+                        last_error = time.monotonic()
+        finally:
+            connection.close()
+            os.close(server_fd)
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except error.ConnectionClosedError:
+        pass
