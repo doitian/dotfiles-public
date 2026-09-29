@@ -44,6 +44,40 @@ exit "$TEST_ACTION_EXIT"
   return { dir, env };
 }
 
+async function audioFixture() {
+  const { dir, env } = await fixture("inactive");
+  await writeFile(join(dir, "bin", "pactl"), `#!/bin/sh
+if [ "$1" = "--format=json" ]; then
+  printf '%s' "$TEST_ERROR" >&2
+  case "$2 $3" in
+    "info ") printf '%s' "$TEST_AUDIO_INFO" ;;
+    "list sinks") printf '%s' "$TEST_SINKS" ;;
+    "list sources") printf '%s' "$TEST_SOURCES" ;;
+  esac
+  exit "$TEST_STATUS_EXIT"
+fi
+printf '%s\\n' "$@" >> "$TEST_LOG"
+printf '%s' "$TEST_ERROR" >&2
+exit "$TEST_ACTION_EXIT"
+`, { mode: 0o755 });
+  return {
+    dir,
+    env: {
+      ...env,
+      ROFI_DATA: JSON.stringify(["Audio"]),
+      TEST_AUDIO_INFO: JSON.stringify({ default_sink_name: "speakers", default_source_name: "mic" }),
+      TEST_SINKS: JSON.stringify([
+        { name: "speakers", description: "Speakers" },
+        { name: "headphones", description: "Headphones" },
+      ]),
+      TEST_SOURCES: JSON.stringify([
+        { name: "mic", description: "Microphone" },
+        { name: "webcam", description: "Webcam" },
+      ]),
+    },
+  };
+}
+
 async function run(env, selection) {
   const child = Bun.spawn([process.execPath, script, ...(selection ? [selection] : [])], {
     env: { ...env, ROFI_RETV: selection ? "1" : "0" },
@@ -109,6 +143,73 @@ linuxTest("hyprwhspr rechecks state before acting on a stale selection", async (
     expect(await run({ ...env, TEST_STATE: "inactive" }, "Reload model"))
       .toMatchObject({ code: 0, stdout: "" });
     expect(await Bun.file(env.TEST_LOG).exists()).toBe(false);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+linuxTest("audio is a top-level menu with inputs, outputs, and marked defaults", async () => {
+  const { dir, env } = await audioFixture();
+  try {
+    const root = await run({ ...env, ROFI_DATA: "[]" });
+    expect(root.labels.slice(0, 2)).toEqual(["Niri", "Audio"]);
+    const menu = await run({ ...env, ROFI_DATA: "[]" }, "Audio");
+    expect(menu).toMatchObject({
+      code: 0,
+      labels: ["Output: Speakers ✓", "Output: Headphones", "Input: Microphone ✓", "Input: Webcam"],
+    });
+    expect(menu.stdout).toContain("\u{F028}  Output: Speakers ✓");
+    expect(menu.stdout).toContain("\u{F130}  Input: Microphone ✓");
+    expect(await Bun.file(env.TEST_LOG).exists()).toBe(false);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+for (const [selection, kind, name] of [
+  ["Output: Speakers ✓", "sink", "speakers"],
+  ["Output: Headphones", "sink", "headphones"],
+  ["Input: Microphone ✓", "source", "mic"],
+  ["Input: Webcam", "source", "webcam"],
+]) {
+  linuxTest(`audio sets default: ${selection}`, async () => {
+    const { dir, env } = await audioFixture();
+    try {
+      expect(await run(env, selection)).toMatchObject({ code: 0, stdout: "" });
+      expect(await Bun.file(env.TEST_LOG).text()).toBe(`set-default-${kind}\n${name}\n`);
+      expect(await run({ ...env, TEST_ACTION_EXIT: "1", TEST_ERROR: "access denied" }, selection))
+        .toMatchObject({ code: 1, stderr: expect.stringContaining("access denied") });
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+}
+
+linuxTest("audio distinguishes duplicate descriptions and safely passes device names", async () => {
+  const { dir, env } = await audioFixture();
+  const name = "usb mic; $(touch nope)";
+  try {
+    env.TEST_SOURCES = JSON.stringify([
+      { name: "mic", description: "Microphone" },
+      { name, description: "Microphone" },
+    ]);
+    const selection = `Input: Microphone (${name})`;
+    expect((await run(env)).labels).toContain("Input: Microphone (mic) ✓");
+    expect((await run(env)).labels).toContain(selection);
+    expect(await run(env, selection)).toMatchObject({ code: 0, stdout: "" });
+    expect(await Bun.file(env.TEST_LOG).text()).toBe(`set-default-source\n${name}\n`);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+linuxTest("audio handles empty device lists and reports server failures", async () => {
+  const { dir, env } = await audioFixture();
+  try {
+    expect(await run({ ...env, TEST_SINKS: "[]", TEST_SOURCES: "[]" }))
+      .toMatchObject({ code: 0, labels: [] });
+    expect(await run({ ...env, TEST_STATUS_EXIT: "1", TEST_ERROR: "connection refused" }))
+      .toMatchObject({ code: 1, labels: [], stderr: expect.stringContaining("connection refused") });
   } finally {
     await rm(dir, { recursive: true, force: true });
   }

@@ -103,6 +103,36 @@ const root = {
       return entries;
     }),
   })),
+  "\u{F028}  Audio": submenu(async () => {
+    const pactl = async (args) => {
+      const result = await $`pactl ${args}`.quiet().nothrow();
+      if (result.exitCode !== 0) {
+        await fail(`pactl ${args.join(" ")} failed: ${result.stderr.toString().trim()}`);
+      }
+      return result.stdout.toString();
+    };
+    const [info, sinks, sources] = await Promise.all([
+      pactl(["--format=json", "info"]),
+      pactl(["--format=json", "list", "sinks"]),
+      pactl(["--format=json", "list", "sources"]),
+    ]).then((results) => results.map((result) => JSON.parse(result)));
+    const entries = {};
+    for (const [kind, direction, icon, devices, current] of [
+      ["sink", "Output", "\u{F028}", sinks, info.default_sink_name],
+      ["source", "Input", "\u{F130}", sources, info.default_source_name],
+    ]) {
+      for (const device of devices) {
+        const description = device.description || device.name;
+        const duplicate = devices.some((other) => other.name !== device.name
+          && (other.description || other.name) === description);
+        const label = `${icon}  ${direction}: ${description}${duplicate ? ` (${device.name})` : ""}${device.name === current ? " ✓" : ""}`;
+        entries[label] = async () => {
+          await pactl([`set-default-${kind}`, device.name]);
+        };
+      }
+    }
+    return entries;
+  }),
   "\u{F130}  Hyprwhspr": submenu(async () => {
     const status = await $`systemctl --user show hyprwhspr.service --property=ActiveState --value`.quiet().nothrow();
     if (status.exitCode !== 0) {
