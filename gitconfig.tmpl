@@ -27,8 +27,6 @@
 	wip = commit -n -m WIP
 	print-commit-message = log --pretty="format:%B"
 	cgen = "!f() { git-mgen | git commit -F - -e; }; f"
-	cqw = "!opencode run -m opencode-go/qwen3.8-max /git-commit"
-	sqw = "!opencode mini -m opencode-go/qwen3.8-max --prompt /split-commit"
 	cds = "!opencode run -m opencode-go/deepseek-v4.1-flash /git-commit"
 	sds = "!opencode mini -m opencode-go/deepseek-v4.1-flash --prompt /split-commit"
 

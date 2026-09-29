@@ -68,16 +68,6 @@ customCommands:
         context: "status, files"
         description: "AI generated message"
         output: terminal
-      - key: q
-        command: "git cqw"
-        context: "status, files"
-        description: "OpenCode and Qianwen"
-        output: terminal
-      - key: Q
-        command: "git sqw"
-        context: "status, files"
-        description: "Split commit with OpenCode and Qianwen"
-        output: terminal
       - key: d
         command: "git cds"
         context: "status, files"
