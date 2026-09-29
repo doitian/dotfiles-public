@@ -103,6 +103,41 @@ const root = {
       return entries;
     }),
   })),
+  "\u{F130}  Hyprwhspr": submenu(async () => {
+    const status = await $`systemctl --user show hyprwhspr.service --property=ActiveState --value`.quiet().nothrow();
+    if (status.exitCode !== 0) {
+      await fail(`cannot read hyprwhspr service status: ${status.stderr.toString().trim()}`);
+    }
+    const state = status.stdout.toString().trim();
+    const entries = {};
+    const serviceAction = (action) => async () => {
+      const result = await $`systemctl --user ${action} hyprwhspr.service`.quiet().nothrow();
+      if (result.exitCode !== 0) {
+        await fail(`hyprwhspr ${action} failed: ${result.stderr.toString().trim()}`);
+      }
+    };
+    if (["active", "reloading", "activating"].includes(state)) {
+      entries["\u{F04D}  Stop service"] = serviceAction("stop");
+      entries["\u{F021}  Restart service"] = serviceAction("restart");
+    } else if (["inactive", "failed"].includes(state)) {
+      entries["\u{F04B}  Start service"] = serviceAction("start");
+    }
+    if (state === "active") {
+      // Match hyprwhspr's runtime path and model lifecycle marker (lib/src/paths.py).
+      const runtime = process.env.XDG_RUNTIME_DIR
+        ? join(process.env.XDG_RUNTIME_DIR, "hyprwhspr")
+        : join(tmpdir(), `hyprwhspr-${process.getuid()}`);
+      const unloaded = await Bun.file(join(runtime, "model_unloaded")).exists();
+      const action = unloaded ? "reload" : "unload";
+      entries[unloaded ? "\u{F01E}  Reload model" : "\u{F019}  Unload model"] = async () => {
+        const result = await $`hyprwhspr model ${action}`.quiet().nothrow();
+        if (result.exitCode !== 0) {
+          await fail(`hyprwhspr model ${action} failed: ${result.stderr.toString().trim() || result.stdout.toString().trim()}`);
+        }
+      };
+    }
+    return entries;
+  }),
   "\u{F1DE}  Waybar": submenu(async () => {
     const entries = {
       // Defer until rofi has closed: killing waybar now would make waybar's
