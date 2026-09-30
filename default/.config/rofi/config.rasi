@@ -18,3 +18,141 @@ configuration {
   kb-select-9: "Control+9";
   kb-select-10: "Control+0";
 }
+
+/* Catppuccin Macchiato: match Waybar's desktop chrome, not the Latte apps. */
+* {
+  font: "Sarasa UI SC 12";
+  background: #24273a;
+  foreground: #cad3f5;
+  mantle: #1e2030;
+  crust: #181926;
+  surface0: #363a4f;
+  surface1: #494d64;
+  subtext0: #a5adcb;
+  blue: #8aadf4;
+  mauve: #c6a0f6;
+  red: #ed8796;
+
+  normal-background: transparent;
+  normal-foreground: @foreground;
+  alternate-normal-background: @normal-background;
+  alternate-normal-foreground: @foreground;
+  selected-normal-background: @blue;
+  selected-normal-foreground: @crust;
+  active-background: transparent;
+  active-foreground: @mauve;
+  alternate-active-background: @active-background;
+  alternate-active-foreground: @active-foreground;
+  selected-active-background: @mauve;
+  selected-active-foreground: @crust;
+  urgent-background: transparent;
+  urgent-foreground: @red;
+  alternate-urgent-background: @urgent-background;
+  alternate-urgent-foreground: @urgent-foreground;
+  selected-urgent-background: @red;
+  selected-urgent-foreground: @crust;
+
+  background-color: transparent;
+  text-color: @foreground;
+  border-color: @surface1;
+  separatorcolor: @surface0;
+}
+
+window {
+  location: center;
+  anchor: center;
+  width: 800px;
+  background-color: @mantle;
+  border: 1px;
+  border-radius: 14px;
+  padding: 16px;
+}
+
+mainbox {
+  spacing: 12px;
+  padding: 0;
+}
+
+inputbar {
+  children: [ prompt, entry, overlay, case-indicator ];
+  background-color: @background;
+  border: 1px;
+  border-radius: 8px;
+  padding: 12px;
+  spacing: 12px;
+}
+
+prompt {
+  text-color: @blue;
+}
+
+entry {
+  placeholder: "Type to filter…";
+  placeholder-color: @subtext0;
+  cursor-color: @blue;
+}
+
+case-indicator {
+  text-color: @mauve;
+}
+
+overlay {
+  background-color: @surface0;
+  text-color: @foreground;
+  border-radius: 4px;
+}
+
+listview {
+  lines: 10;
+  columns: 1;
+  fixed-height: false;
+  border: 0;
+  padding: 0;
+  spacing: 4px;
+  scrollbar: true;
+}
+
+element {
+  padding: 9px 12px;
+  spacing: 12px;
+  border: 0;
+  border-radius: 8px;
+}
+
+element-icon {
+  size: 24px;
+  vertical-align: 0.5;
+}
+
+element-text {
+  vertical-align: 0.5;
+  highlight: bold underline;
+}
+
+scrollbar {
+  width: 4px;
+  handle-width: 4px;
+  handle-color: @surface1;
+  border-radius: 2px;
+}
+
+message {
+  border: 1px 0 0;
+  padding: 12px 0 0;
+}
+
+textbox {
+  text-color: @subtext0;
+}
+
+sidebar, mode-switcher {
+  border: 1px 0 0;
+  border-color: @surface0;
+  padding: 12px 0 0;
+  spacing: 4px;
+}
+
+button {
+  padding: 8px 12px;
+  border-radius: 8px;
+}
