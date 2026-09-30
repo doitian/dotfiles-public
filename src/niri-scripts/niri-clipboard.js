@@ -22,6 +22,11 @@ const IMAGE_PREVIEW = /\[\[\s?binary.*?\b(gif|jpe?g|png|bmp|tiff|webp)\b/i;
 const ICON_DIR = join(tmpdir(), "cliphist");
 const PASTE_DELAY_MS = 300;
 const HTML_TAG = /<\/?[a-z][^>]*>/i;
+// rofi reports kb-custom-N as ROFI_RETV 10 + (N - 1), so the Ctrl+Enter /
+// Ctrl+Shift+Enter bindings below (kb-custom-2/kb-custom-3) arrive as 11/12.
+const RETV_COPY = "1";
+const RETV_PASTE = "11";
+const RETV_PASTE_PLAIN = "12";
 
 async function fail(msg) {
   console.error(`niri-clipboard: ${msg}`);
@@ -184,11 +189,11 @@ async function runPending(pendingPath) {
 if (process.env.ROFI_RETV !== undefined) {
   const selection = process.argv[2];
   const retv = process.env.ROFI_RETV;
-  if (retv === "1" && selection !== undefined) {
+  if (retv === RETV_COPY && selection !== undefined) {
     await copy(selection);
-  } else if (retv === "12" && selection !== undefined) {
+  } else if (retv === RETV_PASTE && selection !== undefined) {
     await queue("paste", selection);
-  } else if (retv === "13" && selection !== undefined) {
+  } else if (retv === RETV_PASTE_PLAIN && selection !== undefined) {
     await queue("plain", selection);
   } else {
     await list();

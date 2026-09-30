@@ -150,7 +150,7 @@ linuxTest("copies the selected row while wl-copy keeps serving", async () => {
 linuxTest("paste shortcut queues a paste action", async () => {
   const { dir, env } = await fixture();
   try {
-    const { code, stdout } = await run({ ...env, ROFI_RETV: "12" }, ["42\t[[ binary data 6 B png 2x2 ]]"]);
+    const { code, stdout } = await run({ ...env, ROFI_RETV: "11" }, ["42\t[[ binary data 6 B png 2x2 ]]"]);
     expect(code).toBe(0);
     expect(stdout).toBe("");
     expect(await Bun.file(env.NIRI_CLIPBOARD_PENDING).json()).toEqual({ action: "paste", id: "42" });
@@ -162,7 +162,7 @@ linuxTest("paste shortcut queues a paste action", async () => {
 linuxTest("plain shortcut queues a plain action", async () => {
   const { dir, env } = await fixture();
   try {
-    const { code, stdout } = await run({ ...env, ROFI_RETV: "13" }, ["41\thello world"]);
+    const { code, stdout } = await run({ ...env, ROFI_RETV: "12" }, ["41\thello world"]);
     expect(code).toBe(0);
     expect(stdout).toBe("");
     expect(await Bun.file(env.NIRI_CLIPBOARD_PENDING).json()).toEqual({ action: "plain", id: "41" });
@@ -174,7 +174,7 @@ linuxTest("plain shortcut queues a plain action", async () => {
 linuxTest("plain shortcut refuses image rows", async () => {
   const { dir, env } = await fixture();
   try {
-    const { code, stderr } = await run({ ...env, ROFI_RETV: "13" }, ["42\t[[ binary data 6 B png 2x2 ]]"]);
+    const { code, stderr } = await run({ ...env, ROFI_RETV: "12" }, ["42\t[[ binary data 6 B png 2x2 ]]"]);
     expect(code).toBe(1);
     expect(stderr).toContain("paste as plain text works only for text entries");
     expect(await Bun.file(env.NIRI_CLIPBOARD_PENDING).exists()).toBe(false);
