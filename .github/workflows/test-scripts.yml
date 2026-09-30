@@ -21,6 +21,9 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: "1.4.1"
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
       - uses: jdx/mise-action@v4
         with:
           version: "2026.9.1"

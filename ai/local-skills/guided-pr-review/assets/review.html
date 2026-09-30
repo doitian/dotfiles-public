@@ -20,11 +20,13 @@
 @media(max-width:720px){.layout{display:block}.sidebar{display:none}.mobile-picker{display:block}.topbar{padding:10px 12px;position:static}.topbar .brand{flex-wrap:wrap;gap:8px}.file-header{position:static;flex-wrap:wrap}main{padding:18px 10px}.diff-header,.diff-row{grid-template-columns:36px 36px 17px minmax(0,1fr)}h1{font-size:21px}.toolbar{gap:6px}.file{scroll-margin-top:10px}.annotation,.saved-note{padding:12px}.diff{font-size:12px}}
 @media(pointer:coarse){button,select{min-height:40px}.line-number{min-height:32px}.annotation textarea{font-size:16px}}
 .related-context{margin:18px 0 22px;max-width:1100px}.related-context h2{font-size:15px;font-weight:600;margin:0 0 10px}.context-item{margin:0 0 14px;padding-left:14px;border-left:2px solid var(--line)}.context-item h3{font-size:14px;font-weight:600;margin:0 0 4px}.context-body{margin:0 0 6px;white-space:pre-wrap;overflow-wrap:anywhere}.context-links{display:flex;align-items:center;gap:6px 14px;flex-wrap:wrap;margin-top:6px;font-size:12px}.context-code{margin-top:8px}.context-code summary{cursor:pointer;color:var(--muted);font-size:12px}.context-code pre{font:12px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--panel);padding:10px;border-radius:5px}
+#guided-review[data-surface=pages] .sidebar{height:auto;max-height:calc(100vh - 61px)}
 </style>
 <!--/page-head-->
 </head>
 <body>
 <!--#page-body-->
+<div id="guided-review">
 <header class="topbar">
   <div class="brand"><strong id="pr-label"></strong><span id="pr-title" class="muted small"></span><code id="head-label" class="small"></code></div>
   <div class="toolbar"><span id="save-status" class="small muted" role="status" aria-live="polite"></span><button id="notes-button" type="button">Questions (0)</button><a id="pr-link" class="small" target="_blank" rel="noopener noreferrer">GitHub PR ↗</a></div>
@@ -36,7 +38,7 @@
     <div id="chunk-meta" class="small muted"></div><h1 id="chunk-title"></h1><p id="objective" class="objective"></p>
     <section id="related-context" class="related-context" aria-labelledby="context-heading" hidden><h2 id="context-heading">Related context</h2><div id="context-items"></div></section>
     <details class="review-focus"><summary>Review focus</summary><ul id="focus"></ul></details>
-    <div class="chunk-actions"><div class="toolbar"><button id="previous" type="button">← Previous chunk</button><button id="next" type="button" class="primary">Next chunk →</button></div><label class="reviewed"><input id="reviewed" type="checkbox">Reviewed by me</label></div>
+    <div class="chunk-actions"><div class="toolbar"><button id="previous" type="button">← Previous chunk</button><button id="next" type="button" class="primary">Next chunk →</button></div><label class="reviewed"><input id="reviewed" type="checkbox"><span id="reviewed-label">Reviewed by me</span></label></div>
     <ul id="file-index" class="file-index" aria-label="Files in this chunk"></ul>
     <div id="files"></div>
     <div class="bottom-nav"><button id="previous-bottom" type="button">← Previous chunk</button><span id="next-label" class="small muted"></span><button id="next-bottom" type="button" class="primary">Next chunk →</button></div>
@@ -51,26 +53,32 @@
   <div id="questions-list"></div>
 </dialog>
 <script id="review-data" type="application/json">__DATA__</script>
+</div>
 <script>
 (() => {
 'use strict';
-const data=JSON.parse(document.getElementById('review-data').textContent);
+__PAGES_STORE__
+const root=document.getElementById('guided-review');
+const $=id=>root.querySelector('#'+id);
+const data=JSON.parse($('review-data').textContent);
+root.dataset.surface=data.surface;
 const chunks=data.chunks;
 document.title=data.label+' · Guided review';
-document.getElementById('pr-label').textContent=data.label;
-document.getElementById('pr-title').textContent=data.title;
-document.getElementById('head-label').textContent=data.head.slice(0,10);
-document.getElementById('pr-link').href=data.url;
-document.getElementById('review-count').textContent='REVIEW ORDER · '+chunks.length+' CHUNKS';
-const storageKey='guided-pr-review-'+data.reviewId;
-const artifactMode=data.surface==='artifact';
+$('pr-label').textContent=data.label;
+$('pr-title').textContent=data.title;
+$('head-label').textContent=data.head.slice(0,10);
+$('pr-link').href=data.url;
+$('review-count').textContent='REVIEW ORDER · '+chunks.length+' CHUNKS';
+const pagesMode=data.surface==='pages';
+const storageKey='guided-pr-review-'+data.reviewId+(pagesMode?'-pages':'');
+const artifactMode=data.surface==='artifact'||pagesMode;
 const token=document.querySelector('meta[name="review-token"]')?.content||'';
 const serverMode=!artifactMode && token!=='' && token!=='__'+'SAVE_TOKEN__' && location.protocol.startsWith('http');
-if(artifactMode)document.getElementById('export-questions').textContent='Show notes JSON';
-const $=id=>document.getElementById(id);
+if(artifactMode)$('export-questions').textContent='Show notes JSON';
 let state={version:1,reviewId:data.reviewId,head:data.head,updatedAt:0,current:1,reviewed:[],notes:[],drafts:{}};
 let saveTimer=null,saveSequence=0,queue=Promise.resolve(),browserSaved=false;
 let hostStore=null,hostShape=null;
+let pagesStore=null,pagesError='';
 let editor=null;
 const uid=()=>typeof crypto.randomUUID==='function'?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);
 const showText=text=>String(text).replaceAll('\u0000','␀');
@@ -78,6 +86,8 @@ const current=()=>chunks[state.current-1];
 function create(tag,className,text){const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined)node.textContent=text;return node;}
 function button(label,action,className=''){const node=create('button',className,label);node.type='button';node.addEventListener('click',action);return node;}
 function savingLabel(){
+  if(pagesError)return pagesError+' · use Copy questions';
+  if(pagesStore)return pagesStore.hasPending()?'Questions pending shared save':'Questions save with this Page';
   if(serverMode)return 'Notes save locally';
   if(hostStore)return 'Notes save with this review';
   return browserSaved?'Notes save in this browser':'Notes kept in this page · copy before closing';
@@ -86,6 +96,12 @@ function describeSaving(){
   const durable=serverMode||hostStore;
   $('notes-help').textContent='Click a line number to add a question. '+(durable?'Notes save alongside this review; tell your assistant “answer my saved notes” when ready.':'Use Copy questions to send your notes into the conversation. Browser storage is used when available; otherwise copy your notes before closing.')+' The review checkbox only records progress here.';
   $('questions-help').textContent=durable?'Tell your assistant “answer my saved notes for '+data.label+'”. Notes are saved alongside this review, with file and line context.':'Copy your questions into the conversation so the assistant can read them. Notes stay on this page if browser storage is unavailable.';
+  if(pagesMode){
+    const handoff=pagesStore?'Saved questions are shared with Page collaborators. Ask your assistant to read this Page\'s saved questions; use Copy questions if they are unavailable.':'Shared saving is unavailable. Use Copy questions to send them into the conversation.';
+    $('notes-help').textContent='Click a line number to add a question. '+handoff+' Review progress, navigation, and drafts stay '+(browserSaved?'in this browser.':'in this open view; they will be lost when it closes.');
+    $('questions-help').textContent=handoff+' For simultaneous review, use native Page comments with chunk, file, old/new line, and revision context.';
+    $('reviewed-label').textContent='Reviewed by me · '+(browserSaved?'this browser':'this view');
+  }
   $('save-status').textContent=savingLabel();
 }
 // Drafts stay in browser storage: they change on every keystroke and an
@@ -93,13 +109,21 @@ function describeSaving(){
 function hostRecord(){return {reviewId:state.reviewId,head:state.head,base:data.base,url:data.url,
   updatedAt:state.updatedAt,current:state.current,reviewed:state.reviewed,notes:state.notes};}
 const hostShapeOf=record=>JSON.stringify({...record,updatedAt:0});
+function saveBrowser(){
+  try{localStorage.setItem(storageKey,JSON.stringify(state));browserSaved=true;}catch{browserSaved=false;}
+}
 function save(immediate=false){
   state.updatedAt=Date.now();
-  try{localStorage.setItem(storageKey,JSON.stringify(state));browserSaved=true;}catch{browserSaved=false;}
+  saveBrowser();
   clearTimeout(saveTimer);
-  $('save-status').textContent=serverMode||hostStore?'Saving…':browserSaved?'Saved in this browser':'Notes kept in this page · export before closing';
+  $('save-status').textContent=pagesMode?savingLabel():serverMode||hostStore?'Saving…':browserSaved?'Saved in this browser':'Notes kept in this page · export before closing';
   const write=()=>{
     const sequence=++saveSequence;
+    if(pagesStore&&pagesStore.hasPending()){
+      $('save-status').textContent='Saving questions…';
+      pagesStore.flush().then(()=>{pagesError='';if(sequence===saveSequence)describeSaving();})
+        .catch(error=>{pagesError=error.message;if(sequence===saveSequence)describeSaving();});
+    }else if(pagesMode)$('save-status').textContent=savingLabel();
     if(hostStore){
       // One write at a time, in order, and only when the record really changed.
       const record=hostRecord(),shape=hostShapeOf(record);
@@ -136,7 +160,7 @@ function renderNav(){
 function go(id){if(id<1||id>chunks.length)return;state.current=id;render();save();window.scrollTo({top:0,behavior:'instant'});}
 function draftKey(file,side,line){return [state.current,file,side,line??'file'].join('|');}
 function openEditor(file,side,line,rowElement,note){
-  if(editor)editor.remove();document.querySelectorAll('.diff-row.selected').forEach(n=>n.classList.remove('selected'));
+  if(editor)editor.remove();root.querySelectorAll('.diff-row.selected').forEach(n=>n.classList.remove('selected'));
   const key=draftKey(file.path,side,line);
   const box=create('div','annotation');box.dataset.editor='true';editor=box;
   const area=create('textarea');area.id='question-editor';area.value=note?note.text:(state.drafts[key]||'');area.placeholder='Ask a question or leave a review note…';
@@ -147,20 +171,27 @@ function openEditor(file,side,line,rowElement,note){
     const text=area.value.trim();if(!text){area.focus();return;}
     const entry={id:note?.id||uid(),chunk:state.current,title:current().title,file:file.path,side,line:line??null,text,createdAt:note?.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString()};
     if(note)state.notes=state.notes.map(n=>n.id===note.id?entry:n);else state.notes.push(entry);
+    if(pagesMode){state.pagePending??={};state.pagePending[entry.id]=entry;}
+    if(pagesStore)pagesStore.change(entry.id,entry);
     delete state.drafts[key];save(true);renderFileNotes(file);box.remove();editor=null;updateCounts();
-  },'primary'),button('Cancel',()=>{box.remove();editor=null;document.querySelectorAll('.diff-row.selected').forEach(n=>n.classList.remove('selected'));}));
+  },'primary'),button('Cancel',()=>{box.remove();editor=null;root.querySelectorAll('.diff-row.selected').forEach(n=>n.classList.remove('selected'));}));
   box.append(actions);
-  if(rowElement){rowElement.classList.add('selected');rowElement.after(box);}else document.getElementById(fileId(file)).querySelector('.file-header').after(box);
+  if(rowElement){rowElement.classList.add('selected');rowElement.after(box);}else $(fileId(file)).querySelector('.file-header').after(box);
   area.focus({preventScroll:true});box.scrollIntoView({block:'nearest'});
 }
 const fileId=file=>'file-'+current().files.indexOf(file);
 function renderFileNotes(file){
-  const section=document.getElementById(fileId(file));section.querySelectorAll('.saved-note').forEach(n=>n.remove());
+  const section=$(fileId(file));section.querySelectorAll('.saved-note').forEach(n=>n.remove());
   for(const note of state.notes.filter(n=>n.chunk===state.current&&n.file===file.path)){
     const box=create('div','saved-note');box.dataset.noteId=note.id;box.append(create('div','small muted','Question · '+locationLabel(note)),create('p','note-text',note.text));
     const actions=create('div','toolbar');
     const row=note.side==='file'?null:section.querySelector('[data-'+note.side+'="'+note.line+'"]');
-    actions.append(button('Edit',()=>openEditor(file,note.side,note.line,row,note)),button('Remove',()=>{state.notes=state.notes.filter(n=>n.id!==note.id);save(true);renderFileNotes(file);updateCounts();}));box.append(actions);
+    actions.append(button('Edit',()=>openEditor(file,note.side,note.line,row,note)),button('Remove',()=>{
+      state.notes=state.notes.filter(n=>n.id!==note.id);
+      if(pagesMode){state.pagePending??={};state.pagePending[note.id]=null;}
+      if(pagesStore)pagesStore.change(note.id,null);
+      save(true);renderFileNotes(file);updateCounts();
+    }));box.append(actions);
     if(row)row.after(box);else section.querySelector('.file-header').after(box);
   }
 }
@@ -216,13 +247,15 @@ function render(){
     $('files').append(renderFile(file,index));renderFileNotes(file);
   }
 }
-function questionsText(){return data.label+' review questions\nSnapshot: '+data.head+'\nBase: '+data.base+'\n\n'+state.notes.map((n,i)=>(i+1)+'. Chunk '+n.chunk+' — '+n.title+'\n'+n.file+' · '+locationLabel(n)+'\n'+n.text).join('\n\n');}
-function showQuestions(){
+function questionsText(){return data.label+' review questions\nSnapshot: '+data.head+'\nBase: '+data.base+
+  (pagesMode?'\nReviewed by me in this view: '+(state.reviewed.join(', ')||'none')+'\nCurrent chunk: '+state.current:'')+
+  '\n\n'+state.notes.map((n,i)=>(i+1)+'. Chunk '+n.chunk+' — '+n.title+'\n'+n.file+' · '+locationLabel(n)+'\n'+n.text).join('\n\n');}
+function renderQuestions(){
   $('questions-list').replaceChildren();$('copy-status').textContent='';$('copy-fallback').hidden=true;
   if(!state.notes.length)$('questions-list').append(create('p','muted','No saved questions yet. Click a line number or Add question beside a file.'));
-  for(const note of state.notes){const item=create('div','question-item');item.append(create('div','small muted','Chunk '+note.chunk+' · '+note.file+' · '+locationLabel(note)),create('p','',note.text),button('Go to this question',()=>{$('questions-dialog').close();go(note.chunk);document.querySelector('[data-note-id="'+note.id+'"]').scrollIntoView({block:'center'});}));$('questions-list').append(item);}
-  $('questions-dialog').showModal();
+  for(const note of state.notes){const item=create('div','question-item');item.append(create('div','small muted','Chunk '+note.chunk+' · '+note.file+' · '+locationLabel(note)),create('p','',note.text),button('Go to this question',()=>{$('questions-dialog').close();go(note.chunk);root.querySelector('[data-note-id="'+note.id+'"]').scrollIntoView({block:'center'});}));$('questions-list').append(item);}
 }
+function showQuestions(){renderQuestions();$('questions-dialog').showModal();}
 for(const id of ['previous','previous-bottom'])$(id).addEventListener('click',()=>go(state.current-1));
 for(const id of ['next','next-bottom'])$(id).addEventListener('click',()=>go(state.current+1));
 $('mobile-chunk').addEventListener('change',e=>go(Number(e.target.value)));
@@ -230,17 +263,16 @@ $('reviewed').addEventListener('change',e=>{state.reviewed=state.reviewed.filter
 $('notes-button').addEventListener('click',showQuestions);$('close-questions').addEventListener('click',()=>$('questions-dialog').close());
 $('copy-questions').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(questionsText());$('copy-status').textContent='Copied with file and line context. Paste into this conversation.';}catch{$('copy-text').value=questionsText();$('copy-fallback').hidden=false;$('copy-text').select();}});
 $('export-questions').addEventListener('click',()=>{
-  const text=JSON.stringify({pr:data.url,reviewId:data.reviewId,head:data.head,base:data.base,notes:state.notes},null,2);
+  const text=JSON.stringify({pr:data.url,reviewId:data.reviewId,head:data.head,base:data.base,notes:state.notes,
+    ...(pagesMode?{reviewed:state.reviewed,current:state.current}:{})},null,2);
   $('copy-text').value=text;$('copy-fallback').hidden=false;$('copy-status').textContent='Copy these notes with their snapshot and line context.';
   if(artifactMode)return;
   try{const url=URL.createObjectURL(new Blob([text],{type:'application/json'}));const a=create('a');a.href=url;a.download='pr-'+data.number+'-notes.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}catch{}
 });
 window.addEventListener('pagehide',()=>save(true));
-// Optional host document store, feature-detected and absent everywhere else.
-// A host that grants one keeps notes with the review so an assistant can read
-// them back; every other host keeps browser storage and the copy/export handoff.
+// A granted Claude store lets the assistant read saved notes without a paste.
 async function connectHostStore(){
-  if(serverMode||typeof window.claude?.use!=='function')return;
+  if(serverMode||pagesMode||typeof window.claude?.use!=='function')return;
   let store=null;
   try{store=await window.claude.use('db');}catch{}
   if(!store)return;
@@ -259,11 +291,43 @@ async function connectHostStore(){
   else hostShape=hostShapeOf(hostRecord());
   describeSaving();
 }
+function connectPagesStore(){
+  if(!pagesMode||typeof window.openai?.setWidgetState!=='function')return;
+  let widgetState=window.openai.widgetState;
+  const validNote=note=>{
+    if(!note||typeof note.id!=='string'||!(/^[A-Za-z0-9_-]{1,100}$/).test(note.id)||
+      !Number.isInteger(note.chunk)||typeof note.text!=='string')return false;
+    const file=chunks[note.chunk-1]?.files.find(file=>file.path===note.file);
+    return !!file&&(note.side==='file'?note.line===null:
+      ['old','new'].includes(note.side)&&Number.isInteger(note.line)&&file.rows.some(row=>row[note.side]===note.line));
+  };
+  pagesStore=createPagesStore({read:()=>widgetState,write:async snapshot=>{
+    const observed=widgetState;
+    await window.openai.setWidgetState(snapshot);
+    if(widgetState===observed)widgetState=snapshot;
+  }},{reviewId:data.reviewId,head:data.head,base:data.base,url:data.url},{
+    pending:state.pagePending,validNote,onChange:saved=>{
+      state.notes=saved.notes;state.pagePending=saved.pending;saveBrowser();
+      for(const file of current().files)renderFileNotes(file);
+      updateCounts();if($('questions-dialog').open)renderQuestions();
+    }
+  });
+  const receive=incoming=>{
+    widgetState=incoming;
+    pagesError=pagesStore.receive(incoming)?'':'Saved state belongs to another review or is invalid';
+    describeSaving();
+  };
+  window.addEventListener('openai:set_globals',event=>{
+    const globals=event.detail?.globals;
+    if(globals&&Object.hasOwn(globals,'widgetState'))receive(globals.widgetState);
+  });
+  receive(widgetState);
+}
 async function start(){
   try{const probe=storageKey+':probe';localStorage.setItem(probe,'1');localStorage.removeItem(probe);browserSaved=true;const local=JSON.parse(localStorage.getItem(storageKey)||'null');if(local&&local.reviewId===data.reviewId)state={...state,...local};}catch{}
   if(serverMode){try{const response=await fetch('/state',{headers:{'X-Review-Token':token}});if(response.ok){const saved=await response.json();if(saved&&saved.reviewId===data.reviewId&&(saved.updatedAt||0)>=(state.updatedAt||0))state={...state,...saved};}}catch{}}
   if(!Number.isInteger(state.current)||state.current<1||state.current>chunks.length)state.current=1;
-  render();describeSaving();connectHostStore();
+  render();describeSaving();connectPagesStore();connectHostStore();
 }
 start();
 })();

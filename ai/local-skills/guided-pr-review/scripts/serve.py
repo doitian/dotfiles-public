@@ -96,7 +96,7 @@ def main():
                 validate(state)
                 with lock:
                     temp = root / 'review-notes.json.tmp'
-                    temp.write_text(json.dumps(state, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+                    temp.write_text(json.dumps(state, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')
                     os.replace(temp, state_file)
                 self.reply(200, b'{"saved":true}')
             except (ValueError, TypeError, KeyError):

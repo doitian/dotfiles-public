@@ -20,7 +20,7 @@ def run(args, repo=None, binary=False, check=True):
 
 
 def write_json(filename, value):
-    filename.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    filename.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')
 
 
 def load(filename):
@@ -233,11 +233,18 @@ def build(args):
     # A host that wraps the page in its own document skeleton (a native artifact)
     # receives the marked head and body regions only, never a second <html>.
     fragment = '\n'.join(region(template, name) for name in ('page-head', 'page-body'))
+    pages_store = (Path(__file__).resolve().parent.parent / 'assets' / 'pages-store.js').read_text(encoding='utf-8')
     title = html.escape(f"{data['label']} guided review", quote=False)
-    for filename, source, surface in [('review.html', template, 'local'), ('review-artifact.html', fragment, 'artifact')]:
+    for filename, source, surface in [('review.html', template, 'local'),
+                                     ('review-artifact.html', fragment, 'artifact'),
+                                     ('review-pages.html', fragment, 'pages')]:
         page_data = {**data, 'surface': surface}
         payload = json.dumps(page_data, ensure_ascii=False, separators=(',', ':')).replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026')
-        (directory / filename).write_text(source.replace('__TITLE__', title).replace('__DATA__', payload), encoding='utf-8')
+        rendered = source.replace('__PAGES_STORE__', pages_store if surface == 'pages' else '').replace('__TITLE__', title).replace('__DATA__', payload)
+        (directory / filename).write_text(rendered, encoding='utf-8', newline='\n')
+    pages_bytes = len((directory / 'review-pages.html').read_bytes())
+    write_json(directory / 'pages-compatibility.json', {'file': 'review-pages.html', 'utf8Bytes': pages_bytes,
+               'limitBytes': 256 * 1024, 'embeddable': pages_bytes <= 256 * 1024})
     write_json(directory / 'review-data.json', data)
     write_json(directory / 'coverage.json', {'complete': True, 'changedFiles': len(files), 'chunks': len(chunks),
               'hunksAndNonTextChanges': len(expected), 'additions': sum(c['additions'] for c in chunks),
@@ -245,6 +252,9 @@ def build(args):
     print(f'Built {len(chunks)} chunks covering all {len(files)} changed paths exactly once.')
     print(directory / 'review.html')
     print(directory / 'review-artifact.html')
+    print(directory / 'review-pages.html')
+    print(f"Pages embed: {pages_bytes} / {256 * 1024} UTF-8 bytes" +
+          ('; use a complete HTML fallback.' if pages_bytes > 256 * 1024 else ''))
 
 
 def main():
