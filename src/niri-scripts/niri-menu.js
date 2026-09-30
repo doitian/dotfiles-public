@@ -22,11 +22,12 @@ import { home } from "../lib/env.js";
 const SUBMENU = Symbol("submenu");
 const submenu = (fn) => ({ [SUBMENU]: fn });
 
-// Labels may start with an icon glyph (Private Use Area) for display. It is
-// stripped from the row value so prefix/normal matching works on plain text;
-// the full label is shown via rofi's display row option.
+// Monospaced text glyphs stay aligned and inherit the row's theme colors,
+// unlike rasterized Rofi icons. Search and selection still use plain labels.
+const ICON_FONT = "MesloLGS Nerd Font Mono";
 const PUA_ICON = /^[\u{e000}-\u{f8ff}]\s*/u;
 const stripIcon = (label) => label.replace(PUA_ICON, "");
+const escapeMarkup = (text) => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 
 function findEntry(entries, selection) {
   if (selection in entries) return entries[selection];
@@ -198,16 +199,24 @@ async function resolveNode(path) {
   return node;
 }
 
-function printLevel(entries, path) {
+async function hasIconFont() {
+  if (!Bun.which("fc-match")) return false;
+  const result = await $`fc-match -f '%{family}' ${ICON_FONT}`.quiet().nothrow();
+  if (result.exitCode !== 0) return false;
+  const families = result.stdout.toString().split(",").map((family) => family.trim());
+  return families.includes(ICON_FONT);
+}
+
+async function printLevel(entries, path) {
   const prompt = path.length ? `${path.join(" ")}> ` : "> ";
-  process.stdout.write(`\0prompt\x1f${prompt}\n\0no-custom\x1ftrue\n\0use-hot-keys\x1ftrue\n\0data\x1f${JSON.stringify(path)}\n`);
+  process.stdout.write(`\0prompt\x1f${prompt}\n\0no-custom\x1ftrue\n\0use-hot-keys\x1ftrue\n\0markup-rows\x1ftrue\n\0data\x1f${JSON.stringify(path)}\n`);
+  const showIcons = await hasIconFont();
   for (const label of Object.keys(entries)) {
     const plain = stripIcon(label);
-    if (plain !== label) {
-      process.stdout.write(`${plain}\0display\x1f${label}\n`);
-    } else {
-      console.log(label);
-    }
+    const icon = showIcons && plain !== label
+      ? `<span font_family="${ICON_FONT}" rise="-3pt">${label[0]}</span>  `
+      : "";
+    process.stdout.write(`${plain}\0display\x1f${icon}<span size="12pt">${escapeMarkup(plain)}</span>\n`);
   }
 }
 
@@ -237,7 +246,7 @@ if (process.env.ROFI_RETV !== undefined) {
     // kb-custom-1 (Ctrl+T): go up one level; reprint current level at root
     const parentPath = path.slice(0, -1);
     const parent = parentPath.length > 0 ? await resolveNode(parentPath) : root;
-    printLevel(parent ?? root, parent ? parentPath : path);
+    await printLevel(parent ?? root, parent ? parentPath : path);
     process.exit(0);
   }
   if (process.env.ROFI_RETV === "1") {
@@ -248,9 +257,9 @@ if (process.env.ROFI_RETV !== undefined) {
       process.exit(0);
     }
     const child = entry[SUBMENU] ? await entry[SUBMENU]() : entry;
-    printLevel(child, [...path, process.argv[2]]);
+    await printLevel(child, [...path, process.argv[2]]);
   } else {
-    printLevel(node, path);
+    await printLevel(node, path);
   }
   process.exit(0);
 }
@@ -260,8 +269,10 @@ if (start.length > 0 && !(await resolveNode(start))) {
   await fail(`no submenu at path: ${start.join(" > ")}`);
 }
 
+// Rofi calculates row height from the widget font, not inline markup sizes.
+const menuTheme = 'element-text { font: "Sarasa UI SC 18"; }';
 const pending = join(process.env.XDG_RUNTIME_DIR || tmpdir(), `niri-menu-${process.pid}.sh`);
-const r = await $`rofi -show niri -modes ${"niri:niri-menu"}`
+const r = await $`rofi -show niri -modes ${"niri:niri-menu"} -theme-str ${menuTheme}`
   .env({ ...process.env, NIRI_MENU_PENDING: pending, NIRI_MENU_START: JSON.stringify(start) })
   .quiet()
   .nothrow();

@@ -28,6 +28,10 @@ printf 'hyprwhspr %s\\n' "$*" >> "$TEST_LOG"
 printf '%s' "$TEST_ERROR" >&2
 exit "$TEST_ACTION_EXIT"
 `, { mode: 0o755 });
+  await writeFile(join(bin, "fc-match"), `#!/bin/sh
+printf '%s' "$TEST_FONT_FAMILY"
+exit "$TEST_FONT_EXIT"
+`, { mode: 0o755 });
   const env = {
     ...process.env,
     HOME: dir,
@@ -40,6 +44,8 @@ exit "$TEST_ACTION_EXIT"
     TEST_STATUS_EXIT: "0",
     TEST_ACTION_EXIT: "0",
     TEST_ERROR: "",
+    TEST_FONT_FAMILY: "MesloLGS Nerd Font Mono",
+    TEST_FONT_EXIT: "0",
   };
   return { dir, env };
 }
@@ -94,6 +100,80 @@ async function run(env, selection) {
     .map((line) => line.split("\0")[0]);
   return { code, stdout, stderr, labels };
 }
+
+linuxTest("menu launcher reserves row height for the larger icon font", async () => {
+  const { dir, env } = await fixture("inactive");
+  try {
+    await writeFile(join(dir, "bin", "rofi"), '#!/bin/sh\nprintf "%s\\n" "$@" > "$TEST_LOG"\n', { mode: 0o755 });
+    const child = Bun.spawn([process.execPath, script], {
+      env: { ...env, ROFI_RETV: undefined, ROFI_DATA: undefined },
+      stdout: "ignore",
+      stderr: "pipe",
+    });
+    expect(await child.exited).toBe(0);
+    const args = (await Bun.file(env.TEST_LOG).text()).trimEnd().split("\n");
+    expect(args[args.indexOf("-theme-str") + 1]).toBe('element-text { font: "Sarasa UI SC 18"; }');
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+linuxTest("menu glyphs use monospaced text and inherit theme colors", async () => {
+  const { dir, env } = await fixture("inactive");
+  try {
+    const menu = await run({ ...env, ROFI_DATA: "[]" });
+    expect(menu).toMatchObject({ code: 0, labels: ["Niri", "Audio", "Hyprwhspr", "Waybar"] });
+    const rows = menu.stdout.split("\n").filter((line) => line && !line.startsWith("\0"));
+    for (const row of rows) {
+      const [plain, display] = row.split("\0display\x1f");
+      expect(display).toMatch(/^<span font_family="MesloLGS Nerd Font Mono" rise="-3pt">[\uE000-\uF8FF]<\/span>  /u);
+      expect(display.endsWith(`<span size="12pt">${plain}</span>`)).toBe(true);
+      expect(display).not.toMatch(/foreground|background|color/);
+    }
+    expect(menu.stdout).toContain("\0markup-rows\x1ftrue\n");
+    expect(menu.stdout).not.toContain("\0icon\x1f");
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+linuxTest("missing icon font gives text-only root and submenus without warnings", async () => {
+  const { dir, env } = await fixture("inactive");
+  try {
+    env.TEST_FONT_FAMILY = "DejaVu Sans";
+    const rootEnv = { ...env, ROFI_DATA: "[]" };
+    const menu = await run(rootEnv);
+    expect(menu).toMatchObject({ code: 0, labels: ["Niri", "Audio", "Hyprwhspr", "Waybar"] });
+    expect(menu.stdout).toContain('Niri\0display\x1f<span size="12pt">Niri</span>\n');
+    expect(menu.stdout).not.toMatch(/[\uE000-\uF8FF]|Warning:/u);
+    const child = await run(rootEnv, "Niri");
+    expect(child).toMatchObject({ code: 0, labels: ["Exit", "Shortcuts"] });
+    expect(child.stdout).not.toMatch(/[\uE000-\uF8FF]|Warning:/u);
+    expect(await run(env, "Start service")).toMatchObject({ code: 0, stdout: "" });
+    expect(await Bun.file(env.TEST_LOG).text()).toBe("systemctl --user start hyprwhspr.service\n");
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+linuxTest("font checks accept family aliases and silently handle unavailable fontconfig", async () => {
+  const { dir, env } = await fixture("inactive");
+  try {
+    env.ROFI_DATA = "[]";
+    const installed = await run({ ...env, TEST_FONT_FAMILY: "MesloLGS Nerd Font Mono, MesloLGS Nerd Font Mono Regular" });
+    expect(installed).toMatchObject({ code: 0, labels: ["Niri", "Audio", "Hyprwhspr", "Waybar"] });
+    expect(installed.stdout).toContain('font_family="MesloLGS Nerd Font Mono"');
+    const failed = await run({ ...env, TEST_FONT_EXIT: "1" });
+    expect(failed).toMatchObject({ code: 0, labels: installed.labels });
+    expect(failed.stdout).not.toMatch(/[\uE000-\uF8FF]|Warning:/u);
+    await rm(join(dir, "bin", "fc-match"));
+    const missing = await run(env);
+    expect(missing).toMatchObject({ code: 0, labels: installed.labels });
+    expect(missing.stdout).not.toMatch(/[\uE000-\uF8FF]|Warning:/u);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
 
 for (const [state, unloaded, labels] of [
   ["active", false, ["Stop service", "Restart service", "Unload model"]],
@@ -158,8 +238,8 @@ linuxTest("audio is a top-level menu with inputs, outputs, and marked defaults",
       code: 0,
       labels: ["Output: Speakers ✓", "Output: Headphones", "Input: Microphone ✓", "Input: Webcam"],
     });
-    expect(menu.stdout).toContain("\u{F028}  Output: Speakers ✓");
-    expect(menu.stdout).toContain("\u{F130}  Input: Microphone ✓");
+    expect(menu.stdout).toContain('Output: Speakers ✓\0display\x1f<span font_family="MesloLGS Nerd Font Mono" rise="-3pt">\u{F028}</span>  <span size="12pt">Output: Speakers ✓</span>');
+    expect(menu.stdout).toContain('Input: Microphone ✓\0display\x1f<span font_family="MesloLGS Nerd Font Mono" rise="-3pt">\u{F130}</span>  <span size="12pt">Input: Microphone ✓</span>');
     expect(await Bun.file(env.TEST_LOG).exists()).toBe(false);
   } finally {
     await rm(dir, { recursive: true, force: true });
@@ -198,6 +278,38 @@ linuxTest("audio distinguishes duplicate descriptions and safely passes device n
     expect((await run(env)).labels).toContain(selection);
     expect(await run(env, selection)).toMatchObject({ code: 0, stdout: "" });
     expect(await Bun.file(env.TEST_LOG).text()).toBe(`set-default-source\n${name}\n`);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+linuxTest("menu escapes display markup without changing audio selections", async () => {
+  const { dir, env } = await audioFixture();
+  try {
+    env.TEST_SINKS = JSON.stringify([{ name: "dac", description: "<b>DAC</b> & Amp" }]);
+    const selection = "Output: <b>DAC</b> & Amp";
+    const menu = await run(env);
+    expect(menu.labels).toContain(selection);
+    expect(menu.stdout).toContain('<span size="12pt">Output: &lt;b&gt;DAC&lt;/b&gt; &amp; Amp</span>\n');
+    expect(await run(env, selection)).toMatchObject({ code: 0, stdout: "" });
+    expect(await Bun.file(env.TEST_LOG).text()).toBe("set-default-sink\ndac\n");
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+linuxTest("menu escapes iconless shortcut labels", async () => {
+  const { dir, env } = await fixture("inactive");
+  try {
+    await mkdir(join(dir, ".config", "niri"), { recursive: true });
+    await writeFile(join(dir, ".config", "niri", "config.kdl"), `binds {
+    Mod+N hotkey-overlay-title="Read <notes> & docs" { spawn "notes"; }
+}`);
+    const menu = await run({ ...env, ROFI_DATA: JSON.stringify(["Niri", "Shortcuts"]) });
+    const label = `${"Mod+N".padEnd(22)} Read <notes> & docs`;
+    expect(menu).toMatchObject({ code: 0, labels: [label] });
+    expect(menu.stdout).toContain(`${label}\0display\x1f<span size="12pt">${"Mod+N".padEnd(22)} Read &lt;notes&gt; &amp; docs</span>\n`);
+    expect(menu.stdout).not.toContain("MesloLGS");
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
