@@ -1,0 +1,5 @@
+# Location for satty's save action (Ctrl+S); %-specifiers are expanded as
+# strftime, ~ expands to the home directory. Without this, saving opens a file
+# chooser. Ctrl+Shift+S still opens the chooser.
+[general]
+output-filename = "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"

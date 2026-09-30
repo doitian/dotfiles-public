@@ -1,7 +1,9 @@
 // This config is in the KDL format: https://kdl.dev
 
 prefer-no-csd
-screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
+// Clipboard only, even for Enter/Space in the interactive UI; satty's Ctrl+S
+// saves the file.
+screenshot-path null
 
 input {
     keyboard {
