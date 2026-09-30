@@ -1,0 +1,8 @@
+# niri hardcodes a "Screenshot captured" notification on every capture
+# (no config option as of 26.04). Hide it; satty opening is feedback enough.
+# Expire it too: mako ignores the transient hint and defaults to no timeout,
+# so hidden notifications would otherwise pile up in the list forever.
+[app-name=niri summary="Screenshot captured"]
+invisible=1
+default-timeout=1000
+history=0
