@@ -1,21 +1,14 @@
 #!/usr/bin/env bun
 import { $ } from "bun";
+import { pasteFocused } from "../lib/niri.js";
 
 const PORT = parseInt(process.env.PORT || "8787", 10);
 
-// App-ids that use Ctrl+Shift+V for paste instead of Ctrl+V
-const SHIFT_PASTE_APP_IDS = new Set(["kitty", "org.kde.konsole", "foot", "alacritty", "wezterm"]);
-
-// ydotool key args (press:1 release:0) from linux/input-event-codes.h
-// KEY_LEFTCTRL=29, KEY_LEFTSHIFT=42, KEY_V=47
-const PASTE_KEYS = ["29:1", "47:1", "47:0", "29:0"]; // Ctrl+V
-const PASTE_SHIFT_KEYS = ["29:1", "42:1", "47:1", "47:0", "42:0", "29:0"]; // Ctrl+Shift+V
-
 // KEY_LEFTCTRL=29, KEY_U=22, KEY_BACKSPACE=14
 const KEY_ARGS = {
-    backspace: ["14:1", "14:0"],
-    "c-backspace": ["29:1", "14:1", "14:0", "29:0"],
-    "c-u": ["29:1", "22:1", "22:0", "29:0"],
+  backspace: ["14:1", "14:0"],
+  "c-backspace": ["29:1", "14:1", "14:0", "29:0"],
+  "c-u": ["29:1", "22:1", "22:0", "29:0"],
 };
 
 const HTML = `<!DOCTYPE html>
@@ -140,71 +133,59 @@ if (!("wakeLock" in navigator)) {
 </html>`;
 
 Bun.serve({
-    port: PORT,
-    async fetch(req) {
-        const url = new URL(req.url);
+  port: PORT,
+  async fetch(req) {
+    const url = new URL(req.url);
 
-        if (req.method === "GET" && url.pathname === "/") {
-            return new Response(HTML, {
-                headers: { "Content-Type": "text/html; charset=utf-8" },
-            });
-        }
+    if (req.method === "GET" && url.pathname === "/") {
+      return new Response(HTML, {
+        headers: { "Content-Type": "text/html; charset=utf-8" },
+      });
+    }
 
-        if (req.method === "POST" && url.pathname === "/paste") {
-            const { text } = await req.json();
-            if (typeof text !== "string" || !text) {
-                return Response.json({ ok: false, error: "missing text" }, { status: 400 });
-            }
+    if (req.method === "POST" && url.pathname === "/paste") {
+      const { text } = await req.json();
+      if (typeof text !== "string" || !text) {
+        return Response.json({ ok: false, error: "missing text" }, { status: 400 });
+      }
 
-            const copyR = await $`wl-copy -- ${text}`.quiet().nothrow();
-            if (copyR.exitCode !== 0) {
-                return Response.json(
-                    { ok: false, error: copyR.stderr.toString().trim() },
-                    { status: 500 },
-                );
-            }
+      const copyR = await $`wl-copy -- ${text}`.quiet().nothrow();
+      if (copyR.exitCode !== 0) {
+        return Response.json(
+          { ok: false, error: copyR.stderr.toString().trim() },
+          { status: 500 },
+        );
+      }
 
-            let appId = "";
-            const focusedR = await $`niri msg --json focused-window`.quiet().nothrow();
-            if (focusedR.exitCode === 0) {
-                try {
-                    const win = JSON.parse(focusedR.stdout.toString());
-                    appId = win?.app_id ?? "";
-                } catch {
-                    // ignore parse errors
-                }
-            }
+      const r = await pasteFocused();
+      if (r.exitCode !== 0) {
+        return Response.json(
+          { ok: false, error: r.stderr.toString().trim() },
+          { status: 500 },
+        );
+      }
 
-            const pasteKeys = SHIFT_PASTE_APP_IDS.has(appId) ? PASTE_SHIFT_KEYS : PASTE_KEYS;
-            const r = await $`ydotool key ${pasteKeys}`.quiet().nothrow();
-            if (r.exitCode !== 0) {
-                return Response.json(
-                    { ok: false, error: r.stderr.toString().trim() },
-                    { status: 500 },
-                );
-            }
+      return Response.json({ ok: true });
+    }
 
-            return Response.json({ ok: true });
-        }
+    if (req.method === "POST" && url.pathname === "/key") {
+      const { key } = await req.json();
+      const args = KEY_ARGS[key];
+      if (!args) {
+        return Response.json({ ok: false, error: "unknown key" }, { status: 400 });
+      }
+      const r = await $`ydotool key ${args}`.quiet().nothrow();
+      if (r.exitCode !== 0) {
+        return Response.json(
+          { ok: false, error: r.stderr.toString().trim() },
+          { status: 500 },
+        );
+      }
+      return Response.json({ ok: true });
+    }
 
-        if (req.method === "POST" && url.pathname === "/key") {
-            const { key } = await req.json();
-            const args = KEY_ARGS[key];
-            if (!args) {
-                return Response.json({ ok: false, error: "unknown key" }, { status: 400 });
-            }
-            const r = await $`ydotool key ${args}`.quiet().nothrow();
-            if (r.exitCode !== 0) {
-                return Response.json(
-                    { ok: false, error: r.stderr.toString().trim() },
-                    { status: 500 },
-                );
-            }
-            return Response.json({ ok: true });
-        }
-
-        return new Response("Not Found", { status: 404 });
-    },
+    return new Response("Not Found", { status: 404 });
+  },
 });
 
 console.log(`niri-remote-type listening on http://0.0.0.0:${PORT}`);

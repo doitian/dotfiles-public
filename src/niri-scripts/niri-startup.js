@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * Single niri startup entrypoint: spawns pam_kwallet_init, swayidle, wl-paste+clipman, waybar, and niri-swaybg.
+ * Single niri startup entrypoint: spawns pam_kwallet_init, swayidle, wl-paste+cliphist, waybar, and niri-swaybg.
  * Replaces the five separate spawn-at-startup lines in config.kdl.
  */
 
@@ -35,14 +35,14 @@ function spawnDetached(cmd, args = [], opts = {}) {
   }
 }
 
-const hasClipman = !!Bun.which("clipman");
+const hasCliphist = !!Bun.which("cliphist");
 const hasSwaylock = !!Bun.which("swaylock");
 
 spawnDetached("/usr/lib/pam_kwallet_init");
 
 const swayidleArgs = ["-w"];
-if (hasClipman) {
-  swayidleArgs.push("timeout", "600", "clipman clear -a");
+if (hasCliphist) {
+  swayidleArgs.push("timeout", "600", "cliphist wipe");
 }
 swayidleArgs.push("timeout", "900", "niri msg action power-off-monitors");
 if (hasSwaylock) {
@@ -51,9 +51,10 @@ if (hasSwaylock) {
 }
 spawnDetached("swayidle", swayidleArgs);
 
-// wl-paste watching clipman store
-if (hasClipman) {
-  spawnDetached("wl-paste", ["-t", "text", "--watch", "clipman", "store"]);
+// wl-paste watching cliphist store, one watcher per MIME type (text and images)
+if (hasCliphist) {
+  spawnDetached("wl-paste", ["--type", "text", "--watch", "cliphist", "store"]);
+  spawnDetached("wl-paste", ["--type", "image", "--watch", "cliphist", "store"]);
 }
 
 // waybar

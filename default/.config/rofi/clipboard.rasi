@@ -1,0 +1,14 @@
+/* Clipboard picker (niri-clipboard).
+   @theme replaces the built-in default that a bare `-theme` would drop, and
+   @import pulls in config.rasi's theme so the picker matches the other menus.
+   Only the thumbnail size and row count differ. */
+@theme "default"
+@import "config"
+
+element-icon {
+    size: 96px;
+}
+
+listview {
+    lines: 8;
+}
