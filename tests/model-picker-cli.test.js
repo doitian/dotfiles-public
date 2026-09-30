@@ -282,7 +282,7 @@ test("fa lists models, forwards args, and caches per agent", async () => {
         "--no-multi",
         "--ignore-case",
         `--history=${join(stateDir, "fzf", "fa-history")}`,
-        ...(scenario.query ? [`--query=${scenario.query}`] : []),
+        ...(scenario.query ? [`--query=${scenario.query}`, "--select-1", "--exit-0"] : []),
       ]);
       expect(fzf.input, label).toBe(scenario.picker.join("\n") + "\n");
       if (scenario.expect) {

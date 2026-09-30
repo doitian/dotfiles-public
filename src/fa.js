@@ -163,7 +163,7 @@ async function main() {
 
   const history = await queryHistoryFile("fa");
   const fzfArgs = ["--no-multi", "--ignore-case", `--history=${history}`];
-  if (query) fzfArgs.push(`--query=${query}`);
+  if (query) fzfArgs.push(`--query=${query}`, "--select-1", "--exit-0");
   const picker = Bun.spawn(["fzf", ...fzfArgs], {
     stdin: new Blob([lines.join("\n") + "\n"]),
     stdout: "pipe",
