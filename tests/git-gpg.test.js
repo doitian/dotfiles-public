@@ -3,11 +3,15 @@ import {
   cachedFromKeyinfo,
   findOnPath,
   gpgArgs,
+  gpgFirstEnv,
   parseIdentity,
   parseSignArgs,
   preferGpg,
+  presetCommand,
   siblingTool,
 } from "../src/git-gpg.js";
+
+const posix = (path) => path.replaceAll("\\", "/");
 
 test("gpg args skip the bun script path and keep compiled argv", () => {
   expect(gpgArgs(["bun", "/src/git-gpg.js", "--verify", "a"])).toEqual(["--verify", "a"]);
@@ -64,15 +68,25 @@ test("windows gpg prefers GnuPG over Git's bundled gpg.exe", () => {
       "C:/Program Files (x86)/GnuPG/bin/gpg.exe",
     ]),
   ).toBe("C:/Program Files (x86)/GnuPG/bin/gpg.exe");
-  expect(siblingTool("C:/Program Files (x86)/GnuPG/bin/gpg.exe", "gpg-connect-agent")).toBe(
-    "C:/Program Files (x86)/GnuPG/bin/gpg-connect-agent.exe",
-  );
+  expect(
+    posix(siblingTool("C:/Program Files (x86)/GnuPG/bin/gpg.exe", "gpg-connect-agent")),
+  ).toBe("C:/Program Files (x86)/GnuPG/bin/gpg-connect-agent.exe");
 });
 
 test("findOnPath uses the platform separator", () => {
-  const exists = (path) => path === "/usr/bin/gpg" || path === "C:/GnuPG/bin/gpg.exe";
-  expect(findOnPath("/usr/bin:/bin", ["gpg"], exists, ":")).toEqual(["/usr/bin/gpg"]);
-  expect(findOnPath("C:/Git/usr/bin;C:/GnuPG/bin", ["gpg.exe"], exists, ";")).toEqual([
+  const exists = (path) => ["/usr/bin/gpg", "C:/GnuPG/bin/gpg.exe"].includes(posix(path));
+  expect(findOnPath("/usr/bin:/bin", ["gpg"], exists, ":").map(posix)).toEqual(["/usr/bin/gpg"]);
+  expect(findOnPath("C:/Git/usr/bin;C:/GnuPG/bin", ["gpg.exe"], exists, ";").map(posix)).toEqual([
     "C:/GnuPG/bin/gpg.exe",
   ]);
+});
+
+test("gopass sees the resolved gpg first on PATH, whatever the PATH casing", () => {
+  const env = gpgFirstEnv({ Path: "C:/Git/usr/bin", HOME: "h" }, "C:/GnuPG/bin/gpg.exe", ";");
+  expect(Object.keys(env).sort()).toEqual(["HOME", "PATH"]);
+  expect(posix(env.PATH)).toBe("C:/GnuPG/bin;C:/Git/usr/bin");
+});
+
+test("preset sends the passphrase hex-encoded", () => {
+  expect(presetCommand("AF4F", "pw é")).toBe("PRESET_PASSPHRASE AF4F -1 707720C3A9\n");
 });

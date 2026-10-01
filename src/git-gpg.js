@@ -6,8 +6,6 @@
  * the same agent that will sign.
  */
 import { existsSync } from "node:fs";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { $ } from "bun";
 
@@ -98,6 +96,21 @@ export function siblingTool(gpgPath, baseName) {
   return join(dirname(gpgPath), exe ? `${baseName}.exe` : baseName);
 }
 
+/**
+ * Git for Windows puts its bundled gpg.exe first on PATH. gopass looks up gpg
+ * by PATH, and that gpg cannot see the GnuPG keyring, so put gpgPath first.
+ */
+export function gpgFirstEnv(env, gpgPath, sep = pathSep()) {
+  const out = {};
+  let path = "";
+  for (const [name, value] of Object.entries(env)) {
+    if (name.toUpperCase() === "PATH") path = value ?? "";
+    else out[name] = value;
+  }
+  out.PATH = [dirname(gpgPath), path].filter(Boolean).join(sep);
+  return out;
+}
+
 function pathSep(platform = process.platform) {
   return platform === "win32" ? ";" : ":";
 }
@@ -125,28 +138,27 @@ function resolveCompanion(gpgPath, baseName, env, exists = existsSync) {
   return preferGpg(findOnPath(env.PATH ?? "", names, exists, pathSep())) || names[0];
 }
 
-async function agentVisiblePath(file, gpgPath) {
-  if (process.platform !== "win32" && gpgPath.toLowerCase().endsWith(".exe")) {
-    const converted = await $`wslpath -w ${file}`.quiet().nothrow();
-    if (converted.exitCode === 0) return converted.text().trim();
-  }
-  return file;
+export function presetCommand(grip, pass) {
+  return `PRESET_PASSPHRASE ${grip} -1 ${Buffer.from(pass, "utf8").toString("hex").toUpperCase()}\n`;
 }
 
-async function presetPassphrase(connectAgent, grip, pass, gpgPath) {
-  const dir = await mkdtemp(join(tmpdir(), "git-gpg-"));
-  const file = join(dir, "pass");
-  try {
-    await writeFile(file, pass, { mode: 0o600 });
-    const agentPath = await agentVisiblePath(file, gpgPath);
-    const definq = `/definqfile PASSPHRASE ${agentPath}`;
-    const preset = `PRESET_PASSPHRASE --inquire ${grip} -1`;
-    const result = await $`${connectAgent} ${definq} ${preset} /bye`.quiet().nothrow();
-    const text = `${result.stdout.toString()}${result.stderr.toString()}`;
-    return result.exitCode === 0 && !text.includes("ERR ") && text.includes("OK");
-  } finally {
-    await rm(dir, { recursive: true, force: true });
-  }
+/**
+ * Send the passphrase over stdin to keep it out of argv. GnuPG 2.5 on Windows
+ * answers OK to `--inquire` with /definqfile but caches nothing.
+ */
+async function presetPassphrase(connectAgent, grip, pass) {
+  const child = Bun.spawn([connectAgent], {
+    stdin: new TextEncoder().encode(presetCommand(grip, pass)),
+    stdout: "pipe",
+    stderr: "pipe",
+  });
+  const [stdout, stderr, exitCode] = await Promise.all([
+    new Response(child.stdout).text(),
+    new Response(child.stderr).text(),
+    child.exited,
+  ]);
+  const text = `${stdout}${stderr}`;
+  return exitCode === 0 && !text.includes("ERR ") && text.includes("OK");
 }
 
 async function presetFromGopass(gpg, connectAgent, gopass, key) {
@@ -156,7 +168,7 @@ async function presetFromGopass(gpg, connectAgent, gopass, key) {
   const info = await $`${connectAgent} ${`KEYINFO ${identity.grip}`} /bye`.quiet().nothrow();
   if (cachedFromKeyinfo(info.stdout.toString(), identity.grip)) return;
   const entry = `${entryPrefix}/${identity.email}`;
-  const shown = await $`${gopass} show -o ${entry}`.quiet().nothrow();
+  const shown = await $`${gopass} show -o ${entry}`.env(gpgFirstEnv(process.env, gpg)).quiet().nothrow();
   if (shown.exitCode !== 0) {
     const err = shown.stderr.toString().trim();
     if (err) console.error(err);
@@ -168,7 +180,7 @@ async function presetFromGopass(gpg, connectAgent, gopass, key) {
     console.error(`git-gpg: empty passphrase from ${entry}`);
     process.exit(1);
   }
-  if (!(await presetPassphrase(connectAgent, identity.grip, pass, gpg))) {
+  if (!(await presetPassphrase(connectAgent, identity.grip, pass))) {
     console.error("git-gpg: could not preset passphrase (gpg-agent needs allow-preset-passphrase)");
   }
 }
