@@ -88,7 +88,7 @@
   "load": {
     "format": "{load1}",
     "interval": 5,
-    "on-click": "kitty --class tui-popup btop"
+    "on-click": "setsid -f kitty --class tui-popup btop"
   },
   "cpu": {
     "format": "{usage}% ",
@@ -96,7 +96,7 @@
       "warning": 70,
       "critical": 90
     },
-    "on-click": "kitty --class tui-popup btop"
+    "on-click": "setsid -f kitty --class tui-popup btop"
   },
   "memory": {
     "format": "{}% ",
@@ -104,7 +104,7 @@
       "warning": 70,
       "critical": 90
     },
-    "on-click": "kitty --class tui-popup btop"
+    "on-click": "setsid -f kitty --class tui-popup btop"
   },
   "temperature": {
     // "thermal-zone": 2,
@@ -118,7 +118,7 @@
       "",
       ""
     ],
-    "on-click": "kitty --class tui-popup btop"
+    "on-click": "setsid -f kitty --class tui-popup btop"
   },
   "backlight": {
     // "device": "acpi_video1",
@@ -176,7 +176,7 @@
     "format-linked": "{ifname} (No IP) ",
     "format-disconnected": "Disconnected ⚠",
     "format-alt": "{ifname}: {ipaddr}/{cidr}",
-    "on-click-right": "kitty --class clash -d ~/codebase/clashd/ tmux-up"
+    "on-click-right": "setsid -f kitty --class clash -d ~/codebase/clashd/ tmux-up"
   },
   "pulseaudio": {
     // "scroll-step": 1, // %, can be a float
@@ -200,13 +200,13 @@
         ""
       ]
     },
-    "on-click": "pavucontrol",
+    "on-click": "setsid -f pavucontrol",
     "on-click-right": "pactl set-sink-mute @DEFAULT_SINK@ toggle"
   },
   "custom/menu": {
     "format": "\uF313 ",
     "tooltip": false,
-    "on-click": "niri-menu"
+    "on-click": "setsid -f niri-menu"
   },
   // Optional widgets are fragments in waybar/optional/ (dotfiles repo);
   // waybar-optional symlinks the enabled ones into modules/ (agent-status

@@ -9,6 +9,7 @@
     "exec": "$HOME/.config/waybar/agent-berth.sh",
     "return-type": "json",
     "interval": 5,
-    "on-click": "kitty --class tui-popup agent-berth tui"
+    // Detach: waybar waitpids the click command before the next poll.
+    "on-click": "setsid -f kitty --class tui-popup agent-berth tui"
   }
 }
