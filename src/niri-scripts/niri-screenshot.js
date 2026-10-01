@@ -154,7 +154,17 @@ async function readPng(stream) {
 
 async function openSatty(filename, { outputFilename, niriIds = [] } = {}) {
   if (!Bun.which("satty")) await fail("satty is not installed");
-  const args = ["--filename", filename, "--fullscreen", "--copy-command", selfCommand(["--copy-png", ...niriIds])];
+  // satty fits the image to the window by default, upscaling region shots.
+  // --input-scale 1 starts at one image pixel per physical screen pixel.
+  const args = [
+    "--filename",
+    filename,
+    "--fullscreen",
+    "--input-scale",
+    "1",
+    "--copy-command",
+    selfCommand(["--copy-png", ...niriIds]),
+  ];
   if (outputFilename) args.push("--output-filename", outputFilename);
   await $`satty ${args}`;
 }
