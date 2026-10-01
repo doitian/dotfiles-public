@@ -225,7 +225,11 @@ async function printLevel(entries, path) {
     const icon = showIcons && plain !== label
       ? `<span font_family="${ICON_FONT}" rise="-3pt">${label[0]}</span>  `
       : "";
-    process.stdout.write(`${plain}\0display\x1f${icon}<span size="12pt">${escapeMarkup(plain)}</span>\n`);
+    // With markup-rows, rofi filters on the row text parsed as markup and
+    // drops rows that fail to parse (e.g. a bare "&"), so the text is escaped
+    // and the raw label comes back through info (ROFI_INFO) on selection.
+    const text = escapeMarkup(plain);
+    process.stdout.write(`${text}\0info\x1f${plain}\x1fdisplay\x1f${icon}<span size="12pt">${text}</span>\n`);
   }
 }
 
@@ -259,14 +263,15 @@ if (process.env.ROFI_RETV !== undefined) {
     process.exit(0);
   }
   if (process.env.ROFI_RETV === "1") {
-    const entry = findEntry(node, process.argv[2]);
+    const selection = process.env.ROFI_INFO ?? process.argv[2];
+    const entry = findEntry(node, selection);
     if (!entry) process.exit(0);
     if (typeof entry === "function") {
       await entry();
       process.exit(0);
     }
     const child = entry[SUBMENU] ? await entry[SUBMENU]() : entry;
-    await printLevel(child, [...path, process.argv[2]]);
+    await printLevel(child, [...path, selection]);
   } else {
     await printLevel(node, path);
   }
