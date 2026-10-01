@@ -20,13 +20,15 @@
  */
 
 import { $ } from "bun";
-import { readdir, rm, stat, writeFile } from "node:fs/promises";
+import { readdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
 import { home } from "../lib/env.js";
 
 const dir = join(home(), "Pictures", "Screenshots");
+const runtimeDir = process.env.XDG_RUNTIME_DIR || tmpdir();
+const captureOwner = join(runtimeDir, "niri-screenshot-owner");
 const captureTimeoutMs = 120_000;
 const clipboardTimeoutMs = 3_000;
 const cliphistDeleteTimeoutMs = 1_000;
@@ -174,6 +176,16 @@ async function* jsonLines(stream) {
   }
 }
 
+// Every instance sees every ScreenshotCaptured event, and one whose UI was
+// cancelled or replaced keeps waiting, so only the latest invocation may act.
+async function claimCapture() {
+  await writeFile(captureOwner, String(process.pid));
+}
+
+async function ownsCapture() {
+  return (await readFile(captureOwner, "utf8").catch(() => "")) === String(process.pid);
+}
+
 /** @returns {Promise<{ path: string | null } | null>} null when nothing is captured in time */
 async function capture(action, path) {
   const proc = Bun.spawn(["niri", "msg", "-j", "event-stream"], {
@@ -190,7 +202,7 @@ async function capture(action, path) {
     // to the clipboard; Ctrl+C in the UI skips the file and we read that copy.
     await $`niri msg action ${[action, "--path", path]}`;
     for await (const event of events) {
-      if (event.ScreenshotCaptured) return event.ScreenshotCaptured;
+      if (event.ScreenshotCaptured) return (await ownsCapture()) ? event.ScreenshotCaptured : null;
     }
     return null;
   } finally {
@@ -201,7 +213,7 @@ async function capture(action, path) {
 }
 
 async function screenshotAndAnnotate(action) {
-  const shot = join(process.env.XDG_RUNTIME_DIR || tmpdir(), `niri-screenshot-${process.pid}.png`);
+  const shot = join(runtimeDir, `niri-screenshot-${process.pid}.png`);
   try {
     const before = new Set(await cliphistPngIds());
     const captured = await capture(action, shot);
@@ -261,6 +273,7 @@ async function cmdScreenshot(args) {
   let action = "screenshot";
   if (opts.screen) action = "screenshot-screen";
   if (opts.window) action = "screenshot-window";
+  await claimCapture();
   if (opts.annotate) await screenshotAndAnnotate(action);
   else await $`niri msg action ${action}`;
 }

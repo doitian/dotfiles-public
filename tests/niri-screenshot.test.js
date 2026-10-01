@@ -28,6 +28,7 @@ async function fixture() {
     TEST_CAPTURED: join(dir, "captured"),
     TEST_NEW_ENTRY: join(dir, "new-entry"),
     TEST_SATTY_ARGS: join(dir, "satty-args"),
+    TEST_SATTY_RUNS: join(dir, "satty-runs"),
     TEST_COPY_CMD: join(dir, "copy-cmd"),
     TEST_COPY_EXIT: join(dir, "copy-exit"),
     TEST_PNG: join(dir, "fixture.png"),
@@ -47,7 +48,7 @@ if (args[0] === "msg" && args[1] === "-j" && args[2] === "event-stream") {
   writeSync(1, JSON.stringify({ ConfigLoaded: { failed: false } }) + "\\n");
   appendFileSync(log, "after first line\\n");
   const captured = process.env.TEST_CAPTURED;
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 200; i++) {
     try {
       if (await Bun.file(captured).exists()) break;
     } catch (err) {
@@ -63,7 +64,7 @@ if (args[0] === "msg" && args[1] === "-j" && args[2] === "event-stream") {
 if (args[0] === "msg" && args[1] === "action") {
   const path = args[args.indexOf("--path") + 1];
   await Bun.write(log, (await Bun.file(log).text()) + "captured-env=" + process.env.TEST_CAPTURED + " path=" + path + "\\n");
-  if (path) {
+  if (path && !process.env.TEST_CANCEL) {
     await Bun.write(path, Bun.file(process.env.TEST_PNG));
     await Bun.write(process.env.TEST_CAPTURED, JSON.stringify({ ScreenshotCaptured: { path } }) + "\\n");
     await Bun.write(process.env.TEST_NEW_ENTRY, "99\\t[[ binary data 4 B png 1x1 ]]\\n");
@@ -72,8 +73,10 @@ if (args[0] === "msg" && args[1] === "action") {
 `, { mode: 0o755 });
   await writeFile(join(bin, "satty"), [
     "#!/usr/bin/env bun",
+    "import { appendFileSync } from 'node:fs';",
     "const args = process.argv.slice(2);",
     "await Bun.write(process.env.TEST_SATTY_ARGS, args.join('\\n') + '\\n');",
+    "appendFileSync(process.env.TEST_SATTY_RUNS, args.join(' ') + '\\n');",
     "const cmd = args[args.indexOf('--copy-command') + 1] ?? '';",
     "await Bun.write(process.env.TEST_COPY_CMD, cmd);",
     "const image = args[args.indexOf('--filename') + 1];",
@@ -126,6 +129,43 @@ linuxTest("annotate capture drops niri's cliphist entry when satty copies", asyn
     expect(await readFile(env.TEST_DELETE, "utf8")).toBe("99\n");
   } finally {
     proc.kill();
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+linuxTest("an instance superseded by a newer screenshot leaves satty to it", async () => {
+  const { dir, env } = await fixture();
+  const run = (extra = {}) =>
+    Bun.spawn([process.execPath, script, "screenshot", "--annotate"], {
+      env: { ...env, ...extra },
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+  // The first instance's UI is cancelled; the second's capture reaches both.
+  const first = run({ TEST_CANCEL: "1" });
+  let second;
+  try {
+    const deadline = Date.now() + 2_000;
+    while (!(await readFile(env.TEST_NIRI_LOG, "utf8")).includes("msg action") && Date.now() < deadline) {
+      await Bun.sleep(10);
+    }
+    second = run();
+    const codes = await Promise.race([
+      Promise.all([first.exited, second.exited]),
+      Bun.sleep(6_000).then(() => "timeout"),
+    ]);
+    if (codes === "timeout") {
+      first.kill();
+      second.kill();
+    }
+    const stderr = (await Promise.all([first, second].map((p) => new Response(p.stderr).text()))).join("\n");
+    expect(codes, stderr).toEqual([0, 0]);
+    const runs = (await readFile(env.TEST_SATTY_RUNS, "utf8")).trim().split("\n");
+    expect(runs).toHaveLength(1);
+    expect(runs[0]).toContain(`niri-screenshot-${second.pid}.png`);
+  } finally {
+    first.kill();
+    second?.kill();
     await rm(dir, { recursive: true, force: true });
   }
 });
