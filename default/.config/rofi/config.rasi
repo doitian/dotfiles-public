@@ -7,6 +7,12 @@ configuration {
   kb-matcher-down: "Control+minus";
   // niri-menu: go up one menu level (rofi custom keybinding 1)
   kb-custom-1: "Control+t";
+  // Rofi's defaults need a double click to accept: the first click only moves
+  // the selection (me-select-entry). Unbind that so a single left click accepts
+  // the row under the pointer, with Ctrl-click for the custom accept action.
+  me-select-entry: "";
+  me-accept-entry: "MousePrimary";
+  me-accept-custom: "Control+MousePrimary";
   kb-select-1: "Control+1";
   kb-select-2: "Control+2";
   kb-select-3: "Control+3";
