@@ -33,7 +33,7 @@
     "clock",
     "tray",
     "custom/hyprwhspr",
-    "custom/power"
+    "custom/menu"
   ],
   // Modules configuration
   "niri/workspaces": {
@@ -203,18 +203,10 @@
     "on-click": "pavucontrol",
     "on-click-right": "pactl set-sink-mute @DEFAULT_SINK@ toggle"
   },
-  "custom/power": {
-    "format": "⏻ ",
+  "custom/menu": {
+    "format": "\uF313 ",
     "tooltip": false,
-    "menu": "on-click",
-    "on-click-right": "niri-menu",
-    "menu-file": "$HOME/.config/waybar/power_menu.xml", // Menu file in resources folder
-    "menu-actions": {
-      "shutdown": "systemctl poweroff",
-      "reboot": "systemctl reboot",
-      "suspend": "systemctl suspend",
-      "hibernate": "systemctl hibernate"
-    }
+    "on-click": "niri-menu"
   },
   // Optional widgets are fragments in waybar/optional/ (dotfiles repo);
   // waybar-optional symlinks the enabled ones into modules/ (agent-status

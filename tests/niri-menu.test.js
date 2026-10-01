@@ -147,7 +147,7 @@ linuxTest("missing icon font gives text-only root and submenus without warnings"
     expect(menu.stdout).toContain('Niri\0display\x1f<span size="12pt">Niri</span>\n');
     expect(menu.stdout).not.toMatch(/[\uE000-\uF8FF]|Warning:/u);
     const child = await run(rootEnv, "Niri");
-    expect(child).toMatchObject({ code: 0, labels: ["Exit", "Shortcuts"] });
+    expect(child).toMatchObject({ code: 0, labels: ["Exit", "Reboot", "Shutdown", "Sleep", "Shortcuts"] });
     expect(child.stdout).not.toMatch(/[\uE000-\uF8FF]|Warning:/u);
     expect(await run(env, "Start service")).toMatchObject({ code: 0, stdout: "" });
     expect(await Bun.file(env.TEST_LOG).text()).toBe("systemctl --user start hyprwhspr.service\n");
@@ -174,6 +174,23 @@ linuxTest("font checks accept family aliases and silently handle unavailable fon
     await rm(dir, { recursive: true, force: true });
   }
 });
+
+for (const [selection, command] of [
+  ["Reboot", "systemctl reboot"],
+  ["Shutdown", "systemctl poweroff"],
+  ["Sleep", "systemctl suspend"],
+]) {
+  linuxTest(`niri power action: ${selection}`, async () => {
+    const { dir, env } = await fixture("inactive");
+    try {
+      env.ROFI_DATA = JSON.stringify(["Niri"]);
+      expect(await run(env, selection)).toMatchObject({ code: 0, stdout: "" });
+      expect(await Bun.file(env.TEST_LOG).text()).toBe(`${command}\n`);
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+}
 
 for (const [state, unloaded, labels] of [
   ["active", false, ["Stop service", "Restart service", "Unload model"]],
