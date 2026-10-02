@@ -2,7 +2,7 @@
 /**
  * Compile each direct .js in src/ to a standalone executable in dist/.
  * Run: bun run build
- * Skips a target if it is newer than the source entry, mise.local.toml (if present), and all src/lib/*.
+ * Skips a target if it is newer than the source entry, build.js, mise.local.toml (if present), and all src/lib/*.
  */
 import { Glob } from "bun";
 import { mkdirSync, existsSync, readdirSync, statSync } from "node:fs";
@@ -35,13 +35,15 @@ if (existsSync(privateSrcDir)) {
 
 const libDir = join(process.cwd(), "src", "lib");
 
-/** Return the newest mtime among source entry, mise.local.toml (if any), and all files in src/lib. */
+/** Return the newest mtime among source entry, build.js, mise.local.toml (if any), and all files in src/lib. */
 function getNewestInputMtime(sourcePath) {
   let newest = 0;
-  try {
-    const s = statSync(sourcePath);
-    if (s.mtimeMs > newest) newest = s.mtimeMs;
-  } catch (_) { }
+  for (const p of [sourcePath, import.meta.path]) {
+    try {
+      const s = statSync(p);
+      if (s.mtimeMs > newest) newest = s.mtimeMs;
+    } catch (_) { }
+  }
   if (existsSync(libDir)) {
     for (const f of readdirSync(libDir, { recursive: true })) {
       const p = join(libDir, f);
@@ -67,7 +69,7 @@ async function buildOne({ sourcePath, outfile }) {
   const result = await Bun.build({
     entrypoints: [sourcePath],
     minify: true,
-    compile: { outfile },
+    compile: { outfile, autoloadDotenv: false, autoloadBunfig: false },
   });
   if (!result.success) {
     console.error(result.logs);
