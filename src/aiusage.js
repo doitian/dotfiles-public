@@ -63,7 +63,7 @@ function usageDiff(settings, usage, now, color) {
   const timePct = Math.max(0, Math.min(100, ((reset - now) / duration) * 100));
   const diff = Math.round(usagePct - timePct);
   const text = `${diff >= 0 ? "+" : ""}${diff}%`;
-  return colorize(text, diff < 0 ? "red" : diff <= 5 ? "green" : "yellow", color);
+  return colorize(text, diff < 0 ? "red" : diff <= 5 ? "green" : "blue", color);
 }
 
 function bankedResets(account) {
@@ -100,7 +100,7 @@ function formatRow(instance, now, banked, color) {
     value = "-";
   }
   const reset = usage.resets_at ? resetTime(usage.resets_at, now) : "-";
-  const row = [`${singleLine(provider)}${account}`, singleLine(limit), value, usageDiff(settings, usage, now, color), reset];
+  const row = [`${singleLine(provider)}${account}`, singleLine(limit), value, reset, usageDiff(settings, usage, now, color)];
   if (banked) row.push(bankedCell(settings, usage, now, color));
   return row;
 }
@@ -109,7 +109,7 @@ export function formatTable(instances, now = Date.now(), { color = false } = {})
   if (!instances.length) return "No AI usage buttons found.";
   const banked = instances.some((instance) => bankedCell(instance.settings ?? {}, instance.usage ?? {}, now) !== "-");
   const rows = [
-    ["Provider", "Limit", "Remaining", "Diff", "Resets in", ...(banked ? ["Banked"] : [])],
+    ["Provider", "Limit", "Remaining", "Resets in", "Diff", ...(banked ? ["Banked"] : [])],
     ...instances.map((instance) => formatRow(instance, now, banked, color))
       .sort((a, b) => a[0].localeCompare(b[0], undefined, { sensitivity: "base" })
         || (LIMIT_ORDER[a[1]] ?? 4) - (LIMIT_ORDER[b[1]] ?? 4)),
@@ -118,7 +118,7 @@ export function formatTable(instances, now = Date.now(), { color = false } = {})
     Math.max(...rows.map((row) => Bun.stringWidth(row[column]))));
   return rows.map((row) => row.map((cell, column) => {
     const padding = " ".repeat(widths[column] - Bun.stringWidth(cell));
-    return column === 2 || column === 3 ? padding + cell : cell + padding;
+    return column === 2 || column === 4 ? padding + cell : cell + padding;
   }).join("  ").trimEnd()).join("\n");
 }
 
@@ -292,7 +292,7 @@ Show Ulanzi AI usage, updating every 5 seconds. Press r to refresh, q or Ctrl+C 
 --refresh  Request fresh provider data on launch.
 --color    Force color output, even when stdout is redirected.
 Diff is remaining usage minus remaining time on 5h (including rolling), 7d, and 30d monthly windows.
-Within 5 points ahead is green, further ahead is yellow, and behind is red. Balances and rows without a reset show -.
+Within 5 points ahead is green, further ahead is blue, and behind is red. Balances and rows without a reset show -.
 Banked lists Claude and Codex 7d limit resets in reserve and the time until the earliest expires
 (red within 3d, yellow within 7d); the column appears only when some account has one.
 Windows: Ulanzi Studio AI usage plugin. Linux: ulanzi-niri ai-usage --json.`);

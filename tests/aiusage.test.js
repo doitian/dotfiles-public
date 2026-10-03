@@ -294,9 +294,9 @@ test("Linux usage renders accounts, balances, missing values, and sorted limits"
   const rows = Bun.stripANSI(formatTable(linuxInstances(data), Date.parse("2026-09-18T15:00:00Z")))
     .split("\n").map((line) => line.split(/ {2,}/));
   expect(rows).toEqual([
-    ["Provider", "Limit", "Remaining", "Diff", "Resets in"],
-    ["Claude [one@example.com]", "5h", "91%", "+71%", "1h"],
-    ["Claude [one@example.com]", "7d", "78%", "-4%", "5d"],
+    ["Provider", "Limit", "Remaining", "Resets in", "Diff"],
+    ["Claude [one@example.com]", "5h", "91%", "1h", "+71%"],
+    ["Claude [one@example.com]", "7d", "78%", "5d", "-4%"],
     ["Claude [two@example.com]", "-", "-", "-", "-"],
     ["Codex", "-", "-", "-", "-"],
     ["Moonshot", "balance", "82.55 CNY", "-", "-"],
@@ -342,18 +342,18 @@ test("diff column compares remaining usage with remaining time", () => {
         }
       }];
       const cells = Bun.stripANSI(formatTable(instances, now)).split("\n").map((line) => line.split(/ {2,}/));
-      expect(cells[0][3]).toBe("Diff");
-      expect(cells[1][3]).toBe(expected);
+      expect(cells[0][4]).toBe("Diff");
+      expect(cells[1][4]).toBe(expected);
     }
   }
 });
 
-test("diff colors a small lead green, a larger lead yellow, and a deficit red", () => {
+test("diff colors a small lead green, a larger lead blue, and a deficit red", () => {
   const now = Date.parse("2026-09-18T15:00:00Z");
   const painted = (color, text) => `${Bun.color(color, "ansi-16m")}${text}\x1b[0m`;
   for (const [percent, timeFraction, cell] of [
     [45, 0.4, painted("green", "+5%")],
-    [46, 0.4, painted("yellow", "+6%")],
+    [46, 0.4, painted("blue", "+6%")],
     [40, 0.4, painted("green", "+0%")],
     [39, 0.4, painted("red", "-1%")],
   ]) {
@@ -379,7 +379,7 @@ test("diff is blank without a comparable window", () => {
     ["five_hour", { remaining_percent: Infinity }],
   ]) {
     const cells = Bun.stripANSI(formatTable([{ settings: { limit }, usage }], now)).split("\n")[1].split(/ {2,}/);
-    expect(cells[3]).toBe("-");
+    expect(cells[4]).toBe("-");
   }
   expect(formatTable([], now)).toBe("No AI usage buttons found.");
 });
@@ -458,7 +458,7 @@ test("banked resets show count and earliest expiry on 7d rows only", () => {
   expect(output).toContain(`${Bun.color("red", "ansi-16m")}2d\x1b[0m`);
   const rows = Bun.stripANSI(output).split("\n").map((line) => line.split(/ {2,}/));
   expect(rows).toEqual([
-    ["Provider", "Limit", "Remaining", "Diff", "Resets in", "Banked"],
+    ["Provider", "Limit", "Remaining", "Resets in", "Diff", "Banked"],
     ["Claude [one@example.com]", "5h", "91%", "-", "-", "-"],
     ["Claude [one@example.com]", "7d", "78%", "-", "-", "2 (5d)"],
     ["Codex", "7d", "40%", "-", "-", "3 (2d)"],
@@ -466,7 +466,7 @@ test("banked resets show count and earliest expiry on 7d rows only", () => {
     ["xAI", "7d", "50%", "-", "-", "-"],
   ]);
   expect(Bun.stripANSI(formatTable(linuxInstances({ providers: { claude: { accounts: [{ reset_credits: 3, reset_expiries: [day(9)], limits: { seven_day: { remaining_percent: 1 } } }] } } }), now)))
-    .toEndWith("1%     -  -          3 (9d)");
+    .toEndWith("1%  -             -  3 (9d)");
   expect(formatTable([{ settings: { limit: "seven_day" }, usage: { remaining_percent: 50, reset_credits: 0 } }], now)).not.toContain("Banked");
 });
 
