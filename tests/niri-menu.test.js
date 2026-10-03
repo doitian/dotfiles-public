@@ -246,7 +246,7 @@ linuxTest("hyprwhspr rechecks state before acting on a stale selection", async (
   }
 });
 
-linuxTest("audio is a top-level menu with inputs, outputs, and marked defaults", async () => {
+linuxTest("audio lists outputs with the default first and nests inputs under each", async () => {
   const { dir, env } = await audioFixture();
   try {
     const root = await run({ ...env, ROFI_DATA: "[]" });
@@ -254,29 +254,52 @@ linuxTest("audio is a top-level menu with inputs, outputs, and marked defaults",
     const menu = await run({ ...env, ROFI_DATA: "[]" }, "Audio");
     expect(menu).toMatchObject({
       code: 0,
-      labels: ["Output: Speakers ✓", "Output: Headphones", "Input: Microphone ✓", "Input: Webcam"],
+      labels: ["Output: Speakers ✓", "Output: Headphones"],
     });
     expect(menu.stdout).toContain('Output: Speakers ✓\0info\x1fOutput: Speakers ✓\x1fdisplay\x1f<span font_family="MesloLGS Nerd Font Mono" rise="-3pt">\u{F028}</span>  <span size="12pt">Output: Speakers ✓</span>');
-    expect(menu.stdout).toContain('Input: Microphone ✓\0info\x1fInput: Microphone ✓\x1fdisplay\x1f<span font_family="MesloLGS Nerd Font Mono" rise="-3pt">\u{F130}</span>  <span size="12pt">Input: Microphone ✓</span>');
     expect(await Bun.file(env.TEST_LOG).exists()).toBe(false);
+    const reorderedInfo = JSON.stringify({ default_sink_name: "headphones", default_source_name: "webcam" });
+    const reordered = await run({ ...env, TEST_AUDIO_INFO: reorderedInfo });
+    expect(reordered.labels).toEqual(["Output: Headphones ✓", "Output: Speakers"]);
+    const inputs = await run({ ...env, TEST_AUDIO_INFO: reorderedInfo }, "Output: Speakers");
+    expect(inputs).toMatchObject({ code: 0, labels: ["Input: Webcam ✓", "Input: Microphone"] });
+    expect(inputs.stdout).toContain('Input: Webcam ✓\0info\x1fInput: Webcam ✓\x1fdisplay\x1f<span font_family="MesloLGS Nerd Font Mono" rise="-3pt">\u{F130}</span>  <span size="12pt">Input: Webcam ✓</span>');
+    expect(await Bun.file(env.TEST_LOG).text()).toBe("set-default-sink\nspeakers\n");
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
 });
 
-for (const [selection, kind, name] of [
-  ["Output: Speakers ✓", "sink", "speakers"],
-  ["Output: Headphones", "sink", "headphones"],
-  ["Input: Microphone ✓", "source", "mic"],
-  ["Input: Webcam", "source", "webcam"],
+for (const [selection, name] of [
+  ["Output: Speakers ✓", "speakers"],
+  ["Output: Headphones", "headphones"],
 ]) {
-  linuxTest(`audio sets default: ${selection}`, async () => {
+  linuxTest(`audio output sets the default sink, then lists inputs: ${selection}`, async () => {
     const { dir, env } = await audioFixture();
     try {
-      expect(await run(env, selection)).toMatchObject({ code: 0, stdout: "" });
-      expect(await Bun.file(env.TEST_LOG).text()).toBe(`set-default-${kind}\n${name}\n`);
+      expect(await run(env, selection))
+        .toMatchObject({ code: 0, labels: ["Input: Microphone ✓", "Input: Webcam"] });
+      expect(await Bun.file(env.TEST_LOG).text()).toBe(`set-default-sink\n${name}\n`);
       expect(await run({ ...env, TEST_ACTION_EXIT: "1", TEST_ERROR: "access denied" }, selection))
-        .toMatchObject({ code: 1, stderr: expect.stringContaining("access denied") });
+        .toMatchObject({ code: 1, labels: [], stderr: expect.stringContaining("access denied") });
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+}
+
+for (const [selection, name] of [
+  ["Input: Microphone ✓", "mic"],
+  ["Input: Webcam", "webcam"],
+]) {
+  linuxTest(`audio input sets the default source: ${selection}`, async () => {
+    const { dir, env } = await audioFixture();
+    try {
+      env.ROFI_DATA = JSON.stringify(["Audio", "Output: Speakers ✓"]);
+      expect(await run(env, selection)).toMatchObject({ code: 0, stdout: "" });
+      expect(await Bun.file(env.TEST_LOG).text()).toBe(`set-default-source\n${name}\n`);
+      expect(await run({ ...env, TEST_ACTION_EXIT: "1", TEST_ERROR: "access denied" }, selection))
+        .toMatchObject({ code: 1, stdout: "", stderr: expect.stringContaining("access denied") });
     } finally {
       await rm(dir, { recursive: true, force: true });
     }
@@ -287,13 +310,13 @@ linuxTest("audio distinguishes duplicate descriptions and safely passes device n
   const { dir, env } = await audioFixture();
   const name = "usb mic; $(touch nope)";
   try {
+    env.ROFI_DATA = JSON.stringify(["Audio", "Output: Speakers ✓"]);
     env.TEST_SOURCES = JSON.stringify([
       { name: "mic", description: "Microphone" },
       { name, description: "Microphone" },
     ]);
     const selection = `Input: Microphone (${name})`;
-    expect((await run(env)).labels).toContain("Input: Microphone (mic) ✓");
-    expect((await run(env)).labels).toContain(selection);
+    expect((await run(env)).labels).toEqual(["Input: Microphone (mic) ✓", selection]);
     expect(await run(env, selection)).toMatchObject({ code: 0, stdout: "" });
     expect(await Bun.file(env.TEST_LOG).text()).toBe(`set-default-source\n${name}\n`);
   } finally {
@@ -309,7 +332,7 @@ linuxTest("menu escapes row markup without changing audio selections", async () 
     const menu = await run(env);
     const escaped = "Output: &lt;b&gt;DAC&lt;/b&gt; &amp; Amp";
     expect(menu.rows).toContainEqual({ text: escaped, info: selection, display: expect.stringMatching(new RegExp(`<span size="12pt">${escaped}</span>$`)) });
-    expect(await run(env, selection)).toMatchObject({ code: 0, stdout: "" });
+    expect(await run(env, selection)).toMatchObject({ code: 0, labels: ["Input: Microphone ✓", "Input: Webcam"] });
     expect(await Bun.file(env.TEST_LOG).text()).toBe("set-default-sink\ndac\n");
   } finally {
     await rm(dir, { recursive: true, force: true });
@@ -339,6 +362,8 @@ linuxTest("audio handles empty device lists and reports server failures", async 
   const { dir, env } = await audioFixture();
   try {
     expect(await run({ ...env, TEST_SINKS: "[]", TEST_SOURCES: "[]" }))
+      .toMatchObject({ code: 0, labels: [] });
+    expect(await run({ ...env, TEST_SOURCES: "[]" }, "Output: Speakers ✓"))
       .toMatchObject({ code: 0, labels: [] });
     expect(await run({ ...env, TEST_STATUS_EXIT: "1", TEST_ERROR: "connection refused" }))
       .toMatchObject({ code: 1, labels: [], stderr: expect.stringContaining("connection refused") });

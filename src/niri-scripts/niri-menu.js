@@ -126,22 +126,28 @@ const root = {
       pactl(["--format=json", "list", "sinks"]),
       pactl(["--format=json", "list", "sources"]),
     ]).then((results) => results.map((result) => JSON.parse(result)));
-    const entries = {};
-    for (const [kind, direction, icon, devices, current] of [
-      ["sink", "Output", "\u{F028}", sinks, info.default_sink_name],
-      ["source", "Input", "\u{F130}", sources, info.default_source_name],
-    ]) {
-      for (const device of devices) {
+    // The default device leads its list so rofi's initial selection lands on it.
+    const deviceEntries = (devices, direction, icon, current, onSelect) => {
+      const ordered = [...devices].sort((a, b) => Number(b.name === current) - Number(a.name === current));
+      const entries = {};
+      for (const device of ordered) {
         const description = device.description || device.name;
         const duplicate = devices.some((other) => other.name !== device.name
           && (other.description || other.name) === description);
         const label = `${icon}  ${direction}: ${description}${duplicate ? ` (${device.name})` : ""}${device.name === current ? " ✓" : ""}`;
-        entries[label] = async () => {
-          await pactl([`set-default-${kind}`, device.name]);
-        };
+        entries[label] = onSelect(device);
       }
-    }
-    return entries;
+      return entries;
+    };
+    const inputs = () => deviceEntries(sources, "Input", "\u{F130}", info.default_source_name,
+      (device) => async () => {
+        await pactl(["set-default-source", device.name]);
+      });
+    return deviceEntries(sinks, "Output", "\u{F028}", info.default_sink_name,
+      (device) => ({
+        [SUBMENU]: inputs,
+        run: () => pactl(["set-default-sink", device.name]),
+      }));
   }),
   "\u{F130}  Hyprwhspr": submenu(async () => {
     const status = await $`systemctl --user show hyprwhspr.service --property=ActiveState --value`.quiet().nothrow();
@@ -270,6 +276,8 @@ if (process.env.ROFI_RETV !== undefined) {
       await entry();
       process.exit(0);
     }
+    // An entry may run an action (set the output) before opening its submenu.
+    if (entry.run) await entry.run();
     const child = entry[SUBMENU] ? await entry[SUBMENU]() : entry;
     await printLevel(child, [...path, selection]);
   } else {
