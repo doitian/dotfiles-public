@@ -44,25 +44,26 @@ function resetTime(value, now) {
   return "<1m";
 }
 
-function usageBar(settings, usage, now, color) {
-  if (!Number.isFinite(usage.remaining_percent)) return "-";
-  const duration = {
+function windowMs(limit) {
+  return {
     five_hour: 5 * 3600000,
     rolling: 5 * 3600000,
     seven_day: 7 * 86400000,
     seven_day_fable: 7 * 86400000,
     weekly: 7 * 86400000,
     monthly: 30 * 86400000,
-  }[settings.limit];
-  const time = duration ? (Date.parse(usage.resets_at) - now) / duration : NaN;
-  const width = 20;
-  const cells = (fraction) => Number.isFinite(fraction) ? Math.round(Math.max(0, Math.min(1, fraction)) * width) : 0;
-  const upper = cells(usage.remaining_percent / 100);
-  const lower = cells(time);
-  const overlap = Math.min(upper, lower);
-  const longer = upper > lower ? colorize("⠒".repeat(upper - lower), "green", color)
-    : upper < lower ? colorize("⠤".repeat(lower - upper), "red", color) : "";
-  return `[${"⠶".repeat(overlap)}${longer}${" ".repeat(width - Math.max(upper, lower))}]`;
+  }[limit];
+}
+
+function usageDiff(settings, usage, now, color) {
+  const duration = windowMs(settings.limit);
+  const reset = Date.parse(usage.resets_at);
+  if (!duration || !Number.isFinite(usage.remaining_percent) || !Number.isFinite(reset)) return "-";
+  const usagePct = Math.max(0, Math.min(100, usage.remaining_percent));
+  const timePct = Math.max(0, Math.min(100, ((reset - now) / duration) * 100));
+  const diff = Math.round(usagePct - timePct);
+  const text = `${diff >= 0 ? "+" : ""}${diff}%`;
+  return colorize(text, diff < 0 ? "red" : diff <= 5 ? "green" : "yellow", color);
 }
 
 function bankedResets(account) {
@@ -82,7 +83,7 @@ function bankedCell(settings, usage, now, color) {
   return `${count} (${days <= 7 ? colorize(text, days <= 3 ? "red" : "yellow", color) : text})`;
 }
 
-function formatRow(instance, now, bar, banked, color) {
+function formatRow(instance, now, banked, color) {
   const settings = instance.settings ?? {};
   const usage = instance.usage ?? {};
   const provider = settings.label || settings.provider || "unknown";
@@ -99,18 +100,17 @@ function formatRow(instance, now, bar, banked, color) {
     value = "-";
   }
   const reset = usage.resets_at ? resetTime(usage.resets_at, now) : "-";
-  const row = [`${singleLine(provider)}${account}`, singleLine(limit), value, reset];
+  const row = [`${singleLine(provider)}${account}`, singleLine(limit), value, usageDiff(settings, usage, now, color), reset];
   if (banked) row.push(bankedCell(settings, usage, now, color));
-  if (bar) row.push(usageBar(settings, usage, now, color));
   return row;
 }
 
-export function formatTable(instances, now = Date.now(), { bar = false, color = false } = {}) {
+export function formatTable(instances, now = Date.now(), { color = false } = {}) {
   if (!instances.length) return "No AI usage buttons found.";
   const banked = instances.some((instance) => bankedCell(instance.settings ?? {}, instance.usage ?? {}, now) !== "-");
   const rows = [
-    ["Provider", "Limit", "Remaining", "Resets in", ...(banked ? ["Banked"] : []), ...(bar ? ["Remaining"] : [])],
-    ...instances.map((instance) => formatRow(instance, now, bar, banked, color))
+    ["Provider", "Limit", "Remaining", "Diff", "Resets in", ...(banked ? ["Banked"] : [])],
+    ...instances.map((instance) => formatRow(instance, now, banked, color))
       .sort((a, b) => a[0].localeCompare(b[0], undefined, { sensitivity: "base" })
         || (LIMIT_ORDER[a[1]] ?? 4) - (LIMIT_ORDER[b[1]] ?? 4)),
   ];
@@ -118,7 +118,7 @@ export function formatTable(instances, now = Date.now(), { bar = false, color = 
     Math.max(...rows.map((row) => Bun.stringWidth(row[column]))));
   return rows.map((row) => row.map((cell, column) => {
     const padding = " ".repeat(widths[column] - Bun.stringWidth(cell));
-    return column === 2 ? padding + cell : cell + padding;
+    return column === 2 || column === 3 ? padding + cell : cell + padding;
   }).join("  ").trimEnd()).join("\n");
 }
 
@@ -279,14 +279,23 @@ async function main() {
   const { values } = parseArgs({
     options: {
       once: { type: "boolean" },
-      bar: { type: "boolean" },
       color: { type: "boolean" },
       refresh: { type: "boolean" },
       help: { type: "boolean", short: "h" },
     },
   });
   if (values.help) {
-    console.log("Usage: aiusage [--once] [--refresh] [--bar] [--color]\n\nShow Ulanzi AI usage, updating every 5 seconds. Press r to refresh, q or Ctrl+C to quit.\n--once     Print one snapshot (also used when stdout is redirected).\n--refresh  Request fresh provider data on launch.\n--bar      Add a bar: upper = usage remaining, lower = time remaining.\n           Time uses 5h (including rolling), 7d, or 30d (monthly) windows with a reset timestamp; balances have no bar.\n           The longer of the two is colored: green when usage remaining is longer, red when time is longer.\n--color    Force color output, even when stdout is redirected.\nBanked lists Claude and Codex 7d limit resets in reserve and the time until the earliest expires\n(red within 3d, yellow within 7d); the column appears only when some account has one.\nWindows: Ulanzi Studio AI usage plugin. Linux: ulanzi-niri ai-usage --json.");
+    console.log(`Usage: aiusage [--once] [--refresh] [--color]
+
+Show Ulanzi AI usage, updating every 5 seconds. Press r to refresh, q or Ctrl+C to quit.
+--once     Print one snapshot (also used when stdout is redirected).
+--refresh  Request fresh provider data on launch.
+--color    Force color output, even when stdout is redirected.
+Diff is remaining usage minus remaining time on 5h (including rolling), 7d, and 30d monthly windows.
+Within 5 points ahead is green, further ahead is yellow, and behind is red. Balances and rows without a reset show -.
+Banked lists Claude and Codex 7d limit resets in reserve and the time until the earliest expires
+(red within 3d, yellow within 7d); the column appears only when some account has one.
+Windows: Ulanzi Studio AI usage plugin. Linux: ulanzi-niri ai-usage --json.`);
     return;
   }
   let refresh;

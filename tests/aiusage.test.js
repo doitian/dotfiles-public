@@ -167,7 +167,7 @@ async function windowsCli(dir, args, interactive = false, executable = null) {
 
 test.skipIf(process.platform !== "win32")("Windows CLI refreshes at launch with --once and redirected stdout", async () => {
   const { dir, requests } = await bridge((request, path) => Response.json(path === "/usage/refresh" ? fresh : { instances: snapshot }));
-  for (const args of [["--once"], [], ["--once", "--refresh"], ["--refresh"], ["--once", "--color"], ["--color", "--refresh", "--bar"]]) {
+  for (const args of [["--once"], [], ["--once", "--refresh"], ["--refresh"], ["--once", "--color"], ["--color", "--refresh"]]) {
     requests.length = 0;
     const run = await windowsCli(dir, args);
     expect(await run.child.exited).toBe(0);
@@ -294,16 +294,16 @@ test("Linux usage renders accounts, balances, missing values, and sorted limits"
   const rows = Bun.stripANSI(formatTable(linuxInstances(data), Date.parse("2026-09-18T15:00:00Z")))
     .split("\n").map((line) => line.split(/ {2,}/));
   expect(rows).toEqual([
-    ["Provider", "Limit", "Remaining", "Resets in"],
-    ["Claude [one@example.com]", "5h", "91%", "1h"],
-    ["Claude [one@example.com]", "7d", "78%", "5d"],
-    ["Claude [two@example.com]", "-", "-", "-"],
-    ["Codex", "-", "-", "-"],
-    ["Moonshot", "balance", "82.55 CNY", "-"],
-    ["OpenCode Go", "rolling", "100%", "-"],
-    ["OpenCode Go", "7d", "20%", "-"],
-    ["OpenCode Go", "monthly", "50%", "-"],
-    ["xAI", "7d", "-", "-"],
+    ["Provider", "Limit", "Remaining", "Diff", "Resets in"],
+    ["Claude [one@example.com]", "5h", "91%", "+71%", "1h"],
+    ["Claude [one@example.com]", "7d", "78%", "-4%", "5d"],
+    ["Claude [two@example.com]", "-", "-", "-", "-"],
+    ["Codex", "-", "-", "-", "-"],
+    ["Moonshot", "balance", "82.55 CNY", "-", "-"],
+    ["OpenCode Go", "rolling", "100%", "-", "-"],
+    ["OpenCode Go", "7d", "20%", "-", "-"],
+    ["OpenCode Go", "monthly", "50%", "-", "-"],
+    ["xAI", "7d", "-", "-", "-"],
   ]);
 });
 
@@ -316,84 +316,72 @@ test("forced colors cover usage thresholds and balances without changing table a
     [{ remaining_amount: 12.5, currency: "CNY" }, "12.50 CNY", "green"],
   ];
   const instances = cases.map(([usage]) => ({ settings: { provider: "Test" }, usage }));
-  for (const bar of [false, true]) {
-    const output = formatTable(instances, 0, { bar, color: true });
-    for (const [, text, color] of cases) {
-      expect(output).toContain(`${Bun.color(color, "ansi-16m")}${text}\x1b[0m`);
-    }
-    expect(Bun.stripANSI(output)).toBe(Bun.stripANSI(formatTable(instances, 0, { bar })));
+  const output = formatTable(instances, 0, { color: true });
+  for (const [, text, color] of cases) {
+    expect(output).toContain(`${Bun.color(color, "ansi-16m")}${text}\x1b[0m`);
   }
+  expect(Bun.stripANSI(output)).toBe(Bun.stripANSI(formatTable(instances, 0)));
 });
 
-test("optional bars overlay remaining usage and time for fixed-duration limits", () => {
+test("diff column compares remaining usage with remaining time", () => {
   const now = Date.parse("2026-09-18T15:00:00Z");
   for (const [limit, hours] of [["five_hour", 5], ["rolling", 5], ["seven_day", 168], ["seven_day_fable", 168], ["weekly", 168], ["monthly", 720]]) {
     for (const [percent, timeFraction, expected] of [
-      [70, 0.4, "⠶".repeat(8) + "⠒".repeat(6) + " ".repeat(6)],
-      [40, 0.7, "⠶".repeat(8) + "⠤".repeat(6) + " ".repeat(6)],
-      [100, 1, "⠶".repeat(20)],
-      [0, 0, " ".repeat(20)],
-      [150, 2, "⠶".repeat(20)],
-      [-10, -1, " ".repeat(20)],
+      [70, 0.4, "+30%"],
+      [40, 0.7, "-30%"],
+      [45, 0.4, "+5%"],
+      [46, 0.4, "+6%"],
+      [100, 1, "+0%"],
+      [0, 0, "+0%"],
+      [150, 2, "+0%"],
+      [-10, -1, "+0%"],
     ]) {
       const instances = [{
         settings: { provider: "Test", limit }, usage: {
           remaining_percent: percent, resets_at: new Date(now + hours * 3600000 * timeFraction).toISOString(),
         }
       }];
-      const output = Bun.stripANSI(formatTable(instances, now, { bar: true }));
-      expect(output.split("\n")[0]).toEndWith("Remaining");
-      expect(output.split("\n")[0]).not.toContain("(");
-      expect(output.split("\n")[1]).toEndWith(`[${expected}]`);
-      expect(formatTable(instances, now)).not.toMatch(/[⠶⠒⠤]/);
+      const cells = Bun.stripANSI(formatTable(instances, now)).split("\n").map((line) => line.split(/ {2,}/));
+      expect(cells[0][3]).toBe("Diff");
+      expect(cells[1][3]).toBe(expected);
     }
   }
 });
 
-test("bars color only the longer, non-overlapping segment", () => {
+test("diff colors a small lead green, a larger lead yellow, and a deficit red", () => {
   const now = Date.parse("2026-09-18T15:00:00Z");
-  const green = `${Bun.color("green", "ansi-16m")}${"⠒".repeat(6)}\x1b[0m`;
-  const red = `${Bun.color("red", "ansi-16m")}${"⠤".repeat(6)}\x1b[0m`;
-  for (const [percent, timeFraction, bar] of [
-    [70, 0.4, `[${"⠶".repeat(8)}${green}${" ".repeat(6)}]`],
-    [40, 0.7, `[${"⠶".repeat(8)}${red}${" ".repeat(6)}]`],
-    [100, 1, `[${"⠶".repeat(20)}]`],
+  const painted = (color, text) => `${Bun.color(color, "ansi-16m")}${text}\x1b[0m`;
+  for (const [percent, timeFraction, cell] of [
+    [45, 0.4, painted("green", "+5%")],
+    [46, 0.4, painted("yellow", "+6%")],
+    [40, 0.4, painted("green", "+0%")],
+    [39, 0.4, painted("red", "-1%")],
   ]) {
     const instances = [{
       settings: { provider: "Test", limit: "five_hour" }, usage: {
         remaining_percent: percent, resets_at: new Date(now + 5 * 3600000 * timeFraction).toISOString(),
       }
     }];
-    const output = formatTable(instances, now, { bar: true, color: true });
-    expect(output.split("\n")[1]).toEndWith(bar);
+    expect(formatTable(instances, now, { color: true }).split("\n")[1]).toContain(cell);
   }
 });
 
-test("bar mode keeps rows compact without blank lines", () => {
-  const instances = [snapshot[0], snapshot[0]];
-  const lines = formatTable(instances, 0, { bar: true }).split("\n");
-  expect(lines).toHaveLength(3);
-  expect(lines[1]).toContain("⠒");
-  expect(lines[2]).toContain("⠒");
-  expect(formatTable(instances, 0).split("\n")).toHaveLength(3);
-});
-
-test("bars handle unknown durations, missing resets, balances, and invalid usage", () => {
+test("diff is blank without a comparable window", () => {
   const now = Date.parse("2026-09-18T15:00:00Z");
-  for (const [limit, usage, expected] of [
-    ["five_hour", { remaining_percent: 50 }, `[${"⠒".repeat(10)}${" ".repeat(10)}]`],
-    ["five_hour", { remaining_percent: 50, resets_at: "invalid" }, `[${"⠒".repeat(10)}${" ".repeat(10)}]`],
-    ["monthly", { remaining_percent: 50 }, `[${"⠒".repeat(10)}${" ".repeat(10)}]`],
-    ["unknown", { remaining_percent: 50, resets_at: "2026-09-18T16:00:00Z" }, `[${"⠒".repeat(10)}${" ".repeat(10)}]`],
-    ["balance", { remaining_amount: 12, currency: "CNY" }, "-"],
-    ["five_hour", {}, "-"],
-    ["five_hour", { remaining_percent: NaN }, "-"],
-    ["five_hour", { remaining_percent: Infinity }, "-"],
+  for (const [limit, usage] of [
+    ["five_hour", { remaining_percent: 50 }],
+    ["five_hour", { remaining_percent: 50, resets_at: "invalid" }],
+    ["monthly", { remaining_percent: 50 }],
+    ["unknown", { remaining_percent: 50, resets_at: "2026-09-18T16:00:00Z" }],
+    ["balance", { remaining_amount: 12, currency: "CNY" }],
+    ["five_hour", {}],
+    ["five_hour", { remaining_percent: NaN }],
+    ["five_hour", { remaining_percent: Infinity }],
   ]) {
-    const output = Bun.stripANSI(formatTable([{ settings: { limit }, usage }], now, { bar: true }));
-    expect(output.split("\n")[1]).toEndWith(`  ${expected}`);
+    const cells = Bun.stripANSI(formatTable([{ settings: { limit }, usage }], now)).split("\n")[1].split(/ {2,}/);
+    expect(cells[3]).toBe("-");
   }
-  expect(formatTable([], now, { bar: true })).toBe("No AI usage buttons found.");
+  expect(formatTable([], now)).toBe("No AI usage buttons found.");
 });
 
 test("Linux usage rejects invalid payloads and accepts an empty provider map", () => {
@@ -424,13 +412,13 @@ test.skipIf(process.platform !== "linux")("Linux CLI uses JSON without touching 
       expect(await Bun.file(cache).text()).toBe("12345\n");
       return { exitCode, stdout, stderr };
     }
-    for (const args of [["--once"], [], ["--once", "--refresh"], ["--refresh"], ["--once", "--bar"], ["--bar", "--refresh"], ["--once", "--color"], ["--color", "--bar", "--refresh"]]) {
+    for (const args of [["--once"], [], ["--once", "--refresh"], ["--refresh"], ["--once", "--color"], ["--color", "--refresh"]]) {
       const result = await run('{"providers":{"codex":{"accounts":[{"limits":{"seven_day":{"remaining_percent":39}}}]}}}', "", 0, args);
       expect(result.exitCode).toBe(0);
       expect(result.stdout).toContain("Codex");
       expect(result.stdout).toContain("39%");
       expect(result.stdout !== Bun.stripANSI(result.stdout)).toBe(args.includes("--color"));
-      expect(Bun.stripANSI(result.stdout).includes("[" + "⠒".repeat(8) + " ".repeat(12) + "]")).toBe(args.includes("--bar"));
+      expect(result.stdout).toContain("Diff");
       expect(result.stderr).toBe("");
     }
     const failed = await run("null", "driver not running", 1);
@@ -465,21 +453,20 @@ test("banked resets show count and earliest expiry on 7d rows only", () => {
       "opencode-go": { accounts: [{ reset_credits: 1, limits: { seven_day: { remaining_percent: 60 } } }] },
     }
   };
-  const output = formatTable(linuxInstances(data), now, { bar: true, color: true });
+  const output = formatTable(linuxInstances(data), now, { color: true });
   expect(output).toContain(`${Bun.color("yellow", "ansi-16m")}5d\x1b[0m`);
   expect(output).toContain(`${Bun.color("red", "ansi-16m")}2d\x1b[0m`);
   const rows = Bun.stripANSI(output).split("\n").map((line) => line.split(/ {2,}/));
-  expect(rows.map((row) => row.slice(0, 5))).toEqual([
-    ["Provider", "Limit", "Remaining", "Resets in", "Banked"],
-    ["Claude [one@example.com]", "5h", "91%", "-", "-"],
-    ["Claude [one@example.com]", "7d", "78%", "-", "2 (5d)"],
-    ["Codex", "7d", "40%", "-", "3 (2d)"],
-    ["OpenCode Go", "7d", "60%", "-", "1"],
-    ["xAI", "7d", "50%", "-", "-"],
+  expect(rows).toEqual([
+    ["Provider", "Limit", "Remaining", "Diff", "Resets in", "Banked"],
+    ["Claude [one@example.com]", "5h", "91%", "-", "-", "-"],
+    ["Claude [one@example.com]", "7d", "78%", "-", "-", "2 (5d)"],
+    ["Codex", "7d", "40%", "-", "-", "3 (2d)"],
+    ["OpenCode Go", "7d", "60%", "-", "-", "1"],
+    ["xAI", "7d", "50%", "-", "-", "-"],
   ]);
-  expect(rows[0][5]).toBe("Remaining");
   expect(Bun.stripANSI(formatTable(linuxInstances({ providers: { claude: { accounts: [{ reset_credits: 3, reset_expiries: [day(9)], limits: { seven_day: { remaining_percent: 1 } } }] } } }), now)))
-    .toEndWith("1%  -          3 (9d)");
+    .toEndWith("1%     -  -          3 (9d)");
   expect(formatTable([{ settings: { limit: "seven_day" }, usage: { remaining_percent: 50, reset_credits: 0 } }], now)).not.toContain("Banked");
 });
 
