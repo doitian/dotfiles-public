@@ -9,7 +9,7 @@ out=$(jq -cn --argjson s "$stats" '
      elif $t.running > 0 then {class: "running", symbol: "\uf04b"}
      elif $t.idle > 0 then {class: "idle", symbol: "\uf186"}
      elif $t.done > 0 then {class: "done", symbol: "\uf00c"}
-     else empty end) as $top
+     else {class: "idle", symbol: "\uf186"} end) as $top
   | {
       text: "\($top.symbol)  \($t[$top.class])",
       tooltip: ($s | map("\(.provider): \(.running) running, \(.waiting) waiting, \(.idle) idle, \(.done) done") | join("\n")),
