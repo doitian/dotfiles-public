@@ -148,7 +148,7 @@ linuxTest("missing icon font gives text-only root and submenus without warnings"
     expect(menu.stdout).toContain('Niri\0info\x1fNiri\x1fdisplay\x1f<span size="12pt">Niri</span>\n');
     expect(menu.stdout).not.toMatch(/[\uE000-\uF8FF]|Warning:/u);
     const child = await run(rootEnv, "Niri");
-    expect(child).toMatchObject({ code: 0, labels: ["Exit", "Reboot", "Shutdown", "Sleep", "Shortcuts"] });
+    expect(child).toMatchObject({ code: 0, labels: ["Shutdown", "Reboot", "Sleep", "Exit", "Shortcuts"] });
     expect(child.stdout).not.toMatch(/[\uE000-\uF8FF]|Warning:/u);
     expect(await run(env, "Start service")).toMatchObject({ code: 0, stdout: "" });
     expect(await Bun.file(env.TEST_LOG).text()).toBe("systemctl --user start hyprwhspr.service\n");

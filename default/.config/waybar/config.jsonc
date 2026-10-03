@@ -206,7 +206,8 @@
   "custom/menu": {
     "format": "\uF313 ",
     "tooltip": false,
-    "on-click": "setsid -f niri-menu"
+    "on-click": "setsid -f niri-menu",
+    "on-click-right": "setsid -f niri-menu Niri"
   },
   // Optional widgets are fragments in waybar/optional/ (dotfiles repo);
   // waybar-optional symlinks the enabled ones into modules/ (agent-status

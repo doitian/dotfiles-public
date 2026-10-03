@@ -80,17 +80,17 @@ async function fail(msg) {
 
 const root = {
   "\u{F009}  Niri": submenu(async () => ({
-    "\u{F2D3}  Exit": async () => {
-      await $`niri msg action quit`.quiet().nothrow();
+    "\u{F011}  Shutdown": async () => {
+      await $`systemctl poweroff`.quiet().nothrow();
     },
     "\u{F021}  Reboot": async () => {
       await $`systemctl reboot`.quiet().nothrow();
     },
-    "\u{F011}  Shutdown": async () => {
-      await $`systemctl poweroff`.quiet().nothrow();
-    },
     "\u{F186}  Sleep": async () => {
       await $`systemctl suspend`.quiet().nothrow();
+    },
+    "\u{F2D3}  Exit": async () => {
+      await $`niri msg action quit`.quiet().nothrow();
     },
     "\u{F11C}  Shortcuts": submenu(async () => {
       const kdl = await Bun.file(join(home(), ".config", "niri", "config.kdl")).text();
