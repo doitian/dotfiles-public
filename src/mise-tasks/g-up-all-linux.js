@@ -1,14 +1,15 @@
 #!/usr/bin/env bun
+import { $ } from "bun";
 import { spawnSyncOrExit } from "../lib/shell";
 
-function main() {
+async function main() {
   if (Bun.which("apt")) {
     spawnSyncOrExit("sudo", "apt", "update");
     spawnSyncOrExit("sudo", "apt", "upgrade", "-y");
   }
   if (Bun.which("brew")) {
-    spawnSyncOrExit("brew", "update");
-    spawnSyncOrExit("brew", "upgrade");
+    await $`brew update`;
+    await $`brew upgrade -y`;
   }
   if (Bun.which("paru")) {
     spawnSyncOrExit("paru", "-Syu");
@@ -24,4 +25,4 @@ function main() {
   }
 }
 
-main();
+await main();
