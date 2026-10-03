@@ -10,6 +10,7 @@
     "return-type": "json",
     "interval": 5,
     // Detach: waybar waitpids the click command before the next poll.
-    "on-click": "setsid -f kitty --class tui-popup agent-berth tui"
+    "on-click": "setsid -f kitty --class tui-popup agent-berth tui",
+    "on-click-right": "setsid -f kitty --class tui-popup aiusage --bar"
   }
 }
