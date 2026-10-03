@@ -33,5 +33,7 @@ errors, read [references/troubleshooting.md](references/troubleshooting.md)
 before asking the user to authenticate. Its sandbox retry procedure is
 specific to Codex.
 
+For a completed decision task, record one sentence stating the choice and why.
+
 Failures go to stderr and exit 1. Report the operation's result or specific
 failure; an unsuccessful command is not confirmation of a change.
