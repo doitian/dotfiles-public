@@ -65,7 +65,24 @@ function usageBar(settings, usage, now, color) {
   return `[${"⠶".repeat(overlap)}${longer}${" ".repeat(width - Math.max(upper, lower))}]`;
 }
 
-function formatRow(instance, now, bar, color) {
+function bankedResets(account) {
+  const count = account?.reset_credits;
+  if (!Number.isInteger(count) || count <= 0) return {};
+  return { reset_credits: count, reset_expiries: Array.isArray(account.reset_expiries) ? account.reset_expiries : [] };
+}
+
+// Mirrors the Ulanzi 7d keys, which are the only ones that show banked resets.
+function bankedCell(settings, usage, now, color) {
+  const count = usage.reset_credits;
+  if (settings.limit !== "seven_day" || !Number.isInteger(count) || count <= 0) return "-";
+  const expiry = Math.min(...(usage.reset_expiries ?? []).slice(0, count).map(Date.parse).filter(Number.isFinite));
+  if (!Number.isFinite(expiry)) return String(count);
+  const days = (expiry - now) / 86400000;
+  const text = resetTime(new Date(expiry).toISOString(), now);
+  return `${count} (${days <= 7 ? colorize(text, days <= 3 ? "red" : "yellow", color) : text})`;
+}
+
+function formatRow(instance, now, bar, banked, color) {
   const settings = instance.settings ?? {};
   const usage = instance.usage ?? {};
   const provider = settings.label || settings.provider || "unknown";
@@ -83,15 +100,17 @@ function formatRow(instance, now, bar, color) {
   }
   const reset = usage.resets_at ? resetTime(usage.resets_at, now) : "-";
   const row = [`${singleLine(provider)}${account}`, singleLine(limit), value, reset];
+  if (banked) row.push(bankedCell(settings, usage, now, color));
   if (bar) row.push(usageBar(settings, usage, now, color));
   return row;
 }
 
 export function formatTable(instances, now = Date.now(), { bar = false, color = false } = {}) {
   if (!instances.length) return "No AI usage buttons found.";
+  const banked = instances.some((instance) => bankedCell(instance.settings ?? {}, instance.usage ?? {}, now) !== "-");
   const rows = [
-    ["Provider", "Limit", "Remaining", "Resets in", ...(bar ? ["Remaining"] : [])],
-    ...instances.map((instance) => formatRow(instance, now, bar, color))
+    ["Provider", "Limit", "Remaining", "Resets in", ...(banked ? ["Banked"] : []), ...(bar ? ["Remaining"] : [])],
+    ...instances.map((instance) => formatRow(instance, now, bar, banked, color))
       .sort((a, b) => a[0].localeCompare(b[0], undefined, { sensitivity: "base" })
         || (LIMIT_ORDER[a[1]] ?? 4) - (LIMIT_ORDER[b[1]] ?? 4)),
   ];
@@ -167,7 +186,7 @@ function refreshedInstances(instances, data) {
       usage = { remaining_amount: limit.remaining_amount, currency: limit.currency };
     } else if (Number.isFinite(limit?.remaining_percent) || Number.isFinite(limit?.used_percent)) {
       const remaining = Number.isFinite(limit.remaining_percent) ? limit.remaining_percent : 100 - limit.used_percent;
-      usage = { remaining_percent: Math.max(0, Math.min(100, remaining)), resets_at: limit.resets_at };
+      usage = { remaining_percent: Math.max(0, Math.min(100, remaining)), resets_at: limit.resets_at, ...bankedResets(account) };
     }
     return { ...instance, usage, fetchedAt: data.fetchedAt };
   });
@@ -227,7 +246,7 @@ export function linuxInstances(data) {
       const entries = limits && typeof limits === "object" && !Array.isArray(limits) ? Object.entries(limits) : [];
       if (!entries.length) instances.push({ settings: { ...settings, limit: "-" } });
       for (const [limit, usage] of entries) {
-        instances.push({ settings: { ...settings, limit }, usage });
+        instances.push({ settings: { ...settings, limit }, usage: { ...usage, ...bankedResets(account) } });
       }
     }
   }
@@ -267,7 +286,7 @@ async function main() {
     },
   });
   if (values.help) {
-    console.log("Usage: aiusage [--once] [--refresh] [--bar] [--color]\n\nShow Ulanzi AI usage, updating every 5 seconds. Press r to refresh, q or Ctrl+C to quit.\n--once     Print one snapshot (also used when stdout is redirected).\n--refresh  Request fresh provider data on launch.\n--bar      Add a bar: upper = usage remaining, lower = time remaining.\n           Time uses 5h (including rolling), 7d, or 30d (monthly) windows with a reset timestamp; balances have no bar.\n           The longer of the two is colored: green when usage remaining is longer, red when time is longer.\n--color    Force color output, even when stdout is redirected.\nWindows: Ulanzi Studio AI usage plugin. Linux: ulanzi-niri ai-usage --json.");
+    console.log("Usage: aiusage [--once] [--refresh] [--bar] [--color]\n\nShow Ulanzi AI usage, updating every 5 seconds. Press r to refresh, q or Ctrl+C to quit.\n--once     Print one snapshot (also used when stdout is redirected).\n--refresh  Request fresh provider data on launch.\n--bar      Add a bar: upper = usage remaining, lower = time remaining.\n           Time uses 5h (including rolling), 7d, or 30d (monthly) windows with a reset timestamp; balances have no bar.\n           The longer of the two is colored: green when usage remaining is longer, red when time is longer.\n--color    Force color output, even when stdout is redirected.\nBanked lists Claude and Codex 7d limit resets in reserve and the time until the earliest expires\n(red within 3d, yellow within 7d); the column appears only when some account has one.\nWindows: Ulanzi Studio AI usage plugin. Linux: ulanzi-niri ai-usage --json.");
     return;
   }
   let refresh;

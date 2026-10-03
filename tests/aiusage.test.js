@@ -447,3 +447,52 @@ test.skipIf(process.platform !== "linux")("Linux CLI uses JSON without touching 
     await rm(dir, { recursive: true, force: true });
   }
 });
+
+test("banked resets show count and earliest expiry on 7d rows only", () => {
+  const now = Date.parse("2026-10-03T00:00:00Z");
+  const day = (days) => new Date(now + days * 86400000).toISOString();
+  const data = {
+    providers: {
+      claude: {
+        accounts: [{
+          email: "one@example.com", reset_credits: 2, reset_expiries: [day(12), day(5)], limits: {
+            five_hour: { remaining_percent: 91 }, seven_day: { remaining_percent: 78 },
+          }
+        }]
+      },
+      codex: { accounts: [{ reset_credits: 3, reset_expiries: [day(2)], limits: { seven_day: { remaining_percent: 40 } } }] },
+      xai: { accounts: [{ reset_credits: 1, limits: { weekly: { remaining_percent: 50 } } }] },
+      "opencode-go": { accounts: [{ reset_credits: 1, limits: { seven_day: { remaining_percent: 60 } } }] },
+    }
+  };
+  const output = formatTable(linuxInstances(data), now, { bar: true, color: true });
+  expect(output).toContain(`${Bun.color("yellow", "ansi-16m")}5d\x1b[0m`);
+  expect(output).toContain(`${Bun.color("red", "ansi-16m")}2d\x1b[0m`);
+  const rows = Bun.stripANSI(output).split("\n").map((line) => line.split(/ {2,}/));
+  expect(rows.map((row) => row.slice(0, 5))).toEqual([
+    ["Provider", "Limit", "Remaining", "Resets in", "Banked"],
+    ["Claude [one@example.com]", "5h", "91%", "-", "-"],
+    ["Claude [one@example.com]", "7d", "78%", "-", "2 (5d)"],
+    ["Codex", "7d", "40%", "-", "3 (2d)"],
+    ["OpenCode Go", "7d", "60%", "-", "1"],
+    ["xAI", "7d", "50%", "-", "-"],
+  ]);
+  expect(rows[0][5]).toBe("Remaining");
+  expect(Bun.stripANSI(formatTable(linuxInstances({ providers: { claude: { accounts: [{ reset_credits: 3, reset_expiries: [day(9)], limits: { seven_day: { remaining_percent: 1 } } }] } } }), now)))
+    .toEndWith("1%  -          3 (9d)");
+  expect(formatTable([{ settings: { limit: "seven_day" }, usage: { remaining_percent: 50, reset_credits: 0 } }], now)).not.toContain("Banked");
+});
+
+test("Windows refresh carries banked resets from the provider account", async () => {
+  const instances = [{ settings: { provider: "codex", limit: "seven_day" }, usage: { remaining_percent: 10 }, fetchedAt: 100 }];
+  const data = {
+    fetchedAt: 200, providers: {
+      codex: { accounts: [{ active: true, reset_credits: 1, reset_expiries: ["2026-10-22T16:00:00.000Z"], limits: { seven_day: { remaining_percent: 85 } } }] },
+    }
+  };
+  const { cache } = await bridge((request, path) => Response.json(path === "/usage/refresh" ? data : { instances }));
+  const read = await createUsageReader(cache);
+  expect((await read(true))[0].usage).toEqual({
+    remaining_percent: 85, resets_at: undefined, reset_credits: 1, reset_expiries: ["2026-10-22T16:00:00.000Z"],
+  });
+});
