@@ -2,4 +2,4 @@ defaults:
   - xelatex-base
 variables:
   # scrbook, scrreprt, scrartcl, scrlttr2 and typearea
-  documentclass: srcbook
+  documentclass: scrbook
