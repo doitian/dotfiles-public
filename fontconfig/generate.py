@@ -12,7 +12,7 @@ C = {
     },
     "sans-serif": {
         "title": "Sans",
-        "prefer": ["Greycliff CF", "Atkinson Hyperlegible"],
+        "prefer": ["Greycliff CF", "Atkinson Hyperlegible Next"],
         "sc": ["MiSans VF"],
         "tc": ["MiSans VF"],
         "hk": ["MiSans VF"],

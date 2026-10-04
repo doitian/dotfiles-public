@@ -49,13 +49,13 @@ jobs:
             fonts-noto-cjk \
             fonts-noto-color-emoji
 
-      - name: Install Atkinson Hyperlegible font
+      - name: Install Atkinson Hyperlegible Next font
         run: |
-          curl -fsSL "https://github.com/googlefonts/atkinson-hyperlegible/archive/refs/heads/main.tar.gz" -o /tmp/atkinson.tar.gz
+          curl -fsSL "https://github.com/googlefonts/atkinson-hyperlegible-next/archive/refs/heads/main.tar.gz" -o /tmp/atkinson.tar.gz
           mkdir -p /tmp/atkinson
           tar -xf /tmp/atkinson.tar.gz -C /tmp/atkinson --strip-components=1
-          sudo mkdir -p /usr/local/share/fonts/atkinson-hyperlegible
-          sudo cp /tmp/atkinson/fonts/ttf/*.ttf /usr/local/share/fonts/atkinson-hyperlegible/
+          sudo mkdir -p /usr/local/share/fonts/atkinson-hyperlegible-next
+          sudo cp /tmp/atkinson/fonts/ttf/*.ttf /usr/local/share/fonts/atkinson-hyperlegible-next/
 
       - name: Install JetBrains Mono font
         run: |
@@ -83,7 +83,7 @@ jobs:
 
       - name: Verify fonts
         run: |
-          fc-list | grep -i "atkinson"
+          fc-list | grep -i "atkinson hyperlegible next"
           fc-list | grep -i "lato"
           fc-list | grep -i "jetbrains"
           fc-list | grep -i "noto.*cjk" | head -3
