@@ -280,6 +280,19 @@ description = "Activate mise in claude"
 dir = "{{cwd}}"
 run = "preset-claude"
 
+[tasks."preset:paseo"]
+hide = true
+description = "Configure Paseo worktree setup with git wta"
+dir = "{{cwd}}"
+run = '''
+#!/usr/bin/env bun
+const file = Bun.file("paseo.json");
+const config = await file.exists() ? await file.json() : {};
+config.worktree ??= {};
+config.worktree.setup = 'git wta --setup "$PASEO_SOURCE_CHECKOUT_PATH" "$PASEO_WORKTREE_PATH"';
+await Bun.write(file, JSON.stringify(config, null, 2) + "\n");
+'''
+
 [tasks."preset:skills"]
 hide = true
 description = "Link .claude/skills and .agents/skills when only one exists"
