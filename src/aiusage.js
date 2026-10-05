@@ -55,15 +55,18 @@ function windowMs(limit) {
   }[limit];
 }
 
-function usageDiff(settings, usage, now, color) {
+const SHORT_LIMITS = new Set(["five_hour", "rolling"]);
+const ACTION_RANK = { "↓": 0, "↑": 1 };
+
+// Remaining usage over remaining time: below 1× runs out before the reset, above 1× leaves quota unused.
+function usagePace(settings, usage, now) {
   const duration = windowMs(settings.limit);
   const reset = Date.parse(usage.resets_at);
-  if (!duration || !Number.isFinite(usage.remaining_percent) || !Number.isFinite(reset)) return "-";
-  const usagePct = Math.max(0, Math.min(100, usage.remaining_percent));
-  const timePct = Math.max(0, Math.min(100, ((reset - now) / duration) * 100));
-  const diff = Math.round(usagePct - timePct);
-  const text = `${diff >= 0 ? "+" : ""}${diff}%`;
-  return colorize(text, diff < 0 ? "red" : diff <= 5 ? "green" : "blue", color);
+  if (!duration || !Number.isFinite(usage.remaining_percent) || !Number.isFinite(reset) || reset <= now) return null;
+  const time = Math.min(1, (reset - now) / duration);
+  const pace = Math.round(Math.max(0, Math.min(100, usage.remaining_percent)) / time / 10) / 10;
+  const action = pace < 1 ? "↓" : pace >= 1.5 && !SHORT_LIMITS.has(settings.limit) ? "↑" : "";
+  return { pace, action };
 }
 
 function bankedResets(account) {
@@ -73,53 +76,68 @@ function bankedResets(account) {
 }
 
 // Mirrors the Ulanzi 7d keys, which are the only ones that show banked resets.
-function bankedCell(settings, usage, now, color) {
+function bankedExpiry(settings, usage) {
   const count = usage.reset_credits;
-  if (settings.limit !== "seven_day" || !Number.isInteger(count) || count <= 0) return "-";
-  const expiry = Math.min(...(usage.reset_expiries ?? []).slice(0, count).map(Date.parse).filter(Number.isFinite));
-  if (!Number.isFinite(expiry)) return String(count);
-  const days = (expiry - now) / 86400000;
-  const text = resetTime(new Date(expiry).toISOString(), now);
-  return `${count} (${days <= 7 ? colorize(text, days <= 3 ? "red" : "yellow", color) : text})`;
+  if (settings.limit !== "seven_day" || !Number.isInteger(count) || count <= 0) return null;
+  return { count, expiry: Math.min(...(usage.reset_expiries ?? []).slice(0, count).map(Date.parse).filter(Number.isFinite)) };
 }
 
-function formatRow(instance, now, banked, color) {
+function bankedCell(banked, now, paint) {
+  if (!banked) return "-";
+  if (!Number.isFinite(banked.expiry)) return String(banked.count);
+  const days = (banked.expiry - now) / 86400000;
+  const text = resetTime(new Date(banked.expiry).toISOString(), now);
+  return `${banked.count} (${days <= 7 ? paint(text, days <= 3 ? "red" : "yellow") : text})`;
+}
+
+function formatRow(instance, now, showBanked, color) {
   const settings = instance.settings ?? {};
   const usage = instance.usage ?? {};
   const provider = settings.label || settings.provider || "unknown";
   const account = settings.account ? ` [${singleLine(settings.account)}]` : "";
   const limit = LIMITS[settings.limit] ?? settings.limit ?? "usage";
+  const pace = usagePace(settings, usage, now);
+  const banked = bankedExpiry(settings, usage);
+  // On-pace rows fade out unless a banked reset is about to expire.
+  const dim = Boolean(pace && !pace.action && !(banked?.expiry - now <= 7 * 86400000));
+  const paint = (text, name) => dim ? text : colorize(text, name, color);
   let value;
   if (typeof usage.remaining_percent === "number" && Number.isFinite(usage.remaining_percent)) {
     const percent = usage.remaining_percent;
-    value = colorize(`${Number(percent.toFixed(1))}%`, percent <= 20 ? "red" : percent <= 50 ? "orange" : "green", color);
+    value = paint(`${Number(percent.toFixed(1))}%`, percent <= 20 ? "red" : percent <= 50 ? "orange" : "green");
   } else if (typeof usage.remaining_amount === "number" && Number.isFinite(usage.remaining_amount)) {
     const amount = usage.remaining_amount;
-    value = colorize(`${amount.toFixed(2)} ${singleLine(usage.currency || "")}`.trim(), amount <= 0 ? "red" : "green", color);
+    value = paint(`${amount.toFixed(2)} ${singleLine(usage.currency || "")}`.trim(), amount <= 0 ? "red" : "green");
   } else {
     value = "-";
   }
   const reset = usage.resets_at ? resetTime(usage.resets_at, now) : "-";
-  const row = [`${singleLine(provider)}${account}`, singleLine(limit), value, reset, usageDiff(settings, usage, now, color)];
-  if (banked) row.push(bankedCell(settings, usage, now, color));
-  return row;
+  let paceCell = "-";
+  if (pace) {
+    const text = `${(pace.pace >= 10 ? ">9" : pace.pace.toFixed(1)).padStart(3)}×`;
+    paceCell = pace.action ? paint(`${text} ${pace.action}`, pace.action === "↑" ? "blue" : "red") : text;
+  }
+  const cells = [`${singleLine(provider)}${account}`, singleLine(limit), value, reset, paceCell];
+  if (showBanked) cells.push(bankedCell(banked, now, paint));
+  return { cells, dim, pace: pace?.pace, rank: ACTION_RANK[pace?.action] ?? 2 };
 }
 
 export function formatTable(instances, now = Date.now(), { color = false } = {}) {
   if (!instances.length) return "No AI usage buttons found.";
-  const banked = instances.some((instance) => bankedCell(instance.settings ?? {}, instance.usage ?? {}, now) !== "-");
-  const rows = [
-    ["Provider", "Limit", "Remaining", "Resets in", "Diff", ...(banked ? ["Banked"] : [])],
-    ...instances.map((instance) => formatRow(instance, now, banked, color))
-      .sort((a, b) => a[0].localeCompare(b[0], undefined, { sensitivity: "base" })
-        || (LIMIT_ORDER[a[1]] ?? 4) - (LIMIT_ORDER[b[1]] ?? 4)),
-  ];
-  const widths = rows[0].map((_, column) =>
-    Math.max(...rows.map((row) => Bun.stringWidth(row[column]))));
-  return rows.map((row) => row.map((cell, column) => {
+  const showBanked = instances.some((instance) => bankedExpiry(instance.settings ?? {}, instance.usage ?? {}));
+  const header = ["Provider", "Limit", "Remaining", "Resets in", "Pace", ...(showBanked ? ["Banked"] : [])];
+  const rows = instances.map((instance) => formatRow(instance, now, showBanked, color))
+    .sort((a, b) => a.rank - b.rank
+      || (a.rank === 0 ? a.pace - b.pace : a.rank === 1 ? b.pace - a.pace : 0)
+      || a.cells[0].localeCompare(b.cells[0], undefined, { sensitivity: "base" })
+      || (LIMIT_ORDER[a.cells[1]] ?? 4) - (LIMIT_ORDER[b.cells[1]] ?? 4));
+  const widths = header.map((_, column) =>
+    Math.max(...[header, ...rows.map((row) => row.cells)].map((cells) => Bun.stringWidth(cells[column]))));
+  const line = (cells) => cells.map((cell, column) => {
     const padding = " ".repeat(widths[column] - Bun.stringWidth(cell));
-    return column === 2 || column === 4 ? padding + cell : cell + padding;
-  }).join("  ").trimEnd()).join("\n");
+    return column === 2 ? padding + cell : cell + padding;
+  }).join("  ").trimEnd();
+  return [line(header), ...rows.map((row) => row.dim ? colorize(line(row.cells), "gray", color) : line(row.cells))].join("\n");
 }
 
 async function findPorts() {
@@ -291,8 +309,9 @@ Show Ulanzi AI usage, updating every 5 seconds. Press r to refresh, q or Ctrl+C 
 --once     Print one snapshot (also used when stdout is redirected).
 --refresh  Request fresh provider data on launch.
 --color    Force color output, even when stdout is redirected.
-Diff is remaining usage minus remaining time on 5h (including rolling), 7d, and 30d monthly windows.
-Within 5 points ahead is green, further ahead is blue, and behind is red. Balances and rows without a reset show -.
+Pace is remaining usage divided by remaining time on 5h (including rolling), 7d, and 30d monthly windows.
+Below 1× is a red ↓ (slow down); 1.5× or more on 7d and monthly windows is a blue ↑ (use it). Those rows sort
+to the top, other rows with a pace are dimmed, and balances and rows without a reset show -.
 Banked lists Claude and Codex 7d limit resets in reserve and the time until the earliest expires
 (red within 3d, yellow within 7d); the column appears only when some account has one.
 Windows: Ulanzi Studio AI usage plugin. Linux: ulanzi-niri ai-usage --json.`);
