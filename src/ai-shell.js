@@ -14,7 +14,6 @@ Generate a shell command from a natural-language description.
 
 Options:
   -m, --model <name>   Override OpenAI model
-  --no-thinking        Disable thinking (Qwen)
   -h, --help           Show this help
 `;
 
@@ -26,7 +25,6 @@ function parseArgs() {
     options: {
       help: { type: "boolean", short: "h" },
       model: { type: "string", short: "m" },
-      "no-thinking": { type: "boolean" },
     },
   });
   if (values.help) {
@@ -35,7 +33,6 @@ function parseArgs() {
   }
   return {
     model: values.model ?? null,
-    noThinking: values["no-thinking"] ?? false,
     prompt: positionals.join(" ").trim(),
   };
 }
@@ -76,7 +73,7 @@ function formatContext(osInfo) {
 }
 
 async function main() {
-  const { model: cliModel, noThinking, prompt: argsPrompt } = parseArgs();
+  const { model: cliModel, prompt: argsPrompt } = parseArgs();
 
   let userPrompt = argsPrompt;
   if (!userPrompt && !process.stdin.isTTY) {
@@ -98,7 +95,7 @@ async function main() {
   await runOneshot(client, selectedModel, {
     systemPrompt: SYSTEM_PROMPT,
     input,
-    noThinking,
+    noThinking: true,
   });
 }
 
