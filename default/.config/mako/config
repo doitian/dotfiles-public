@@ -1,3 +1,16 @@
+# Catppuccin Mocha
+background-color=#1e1e2e
+text-color=#cdd6f4
+border-color=#cba6f7
+progress-color=over #45475a
+border-size=2
+border-radius=10
+padding=12
+icon-path=/usr/share/icons/breeze-dark:/usr/share/icons/breeze
+
+[app-icon=""]
+format=🔔 <b>%s</b>\n%b
+
 # niri hardcodes a "Screenshot captured" notification on every capture
 # (no config option as of 26.04). Hide it; satty opening is feedback enough.
 # Expire it too: mako ignores the transient hint and defaults to no timeout,
@@ -6,3 +19,9 @@
 invisible=1
 default-timeout=1000
 history=0
+
+[urgency=critical]
+border-color=#f38ba8
+ignore-timeout=1
+default-timeout=0
+on-button-left=dismiss
