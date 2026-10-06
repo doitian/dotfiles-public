@@ -90,11 +90,11 @@ function bankedCell(banked, now, paint) {
   return `${banked.count} (${days <= 7 ? paint(text, days <= 3 ? "red" : "yellow") : text})`;
 }
 
-function formatRow(instance, now, showBanked, color) {
+function formatRow(instance, now, showBanked, color, accounts) {
   const settings = instance.settings ?? {};
   const usage = instance.usage ?? {};
   const provider = settings.label || settings.provider || "unknown";
-  const account = settings.account ? ` [${singleLine(settings.account)}]` : "";
+  const account = settings.account ? ` [account ${accounts.get(String(settings.account).trim().toLowerCase())}]` : "";
   const limit = LIMITS[settings.limit] ?? settings.limit ?? "usage";
   const pace = usagePace(settings, usage, now);
   const banked = bankedExpiry(settings, usage);
@@ -126,7 +126,14 @@ export function formatTable(instances, now = Date.now(), { color = false } = {})
   if (!instances.length) return "No AI usage buttons found.";
   const showBanked = instances.some((instance) => bankedExpiry(instance.settings ?? {}, instance.usage ?? {}));
   const header = ["Provider", "Limit", "Remaining", "Resets in", "Pace", ...(showBanked ? ["Banked"] : [])];
-  const rows = instances.map((instance) => formatRow(instance, now, showBanked, color))
+  const accounts = new Map();
+  for (const instance of instances) {
+    const account = instance.settings?.account;
+    if (!account) continue;
+    const key = String(account).trim().toLowerCase();
+    if (!accounts.has(key)) accounts.set(key, accounts.size + 1);
+  }
+  const rows = instances.map((instance) => formatRow(instance, now, showBanked, color, accounts))
     .sort((a, b) => a.rank - b.rank
       || (a.rank === 0 ? a.pace - b.pace : a.rank === 1 ? b.pace - a.pace : 0)
       || a.cells[0].localeCompare(b.cells[0], undefined, { sensitivity: "base" })
@@ -306,6 +313,7 @@ async function main() {
     console.log(`Usage: aiusage [--once] [--refresh] [--color]
 
 Show Ulanzi AI usage, updating every 5 seconds. Press r to refresh, q or Ctrl+C to quit.
+Account identifiers are redacted as numbered aliases.
 --once     Print one snapshot (also used when stdout is redirected).
 --refresh  Request fresh provider data on launch.
 --color    Force color output, even when stdout is redirected.

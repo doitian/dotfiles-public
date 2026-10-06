@@ -295,9 +295,9 @@ test("Linux usage renders accounts, balances, missing values, and sorted limits"
     .split("\n").map((line) => line.split(/ {2,}/));
   expect(rows).toEqual([
     ["Provider", "Limit", "Remaining", "Resets in", "Pace"],
-    ["Claude [one@example.com]", "5h", "91%", "1h", "4.6×"],
-    ["Claude [one@example.com]", "7d", "78%", "5d", "1.0×"],
-    ["Claude [two@example.com]", "-", "-", "-", "-"],
+    ["Claude [account 1]", "5h", "91%", "1h", "4.6×"],
+    ["Claude [account 1]", "7d", "78%", "5d", "1.0×"],
+    ["Claude [account 2]", "-", "-", "-", "-"],
     ["Codex", "-", "-", "-", "-"],
     ["Moonshot", "balance", "82.55 CNY", "-", "-"],
     ["OpenCode Go", "rolling", "100%", "-", "-"],
@@ -305,6 +305,26 @@ test("Linux usage renders accounts, balances, missing values, and sorted limits"
     ["OpenCode Go", "monthly", "50%", "-", "-"],
     ["xAI", "7d", "-", "-", "-"],
   ]);
+});
+
+test("account identifiers are redacted consistently without changing source settings", () => {
+  const instances = [
+    { settings: { provider: "Claude", account: "one@example.com", limit: "five_hour" } },
+    { settings: { provider: "Claude", account: "two@example.com", limit: "seven_day" } },
+    { settings: { provider: "Codex", account: " ONE@EXAMPLE.COM ", limit: "five_hour" } },
+    { settings: { provider: "Moonshot", account: "private-account", limit: "balance" } },
+  ];
+  const original = structuredClone(instances);
+  for (const color of [false, true]) {
+    const output = Bun.stripANSI(formatTable(instances, 0, { color }));
+    expect(output).toContain("Claude [account 1]");
+    expect(output).toContain("Claude [account 2]");
+    expect(output).toContain("Codex [account 1]");
+    expect(output).toContain("Moonshot [account 3]");
+    expect(output).not.toContain("@");
+    expect(output).not.toContain("private-account");
+  }
+  expect(instances).toEqual(original);
 });
 
 test("forced colors cover usage thresholds and balances without changing table alignment", () => {
@@ -473,8 +493,8 @@ test("banked resets show count and earliest expiry on 7d rows only", () => {
   const rows = Bun.stripANSI(output).split("\n").map((line) => line.split(/ {2,}/));
   expect(rows).toEqual([
     ["Provider", "Limit", "Remaining", "Resets in", "Pace", "Banked"],
-    ["Claude [one@example.com]", "5h", "91%", "-", "-", "-"],
-    ["Claude [one@example.com]", "7d", "78%", "-", "-", "2 (5d)"],
+    ["Claude [account 1]", "5h", "91%", "-", "-", "-"],
+    ["Claude [account 1]", "7d", "78%", "-", "-", "2 (5d)"],
     ["Codex", "7d", "40%", "-", "-", "3 (2d)"],
     ["OpenCode Go", "7d", "60%", "-", "-", "1"],
     ["xAI", "7d", "50%", "-", "-", "-"],
