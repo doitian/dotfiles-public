@@ -48,7 +48,7 @@ test("mise validation fails for missing task dependencies", async () => {
   expect((await sandbox.run(["tasks", "validate"])).exitCode).not.toBe(0);
 });
 
-test.each(["g:up:uv", "g:up:bun", "g:add:bun:all", "g:add:gh:all"])(
+test.each(["g:up:uv", "g:up:bun", "g:up:plugins", "g:add:bun:all", "g:add:gh:all"])(
   "%s resolves its command without executing it",
   async (name) => {
     const output = await run("run", "--dry-run", name);

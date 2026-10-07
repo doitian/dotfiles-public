@@ -12,6 +12,9 @@ async function main() {
   if (Bun.which("bun")) {
     spawnSyncOrExit("mise", "run", "g:up:bun");
   }
+  if (Bun.which("pi") || Bun.which("opencode") || Bun.which("claude")) {
+    spawnSyncOrExit("mise", "run", "g:up:plugins");
+  }
 }
 
 main().catch((err) => {

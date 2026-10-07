@@ -28,6 +28,12 @@ description = "Update all bun global packages"
 dir = "~"
 run = "bun update -g --latest"
 
+[tasks."g:up:plugins"]
+hide = true
+description = "Update user-scope plugins for pi, opencode, and claude"
+dir = "~"
+run = "g-up-plugins"
+
 [tasks."g:add:uv:all"]
 hide = true
 description = "Install uv tools"
