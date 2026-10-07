@@ -49,6 +49,12 @@ description = "Install gh extensions"
 dir = "~"
 run = ["gh extension install github/gh-stack"]
 
+[tasks."g:add:pi:all"]
+hide = true
+description = "Install pi extensions"
+dir = "~"
+run = ["pi install npm:pi-advisor"]
+
 [tasks."g:add:sprite"]
 hide = true
 description = "Install sprites CLI"
