@@ -69,6 +69,7 @@ let g:netrw_liststyle = 3
 let g:netrw_winsize = -40
 
 let g:dispatch_no_maps = 1
+let g:dispatch_compilers = { 'mise exec --': '' }
 
 let g:mucomplete#no_mappings = 1
 let g:mucomplete#enable_auto_at_startup = 1

@@ -18,6 +18,7 @@ return {
     },
     init = function()
       vim.g.dispatch_no_maps = 1
+      vim.g.dispatch_compilers = { ["mise exec --"] = "" }
     end,
   },
 
