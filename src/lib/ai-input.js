@@ -1,6 +1,8 @@
+import { readStdin } from "./io.js";
+
 export async function loadFileContent(filePath) {
   if (!filePath) return null;
-  if (filePath === "-") return await Bun.stdin.text();
+  if (filePath === "-") return await readStdin();
   const file = Bun.file(filePath);
   if (!(await file.exists())) {
     throw new Error(`File not found: ${filePath}`);

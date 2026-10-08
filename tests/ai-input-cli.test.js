@@ -61,6 +61,18 @@ for (const script of ["ai-shell", "ai-oneshot"]) {
       });
     }
 
+    test.each(["", "Hello, 世界 👋\r\nlast line"])(
+      "explicit stdin preserves input %j with positional text",
+      async (stdin) => {
+        const result = await run(script, ["-f", "-", "prefix"], stdin);
+        expect(result.exitCode).toBe(0);
+        expect(result.stderr).toBe("");
+        expect(inputFor(script, result.stdout)).toBe(
+          stdin ? `prefix\n\n${stdin}` : "prefix",
+        );
+      },
+    );
+
     test("reads a file without positional text or stdin", async () => {
       const result = await run(script, ["-f", file]);
       expect(result.exitCode).toBe(0);
@@ -81,6 +93,13 @@ test("ai-shell still accepts piped input without --file", async () => {
   const result = await run("ai-shell", [], "stdin content\n");
   expect(result.exitCode).toBe(0);
   expect(inputFor("ai-shell", result.stdout)).toBe("stdin content");
+});
+
+test("ai-oneshot appends implicit stdin to positional text", async () => {
+  const result = await run("ai-oneshot", ["prefix"], "stdin content");
+  expect(result.exitCode).toBe(0);
+  expect(result.stderr).toBe("");
+  expect(inputFor("ai-oneshot", result.stdout)).toBe("prefix\n\nstdin content");
 });
 
 test("ai-shell still prefers positional text over implicit stdin", async () => {

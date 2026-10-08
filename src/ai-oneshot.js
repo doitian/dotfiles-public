@@ -10,7 +10,7 @@
  */
 import { parseArgs as parseArgsUtil } from "node:util";
 import { loadFileContent, prependToInput } from "./lib/ai-input.js";
-import { readLines } from "./lib/io.js";
+import { readLines, readStdin } from "./lib/io.js";
 import { OpenAI, runOneshot } from "./lib/openai.js";
 import { getOpenAICredentials } from "./lib/secrets.js";
 
@@ -63,7 +63,7 @@ async function main() {
 
   const oneshot = file || prefix;
   if (oneshot) {
-    const stdinText = file === "-" || process.stdin.isTTY ? "" : await Bun.stdin.text();
+    const stdinText = file === "-" || process.stdin.isTTY ? "" : await readStdin();
     const input = prependToInput(prefix, fileContent, stdinText);
     await runOneshot(client, selectedModel, { systemPrompt, input, noThinking });
   } else {

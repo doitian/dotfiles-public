@@ -6,6 +6,7 @@
 import { parseArgs as parseArgsUtil } from "node:util";
 import { loadFileContent, prependToInput } from "./lib/ai-input.js";
 import { isPowerShell } from "./lib/env.js";
+import { readStdin } from "./lib/io.js";
 import { OpenAI, runOneshot } from "./lib/openai.js";
 import { getOpenAICredentials } from "./lib/secrets.js";
 
@@ -81,7 +82,7 @@ async function main() {
 
   const fileContent = await loadFileContent(file);
   const stdinText = file !== "-" && (file || !argsPrompt) && !process.stdin.isTTY
-    ? await Bun.stdin.text()
+    ? await readStdin()
     : "";
   const userPrompt = prependToInput(argsPrompt, fileContent, stdinText).trim();
   if (!userPrompt) {
