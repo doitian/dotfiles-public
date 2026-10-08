@@ -9,6 +9,7 @@
  * Positional args are prepended to the user prompt.
  */
 import { parseArgs as parseArgsUtil } from "node:util";
+import { loadFileContent, prependToInput } from "./lib/ai-input.js";
 import { readLines } from "./lib/io.js";
 import { OpenAI, runOneshot } from "./lib/openai.js";
 import { getOpenAICredentials } from "./lib/secrets.js";
@@ -18,7 +19,7 @@ const USAGE = `Usage: ai-oneshot [options] [user prompt...]
 Send stdin (or piped input) to OpenAI, stream response to stdout.
 
 Options:
-  -f, --file <path>     Prepend contents of file to the user message
+  -f, --file <path>     Prepend file contents to the user message (- for stdin)
   -m, --model <name>    Override OpenAI model
   --no-thinking         Disable thinking (Qwen)
   -s, --system <text>  System prompt (instruction for the model)
@@ -50,21 +51,6 @@ function parseArgs() {
   };
 }
 
-async function loadFileContent(filePath) {
-  if (!filePath) return null;
-  const file = Bun.file(filePath);
-  if (!(await file.exists())) {
-    console.error(`File not found: ${filePath}`);
-    process.exit(1);
-  }
-  return await file.text();
-}
-
-function prependToInput(prefix, fileContent, input) {
-  const parts = [prefix, fileContent, input].filter(Boolean);
-  return parts.join("\n\n");
-}
-
 async function main() {
   const { file, model: cliModel, noThinking, prefix, systemPrompt } =
     parseArgs();
@@ -77,7 +63,7 @@ async function main() {
 
   const oneshot = file || prefix;
   if (oneshot) {
-    const stdinText = process.stdin.isTTY ? "" : await Bun.stdin.text();
+    const stdinText = file === "-" || process.stdin.isTTY ? "" : await Bun.stdin.text();
     const input = prependToInput(prefix, fileContent, stdinText);
     await runOneshot(client, selectedModel, { systemPrompt, input, noThinking });
   } else {

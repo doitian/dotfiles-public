@@ -4,6 +4,7 @@
  * Adds a system prompt for shell generation and attaches OS & shell context.
  */
 import { parseArgs as parseArgsUtil } from "node:util";
+import { loadFileContent, prependToInput } from "./lib/ai-input.js";
 import { isPowerShell } from "./lib/env.js";
 import { OpenAI, runOneshot } from "./lib/openai.js";
 import { getOpenAICredentials } from "./lib/secrets.js";
@@ -13,6 +14,7 @@ const USAGE = `Usage: ai-shell [options] [user prompt...]
 Generate a shell command from a natural-language description.
 
 Options:
+  -f, --file <path>    Prepend file contents to the user message (- for stdin)
   -m, --model <name>   Override OpenAI model
   -h, --help           Show this help
 `;
@@ -23,6 +25,7 @@ function parseArgs() {
   const { values, positionals } = parseArgsUtil({
     allowPositionals: true,
     options: {
+      file: { type: "string", short: "f" },
       help: { type: "boolean", short: "h" },
       model: { type: "string", short: "m" },
     },
@@ -32,6 +35,7 @@ function parseArgs() {
     process.exit(0);
   }
   return {
+    file: values.file ?? null,
     model: values.model ?? null,
     prompt: positionals.join(" ").trim(),
   };
@@ -73,14 +77,15 @@ function formatContext(osInfo) {
 }
 
 async function main() {
-  const { model: cliModel, prompt: argsPrompt } = parseArgs();
+  const { file, model: cliModel, prompt: argsPrompt } = parseArgs();
 
-  let userPrompt = argsPrompt;
-  if (!userPrompt && !process.stdin.isTTY) {
-    userPrompt = (await Bun.stdin.text()).trim();
-  }
+  const fileContent = await loadFileContent(file);
+  const stdinText = file !== "-" && (file || !argsPrompt) && !process.stdin.isTTY
+    ? await Bun.stdin.text()
+    : "";
+  const userPrompt = prependToInput(argsPrompt, fileContent, stdinText).trim();
   if (!userPrompt) {
-    console.error("Usage: ai-shell <prompt> or pipe prompt via stdin.");
+    console.error("Usage: ai-shell [-f <path>] <prompt> or pipe prompt via stdin.");
     process.exit(1);
   }
 
