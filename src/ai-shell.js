@@ -5,6 +5,7 @@
  */
 import { parseArgs as parseArgsUtil } from "node:util";
 import { loadFileContent, prependToInput } from "./lib/ai-input.js";
+import { resolveThinking, thinkingHelp } from "./lib/ai-thinking.js";
 import { isPowerShell } from "./lib/env.js";
 import { readStdin } from "./lib/io.js";
 import { OpenAI, runOneshot } from "./lib/openai.js";
@@ -17,6 +18,7 @@ Generate a shell command from a natural-language description.
 Options:
   -f, --file <path>    Prepend file contents to the user message (- for stdin)
   -m, --model <name>   Override OpenAI model
+${thinkingHelp("low")}
   -h, --help           Show this help
 `;
 
@@ -29,6 +31,7 @@ function parseArgs() {
       file: { type: "string", short: "f" },
       help: { type: "boolean", short: "h" },
       model: { type: "string", short: "m" },
+      thinking: { type: "string" },
     },
   });
   if (values.help) {
@@ -38,6 +41,7 @@ function parseArgs() {
   return {
     file: values.file ?? null,
     model: values.model ?? null,
+    thinking: resolveThinking(values.thinking, "low"),
     prompt: positionals.join(" ").trim(),
   };
 }
@@ -78,7 +82,7 @@ function formatContext(osInfo) {
 }
 
 async function main() {
-  const { file, model: cliModel, prompt: argsPrompt } = parseArgs();
+  const { file, model: cliModel, thinking, prompt: argsPrompt } = parseArgs();
 
   const fileContent = await loadFileContent(file);
   const stdinText = file !== "-" && (file || !argsPrompt) && !process.stdin.isTTY
@@ -101,7 +105,7 @@ async function main() {
   await runOneshot(client, selectedModel, {
     systemPrompt: SYSTEM_PROMPT,
     input,
-    noThinking: true,
+    thinking,
   });
 }
 

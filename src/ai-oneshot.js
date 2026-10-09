@@ -10,6 +10,7 @@
  */
 import { parseArgs as parseArgsUtil } from "node:util";
 import { loadFileContent, prependToInput } from "./lib/ai-input.js";
+import { resolveThinking, thinkingHelp } from "./lib/ai-thinking.js";
 import { readLines, readStdin } from "./lib/io.js";
 import { OpenAI, runOneshot } from "./lib/openai.js";
 import { getOpenAICredentials } from "./lib/secrets.js";
@@ -21,7 +22,8 @@ Send stdin (or piped input) to OpenAI, stream response to stdout.
 Options:
   -f, --file <path>     Prepend file contents to the user message (- for stdin)
   -m, --model <name>    Override OpenAI model
-  --no-thinking         Disable thinking (Qwen)
+${thinkingHelp("medium")}
+  --no-thinking        Alias for --thinking none; conflicts with other efforts
   -s, --system <text>  System prompt (instruction for the model)
   -h, --help            Show this help
 `;
@@ -34,6 +36,7 @@ function parseArgs() {
       help: { type: "boolean", short: "h" },
       model: { type: "string", short: "m" },
       "no-thinking": { type: "boolean" },
+      thinking: { type: "string" },
       system: { type: "string", short: "s" },
     },
   });
@@ -45,15 +48,14 @@ function parseArgs() {
   return {
     file: values.file ?? null,
     model: values.model ?? null,
-    noThinking: values["no-thinking"] ?? false,
+    thinking: resolveThinking(values.thinking, "medium", values["no-thinking"]),
     prefix,
     systemPrompt: values.system ?? null,
   };
 }
 
 async function main() {
-  const { file, model: cliModel, noThinking, prefix, systemPrompt } =
-    parseArgs();
+  const { file, model: cliModel, thinking, prefix, systemPrompt } = parseArgs();
 
   const { apiKey, baseURL, model } = await getOpenAICredentials();
   const selectedModel = cliModel ?? model;
@@ -65,13 +67,13 @@ async function main() {
   if (oneshot) {
     const stdinText = file === "-" || process.stdin.isTTY ? "" : await readStdin();
     const input = prependToInput(prefix, fileContent, stdinText);
-    await runOneshot(client, selectedModel, { systemPrompt, input, noThinking });
+    await runOneshot(client, selectedModel, { systemPrompt, input, thinking });
   } else {
     await readLines(async (input) => {
       await runOneshot(client, selectedModel, {
         systemPrompt,
         input,
-        noThinking,
+        thinking,
       });
     });
   }

@@ -1,10 +1,39 @@
 #!/usr/bin/env bun
 /**
  * Generate a git commit message from staged changes using OpenAI.
- * Uses embedded prompt and Bun.spawn for git commands.
  */
+import { $ } from "bun";
+import { parseArgs as parseArgsUtil } from "node:util";
+import {
+  reasoningEffortBody,
+  resolveThinking,
+  thinkingHelp,
+} from "./lib/ai-thinking.js";
+import { OpenAI } from "./lib/openai.js";
 import { getOpenAICredentials } from "./lib/secrets.js";
-import { extraBodyForThinking, OpenAI } from "./lib/openai.js";
+
+const USAGE = `Usage: git-mgen [options]
+
+Generate a git commit message from staged changes.
+
+Options:
+${thinkingHelp("none")}
+  -h, --help           Show this help
+`;
+
+function parseArgs() {
+  const { values } = parseArgsUtil({
+    options: {
+      help: { type: "boolean", short: "h" },
+      thinking: { type: "string" },
+    },
+  });
+  if (values.help) {
+    console.log(USAGE.trim());
+    process.exit(0);
+  }
+  return { thinking: resolveThinking(values.thinking, "none") };
+}
 
 const SYSTEM_PROMPT = `Use the output of \`git diff --staged\` to generate the commit message.
 
@@ -21,47 +50,34 @@ const SYSTEM_PROMPT = `Use the output of \`git diff --staged\` to generate the c
 Respond with ONLY the commit message (subject, blank line, body, and optional further paragraphs). No extra commentary.`;
 
 async function main() {
+  const { thinking } = parseArgs();
   const { apiKey, baseURL, model } = await getOpenAICredentials();
   const client = new OpenAI({ apiKey, baseURL });
 
-  run(client, model).catch((err) => {
+  run(client, model, thinking).catch((err) => {
     console.error(err?.message ?? err);
     process.exit(1);
   });
 }
 
-async function run(client, model) {
+async function run(client, model, thinking) {
   let diff;
   let log;
   try {
-    const diffProc = Bun.spawn(["git", "diff", "--staged"], {
-      stdout: "pipe",
-      stderr: "pipe",
-    });
-    const logProc = Bun.spawn(
-      ["git", "log", "--oneline", "-n", "5", "--no-merges"],
-      { stdout: "pipe", stderr: "pipe" },
-    );
-    const procs = [diffProc, logProc];
-    const results = await Promise.all(
-      procs.map(async (proc) => {
-        await proc.exited;
-        const [out, err] = await Promise.all([
-          proc.stdout ? new Response(proc.stdout).text() : "",
-          proc.stderr ? new Response(proc.stderr).text() : "",
-        ]);
-        return { exitCode: proc.exitCode, out, err };
-      }),
-    );
-    const [diffResult, logResult] = results;
+    const [diffResult, logResult] = await Promise.all([
+      $`git diff --staged`.quiet().nothrow(),
+      $`git log --oneline -n 5 --no-merges`.quiet().nothrow(),
+    ]);
     if (diffResult.exitCode !== 0) {
-      if (diffResult.err.trim()) console.error(diffResult.err.trim());
+      const err = diffResult.stderr.toString().trim();
+      if (err) console.error(err);
       process.exit(1);
     }
-    diff = diffResult.out;
+    diff = diffResult.stdout.toString();
+    const recentCommits = logResult.stdout.toString().trim();
     log =
-      logResult.exitCode === 0 && logResult.out?.trim()
-        ? logResult.out.trim()
+      logResult.exitCode === 0 && recentCommits
+        ? recentCommits
         : "(no commits yet)";
   } catch (e) {
     console.error("Failed to run git commands:", e?.message ?? e);
@@ -83,12 +99,11 @@ async function run(client, model) {
 
   let completion;
   try {
-    const extra_body = extraBodyForThinking(model, true);
     completion = await client.chat.completions.create({
       model,
       messages,
       temperature: 0.2,
-      ...extra_body,
+      ...reasoningEffortBody(thinking),
     });
   } catch (err) {
     console.error("API error:", err?.message ?? err);
