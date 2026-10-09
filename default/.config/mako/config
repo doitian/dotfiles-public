@@ -8,9 +8,6 @@ border-radius=10
 padding=12
 icon-path=/usr/share/icons/breeze-dark:/usr/share/icons/breeze
 
-[app-icon=""]
-format=🔔 <b>%s</b>\n%b
-
 # niri hardcodes a "Screenshot captured" notification on every capture
 # (no config option as of 26.04). Hide it; satty opening is feedback enough.
 # Expire it too: mako ignores the transient hint and defaults to no timeout,
