@@ -215,11 +215,11 @@ else
   xnoremap <Leader>Y "+y$
 end
 nnoremap <Leader>cy <Cmd>let @" = '@'.substitute(fnamemodify(expand('%'), ':.'), '\\', '/', 'g')<CR>
-nnoremap <Leader>cY <Cmd>let @" = '@'.substitute(fnamemodify(expand('%'), ':.'), '\\', '/', 'g').':'.line('.')<CR>
+nnoremap <Leader>cY <Cmd>let @" = '@'.substitute(fnamemodify(expand('%'), ':.'), '\\', '/', 'g').'#L'.line('.')<CR>
 nnoremap <Leader>ct <Cmd>call iy#tmux#SendKeysAndGo('-l', '@'.substitute(fnamemodify(expand('%'), ':.'), '\\', '/', 'g'))<CR>
-nnoremap <Leader>cT <Cmd>call iy#tmux#SendKeysAndGo('-l', '@'.substitute(fnamemodify(expand('%'), ':.'), '\\', '/', 'g').':'.line('.'))<CR>
-xnoremap <Leader>cy <Esc><Cmd>let @" = '@'.substitute(fnamemodify(expand('%'), ':.'), '\\', '/', 'g').':'.line("'<").'-'.line("'>")<CR>
-xnoremap <Leader>ct <Esc><Cmd>call iy#tmux#SendKeysAndGo('-l', '@'.substitute(fnamemodify(expand('%'), ':.'), '\\', '/', 'g').':'.line("'<").'-'.line("'>"))<CR>
+nnoremap <Leader>cT <Cmd>call iy#tmux#SendKeysAndGo('-l', '@'.substitute(fnamemodify(expand('%'), ':.'), '\\', '/', 'g').'#L'.line('.'))<CR>
+xnoremap <Leader>cy <Esc><Cmd>let @" = '@'.substitute(fnamemodify(expand('%'), ':.'), '\\', '/', 'g').'#L'.line("'<").'-L'.line("'>")<CR>
+xnoremap <Leader>ct <Esc><Cmd>call iy#tmux#SendKeysAndGo('-l', '@'.substitute(fnamemodify(expand('%'), ':.'), '\\', '/', 'g').'#L'.line("'<").'-L'.line("'>"))<CR>
 nnoremap >gp <Cmd>exec 'put '.v:register<CR>j
 nnoremap <gp <Cmd>exec 'put! '.v:register<CR>j
 nnoremap >p <Cmd>exec 'put '.v:register."<Bar>keepjump norm '["<CR>
