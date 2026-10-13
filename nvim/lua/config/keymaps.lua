@@ -101,6 +101,9 @@ map("n", "<Leader>fj", "<Cmd>drop `jrnl -p`<CR>", { desc = "Edit journal" })
 map("n", "<Leader>fy", function()
   Snacks.terminal.toggle("yazi", { win = { style = "lazygit" } })
 end, { desc = "Yazi" })
+map("n", "<Leader>gr", function()
+  Snacks.terminal.toggle("tuicr", { win = { style = "lazygit" } })
+end, { desc = "Tuicr" })
 
 -- coding {{{1
 map("n", "<Leader>cw", "<Cmd>ru macros/buffer/whitespace.vim<CR>", { desc = "Fix whitespace issues" })
