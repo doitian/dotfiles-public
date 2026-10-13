@@ -61,14 +61,6 @@ description = "Install pi extensions"
 dir = "~"
 run = ["pi install npm:pi-advisor"]
 
-[tasks."g:add:cursor"]
-hide = true
-description = "Install Cursor CLI"
-dir = "~"
-shell = "{% if os() == 'windows' %}pwsh -NoLogo -NoProfile -ExecutionPolicy Bypass -Command{% else %}bash -c -o errexit{% endif %}"
-run = "curl -fsSL https://cursor.com/install | bash"
-run_windows = "irm 'https://cursor.com/install?win32=true' | iex"
-
 [tasks."g:add:sprite"]
 hide = true
 description = "Install sprites CLI"
