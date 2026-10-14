@@ -24,7 +24,7 @@ opt.visualbell = true
 opt.wildignore = "*.swp,*.bak,*.pyc,*.class,*.beam"
 opt.winwidth = 78
 
-if vim.fn.exists("g:GuiLoaded") == 1 then
+if vim.tbl_contains(vim.v.argv, "--embed") then
   vim.opt.guifont = "CartographCF Nerd Font:h12"
 end
 

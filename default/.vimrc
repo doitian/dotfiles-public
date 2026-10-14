@@ -291,7 +291,6 @@ if s:has_fzf
   nnoremap <Leader>sI <Cmd>Tags<CR>
   nnoremap <Leader>sg <Cmd>RgHidden<CR>
   nnoremap <Leader>sw :RgHidden \<<C-R><C-W>\><CR>
-  nnoremap <Leader>sm <Cmd>Marks<CR>
   nnoremap <Leader>s/ <Cmd>History/<CR>
   nnoremap <Leader>sc <Cmd>History:<CR>
   nnoremap <Leader>sC <Cmd>Commands<CR>
@@ -337,7 +336,7 @@ nnoremap <C-J> <C-W>j
 nnoremap <Leader><Tab><Tab> <Cmd>tabnew<CR>
 nnoremap <Leader><Tab>d <Cmd>tabclose<CR>
 nnoremap <Leader><Tab>l <Cmd>tablast<CR>
-nnoremap <Leader><Tab>f <Cmd>tabclose<CR>
+nnoremap <Leader><Tab>f <Cmd>tabfirst<CR>
 nnoremap <Leader><Tab>] gt
 nnoremap <Leader><Tab>[ gT
 

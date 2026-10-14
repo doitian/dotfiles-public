@@ -149,26 +149,26 @@ return {
           { "<Leader>bne", "<Cmd>BufferLineSortByExtension<CR>", desc = "Sort buffers by extension" },
           { "<Leader>bnr", "<Cmd>BufferLineSortByRelativeDirectory<CR>", desc = "Sort buffers by relative directory" },
           { "<Leader>bnt", "<Cmd>BufferLineSortByTabs<CR>", desc = "Sort buffers by tags" },
-          { "<Leader>1", nth(1), desc = "which_key_ignore" },
-          { "<Leader>2", nth(2), desc = "which_key_ignore" },
-          { "<Leader>3", nth(3), desc = "which_key_ignore" },
-          { "<Leader>4", nth(4), desc = "which_key_ignore" },
-          { "<Leader>5", nth(5), desc = "which_key_ignore" },
-          { "<Leader>6", nth(6), desc = "which_key_ignore" },
-          { "<Leader>7", nth(7), desc = "which_key_ignore" },
-          { "<Leader>8", nth(8), desc = "which_key_ignore" },
-          { "<Leader>9", nth(9), desc = "which_key_ignore" },
-          { "<Leader>0", nth(-1), desc = "which_key_ignore" },
-          { "<Leader>!", move_to_nth(1), desc = "which_key_ignore" },
-          { "<Leader>@", move_to_nth(2), desc = "which_key_ignore" },
-          { "<Leader>#", move_to_nth(3), desc = "which_key_ignore" },
-          { "<Leader>$", move_to_nth(4), desc = "which_key_ignore" },
-          { "<Leader>%", move_to_nth(5), desc = "which_key_ignore" },
-          { "<Leader>^", move_to_nth(6), desc = "which_key_ignore" },
-          { "<Leader>&", move_to_nth(7), desc = "which_key_ignore" },
-          { "<Leader>*", move_to_nth(8), desc = "which_key_ignore" },
-          { "<Leader>(", move_to_nth(9), desc = "which_key_ignore" },
-          { "<Leader>)", move_to_nth(-1), desc = "which_key_ignore" },
+          { "<Leader>1", nth(1) },
+          { "<Leader>2", nth(2) },
+          { "<Leader>3", nth(3) },
+          { "<Leader>4", nth(4) },
+          { "<Leader>5", nth(5) },
+          { "<Leader>6", nth(6) },
+          { "<Leader>7", nth(7) },
+          { "<Leader>8", nth(8) },
+          { "<Leader>9", nth(9) },
+          { "<Leader>0", nth(-1) },
+          { "<Leader>!", move_to_nth(1) },
+          { "<Leader>@", move_to_nth(2) },
+          { "<Leader>#", move_to_nth(3) },
+          { "<Leader>$", move_to_nth(4) },
+          { "<Leader>%", move_to_nth(5) },
+          { "<Leader>^", move_to_nth(6) },
+          { "<Leader>&", move_to_nth(7) },
+          { "<Leader>*", move_to_nth(8) },
+          { "<Leader>(", move_to_nth(9) },
+          { "<Leader>)", move_to_nth(-1) },
         }
       )
     end,
@@ -178,7 +178,7 @@ return {
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/editor.lua
 
   -- Use `<Space>sk` instead
-  { "folke/which-key.nvim", enabled = false, optional = true, opts = { spec = { { "<Leader>bn", group = "sort" } } } },
+  { "folke/which-key.nvim", enabled = false, optional = true },
 
   {
     "folke/todo-comments.nvim",
@@ -426,8 +426,6 @@ return {
             ".git",
           },
         },
-        yamlls = {},
-        jsonls = {},
         harper_ls = {
           -- Enable when `.harper-dictionary.txt` is found in the cwd
           root_dir = function(_, on_dir)
@@ -483,7 +481,7 @@ return {
     "mfussenegger/nvim-lint",
     optional = true,
     opts = {
-      -- use .lazy.lua for project local formatters
+      -- use .lazy.lua for project local linters
       linters_by_ft = {
         ["*"] = { "typos" },
       },

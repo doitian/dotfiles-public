@@ -1,7 +1,7 @@
 -- no 24-bit colors
 local lazy = vim.env.LAZY
   or vim.tbl_contains({ "truecolor", "24bit" }, vim.env.COLORTERM)
-  or vim.fn.exists("g:GuiLoaded") == 1
+  or vim.tbl_contains(vim.v.argv, "--embed")
 if not lazy or lazy == "0" then
   -- Use fallback vimrc. I don't add ~/.vim to rtp here.
   vim.cmd.source("~/.vimrc")

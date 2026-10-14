@@ -65,7 +65,7 @@ map("i", "<C-M-BS>", "<C-u>")
 
 map({ "n", "x" }, "<A-v>", "<C-v>", { desc = "Toggle visual block mode" })
 
-if vim.fn.exists("g:GuiLoaded") == 1 and vim.fn.has("win32") == 1 then
+if vim.tbl_contains(vim.v.argv, "--embed") and vim.fn.has("win32") == 1 then
   map({ "n", "x" }, "<C-S-V>", [["+p]], { desc = "Paste from system clipboard" })
   map("i", "<C-S-V>", "<C-R>+", { desc = "Paste from system clipboard" })
 end
@@ -76,20 +76,19 @@ map("n", "<Leader>wk", "<Cmd>Close<CR>", { desc = "Close disturbing windows" })
 -- navigation {{{1
 unmap({ "n", "x" }, "j")
 unmap({ "n", "x" }, "k")
--- The binding nzv does not work when animation is enabled
 unmap({ "n", "o", "x" }, "n")
 unmap({ "n", "o", "x" }, "N")
 map(
   "n",
   "<S-H>",
   "v:count == 0 ? '<Cmd>BufferLineCyclePrev<CR>' : '<S-H>'",
-  { expr = true, replace_keycodes = false, silent = true, desc = "Next tab" }
+  { expr = true, replace_keycodes = false, silent = true, desc = "Prev buffer" }
 )
 map(
   "n",
   "<S-L>",
   "v:count == 0 ? '<Cmd>BufferLineCycleNext<CR>' : '<S-L>'",
-  { expr = true, replace_keycodes = false, silent = true, desc = "Prev tab" }
+  { expr = true, replace_keycodes = false, silent = true, desc = "Next buffer" }
 )
 
 map("n", "<Leader>ws", "<C-W>s", { desc = "Split window below", remap = true })

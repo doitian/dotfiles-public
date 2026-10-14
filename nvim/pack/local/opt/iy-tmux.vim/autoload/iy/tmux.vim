@@ -15,9 +15,6 @@ function! s:GetTarget() abort
 endfunction
 
 function! iy#tmux#SendKeys(...) abort
-  if !exists('g:iy_tmux_target')
-    let g:iy_tmux_target = s:CreateTarget()
-  endif
   let comm = flatten([['tmux', 'send-keys', '-t', s:GetTarget()], a:000], 1)
   call s:System(comm)
 endfunction
@@ -58,7 +55,7 @@ function! iy#tmux#Yank(type = '') abort
         \ }[a:type]
   try
     execute 'silent noautocmd keepjumps normal! ' . commands
-    call s:System(['tmux', 'set-buffer', getreg('"')])
+    call s:System(['tmux', 'set-buffer', '--', getreg('"')])
   finally
     call setreg('"', save.register)
   endtry
