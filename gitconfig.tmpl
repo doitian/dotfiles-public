@@ -50,20 +50,14 @@
 	dc = diff --stat -p --cached
 	# what would be committed with "git commit -a"
 	da = diff --stat -p HEAD
-	# show difference between working tree and the index
 	dis = diff --stat
-	# what would be committed with "git commit"
 	dcs = diff --stat --cached
-	# what would be committed with "git commit -a"
 	das = diff --stat HEAD
 
 	fp = format-patch -s
 
-	# log list
 	l = log --pretty=tformat:'%C(auto)%h %s %C(blue dim)<%aN %ad>%C(auto)%d' --date=relative
-	# log list with graph
 	lg = l --graph
-	# the last log
 	l1 = !git --no-pager log -1 --decorate --date=relative
 	lp = log -p
 	stat = log --stat
@@ -99,7 +93,7 @@
 	lasttag = describe --tags --abbrev=0
 
 	ours = "!f() { git checkout --ours \"$@\" && git add \"$@\"; }; f"
-	theirs = "!f() { git checkout --theirs "$@" && git add \"$@\"; }; f"
+	theirs = "!f() { git checkout --theirs \"$@\" && git add \"$@\"; }; f"
 
 	purr = pull --rebase
 	new = "!f() { git init; cp ~/.ignore .gitignore; git add -f .gitignore; git commit -m 'initial commit'; }; f"
@@ -145,7 +139,6 @@
 	autocrlf = false
 	safecrlf = true
 	quotePath = off
-	preloadIndex = true
 [init]
 	defaultBranch = main
 [gc]
@@ -173,7 +166,6 @@
 	guiDefault = auto
 [merge]
 	conflictStyle = diff3
-	defaultToUpstream = true
 	guitool = vscode
 	tool = vimdiff
 [mergetool]
