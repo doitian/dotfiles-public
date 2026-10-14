@@ -1,3 +1,14 @@
+-- Front matter strings are parsed as Markdown, so smart quotes must be turned
+-- back into straight quotes before the JSON can be decoded.
+local function straightQuotes(inlines)
+  return inlines:walk {
+    Quoted = function(q)
+      local mark = pandoc.Str(q.quotetype == 'DoubleQuote' and '"' or "'")
+      return pandoc.Inlines { mark } .. q.content .. pandoc.Inlines { mark }
+    end,
+  }
+end
+
 -- Accepts a JSON string (`-M` or front matter) or the equivalent YAML
 -- structure in front matter, e.g. `{2: [0.3, 0.7]}`.
 local function parseColSpecs(value)
@@ -6,7 +17,12 @@ local function parseColSpecs(value)
   end
   local typ = pandoc.utils.type(value)
   if typ == 'string' or typ == 'Inlines' then
-    return pandoc.json.decode(pandoc.utils.stringify(value))
+    local text = pandoc.utils.stringify(typ == 'Inlines' and straightQuotes(value) or value)
+    local ok, specs = pcall(pandoc.json.decode, text)
+    if not ok or type(specs) ~= 'table' then
+      error('tableColSpecs is not valid JSON: ' .. text)
+    end
+    return specs
   end
   local specs = {}
   for key, widths in pairs(value) do
