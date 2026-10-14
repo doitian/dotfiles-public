@@ -1,6 +1,6 @@
 #!/bin/sh
 if command -v git-lfs >/dev/null 2>/dev/null; then
-  if [ "$(git config --get lfs.enabled >/dev/null 2>/dev/null || true)" = true ]; then
+  if [ "$(git config --get lfs.enabled 2>/dev/null || true)" = true ]; then
     git lfs pre-push "$@"
   fi
 fi
