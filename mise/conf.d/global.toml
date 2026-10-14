@@ -353,8 +353,8 @@ description = "Use gh auth token"
 dir = "{{cwd}}"
 shell = "sh -c -o errexit"
 run = [
-  "touch mise.toml",
-  "mise config set -f mise.local.toml env.GITHUB_TOKEN.value '{{ exec(command='gh auth token') }}'",
+  "touch mise.local.toml",
+  '''{% raw %}mise config set -f mise.local.toml env.GITHUB_TOKEN.value "{{ exec(command='gh auth token') }}"{% endraw %}''',
   "mise config set -f mise.local.toml env.GITHUB_TOKEN.redact true",
 ]
 
@@ -371,25 +371,8 @@ dir = "{{cwd}}"
 depends = ["preset:rust"]
 run = "preset-cargo-workspace"
 
-[tasks."preset:mise:windows:sh"]
-hide = true
-description = "Use sh.exe as mise default shell for Windows"
-shell = "sh -c -o errexit"
-run = [
-  'mise config set -f mise.toml settings.windows_default_inline_shell_args "sh.exe -c -o errexit"',
-  'mise config set -f mise.toml settings.windows_default_file_shell_args "sh.exe"',
-]
-
-[tasks."preset:mise:windows:pwsh"]
-hide = true
-description = "Use pwsh as mise default shell for Windows"
-shell = "sh -c -o errexit"
-run = [
-  "mise config set -f mise.toml settings.windows_default_inline_shell_args 'pwsh -NoLogo -NoProfile -Command'",
-  "mise config set -f mise.toml settings.windows_default_file_shell_args 'pwsh -NoLogo -NoProfile'",
-]
-
 [tasks."preset:sccache:shm"]
 hide = true
 description = "Use ramdisk for sccache"
+dir = "{{cwd}}"
 run = "mise set --file mise.local.toml SCCACHE_DIR=/dev/shm/sccache"
