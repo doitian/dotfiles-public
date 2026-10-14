@@ -358,6 +358,32 @@ linuxTest("menu escapes iconless shortcut labels", async () => {
   }
 });
 
+linuxTest("shortcut commands pass bind properties as flags", async () => {
+  const { dir, env } = await fixture("inactive");
+  try {
+    await mkdir(join(dir, ".config", "niri"), { recursive: true });
+    await writeFile(join(dir, ".config", "niri", "config.kdl"), `binds {
+    Mod+Ctrl+U { move-column-to-workspace-down focus=false; }
+    Mod+T { spawn "kitty" "-d" "~"; }
+    Mod+1 { focus-workspace 1; }
+}`);
+    const pending = join(dir, "pending");
+    const shortcuts = { ...env, ROFI_DATA: JSON.stringify(["Niri", "Shortcuts"]), NIRI_MENU_PENDING: pending };
+    const pick = async (key, title) => {
+      expect(await run(shortcuts, `${key.padEnd(22)} ${title}`)).toMatchObject({ code: 0 });
+      return Bun.file(pending).text();
+    };
+    expect(await pick("Mod+Ctrl+U", "move-column-to-workspace-down focus=false"))
+      .toBe("niri msg action move-column-to-workspace-down --focus false");
+    expect(await pick("Mod+T", 'spawn "kitty" "-d" "~"'))
+      .toBe('niri msg action spawn -- "kitty" "-d" "~"');
+    expect(await pick("Mod+1", "focus-workspace 1"))
+      .toBe("niri msg action focus-workspace -- 1");
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
 linuxTest("audio handles empty device lists and reports server failures", async () => {
   const { dir, env } = await audioFixture();
   try {

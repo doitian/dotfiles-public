@@ -102,12 +102,20 @@ const root = {
           /^\s*(\S+)\s+([^{]*)\{\s*([\w-]+)\s*(.*?);?\s*\}\s*$/,
         );
         if (!m) continue;
-        // KDL args are already shell-quoted; `--` keeps them from being read as flags
         const [, key, attrs, action, args] = m;
         if (/hotkey-overlay-title=null/.test(attrs)) continue;
         const title = attrs.match(/hotkey-overlay-title="([^"]+)"/)?.[1]
           ?? `${action} ${args}`.trim();
-        const cmd = `niri msg action ${action}${args ? ` -- ${args}` : ""}`;
+        // KDL values are already shell-quoted. Properties become flags; `--` keeps
+        // positional args from being read as flags.
+        const flags = [];
+        const positional = [];
+        for (const token of args.match(/[\w-]+=(?:"(?:[^"\\]|\\.)*"|\S+)|"(?:[^"\\]|\\.)*"|\S+/g) ?? []) {
+          const prop = token.match(/^([\w-]+)=(.*)$/);
+          if (prop) flags.push(`--${prop[1]} ${prop[2]}`);
+          else positional.push(token);
+        }
+        const cmd = ["niri msg action", action, ...flags, ...(positional.length ? ["--", ...positional] : [])].join(" ");
         entries[`${key.padEnd(22)} ${title}`] = () => afterClose(cmd);
       }
       return entries;

@@ -2,7 +2,7 @@
 /**
  * Clipboard history picker (Mod+V): cliphist history in rofi script mode.
  * Text rows show cliphist's preview; image rows are decoded to files under
- * $TMPDIR/cliphist and shown as thumbnails in tall rows (rofi/clipboard.rasi).
+ * $XDG_RUNTIME_DIR/cliphist (private to the user) and shown as thumbnails in tall rows (rofi/clipboard.rasi).
  * Enter copies the entry, Ctrl+Enter also pastes it into the focused window,
  * Ctrl+Shift+Enter pastes it as plain text (HTML stripped, text/plain only).
  * Paste keys are sent by the launcher once rofi has closed, when focus is back
@@ -19,7 +19,7 @@ import { pasteFocused } from "../lib/niri.js";
 
 // Match cliphist's binary preview: "[[ binary data 24 KiB png 800x600 ]]"
 const IMAGE_PREVIEW = /\[\[\s?binary.*?\b(gif|jpe?g|png|bmp|tiff|webp)\b/i;
-const ICON_DIR = join(tmpdir(), "cliphist");
+const ICON_DIR = join(process.env.XDG_RUNTIME_DIR || tmpdir(), "cliphist");
 const PASTE_DELAY_MS = 300;
 const HTML_TAG = /<\/?[a-z][^>]*>/i;
 // rofi reports kb-custom-N as ROFI_RETV 10 + (N - 1), so the Ctrl+Enter /
@@ -128,7 +128,7 @@ async function list() {
   }
 
   await rm(ICON_DIR, { recursive: true, force: true });
-  await mkdir(ICON_DIR, { recursive: true });
+  await mkdir(ICON_DIR, { recursive: true, mode: 0o700 });
 
   const rows = [];
   for (const line of result.stdout.toString().split("\n").filter(Boolean)) {

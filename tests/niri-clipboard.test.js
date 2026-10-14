@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { mkdir, mkdtemp, readdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readdir, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -109,18 +109,19 @@ async function run(env, args = []) {
 }
 
 linuxTest("lists text rows, thumbnails images, and hides HTML blobs", async () => {
-  const { dir, tmp, env } = await fixture();
+  const { dir, runtime, env } = await fixture();
   try {
     const { code, stdout, rows } = await run(env);
     expect(code).toBe(0);
     expect(rows).toEqual([
-      `42\t[[ binary data 6 B png 2x2 ]]\0icon\x1f${join(tmp, "cliphist", "42.png")}`,
+      `42\t[[ binary data 6 B png 2x2 ]]\0icon\x1f${join(runtime, "cliphist", "42.png")}`,
       "41\thello world",
       "39\t[[ binary data 9 B gif 1x1 ]]",
     ]);
     expect(stdout).not.toContain("meta http-equiv");
-    expect(await Bun.file(join(tmp, "cliphist", "42.png")).text()).toBe("PNGDATA");
-    expect(await Bun.file(join(tmp, "cliphist", "39.gif")).exists()).toBe(false);
+    expect(await Bun.file(join(runtime, "cliphist", "42.png")).text()).toBe("PNGDATA");
+    expect(await Bun.file(join(runtime, "cliphist", "39.gif")).exists()).toBe(false);
+    expect((await stat(join(runtime, "cliphist"))).mode & 0o777).toBe(0o700);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
