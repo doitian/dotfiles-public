@@ -20,13 +20,13 @@ package_manager = "bun"
 hide = true
 description = "Update all uv tools"
 dir = "~"
-run = "uv tool update --all"
+run = "osc-progress uv tool update --all"
 
 [tasks."g:up:bun"]
 hide = true
 description = "Update all bun global packages"
 dir = "~"
-run = "bun update -g --latest"
+run = "osc-progress bun update -g --latest"
 
 [tasks."g:up:plugins"]
 hide = true
@@ -45,21 +45,21 @@ hide = true
 description = "Install all bun global packages"
 dir = "~"
 run = [
-  "bun add -g @opencode/cli",
-  "bun add -g --ignore-scripts @earendil-works/pi-coding-agent",
+  "osc-progress 1/2 bun add -g @opencode/cli",
+  "osc-progress 2/2 bun add -g --ignore-scripts @earendil-works/pi-coding-agent",
 ]
 
 [tasks."g:add:gh:all"]
 hide = true
 description = "Install gh extensions"
 dir = "~"
-run = ["gh extension install github/gh-stack"]
+run = ["osc-progress gh extension install github/gh-stack"]
 
 [tasks."g:add:pi:all"]
 hide = true
 description = "Install pi extensions"
 dir = "~"
-run = ["pi install npm:pi-advisor"]
+run = ["osc-progress pi install npm:pi-advisor"]
 
 [tasks."g:add:sprite"]
 hide = true
@@ -88,7 +88,7 @@ hide = true
 dir = "~"
 description = "Clean up all apps"
 run = "true"
-run_windows = "scoop cleanup -a -k"
+run_windows = "osc-progress scoop cleanup -a -k"
 
 [tasks."g:up:all"]
 hide = true
@@ -125,8 +125,8 @@ EOF
 hide = true
 description = "Install the compound-engineering plugin for claude"
 run = [
-  "claude plugin marketplace add EveryInc/compound-engineering-plugin --scope user",
-  "claude plugin install compound-engineering@compound-engineering-plugin --scope user",
+  "osc-progress 1/2 claude plugin marketplace add EveryInc/compound-engineering-plugin --scope user",
+  "osc-progress 2/2 claude plugin install compound-engineering@compound-engineering-plugin --scope user",
 ]
 
 [tasks."g:claude:ce:disable"]
@@ -138,9 +138,9 @@ run = "claude plugin disable compound-engineering@compound-engineering-plugin --
 hide = true
 description = "Install the plannotator plugin and skills for claude"
 run = [
-  "claude plugin marketplace add backnotprop/plannotator --scope user",
-  "claude plugin install plannotator@plannotator --scope user",
-  "bunx skills add backnotprop/plannotator/apps/skills/core --agent claude-code --global --yes",
+  "osc-progress 1/3 claude plugin marketplace add backnotprop/plannotator --scope user",
+  "osc-progress 2/3 claude plugin install plannotator@plannotator --scope user",
+  "osc-progress 3/3 bunx skills add backnotprop/plannotator/apps/skills/core --agent claude-code --global --yes",
 ]
 
 [tasks."g:claude:plannotator:disable"]
@@ -154,7 +154,7 @@ run = [
 [tasks."g:opencode:ce:enable"]
 hide = true
 description = "Install the compound-engineering plugin for opencode"
-run = "opencode plugin compound-engineering@git+https://github.com/EveryInc/compound-engineering-plugin.git -g -f"
+run = "osc-progress opencode plugin compound-engineering@git+https://github.com/EveryInc/compound-engineering-plugin.git -g -f"
 
 [tasks."g:opencode:ce:disable"]
 hide = true
@@ -173,7 +173,7 @@ fi
 [tasks."g:pi:ce:enable"]
 hide = true
 description = "Install the compound-engineering plugin for pi"
-run = "pi install git:github.com/EveryInc/compound-engineering-plugin"
+run = "osc-progress pi install git:github.com/EveryInc/compound-engineering-plugin"
 
 [tasks."g:pi:ce:disable"]
 hide = true
@@ -185,8 +185,8 @@ hide = true
 description = "Install the compound-engineering plugin for claude (project)"
 dir = "{{cwd}}"
 run = [
-  "claude plugin marketplace add EveryInc/compound-engineering-plugin --scope local",
-  "claude plugin install compound-engineering@compound-engineering-plugin --scope local",
+  "osc-progress 1/2 claude plugin marketplace add EveryInc/compound-engineering-plugin --scope local",
+  "osc-progress 2/2 claude plugin install compound-engineering@compound-engineering-plugin --scope local",
 ]
 
 [tasks."p:claude:ce:disable"]
@@ -200,9 +200,9 @@ hide = true
 description = "Install the plannotator plugin and skills for claude (project)"
 dir = "{{cwd}}"
 run = [
-  "claude plugin marketplace add backnotprop/plannotator --scope local",
-  "claude plugin install plannotator@plannotator --scope local",
-  "bunx skills add backnotprop/plannotator/apps/skills/core --agent claude-code --yes",
+  "osc-progress 1/3 claude plugin marketplace add backnotprop/plannotator --scope local",
+  "osc-progress 2/3 claude plugin install plannotator@plannotator --scope local",
+  "osc-progress 3/3 bunx skills add backnotprop/plannotator/apps/skills/core --agent claude-code --yes",
 ]
 
 [tasks."p:claude:plannotator:disable"]
@@ -218,7 +218,7 @@ run = [
 hide = true
 description = "Install the compound-engineering plugin for opencode (project)"
 dir = "{{cwd}}"
-run = "opencode plugin compound-engineering@git+https://github.com/EveryInc/compound-engineering-plugin.git -f"
+run = "osc-progress opencode plugin compound-engineering@git+https://github.com/EveryInc/compound-engineering-plugin.git -f"
 
 [tasks."p:opencode:ce:disable"]
 hide = true
@@ -240,7 +240,7 @@ echo "compound-engineering plugin already disabled"
 hide = true
 description = "Install the compound-engineering plugin for pi (project)"
 dir = "{{cwd}}"
-run = "pi install -l git:github.com/EveryInc/compound-engineering-plugin"
+run = "osc-progress pi install -l git:github.com/EveryInc/compound-engineering-plugin"
 
 [tasks."p:pi:ce:disable"]
 hide = true

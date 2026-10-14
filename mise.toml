@@ -28,4 +28,4 @@ description = "Update AI skills"
 usage = '''
 arg "[skill]" help="Skill name under ai/skills to update (default: all)"
 '''
-run = "bunx skills update -g -y{% if usage.skill %} {{usage.skill}}{% endif %}"
+run = "osc-progress bunx skills update -g -y{% if usage.skill %} {{usage.skill}}{% endif %}"

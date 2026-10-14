@@ -1,23 +1,22 @@
 #!/usr/bin/env bun
-import { $ } from "bun";
-import { spawnSyncOrExit } from "../lib/shell";
+import { runSteps } from "../lib/progress";
+import { spawnOrExit } from "../lib/shell";
 
-async function main() {
-  if (Bun.which("scoop")) {
-    spawnSyncOrExit("scoop", "update", "-a");
-  }
-  if (Bun.which("uv")) {
-    spawnSyncOrExit("mise", "run", "g:up:uv");
-  }
-  if (Bun.which("bun")) {
-    spawnSyncOrExit("mise", "run", "g:up:bun");
-  }
-  if (Bun.which("pi") || Bun.which("opencode") || Bun.which("claude")) {
-    spawnSyncOrExit("mise", "run", "g:up:plugins");
-  }
+function step(args, estimateMs) {
+  return { args, estimateMs };
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+export function updatePlan(which = (cmd) => Bun.which(cmd)) {
+  const steps = [];
+  if (which("scoop")) steps.push(step(["scoop", "update", "-a"], 60_000));
+  if (which("uv")) steps.push(step(["mise", "run", "g:up:uv"], 30_000));
+  if (which("bun")) steps.push(step(["mise", "run", "g:up:bun"], 20_000));
+  if (which("pi") || which("opencode") || which("claude")) {
+    steps.push(step(["mise", "run", "g:up:plugins"], 45_000));
+  }
+  return steps;
+}
+
+if (import.meta.main) {
+  await runSteps(updatePlan().map(({ args, estimateMs }) => ({ estimateMs, run: () => spawnOrExit(...args) })));
+}

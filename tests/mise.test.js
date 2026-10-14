@@ -51,10 +51,13 @@ test("mise validation fails for missing task dependencies", async () => {
 test.each(["g:up:uv", "g:up:bun", "g:up:plugins", "g:add:bun:all", "g:add:gh:all"])(
   "%s resolves its command without executing it",
   async (name) => {
-    const output = await run("run", "--dry-run", name);
+    const info = await sandbox.run(["tasks", "info", name, "--json"]);
+    expect(info.exitCode, info.stderr).toBe(0);
+    const runText = [JSON.parse(info.stdout).run].flat().join("\n");
     for (const command of [tasks[name].run].flat()) {
-      expect(output).toContain(command);
+      expect(runText).toContain(command);
     }
+    await run("run", "--dry-run", name);
   },
 );
 
@@ -80,6 +83,35 @@ test("g:up alias chooses the platform updater and then cleanup", async () => {
   expect(output.indexOf(update)).toBeLessThan(output.indexOf(clean));
 });
 
+test("long-running package tasks emit OSC progress", () => {
+  for (const name of [
+    "g:up:uv",
+    "g:up:bun",
+    "g:add:bun:all",
+    "g:add:gh:all",
+    "g:add:pi:all",
+    "g:claude:ce:enable",
+    "g:claude:plannotator:enable",
+    "g:opencode:ce:enable",
+    "g:pi:ce:enable",
+    "p:claude:ce:enable",
+    "p:claude:plannotator:enable",
+    "p:opencode:ce:enable",
+    "p:pi:ce:enable",
+  ]) {
+    for (const command of [tasks[name].run].flat()) {
+      expect(command, name).toMatch(/^osc-progress( \d+\/\d+)? /);
+    }
+  }
+  for (const name of ["g:add:bun:all", "g:claude:ce:enable", "g:claude:plannotator:enable", "p:claude:ce:enable", "p:claude:plannotator:enable"]) {
+    const commands = [tasks[name].run].flat();
+    commands.forEach((command, index) => {
+      expect(command, name).toMatch(new RegExp(`^osc-progress ${index + 1}/${commands.length} `));
+    });
+  }
+  expect(tasks["g:clean:all"].run_windows).toMatch(/^osc-progress /);
+});
+
 test("g:up:all is raw so package managers can read the terminal", async () => {
   const result = await sandbox.run(["tasks", "info", "g:up", "--json"]);
   expect(result.exitCode, result.stderr).toBe(0);
@@ -94,6 +126,7 @@ test("preset:ide resolves all editor presets", async () => {
 });
 
 test("opencode plugin installation is global", async () => {
+  await sandbox.linkScript("osc-progress", "");
   await sandbox.recordCommand("opencode");
   const plugin = "compound-engineering@git+https://github.com/EveryInc/compound-engineering-plugin.git";
   await run("run", "g:opencode:ce:enable");
@@ -102,6 +135,7 @@ test("opencode plugin installation is global", async () => {
 });
 
 test("pi plugin installation is global", async () => {
+  await sandbox.linkScript("osc-progress", "");
   await sandbox.recordCommand("pi");
   await run("run", "g:pi:ce:enable");
   expect(await Bun.file(join(sandbox.project, "pi-args.json")).json())
@@ -116,6 +150,7 @@ test("pi plugin removal is global", async () => {
 });
 
 test("opencode plugin installation is project-scoped", async () => {
+  await sandbox.linkScript("osc-progress", "");
   await sandbox.recordCommand("opencode");
   const plugin = "compound-engineering@git+https://github.com/EveryInc/compound-engineering-plugin.git";
   await run("run", "p:opencode:ce:enable");
@@ -124,6 +159,7 @@ test("opencode plugin installation is project-scoped", async () => {
 });
 
 test("pi plugin installation is project-scoped", async () => {
+  await sandbox.linkScript("osc-progress", "");
   await sandbox.recordCommand("pi");
   await run("run", "p:pi:ce:enable");
   expect(await Bun.file(join(sandbox.project, "pi-args.json")).json())

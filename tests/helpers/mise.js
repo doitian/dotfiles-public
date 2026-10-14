@@ -70,8 +70,8 @@ export async function createMiseSandbox() {
       { mode: 0o755 });
   }
 
-  async function linkScript(name) {
-    await launcher(name, fileURLToPath(new URL(`../../src/mise-tasks/${name}.js`, import.meta.url)));
+  async function linkScript(name, dir = "mise-tasks") {
+    await launcher(name, fileURLToPath(new URL(`../../src/${dir ? `${dir}/` : ""}${name}.js`, import.meta.url)));
   }
 
   async function recordCommand(name) {
