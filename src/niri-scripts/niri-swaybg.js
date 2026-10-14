@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * Pick a random wallpaper from ~/Pictures/Wallpapers and run swaybg (replacing this process).
+ * Pick a random wallpaper from ~/Pictures/Wallpapers and run swaybg as a child process.
  */
 
 import { $ } from "bun";
