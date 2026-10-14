@@ -27,17 +27,14 @@ export async function main(args = Bun.argv.slice(2), { readEntry = gopass, store
   }
 
   const openaiEntry = args[0] ?? "default"
-  const [openai, pushover, moonshot] = await Promise.all([
+  const [openai, pushover] = await Promise.all([
     readEntry(`key/openai/${openaiEntry}`),
     readEntry("web/pushover.net/ian"),
-    readEntry("key/moonshot/personal"),
   ]);
 
   await set("openai-api-key", openai.password);
   await set("openai-base-url", openai.fields.get("OPENAI_BASE_URL"));
   await set("openai-model", openai.fields.get("OPENAI_DEFAULT_MODEL"));
-
-  await set("moonshot-token", moonshot.password);
 
   await set("pushover-user-key", pushover.fields.get("key"));
   await set("pushover-agent-token", pushover.fields.get("agent"));

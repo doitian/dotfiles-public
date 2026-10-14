@@ -1158,7 +1158,7 @@ describe("Credentials and terminal lifecycle", () => {
             },
         });
         expect(requested).toContain("key/cloud.google.com/gwscli");
-        expect(requested).toHaveLength(args.length ? 1 : 4);
+        expect(requested).toHaveLength(args.length ? 1 : 3);
         expect(values.get("google-tasks-client-id")).toBe("client");
         expect(values.get("google-tasks-client-secret")).toBe("secret");
         expect(values.get("google-tasks-refresh-token")).toBe("saved-refresh");
