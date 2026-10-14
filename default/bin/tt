@@ -112,8 +112,8 @@ function main() {
   local session="${target%%:*}"
   session="${session#=}"
 
-  local has_session_result="$(tmux has-session -t "$target" 2>&1)"
-  local has_session_status="$?"
+  local has_session_result has_session_status=0
+  has_session_result="$(tmux has-session -t "$target" 2>&1)" || has_session_status="$?"
   if ! [ "$has_session_status" = 0 ]; then
     if [ -z "$session" ]; then
       env TMUX= tmux new-session -d

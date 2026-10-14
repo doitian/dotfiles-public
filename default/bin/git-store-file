@@ -9,7 +9,6 @@ from pathlib import Path
 
 
 def run(cmd: list[str], *, check: bool = True, capture: bool = False, env: dict | None = None) -> subprocess.CompletedProcess:
-    """Run a command, optionally capturing output."""
     merged_env = {**os.environ, **(env or {})}
     return subprocess.run(
         cmd,
@@ -21,7 +20,6 @@ def run(cmd: list[str], *, check: bool = True, capture: bool = False, env: dict 
 
 
 def run_output(cmd: list[str], *, check: bool = True, env: dict | None = None) -> str:
-    """Run a command and return its stdout."""
     result = run(cmd, check=check, capture=True, env=env)
     return result.stdout.strip() if result.stdout else ""
 
@@ -31,13 +29,11 @@ def temp_index_path(name: str) -> str:
 
 
 def branch_exists(remote: str, branch: str) -> bool:
-    """Check if a remote branch exists."""
     result = run(["git", "rev-parse", "--verify", f"{remote}/{branch}"], check=False, capture=True)
     return result.returncode == 0
 
 
 def get_branch_files(remote: str, branch: str) -> list[str]:
-    """Get list of files in the remote branch."""
     output = run_output(["git", "ls-tree", "-r", "--name-only", f"{remote}/{branch}"], check=False)
     return [f for f in output.splitlines() if f]
 
@@ -63,7 +59,6 @@ def cmd_status(args: argparse.Namespace) -> int:
             deleted_files.append(file)
             continue
 
-        # Check if file differs from branch version
         result = run(
             ["git", "--no-pager", "diff", "--quiet", f"{remote}/{branch}:./{file}", file],
             check=False,
@@ -83,7 +78,6 @@ def cmd_status(args: argparse.Namespace) -> int:
     if not has_output:
         print(f"Files in {remote}/{branch} are up to date.")
 
-    # Show diff if requested
     if args.diff and modified_files:
         for file in modified_files:
             print(f"--- {remote}/{branch}:{file}")
@@ -110,13 +104,11 @@ def cmd_restore(args: argparse.Namespace) -> int:
         if result.returncode != 0:
             run(["git", "read-tree", "--empty"], env=env)
 
-        # Restore files from the temporary index to working directory
         if args.files:
-            run(["git", "restore", "--worktree", *args.files], env=env)
+            run(["git", "restore", "--worktree", "--", *args.files], env=env)
         else:
             run(["git", "restore", "--worktree", "."], env=env)
     finally:
-        # Cleanup
         if Path(temp_index).exists():
             Path(temp_index).unlink()
 
@@ -151,12 +143,10 @@ def cmd_remove(args: argparse.Namespace) -> int:
         run(["git", "read-tree", f"{remote}/{branch}"], env=env)
 
         # Remove from index only (files stay in workspace); -f avoids staged-content check
-        run(["git", "rm", "--cached", "-f", "--ignore-unmatch", *files], env=env)
+        run(["git", "rm", "--cached", "-f", "--ignore-unmatch", "--", *files], env=env)
 
-        # Create a commit object
         tree = run_output(["git", "write-tree"], env=env)
 
-        # Get parent commit
         parent = run_output(["git", "rev-parse", "--verify", f"{remote}/{branch}"], env=env)
 
         commit_msg = f"Remove from store: {' '.join(files)}"
@@ -166,7 +156,6 @@ def cmd_remove(args: argparse.Namespace) -> int:
             env=env,
         )
 
-        # Show stats
         print("Commit stats:")
         result = run(
             ["git", "--no-pager", "diff-tree", "--stat", parent, commit_hash],
@@ -197,7 +186,6 @@ def cmd_remove(args: argparse.Namespace) -> int:
 
 
 def cmd_ls(args: argparse.Namespace) -> int:
-    """List all files in the remote branch."""
     remote, branch = args.remote, args.branch
 
     if not branch_exists(remote, branch):
@@ -216,7 +204,6 @@ def cmd_ls(args: argparse.Namespace) -> int:
 
 
 def cmd_store(args: argparse.Namespace) -> int:
-    """Store files to remote branch."""
     remote, branch = args.remote, args.branch
     files = args.files
 
@@ -233,16 +220,13 @@ def cmd_store(args: argparse.Namespace) -> int:
         if result.returncode != 0:
             run(["git", "read-tree", "--empty"], env=env)
 
-        # Add all files (forced, in case they are ignored)
-        run(["git", "add", "-f", *files], env=env)
+        # Forced so ignored files can be stored too
+        run(["git", "add", "-f", "--", *files], env=env)
 
-        # Create a commit object
         tree = run_output(["git", "write-tree"], env=env)
 
-        # Get parent commit if exists
         parent = run_output(["git", "rev-parse", "--verify", f"{remote}/{branch}"], check=False)
 
-        # Create commit message listing all files
         commit_msg = f"Add to store: {' '.join(files)}"
 
         if parent:
@@ -256,7 +240,6 @@ def cmd_store(args: argparse.Namespace) -> int:
                 env=env,
             )
 
-        # Show stats of the commit before pushing
         print("Commit stats:")
         if parent:
             result = run(
@@ -272,7 +255,6 @@ def cmd_store(args: argparse.Namespace) -> int:
             run(["git", "--no-pager", "show", "--format=", "--stat", commit_hash], check=False)
         print()
 
-        # Ask for confirmation before pushing
         try:
             response = input(f"Push to {remote}/{branch}? [y/N] ")
         except EOFError:
@@ -282,17 +264,34 @@ def cmd_store(args: argparse.Namespace) -> int:
             print("Push cancelled.")
             return 1
 
-        # Update the remote branch to point to the new commit
         run(["git", "push", remote, f"{commit_hash}:refs/heads/{branch}"])
 
         print(f"Added to {remote}/{branch}: {' '.join(files)}")
 
     finally:
-        # Cleanup
         if Path(temp_index).exists():
             Path(temp_index).unlink()
 
     return 0
+
+
+COMMANDS = ("store", "status", "restore", "remove", "ls")
+
+
+def with_default_command(argv: list[str]) -> list[str]:
+    """Insert `store` before the first positional argument unless it names a subcommand."""
+    i = 0
+    while i < len(argv):
+        arg = argv[i]
+        if arg in ("-b", "--branch", "-r", "--remote"):
+            i += 2
+        elif arg.startswith("-") and arg != "--":
+            i += 1
+        elif arg in COMMANDS:
+            return argv
+        else:
+            return argv[:i] + ["store"] + argv[i:]
+    return argv + ["store"]
 
 
 def main() -> int:
@@ -323,42 +322,22 @@ Examples:
 
     subparsers = parser.add_subparsers(dest="command", help="Command to run")
 
-    # store subcommand
     store_parser = subparsers.add_parser("store", help="Store files to remote branch (default)")
     store_parser.add_argument("files", nargs="*", help="Files to store")
 
-    # status subcommand
     status_parser = subparsers.add_parser("status", help="Show git status for files in the remote branch")
     status_parser.add_argument("-d", "--diff", action="store_true", help="Show diff for modified files")
 
-    # restore subcommand
     restore_parser = subparsers.add_parser("restore", help="Restore files from remote branch to working directory")
     restore_parser.add_argument("files", nargs="*", help="Files to restore (all if none specified)")
 
-    # remove subcommand
     remove_parser = subparsers.add_parser("remove", help="Remove files from remote branch (keep in workspace)")
     remove_parser.add_argument("files", nargs="+", help="Files to remove from the branch")
 
-    # ls subcommand
     subparsers.add_parser("ls", help="List all files in the remote branch")
 
-    # Parse known args to handle the case where files are passed without 'store' command
-    args, remaining = parser.parse_known_args()
+    args = parser.parse_args(with_default_command(sys.argv[1:]))
 
-    # If no command specified but there are remaining args, treat as 'store' with files
-    if args.command is None:
-        if remaining:
-            args.command = "store"
-            args.files = remaining
-        else:
-            # No command and no files - default to store (will show error about no files)
-            args.command = "store"
-            args.files = []
-    elif args.command == "store" and remaining:
-        # Handle case where store command has additional files
-        args.files = (getattr(args, "files", None) or []) + remaining
-
-    # Execute command
     if args.command == "store":
         return cmd_store(args)
     elif args.command == "status":

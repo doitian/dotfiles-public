@@ -4,10 +4,20 @@ set -e
 set -u
 [ -n "${DEBUG:-}" ] && set -x || true
 
-encoded="$(cat | base64 | tr -d '\n')"
+text="$(
+  cat
+  printf .
+)"
+text="${text%.}"
 
+if [ -n "${TMUX:-}" ] && printf %s "$text" | tmux load-buffer -w - 2>/dev/null; then
+  exit 0
+fi
+
+encoded="$(printf %s "$text" | base64 | tr -d '\n')"
 if [ -n "${TMUX:-}" ]; then
-  echo -en "\033Ptmux;\033\033]52;c;$encoded\007\033\\"
+  # tmux before 3.2 has no load-buffer -w, but still allows passthrough.
+  printf '\033Ptmux;\033\033]52;c;%s\007\033\\' "$encoded"
 else
-  echo -en "\033]52;c;$encoded\007"
+  printf '\033]52;c;%s\007' "$encoded"
 fi
