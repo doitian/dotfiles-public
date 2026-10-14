@@ -18,6 +18,8 @@ alias tl='tmux ls'
 alias tns='tmux new -s'
 alias tnw='tmux neww'
 alias tu=' tmux-up'
+# source-file alone would stack another copy of the set -a terminal-features
+alias tmux-reload='tmux set -su terminal-features \; source-file ~/.tmux.conf'
 function twn() {
   tmux rename-window "${1:-"${PWD##*/}"}"
 }
