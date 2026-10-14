@@ -1,0 +1,5 @@
+--tag-relative=yes
+--exclude=.git
+--exclude=tmp
+--exclude=.svn
+--exclude=log
