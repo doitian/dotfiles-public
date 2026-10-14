@@ -8,6 +8,11 @@ export function home() {
   return process.env.USERPROFILE || process.env.HOME || "";
 }
 
+/** %LOCALAPPDATA%, or ~/AppData/Local when it is unset. */
+export function localAppData() {
+  return process.env.LOCALAPPDATA || join(home(), "AppData", "Local");
+}
+
 /**
  * Base directory for per-user state: %LOCALAPPDATA% on Windows and
  * $XDG_STATE_HOME (or ~/.local/state) elsewhere.
@@ -15,8 +20,13 @@ export function home() {
  */
 export function stateDir() {
   return process.platform === "win32"
-    ? process.env.LOCALAPPDATA || join(home(), "AppData", "Local")
+    ? localAppData()
     : process.env.XDG_STATE_HOME || join(home(), ".local", "state");
+}
+
+/** Point gpg's pinentry at the controlling terminal unless GPG_TTY is already set. */
+export function ensureGpgTty() {
+  process.env.GPG_TTY ||= process.platform !== "win32" ? "/dev/tty" : "";
 }
 
 /**

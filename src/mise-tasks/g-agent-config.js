@@ -1,14 +1,14 @@
 #!/usr/bin/env bun
 import { mkdir } from "node:fs/promises";
 import { dirname, join } from "node:path";
-import { home } from "../lib/env";
+import { home, localAppData } from "../lib/env";
 import { exists } from "../lib/fs";
 import { getOpenAICredentials } from "../lib/secrets";
 
 /** mbx cache root: %LOCALAPPDATA%\mbx on Windows, ~/.cache/mbx elsewhere. */
 function mbxCacheRoot() {
   if (process.platform === "win32") {
-    return join(process.env.LOCALAPPDATA || join(home(), "AppData", "Local"), "mbx");
+    return join(localAppData(), "mbx");
   }
   return join(home(), ".cache/mbx");
 }

@@ -9,6 +9,7 @@ import { join } from "node:path";
 import { createInterface } from "node:readline";
 import { exists } from "./lib/fs.js";
 import { home } from "./lib/env.js";
+import { fzf } from "./lib/fzf.js";
 
 const BASE_DIR = join(home(), ".dotfiles", "repos", "public");
 const SKILLS_DIR = join(BASE_DIR, "ai", "skills");
@@ -272,16 +273,8 @@ async function choosePrompt(registry, varsDict, interactive, ask) {
     process.exit(1);
   }
   const promptList = names.join("\n");
-  const proc = Bun.spawn(["fzf"], {
-    stdin: "pipe",
-    stdout: "pipe",
-    stderr: "inherit",
-  });
-  proc.stdin.write(promptList);
-  proc.stdin.end();
-  const exit = await proc.exited;
-  const out = await new Response(proc.stdout).text();
-  const selected = out.trim();
+  const { code: exit, stdout } = await fzf([], promptList);
+  const selected = stdout.trim();
   if (exit === 130) process.exit(130);
   if (exit === 1) process.exit(0);
   if (exit !== 0) process.exit(exit);

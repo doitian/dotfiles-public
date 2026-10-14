@@ -3,6 +3,7 @@
  * fzf over git branches/files. Renamed from pzf. Port of default/bin/pzf (Python).
  */
 import { writeClipboard } from "./lib/io.js";
+import { fzf } from "./lib/fzf.js";
 
 const usage = `Usage: czf [-c] <subcommand> [fzf-options...]
 
@@ -36,37 +37,16 @@ async function runFzf(producerCmd, producerArgs, fzfArgs, options = {}) {
   });
 
   try {
-    let fzf;
-    const stdoutMode = clipboard ? "pipe" : "inherit";
+    let input = pProd.stdout;
     if (filter) {
       const out = await new Response(pProd.stdout).text();
-      const lines = out.split(/\r?\n/).filter((line) => filter(line));
-      const input = lines.join("\n");
-      fzf = Bun.spawn(["fzf", ...fzfArgsCopy], {
-        stdin: "pipe",
-        stdout: stdoutMode,
-        stderr: "inherit",
-        env: process.env,
-      });
-      fzf.stdin.write(input);
-      fzf.stdin.end();
-    } else {
-      fzf = Bun.spawn(["fzf", ...fzfArgsCopy], {
-        stdin: pProd.stdout,
-        stdout: stdoutMode,
-        stderr: "inherit",
-        env: process.env,
-      });
+      input = out.split(/\r?\n/).filter((line) => filter(line)).join("\n");
     }
-    const code = await fzf.exited;
+    const { code, stdout } = await fzf(fzfArgsCopy, input);
     pProd.kill();
-    if (clipboard && code === 0) {
-      const output = await new Response(fzf.stdout).text();
-      process.stdout.write(output);
-      await writeClipboard(output.trimEnd());
-    }
-    const sig = fzf.signalCode;
-    process.exit(sig ? 128 + (sig === "SIGINT" ? 2 : 0) : code);
+    if (!clipboard || code === 0) await Bun.write(Bun.stdout, stdout);
+    if (clipboard && code === 0) await writeClipboard(stdout.trimEnd());
+    process.exit(code);
   } catch (e) {
     pProd.kill();
     if (e?.code === "ENOENT") {
@@ -145,22 +125,14 @@ const dispatch = {
 async function chooseSubcommand(query) {
   const fzfArgs = ["--prompt=czf> ", "--select-1", "--exit-0"];
   if (query) fzfArgs.push("--query", query);
-  const fzf = Bun.spawn(["fzf", ...fzfArgs], {
-    stdin: "pipe",
-    stdout: "pipe",
-    stderr: "inherit",
-    env: process.env,
-  });
-  fzf.stdin.write(subcommands.join("\n"));
-  fzf.stdin.end();
-  const code = await fzf.exited;
+  const { code, stdout } = await fzf(fzfArgs, subcommands.join("\n"));
   if (code !== 0) {
     if (code === 1) {
       console.error(usage);
     }
     process.exit(code);
   }
-  return (await new Response(fzf.stdout).text()).trim();
+  return stdout.trim();
 }
 
 async function main() {

@@ -14,9 +14,7 @@ async function runCommand(argv) {
     stdout: "inherit",
     stderr: "inherit",
   });
-  const code = await proc.exited;
-  const sig = proc.signalCode;
-  return sig ? 128 + (sig === "SIGINT" ? 2 : 0) : code;
+  return await proc.exited;
 }
 
 function formatDuration(seconds) {

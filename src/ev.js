@@ -9,6 +9,8 @@ import { parseArgs } from "node:util";
 import { $ } from "bun";
 import { gopassPassword, gopassFields } from "./lib/secrets.js";
 import { writeClipboard } from "./lib/io.js";
+import { ensureGpgTty } from "./lib/env.js";
+import { fzf } from "./lib/fzf.js";
 
 async function main() {
   const { values, positionals } = parseArgs({
@@ -19,18 +21,13 @@ async function main() {
   });
 
   if (positionals.length === 0) {
-    process.env.GPG_TTY =
-      process.env.GPG_TTY || (process.platform !== "win32" ? "/dev/tty" : "");
+    ensureGpgTty();
 
     const entryChoice = (await $`gopass list -f | fzf`.text()).trim();
     if (!entryChoice) return;
 
-    const fieldChoiceFzf = Bun.spawn(["fzf"], { stdin: "pipe" });
-    fieldChoiceFzf.stdin.write("PASS\n");
-    fieldChoiceFzf.stdin.write(Array.from((await gopassFields(entryChoice)).keys()).join("\n"));
-    fieldChoiceFzf.stdin.end();
-
-    const fieldChoice = (await fieldChoiceFzf.stdout.text()).trim();
+    const fields = ["PASS", ...(await gopassFields(entryChoice)).keys()];
+    const fieldChoice = (await fzf([], fields.join("\n"))).stdout.trim();
 
     if (fieldChoice && fieldChoice !== "PASS") {
       const cmd = `ev ${entryChoice} ${$.escape(fieldChoice)}`;

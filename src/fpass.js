@@ -3,6 +3,8 @@
  * gopass + fzf/rofi. Port of default/bin/fpass.
  */
 import { $ } from "bun";
+import { ensureGpgTty } from "./lib/env.js";
+import { fzf } from "./lib/fzf.js";
 
 const args = process.argv.slice(2);
 const isRofi = args[0] === "--rofi";
@@ -104,22 +106,12 @@ function copyFieldLoop(entry, fields) {
 }
 
 async function fzfSelect(list) {
-  const fzfProc = Bun.spawn(["fzf"], {
-    stdin: "pipe",
-    stdout: "pipe",
-    stderr: "inherit",
-    env: process.env,
-  });
-  fzfProc.stdin.write(list);
-  fzfProc.stdin.end();
-  const code = await fzfProc.exited;
-  const out = fzfProc.stdout ? await new Response(fzfProc.stdout).text() : "";
-  return { code, selected: out.trim().split("\n")[0] };
+  const { code, stdout } = await fzf([], list);
+  return { code, selected: stdout.trim().split("\n")[0] };
 }
 
 async function interactiveCopy() {
-  process.env.GPG_TTY =
-    process.env.GPG_TTY || (process.platform !== "win32" ? "/dev/tty" : "");
+  ensureGpgTty();
   const listR = await $`gopass list -f`.quiet().nothrow();
   if (listR.exitCode !== 0) process.exit(listR.exitCode);
   const entries = (listR.stdout?.toString() ?? "")
@@ -173,8 +165,7 @@ async function main() {
     return;
   }
 
-  process.env.GPG_TTY =
-    process.env.GPG_TTY || (process.platform !== "win32" ? "/dev/tty" : "");
+  ensureGpgTty();
   const listR = await $`gopass list -f`.quiet().nothrow();
   if (listR.exitCode !== 0) process.exit(listR.exitCode);
   const list = { stdout: (listR.stdout?.toString() ?? "").trim() };

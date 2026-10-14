@@ -10,6 +10,7 @@
  */
 import { join } from "node:path";
 import { parseArgs as parseArgsUtil } from "node:util";
+import { loadFileContent, prependToInput } from "./lib/ai-input.js";
 import { home } from "./lib/env.js";
 import { readLines } from "./lib/io.js";
 import { OpenAI, runOneshot } from "./lib/openai.js";
@@ -20,7 +21,7 @@ const USAGE = `Usage: ai-polish [options] [instruction...]
 Polish text from stdin. Positional arguments are prepended to the text as instructions.
 
 Options:
-  -f, --file <path>   Prepend contents of file to the input
+  -f, --file <path>   Prepend contents of file to the input (- for stdin)
   -m, --model <name>  Override OpenAI model
   --no-thinking       Disable thinking (Qwen)
   -h, --help          Show this help
@@ -49,16 +50,6 @@ function parseArgs() {
   };
 }
 
-async function loadFileContent(filePath) {
-  if (!filePath) return null;
-  const file = Bun.file(filePath);
-  if (!(await file.exists())) {
-    console.error(`File not found: ${filePath}`);
-    process.exit(1);
-  }
-  return await file.text();
-}
-
 const SKILL_PATH = join(
   home(),
   ".dotfiles",
@@ -81,11 +72,6 @@ async function loadPolishPrompt() {
   return match ? match[1].trim() : raw.trim();
 }
 
-function prependToInput(prefix, fileContent, input) {
-  const parts = [prefix, fileContent, input].filter(Boolean);
-  return parts.join("\n\n");
-}
-
 async function main() {
   const { file, model: cliModel, noThinking, prefix } = parseArgs();
 
@@ -100,7 +86,7 @@ async function main() {
 
   const oneshot = file || prefix;
   if (oneshot) {
-    const stdinText = process.stdin.isTTY ? "" : await Bun.stdin.text();
+    const stdinText = file === "-" || process.stdin.isTTY ? "" : await Bun.stdin.text();
     const input = prependToInput(prefix, fileContent, stdinText);
     await runOneshot(client, selectedModel, { systemPrompt, input, noThinking });
   } else {

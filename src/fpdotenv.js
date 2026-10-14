@@ -5,33 +5,22 @@
  * automatically; picks the entry via fzf when none is given.
  */
 import { $ } from "bun";
-import { isPowerShell } from "./lib/env.js";
+import { ensureGpgTty, isPowerShell } from "./lib/env.js";
+import { fzf } from "./lib/fzf.js";
 import { gopass, gopassToEnv } from "./lib/secrets.js";
 
 async function pickEntry() {
   const listR = await $`gopass list -f`.quiet().nothrow();
   if (listR.exitCode !== 0) process.exit(listR.exitCode);
   const list = (listR.stdout?.toString() ?? "").trim();
-  const fzfProc = Bun.spawn(["fzf"], {
-    stdin: "pipe",
-    stdout: "pipe",
-    stderr: "inherit",
-    env: process.env,
-  });
-  fzfProc.stdin.write(list);
-  fzfProc.stdin.end();
-  const fzfCode = await fzfProc.exited;
-  const fzfOut = fzfProc.stdout
-    ? await new Response(fzfProc.stdout).text()
-    : "";
-  const fzfSelected = fzfOut.trim();
+  const { code: fzfCode, stdout } = await fzf([], list);
+  const fzfSelected = stdout.trim();
   if (fzfCode !== 0 || !fzfSelected) process.exit(fzfCode ?? 1);
   return fzfSelected.split("\n")[0];
 }
 
 async function main() {
-  process.env.GPG_TTY =
-    process.env.GPG_TTY || (process.platform !== "win32" ? "/dev/tty" : "");
+  ensureGpgTty();
   const entry = process.argv[2] ?? (await pickEntry());
   const env = gopassToEnv(
     await gopass(entry),

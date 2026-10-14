@@ -5,6 +5,7 @@
 import { $ } from "bun";
 import { parseArgs as parseArgsUtil } from "node:util";
 import { createInterface } from "node:readline";
+import { fzf } from "./lib/fzf.js";
 
 const USAGE = `Usage: web-search [-s <engine>] [query...]
 
@@ -67,19 +68,11 @@ async function main() {
   const { engineQuery, query } = parseArgs();
 
   const input = ENGINES.map((e) => e.name).join("\n");
-  const fzfArgs = ["fzf", "-0", "-1"];
+  const fzfArgs = ["-0", "-1"];
   if (engineQuery) fzfArgs.push("-q", engineQuery);
 
-  const fzf = Bun.spawn(fzfArgs, {
-    stdin: "pipe",
-    stdout: "pipe",
-    stderr: "inherit",
-  });
-  fzf.stdin.write(input);
-  fzf.stdin.end();
-  const code = await fzf.exited;
-  const out = fzf.stdout ? await new Response(fzf.stdout).text() : "";
-  const selected = out.trim();
+  const { code, stdout } = await fzf(fzfArgs, input);
+  const selected = stdout.trim();
   if (code !== 0 || !selected) process.exit(code ?? 1);
 
   const engine = ENGINES.find((e) => e.name === selected);

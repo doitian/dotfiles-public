@@ -4,6 +4,7 @@ import { dirname, join } from "node:path";
 import { parseArgs } from "node:util";
 import { $ } from "bun";
 import { home } from "./lib/env.js";
+import { fzf } from "./lib/fzf.js";
 
 const PLAYLIST_URL = "https://live.zbds.top/tv/iptv4.m3u";
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
@@ -80,16 +81,11 @@ async function main() {
   const cacheDir = process.env.XDG_CACHE_HOME || join(home(), ".cache");
   const channels = await loadPlaylist(join(cacheDir, "ftv", "iptv4.m3u"), values.refresh);
   const rows = channels.map((channel, index) => `${index}\t${channel.name}\t${channel.group}`);
-  const picker = Bun.spawn([
-    "fzf", "--no-multi", "--delimiter=\t", "--with-nth=2..",
+  const { code, stdout } = await fzf([
+    "--no-multi", "--delimiter=\t", "--with-nth=2..",
     "--prompt=Channel> ", `--query=${positionals.join(" ")}`,
-  ], {
-    stdin: new Blob([rows.join("\n") + "\n"]),
-    stdout: "pipe",
-    stderr: "inherit",
-  });
-  const selected = (await new Response(picker.stdout).text()).trim();
-  const code = await picker.exited;
+  ], rows.join("\n") + "\n");
+  const selected = stdout.trim();
   if (code !== 0) process.exit(code);
   if (!selected) return;
   const channel = channels[Number(selected.split("\t")[0])];

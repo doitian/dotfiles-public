@@ -1,8 +1,9 @@
 #!/usr/bin/env bun
 import { $ } from "bun";
 import { mkdir } from "node:fs/promises";
-import { homedir, hostname } from "node:os";
+import { hostname } from "node:os";
 import { dirname, join } from "node:path";
+import { home } from "./lib/env.js";
 import { readStdin } from "./lib/io.js";
 import { getPushoverCredentials } from "./lib/secrets.js";
 import { send } from "./lib/pushover.js";
@@ -64,7 +65,7 @@ export function makoConfig(original, action) {
 }
 
 async function configureMako(action) {
-  const path = join(process.env.XDG_CONFIG_HOME || join(homedir(), ".config"), "mako", "config");
+  const path = join(process.env.XDG_CONFIG_HOME || join(home(), ".config"), "mako", "config");
   const file = Bun.file(path);
   const original = (await file.exists()) ? await file.text() : "";
   const updated = makoConfig(original, action);
@@ -155,8 +156,7 @@ async function forward(notification) {
   await send(payload, await getPushoverCredentials("desktop-notification"));
 }
 
-const compiled = /^(?:[a-z]:)?\/(?:\$bunfs|~BUN)\//i.test((process.argv[1] || "").replaceAll("\\", "/"));
-if (import.meta.main || compiled) main().catch((err) => {
+if (import.meta.main || Bun.isStandaloneExecutable) main().catch((err) => {
   console.error(`dn-pushover: ${err.message}`);
   process.exit(1);
 });

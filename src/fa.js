@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { $ } from "bun";
 import { readCache, writeCache } from "./lib/cache.js";
 import { stateDir } from "./lib/env.js";
-import { queryHistoryFile } from "./lib/fzf.js";
+import { fzf, queryHistoryFile } from "./lib/fzf.js";
 
 function fail(message) {
   console.error(`fa: ${message}`);
@@ -164,13 +164,8 @@ async function main() {
   const history = await queryHistoryFile("fa");
   const fzfArgs = ["--no-multi", "--ignore-case", `--history=${history}`];
   if (query) fzfArgs.push(`--query=${query}`, "--select-1", "--exit-0");
-  const picker = Bun.spawn(["fzf", ...fzfArgs], {
-    stdin: new Blob([lines.join("\n") + "\n"]),
-    stdout: "pipe",
-    stderr: "inherit",
-  });
-  const selected = (await new Response(picker.stdout).text()).trim();
-  const pickerCode = await picker.exited;
+  const { code: pickerCode, stdout } = await fzf(fzfArgs, lines.join("\n") + "\n");
+  const selected = stdout.trim();
   if (pickerCode !== 0) process.exit(pickerCode);
   if (!selected) process.exit(1);
 

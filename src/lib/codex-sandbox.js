@@ -1,6 +1,6 @@
 import { $ } from "bun";
 import { join } from "node:path";
-import { home } from "./env";
+import { home, localAppData } from "./env";
 import { exists } from "./fs";
 
 /**
@@ -19,9 +19,8 @@ export async function grantCodexSandboxPermissions() {
     granted.push(ignorePath);
   }
 
-  const localAppData = process.env.LOCALAPPDATA || join(home(), "AppData", "Local");
   const toolDirectories = [
-    join(localAppData, "nvim-data", "mason"),
+    join(localAppData(), "nvim-data", "mason"),
     join(process.cwd(), "dist"),
   ];
   for (const directory of toolDirectories) {

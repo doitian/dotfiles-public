@@ -14,9 +14,7 @@ export async function configureWindows(action, cleanup = false) {
   if (!process.env.LOCALAPPDATA || !isAbsolute(process.env.LOCALAPPDATA)) {
     throw new Error("LOCALAPPDATA must be an absolute path");
   }
-  // Bun standalone keeps argv[1] in /$bunfs/ (Unix) or B:/~BUN/ (Windows).
   const entry = process.argv[1];
-  const standalone = entry && /^(?:[a-z]:)?\/(?:\$bunfs|~BUN)\//i.test(entry.replaceAll("\\", "/"));
   if (action === "setup" && !entry) throw new Error("Cannot determine the dn-pushover entrypoint");
   const request = {
     Action: action,
@@ -25,7 +23,7 @@ export async function configureWindows(action, cleanup = false) {
     Architecture: process.arch,
     InvocationJson: JSON.stringify({
       Executable: process.execPath,
-      Arguments: standalone || !entry ? [] : [resolve(entry)],
+      Arguments: Bun.isStandaloneExecutable || !entry ? [] : [resolve(entry)],
     }),
     Assets: {
       "Program.cs": program,

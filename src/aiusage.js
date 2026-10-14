@@ -1,9 +1,9 @@
 #!/usr/bin/env bun
 import { $ } from "bun";
 import { mkdir, unlink } from "node:fs/promises";
-import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { parseArgs } from "node:util";
+import { localAppData } from "./lib/env.js";
 
 const LIMITS = {
   five_hour: "5h",
@@ -329,7 +329,7 @@ Windows: Ulanzi Studio AI usage plugin. Linux: ulanzi-niri ai-usage --json.`);
   if (process.platform === "linux") {
     refresh = readLinuxInstances;
   } else if (process.platform === "win32") {
-    const cachePath = join(process.env.LOCALAPPDATA || join(homedir(), "AppData", "Local"), "aiusage", "port.json");
+    const cachePath = join(localAppData(), "aiusage", "port.json");
     refresh = await createUsageReader(cachePath);
   } else {
     throw new Error(`Unsupported platform: ${process.platform}`);

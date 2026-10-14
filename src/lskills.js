@@ -3,6 +3,7 @@ import { lstat, mkdir, readdir, symlink, unlink } from "node:fs/promises";
 import { join } from "node:path";
 import { home } from "./lib/env.js";
 import { exists } from "./lib/fs.js";
+import { fzf } from "./lib/fzf.js";
 
 const SKILLS_SRC = join(home(), ".dotfiles/repos/public/ai/local-skills");
 
@@ -41,13 +42,8 @@ async function ladd() {
     process.exit(1);
   }
 
-  const fzf = Bun.spawn(["fzf", "--no-multi"], {
-    stdin: new Blob([skills.join("\n") + "\n"]),
-    stdout: "pipe",
-    stderr: "inherit",
-  });
-  const selected = (await new Response(fzf.stdout).text()).trim();
-  const code = await fzf.exited;
+  const { code, stdout } = await fzf(["--no-multi"], skills.join("\n") + "\n");
+  const selected = stdout.trim();
   if (code !== 0) process.exit(code);
   if (!selected) process.exit(1);
 

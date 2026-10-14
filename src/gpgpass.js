@@ -3,9 +3,9 @@
  * Copy GPG key id to clipboard via gopass. Port of default/bin/gpgpass.
  */
 import { $ } from "bun";
+import { ensureGpgTty } from "./lib/env.js";
 
-process.env.GPG_TTY =
-  process.env.GPG_TTY || (process.platform !== "win32" ? "/dev/tty" : "");
+ensureGpgTty();
 
 async function main() {
   const emailR = await $`git config user.email`.quiet().nothrow();

@@ -9,6 +9,7 @@ import { $ } from "bun";
 import { exists } from "./lib/fs.js";
 import { home } from "./lib/env.js";
 import { writeClipboard } from "./lib/io.js";
+import { fzf } from "./lib/fzf.js";
 
 const UNICODES_URL =
   "https://www.unicode.org/Public/UCA/latest/allkeys.txt";
@@ -52,16 +53,11 @@ async function main() {
   });
 
   const query = positionals.join(" ");
-  const fzfArgs = ["fzf"];
+  const fzfArgs = [];
   if (query) fzfArgs.push("--query", query);
-  const fzfProc = Bun.spawn(fzfArgs, {
-    stdin: Bun.file(unicodesPath),
-    stdout: "pipe",
-    stderr: "inherit",
-  });
-  const code = await fzfProc.exited;
+  const { code, stdout } = await fzf(fzfArgs, Bun.file(unicodesPath));
   if (code !== 0) process.exit(code);
-  const selected = (await new Response(fzfProc.stdout).text()).trim();
+  const selected = stdout.trim();
   if (!selected) process.exit(1);
 
   const hex = selected.replace(/ *#.*/, "").trim();
