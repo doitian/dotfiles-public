@@ -1,3 +1,12 @@
+# Outside the guard: shells started by tmux or nested shells inherit the first shell's tty.
+if [[ "$OSTYPE" == "linux"* && -z "${DISPLAY:-}" && -z "${WAYLAND_DISPLAY:-}" ]]; then
+  if [[ -n "${TTY:-}" ]]; then
+    export GPG_TTY="$TTY"
+  elif [[ -n "${BASH_VERSION:-}" ]] && __gpg_tty="$(tty 2>/dev/null)"; then
+    export GPG_TTY="$__gpg_tty"
+  fi
+  unset __gpg_tty
+fi
 if [[ "${SHELL_ENV_LOADED:-}" ]]; then
     return
 fi
@@ -7,9 +16,6 @@ export REMEMBER_PATH="${REMEMBER_PATH:-$PATH}"
 [ -z "$HOME" ] && HOME="$(cd ~ && pwd)"
 if [[ -n "$BASH_VERSION" && -f "$HOME/.bashrc" ]]; then
   . "$HOME/.bashrc"
-fi
-if [[ "$OSTYPE" == "linux"* && -z "${DISPLAY:-}" && -z "${WAYLAND_DISPLAY:-}" ]]; then
-  export GPG_TTY="${TTY:-}"
 fi
 
 # path
