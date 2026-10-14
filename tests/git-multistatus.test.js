@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, expect, test } from "bun:test";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
-import { devNull, tmpdir } from "node:os";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -9,7 +9,6 @@ const script = fileURLToPath(new URL("../src/git-multistatus.js", import.meta.ur
 let dir;
 const env = {
   ...process.env,
-  GIT_CONFIG_GLOBAL: devNull,
   GIT_CONFIG_NOSYSTEM: "1",
   GIT_AUTHOR_NAME: "t",
   GIT_AUTHOR_EMAIL: "t@example.com",
@@ -24,6 +23,8 @@ async function git(cwd, ...args) {
 
 beforeEach(async () => {
   dir = await mkdtemp(join(tmpdir(), "git-multistatus-"));
+  env.GIT_CONFIG_GLOBAL = join(dir, "gitconfig");
+  await writeFile(env.GIT_CONFIG_GLOBAL, "");
 });
 
 afterEach(async () => {

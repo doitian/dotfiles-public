@@ -125,9 +125,11 @@ async function main() {
   const isTty = process.stdout.isTTY;
 
   if (!hasP && isTty) {
-    const reloadCmd =
-      "git-multistatus " +
-      dirs.map((d) => `'${d.replaceAll("'", "'\\''")}'`).join(" ");
+    // fzf runs actions through cmd on Windows, which does not strip single quotes.
+    const quote = process.platform === "win32"
+      ? (d) => `"${d}"`
+      : (d) => `'${d.replaceAll("'", "'\\''")}'`;
+    const reloadCmd = "git-multistatus " + dirs.map(quote).join(" ");
     const fzf = Bun.spawn(
       [
         "fzf",
