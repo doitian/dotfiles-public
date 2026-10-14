@@ -54,6 +54,10 @@ function vpexec() {
   command script -qefc "$cmd" /dev/null </dev/null | command vimpager
 }
 
+function fixssh() {
+  eval "$(command fixssh)"
+}
+
 function fixauth() {
   local authenv="$(command fixauth)"
   echo "$authenv"

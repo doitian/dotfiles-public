@@ -99,8 +99,6 @@ function omz_termsupport_preexec {
   local LINE="${2:gs/%/%%}"
   local PREFIX="${SSH_TTY:+$SHORT_HOST: }"
   local UNALIAS="${aliases[$CMD]}"
-
-  local UNALIAS="${aliases[$CMD]}"
   if [ -n "$UNALIAS" ]; then
     CMD="${UNALIAS%% *}"
   fi

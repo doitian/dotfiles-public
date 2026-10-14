@@ -97,7 +97,6 @@ ssh-proxy-command)
       ;;
     esac
   fi
-  PROXY_NETLOC="${http_proxy#*://}"
 
   shift
   exec nc $PROXY_TYPE -x "${http_proxy#*://}" "$@"

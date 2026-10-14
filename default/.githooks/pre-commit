@@ -1,17 +1,12 @@
 #!/bin/sh
 set -e
 
-DIR="$(git config --get core.hooksPath 2>/dev/null || echo .git/hooks)"
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
 NC='\033[0m' # No Color
 PREFIX="${GREEN}[PRECOMMIT]${NC}"
 FAILURE="${RED}FAILED${NC}"
-WARNING="${RED}[WARNING]${NC}"
-SKIPPED="${YELLOW}SKIPPED${NC}"
 SUCCESS="${GREEN}ok${NC}"
-FAILED=0
 
 if git rev-parse --verify HEAD >/dev/null 2>/dev/null; then
   AGAINST_SHA=HEAD
