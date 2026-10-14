@@ -4,12 +4,12 @@ on:
   push:
     paths:
       - default/.vimrc
-      - nvim/after
-      - nvim/macros
-      - nvim/pack
+      - nvim/after/**
+      - nvim/macros/**
+      - nvim/pack/**
       - nvim/package.json
-      - nvim/plugin
-      - nvim/snippets
+      - nvim/plugin/**
+      - nvim/snippets/**
       - .github/workflows/package-vimfiles.yml
       - .github/files/install-vimfiles.py
 
