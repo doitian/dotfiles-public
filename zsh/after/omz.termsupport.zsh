@@ -112,6 +112,14 @@ if [[ -z "$INSIDE_EMACS" || "$INSIDE_EMACS" = vterm ]]; then
   add-zsh-hook preexec omz_termsupport_preexec
 fi
 
+# Drop a finished task's OSC 9;4 state when the next command starts.
+# Same sequence as `osc-progress` with no arguments.
+function osc_progress_clear {
+  [[ -w /dev/tty ]] || return 0
+  printf '\033]9;4;0\033\\' >/dev/tty
+}
+add-zsh-hook preexec osc_progress_clear
+
 function omz_urlencode() {
   emulate -L zsh
   local -a opts
