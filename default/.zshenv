@@ -8,15 +8,15 @@ if [[ "$OSTYPE" == "linux"* && -z "${DISPLAY:-}" && -z "${WAYLAND_DISPLAY:-}" ]]
   unset __gpg_tty
 fi
 if [[ "${SHELL_ENV_LOADED:-}" ]]; then
-    return
+  if [[ -n "${BASH_VERSION:-}" && -f "$HOME/.bashrc" ]]; then
+    . "$HOME/.bashrc"
+  fi
+  return
 fi
 export SHELL_ENV_LOADED=1
 : "${PATH:=/bin:/usr/bin:/usr/local/bin}"
 export REMEMBER_PATH="${REMEMBER_PATH:-$PATH}"
 [ -z "$HOME" ] && HOME="$(cd ~ && pwd)"
-if [[ -n "$BASH_VERSION" && -f "$HOME/.bashrc" ]]; then
-  . "$HOME/.bashrc"
-fi
 
 # path
 export GOPATH="$HOME/codebase/gopath"
@@ -43,7 +43,6 @@ unset PATH_SECTION_B
 # lang
 export LANG=en_US.UTF-8
 export LC_CTYPE=$LANG
-export LC_ALL=$LANG
 
 # ulimit
 if [ -f /usr/bin/mdfind ]; then
@@ -81,3 +80,8 @@ export ALTERNATE_EDITOR="$EDITOR"
 export PAGER="${PAGER:=less}"
 
 export OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1
+
+# This file is also ~/.bash_profile, and bash login shells don't read .bashrc on their own.
+if [[ -n "${BASH_VERSION:-}" && -f "$HOME/.bashrc" ]]; then
+  . "$HOME/.bashrc"
+fi

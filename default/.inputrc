@@ -1,5 +1,7 @@
+$include /etc/inputrc
+
 set print-completions-horizontally on
-set show-all-if-ambiguous on 
+set show-all-if-ambiguous on
 
 "\e/":menu-complete
-"\e[3~":backward-kill-word
+"\e[3~":delete-char
