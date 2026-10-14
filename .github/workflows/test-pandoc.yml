@@ -5,6 +5,10 @@ on:
     paths:
       - pandoc/**
       - .github/workflows/test-pandoc.yml
+  pull_request:
+    paths:
+      - pandoc/**
+      - .github/workflows/test-pandoc.yml
   workflow_dispatch:
 
 jobs:
@@ -14,7 +18,7 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Install LaTeX
         run: |
@@ -50,8 +54,12 @@ jobs:
             fonts-noto-color-emoji
 
       - name: Install Atkinson Hyperlegible Next font
+        env:
+          ATKINSON_COMMIT: 7925f50f649b3813257faf2f4c0b381011f434f1
+          ATKINSON_SHA256: 4b455dcf5ce2d6261df7caf6f4d035c893b446f14269106a07bc03c204368626
         run: |
-          curl -fsSL "https://github.com/googlefonts/atkinson-hyperlegible-next/archive/refs/heads/main.tar.gz" -o /tmp/atkinson.tar.gz
+          curl -fsSL "https://github.com/googlefonts/atkinson-hyperlegible-next/archive/${ATKINSON_COMMIT}.tar.gz" -o /tmp/atkinson.tar.gz
+          echo "${ATKINSON_SHA256}  /tmp/atkinson.tar.gz" | sha256sum -c -
           mkdir -p /tmp/atkinson
           tar -xf /tmp/atkinson.tar.gz -C /tmp/atkinson --strip-components=1
           sudo mkdir -p /usr/local/share/fonts/atkinson-hyperlegible-next

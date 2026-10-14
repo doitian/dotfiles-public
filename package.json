@@ -6,15 +6,16 @@
   "scripts": {
     "test": "bun test ./tests",
     "check:mise": "bun run scripts/check-mise.js",
+    "check:build": "bun run scripts/check-build.js",
     "build": "bun run build.js",
     "clear-secrets": "bun run scripts/clear-secrets.js",
     "ev-secrets": "bun run scripts/ev-secrets.js",
     "set-secret": "bun run scripts/set-secret.js"
   },
   "engines": {
-    "bun": ">=1.0.0"
+    "bun": ">=1.4.1"
   },
   "dependencies": {
-    "openai": "^4.104.0"
+    "openai": "^7.25.0"
   }
 }

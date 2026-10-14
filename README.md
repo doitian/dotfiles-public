@@ -4,12 +4,13 @@ See <https://github.com/doitian/dotfiles>
 
 ## Tests
 
-Install Bun 1.4.1 and mise 2026.9.1, then run:
+Install Bun 1.4.3 and mise 2026.10.8, then run:
 
 ```sh
 bun install --frozen-lockfile
 bun run test
 bun run check:mise
+bun run check:build
 ```
 
 The suite covers shared helpers and tasks in `mise/conf.d/global.toml`, including
@@ -20,8 +21,9 @@ external services are required. On Windows, Git for Windows tools must be on PAT
 
 `check:mise` loads a temporary copy of `mise/conf.d/global.toml`, verifies every
 task was discovered, and runs `mise tasks validate` to check syntax, usage specs,
-and dependency references. GitHub Actions runs both checks on Linux and Windows
-for pushes and pull requests.
+and dependency references. `check:build` bundles every script entrypoint without
+compiling binaries, catching broken imports in scripts that have no tests. GitHub
+Actions runs all three checks on Linux and Windows for pushes and pull requests.
 
 ## Tools I Used
 
