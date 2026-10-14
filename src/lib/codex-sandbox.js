@@ -21,7 +21,7 @@ export async function grantCodexSandboxPermissions() {
 
   const toolDirectories = [
     join(localAppData(), "nvim-data", "mason"),
-    join(process.cwd(), "dist"),
+    join(home(), ".dotfiles", "repos", "public", "dist"),
   ];
   for (const directory of toolDirectories) {
     if (!(await exists(directory))) continue;
