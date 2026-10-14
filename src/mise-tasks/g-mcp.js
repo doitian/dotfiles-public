@@ -57,6 +57,20 @@ function agentConfig(agent) {
   return null;
 }
 
+/** Rewrite OpenCode `{env:NAME}` placeholders as Claude's `${NAME}`. */
+export function toClaudeEnvSyntax(value) {
+  if (typeof value === "string") {
+    return value.replace(/\{env:([A-Za-z_][A-Za-z0-9_]*)\}/g, (_, name) => `\${${name}}`);
+  }
+  if (Array.isArray(value)) return value.map(toClaudeEnvSyntax);
+  if (value != null && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [key, toClaudeEnvSyntax(item)]),
+    );
+  }
+  return value;
+}
+
 function isRemoteTemplate(mcpTemplate) {
   return (
     mcpTemplate.type === "remote" ||
@@ -89,15 +103,17 @@ function toClaudeStdioEntry(mcpTemplate) {
   const env = mcpTemplate.environment ?? mcpTemplate.env;
   if (env != null) entry.env = env;
 
-  return entry;
+  return toClaudeEnvSyntax(entry);
 }
 
 function toClaudeCodeEntry(mcpTemplate) {
   if (isRemoteTemplate(mcpTemplate)) {
     const entry = { ...mcpTemplate };
     delete entry.enabled;
+    // OpenCode's `oauth: false` disables discovery; Claude only accepts an options object.
+    if (entry.oauth == null || typeof entry.oauth !== "object") delete entry.oauth;
     if (entry.type === "remote") entry.type = "http";
-    return entry;
+    return toClaudeEnvSyntax(entry);
   }
   return toClaudeStdioEntry(mcpTemplate);
 }
@@ -110,8 +126,10 @@ function toClaudeDesktopEntry(mcpTemplate) {
       throw new Error("remote mcp template missing url");
     }
     const args = ["mcp-remote", mcpTemplate.url];
+    if (new URL(mcpTemplate.url).protocol === "http:") args.push("--allow-http");
     if (mcpTemplate.headers && typeof mcpTemplate.headers === "object") {
-      for (const [key, value] of Object.entries(mcpTemplate.headers)) {
+      // mcp-remote expands ${NAME} in header values from its own environment.
+      for (const [key, value] of Object.entries(toClaudeEnvSyntax(mcpTemplate.headers))) {
         args.push("--header", `${key}:${value}`);
       }
     }
@@ -121,7 +139,7 @@ function toClaudeDesktopEntry(mcpTemplate) {
   return toClaudeStdioEntry(mcpTemplate);
 }
 
-function toClaudeEntry(mcpTemplate, agent) {
+export function toClaudeEntry(mcpTemplate, agent) {
   if (agent === "claude-desktop") return toClaudeDesktopEntry(mcpTemplate);
   return toClaudeCodeEntry(mcpTemplate);
 }
@@ -167,7 +185,7 @@ function parseArgs(argv) {
 }
 
 async function readJson(path) {
-  return JSON.parse(await Bun.file(path).text());
+  return Bun.JSONC.parse(await Bun.file(path).text());
 }
 
 async function writeJson(path, data) {
@@ -265,7 +283,9 @@ async function main() {
   console.log(message);
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+if (import.meta.main || Bun.isStandaloneExecutable) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}
