@@ -15,6 +15,7 @@ sources = [
   "bun.lock",
   "build.js",
   "src/**/*.js",
+  "src/lib/**/*",
   "../private/src/**/*.js",
 ]
 outputs = ["dist/**"]

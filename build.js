@@ -1,68 +1,49 @@
 #!/usr/bin/env bun
 /**
- * Compile each direct .js in src/ to a standalone executable in dist/.
+ * Compile each direct .js in src/ (and ../private/src/) to a standalone executable in dist/,
+ * src/mise-tasks/ to dist/mise-tasks/, and src/niri-scripts/ to dist/ on Linux.
  * Run: bun run build
- * Skips a target if it is newer than the source entry, build.js, mise.local.toml (if present), and all src/lib/*.
+ * Skips a target that is newer than its entry and every shared input (build.js, package.json,
+ * bun.lock, src/lib/**), and removes outputs whose source no longer exists.
  */
 import { Glob } from "bun";
-import { mkdirSync, existsSync, readdirSync, statSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { existsSync, mkdirSync, readdirSync, rmSync, statSync } from "node:fs";
+import { join } from "node:path";
 
-const distDir = resolve(process.cwd(), "dist");
-if (!existsSync(distDir)) {
-  mkdirSync(distDir, { recursive: true });
-}
-
-// Direct .js files under src/ to compile
-const srcDir = join(process.cwd(), "src");
-const entries = [];
+const root = import.meta.dir;
+const distDir = join(root, "dist");
 const glob = new Glob("*.js");
-for await (const file of glob.scan(srcDir)) {
-  entries.push({
-    name: file.slice(0, -3),
-    sourcePath: join(srcDir, file),
-  });
-}
-const privateSrcDir = join(process.cwd(), "..", "private", "src");
-if (existsSync(privateSrcDir)) {
-  for await (const file of glob.scan(privateSrcDir)) {
-    entries.push({
-      name: file.slice(0, -3),
-      sourcePath: join(privateSrcDir, file),
-    });
+
+async function scanEntries(srcDir) {
+  const entries = [];
+  if (!existsSync(srcDir)) return entries;
+  for await (const file of glob.scan(srcDir)) {
+    entries.push({ name: file.slice(0, -3), sourcePath: join(srcDir, file) });
   }
+  return entries;
 }
 
-const libDir = join(process.cwd(), "src", "lib");
-
-/** Return the newest mtime among source entry, build.js, mise.local.toml (if any), and all files in src/lib. */
-function getNewestInputMtime(sourcePath) {
-  let newest = 0;
-  for (const p of [sourcePath, import.meta.path]) {
-    try {
-      const s = statSync(p);
-      if (s.mtimeMs > newest) newest = s.mtimeMs;
-    } catch (_) { }
+function mtime(path) {
+  try {
+    const st = statSync(path);
+    return st.isFile() ? st.mtimeMs : 0;
+  } catch {
+    return 0;
   }
-  if (existsSync(libDir)) {
-    for (const f of readdirSync(libDir, { recursive: true })) {
-      const p = join(libDir, f);
-      try {
-        const st = statSync(p);
-        if (st.isDirectory()) continue;
-        if (st.mtimeMs > newest) newest = st.mtimeMs;
-      } catch (_) { }
-    }
-  }
-  return newest;
 }
 
-/** Return outfile mtime in ms, or 0 if missing. Handles .exe on Windows. */
-function getOutputMtime(outfile) {
-  for (const p of [outfile, outfile + ".exe"]) {
-    if (existsSync(p)) return statSync(p).mtimeMs;
+function sharedInputMtime() {
+  const files = [import.meta.path, join(root, "package.json"), join(root, "bun.lock")];
+  for (const libDir of [join(root, "src", "lib"), join(root, "..", "private", "src", "lib")]) {
+    if (!existsSync(libDir)) continue;
+    for (const f of readdirSync(libDir, { recursive: true })) files.push(join(libDir, f));
   }
-  return 0;
+  return Math.max(...files.map(mtime));
+}
+
+/** Handles the .exe suffix Bun adds on Windows. */
+function outputMtime(outfile) {
+  return Math.max(mtime(outfile), mtime(outfile + ".exe"));
 }
 
 async function buildOne({ sourcePath, outfile }) {
@@ -78,15 +59,12 @@ async function buildOne({ sourcePath, outfile }) {
   return result.outputs[0].path;
 }
 
-async function buildIfStale(entryList, outDir) {
-  if (!existsSync(outDir)) {
-    mkdirSync(outDir, { recursive: true });
-  }
-  for (const { name, sourcePath } of entryList) {
+async function buildIfStale(entries, outDir, sharedMtime) {
+  mkdirSync(outDir, { recursive: true });
+  for (const { name, sourcePath } of entries) {
     const outfile = join(outDir, name);
-    const outMtime = getOutputMtime(outfile);
-    const newestInput = getNewestInputMtime(sourcePath);
-    if (outMtime >= newestInput && outMtime > 0) {
+    const outMtime = outputMtime(outfile);
+    if (outMtime > 0 && outMtime >= Math.max(sharedMtime, mtime(sourcePath))) {
       console.log(`Skipping ${sourcePath} (up to date)`);
       continue;
     }
@@ -96,26 +74,37 @@ async function buildIfStale(entryList, outDir) {
   }
 }
 
-await buildIfStale(entries, distDir);
+function pruneStale(entries, outDir) {
+  if (!existsSync(outDir)) return;
+  const names = new Set(entries.map((e) => e.name));
+  for (const file of readdirSync(outDir, { withFileTypes: true })) {
+    if (!file.isFile() || names.has(file.name.replace(/\.exe$/, ""))) continue;
+    const path = join(outDir, file.name);
+    try {
+      rmSync(path);
+      console.log(`Removed ${path} (source no longer exists)`);
+    } catch (err) {
+      console.warn(`Could not remove stale ${path}: ${err.message}`);
+    }
+  }
+}
 
-const miseTasksSrcDir = join(process.cwd(), "src", "mise-tasks");
+const sharedMtime = sharedInputMtime();
+
+const binEntries = [
+  ...(await scanEntries(join(root, "src"))),
+  ...(await scanEntries(join(root, "..", "private", "src"))),
+];
+const niriEntries = await scanEntries(join(root, "src", "niri-scripts"));
+await buildIfStale(binEntries, distDir, sharedMtime);
+if (process.platform === "linux") {
+  await buildIfStale(niriEntries, distDir, sharedMtime);
+}
+pruneStale([...binEntries, ...niriEntries], distDir);
+
 const miseTasksDistDir = join(distDir, "mise-tasks");
-if (existsSync(miseTasksSrcDir)) {
-  const miseEntries = [];
-  for await (const file of glob.scan(miseTasksSrcDir)) {
-    miseEntries.push({ name: file.slice(0, -3), sourcePath: join(miseTasksSrcDir, file) });
-  }
-  await buildIfStale(miseEntries, miseTasksDistDir);
-}
-
-// niri-scripts: built only on Linux, output to dist/
-const niriScriptsSrcDir = join(process.cwd(), "src", "niri-scripts");
-if (process.platform === "linux" && existsSync(niriScriptsSrcDir)) {
-  const niriEntries = [];
-  for await (const file of glob.scan(niriScriptsSrcDir)) {
-    niriEntries.push({ name: file.slice(0, -3), sourcePath: join(niriScriptsSrcDir, file) });
-  }
-  await buildIfStale(niriEntries, distDir);
-}
+const miseEntries = await scanEntries(join(root, "src", "mise-tasks"));
+await buildIfStale(miseEntries, miseTasksDistDir, sharedMtime);
+pruneStale(miseEntries, miseTasksDistDir);
 
 console.log("Build done.");
