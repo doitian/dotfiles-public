@@ -17,10 +17,13 @@ fi
 ZSH_COMPDUMP="$HOME/.zcompdump-${SHORT_HOST}-${ZSH_VERSION}"
 
 autoload -U compaudit compinit
-if [[ -f "$ZSH_COMPDUMP"(Nm+1) ]]; then
+# Glob qualifiers are ignored inside [[ ]], so test staleness via an array glob.
+_zcompdump_stale=("$ZSH_COMPDUMP"(N.mh+24))
+if (( $#_zcompdump_stale )); then
   # force rebuilding daily
   compinit -i -d "${ZSH_COMPDUMP}"
   touch "${ZSH_COMPDUMP}"
 else
   compinit -C -i -d "${ZSH_COMPDUMP}"
 fi
+unset _zcompdump_stale
