@@ -205,7 +205,7 @@ test("streaming validates before requesting and preserves deltas and refusal han
   expect(payloads[0].reasoning_effort).toBe("none");
 });
 
-test("runOneshot retains noThinking compatibility for ai-polish", async () => {
+test("runOneshot sends the thinking effort and rejects blank input", async () => {
   let payload;
   const client = {
     chat: {
@@ -219,7 +219,7 @@ test("runOneshot retains noThinking compatibility for ai-polish", async () => {
       }
     },
   };
-  await runOneshot(client, "qwen-test", { input: "prompt", noThinking: true });
+  await runOneshot(client, "qwen-test", { input: "prompt", thinking: "none" });
   expect(payload.reasoning_effort).toBe("none");
   expect(payload).not.toHaveProperty("enable_thinking");
   await expect(runOneshot(client, "test", { input: " " })).rejects.toThrow("No input on stdin.");
