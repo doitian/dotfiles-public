@@ -43,28 +43,30 @@ async function getRepoStatus(dir) {
   const gitDir = path + "/.git";
   if (!existsSync(path) || !existsSync(gitDir)) return null;
 
-  const r = await $`git -C ${path} status -b --porcelain`.quiet().nothrow();
+  const r = await $`git -C ${path} status --porcelain=v2 --branch`.quiet().nothrow();
   if (r.exitCode !== 0) return null;
-  const stdout = (r.stdout?.toString() ?? "").trim();
 
-  const lines = stdout.split(/\r?\n/).filter(Boolean);
-  const first = lines[0];
-  if (!first || !first.startsWith("## ")) return null;
-
-  // ## branch...upstream [ahead 1, behind 2] or ## branch...upstream [ahead 1] or ## branch
-  const rest = first.slice(3);
-  const branchMatch = rest.match(/^([^\s.]+)(?:\.\.\.(\S+))?(?:\s+\[(.*)\])?/);
-  const branch = branchMatch ? branchMatch[1] : rest.split(/\s/)[0] || "?";
-  const remote = branchMatch?.[2];
-  const aheadBehind = branchMatch?.[3] || "";
+  let branch = "?";
+  let remote;
   let ahead = 0;
   let behind = 0;
-  const aheadM = aheadBehind.match(/ahead\s+(\d+)/);
-  const behindM = aheadBehind.match(/behind\s+(\d+)/);
-  if (aheadM) ahead = parseInt(aheadM[1], 10);
-  if (behindM) behind = parseInt(behindM[1], 10);
-
-  const dirty = lines.length > 1;
+  let dirty = false;
+  for (const line of r.stdout.toString().split(/\r?\n/)) {
+    if (!line) continue;
+    if (!line.startsWith("# ")) {
+      dirty = true;
+    } else if (line.startsWith("# branch.head ")) {
+      branch = line.slice("# branch.head ".length);
+    } else if (line.startsWith("# branch.upstream ")) {
+      remote = line.slice("# branch.upstream ".length);
+    } else {
+      const ab = line.match(/^# branch\.ab \+(\d+) -(\d+)$/);
+      if (ab) {
+        ahead = Number(ab[1]);
+        behind = Number(ab[2]);
+      }
+    }
+  }
 
   return { path, branch, remote, dirty, ahead, behind };
 }
@@ -125,7 +127,7 @@ async function main() {
   if (!hasP && isTty) {
     const reloadCmd =
       "git-multistatus " +
-      dirs.map((d) => (d.includes(" ") ? `'${d}'` : d)).join(" ");
+      dirs.map((d) => `'${d.replaceAll("'", "'\\''")}'`).join(" ");
     const fzf = Bun.spawn(
       [
         "fzf",
