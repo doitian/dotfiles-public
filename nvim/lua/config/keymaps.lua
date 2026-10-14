@@ -57,8 +57,6 @@ map("n", ">p", "<Cmd>exec 'put '.v:register.\"<Bar>keepjump norm '[\"<CR>", { de
 map("n", "<p", "<Cmd>exec 'put! '.v:register.\"<Bar>keepjump norm '[\"<CR>", { desc = "Paste above" })
 map("n", ">gp", "<Cmd>exec 'put '.v:register<CR>j", { desc = "Paste below" })
 map("n", "<gp", "<Cmd>exec 'put! '.v:register<CR>j", { desc = "Paste above" })
-map("n", "gx", "<Cmd>call jobstart(['open',expand('<cfile>')])<CR>", { desc = "Open file under cursor", silent = true })
-map("x", "gx", "y<Cmd>call jobstart(['open',@*])<CR>", { desc = "Open selected file", silent = true })
 map("x", "&", ":&&<CR>", { desc = "Repeat substitution on selected lines" })
 vim.F.npcall(unmap, { "s" }, ">")
 vim.F.npcall(unmap, { "s" }, "<")
@@ -67,7 +65,7 @@ map("i", "<C-M-BS>", "<C-u>")
 
 map({ "n", "x" }, "<A-v>", "<C-v>", { desc = "Toggle visual block mode" })
 
-if vim.fn.exists("g:GuiLoaded") and vim.fn.has("win32") == 1 then
+if vim.fn.exists("g:GuiLoaded") == 1 and vim.fn.has("win32") == 1 then
   map({ "n", "x" }, "<C-S-V>", [["+p]], { desc = "Paste from system clipboard" })
   map("i", "<C-S-V>", "<C-R>+", { desc = "Paste from system clipboard" })
 end

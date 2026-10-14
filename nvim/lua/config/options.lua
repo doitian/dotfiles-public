@@ -24,7 +24,7 @@ opt.visualbell = true
 opt.wildignore = "*.swp,*.bak,*.pyc,*.class,*.beam"
 opt.winwidth = 78
 
-if vim.fn.exists("g:GuiLoaded") then
+if vim.fn.exists("g:GuiLoaded") == 1 then
   vim.opt.guifont = "CartographCF Nerd Font:h12"
 end
 
@@ -57,7 +57,7 @@ if vim.env.WSL_DISTRO_NAME then
 end
 if my_clipboard then
   vim.g.clipboard = my_clipboard
-  if vim.fn.exists("g:loaded_clipboard_provider") then
+  if vim.fn.exists("g:loaded_clipboard_provider") == 1 then
     vim.g.loaded_clipboard_provider = nil
     vim.cmd.runtime("autoload/provider/clipboard.vim")
   end
@@ -65,7 +65,7 @@ end
 
 if vim.fn.has("win32") == 1 then
   opt.shellslash = true
-  opt.shell = vim.fn.executable("pwsh") and "pwsh" or "powershell"
+  opt.shell = vim.fn.executable("pwsh") == 1 and "pwsh" or "powershell"
   opt.shellcmdflag =
     "-NoLogo -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new();$PSDefaultParameterValues['Out-File:Encoding']='utf8';"
   opt.shellredir = '2>&1 | %%{ "$_" } | Out-File %s; exit $LastExitCode'

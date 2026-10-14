@@ -230,7 +230,7 @@ inoremap ; ;<C-G>u
 xnoremap < <gv
 xnoremap > >gv
 nnoremap gx <Cmd>call job_start(['open',expand('<cfile>')])<CR>
-xnoremap gx y<Cmd>call job_start(['open',@*])<CR>
+xnoremap gx y<Cmd>call job_start(['open',@"])<CR>
 nnoremap ]<Space> <Cmd>call append(line('.'), repeat([''], v:count1))<CR>
 nnoremap [<Space> <Cmd>call append(line('.')-1, repeat([''], v:count1))<CR>
 nnoremap & <Cmd>&&<CR>

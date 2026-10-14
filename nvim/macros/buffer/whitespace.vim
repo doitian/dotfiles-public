@@ -1,6 +1,6 @@
 let _s=@/
   %s/\s\+$//e
-while getline("$") == ""
+while line('$') > 1 && getline('$') ==# ''
   $d
 endwhile
 let @/=_s

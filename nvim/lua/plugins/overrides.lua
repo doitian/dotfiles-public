@@ -20,6 +20,17 @@ function LazyVim.root.bufpath(buf)
   return LazyVim.root.realpath(path)
 end
 
+-- TypeScript 7's native language server. Prefer Bun's installation, then
+-- Mason's; without either, fall back to LazyVim's vtsls.
+local typescript_native_cmd
+for _, path in ipairs({ "~/.bun/bin/tsc", "~/.local/share/nvim/mason/bin/tsc" }) do
+  path = vim.fn.expand(path)
+  if vim.fn.executable(path) == 1 then
+    typescript_native_cmd = path
+    break
+  end
+end
+
 return {
   -- ui {{{1
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/ui.lua
@@ -398,16 +409,10 @@ return {
             end
           end,
         },
-        -- TypeScript 7's native language server. Prefer Bun's installation,
-        -- then fall back to Mason's.
-        vtsls = { enabled = false },
+        vtsls = { enabled = typescript_native_cmd == nil },
         typescript_native = {
-          cmd = {
-            vim.fn.executable(vim.fn.expand("~/.bun/bin/tsc")) == 1 and vim.fn.expand("~/.bun/bin/tsc")
-              or vim.fn.expand("~/.local/share/nvim/mason/bin/tsc"),
-            "--lsp",
-            "--stdio",
-          },
+          enabled = typescript_native_cmd ~= nil,
+          cmd = { typescript_native_cmd, "--lsp", "--stdio" },
           filetypes = {
             "javascript",
             "javascriptreact",

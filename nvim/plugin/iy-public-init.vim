@@ -61,7 +61,7 @@ cnoreabbrev <expr> xmapcr <SID>ExpandAlias(':', 'xmapcr', 'xnoremap <buffer> <lt
 cnoreabbrev <expr> xmaptsk <SID>ExpandAlias(':', 'xmaptsk', 'xnoremap <buffer> <lt>CR> y<lt>Cmd>call iy#tmux#SendKeys("-l", @")<lt>CR><Left><Left><Left><Left><Left>')
 cnoreabbrev <expr> xmaptsb <SID>ExpandAlias(':', 'xmaptsb', 'xnoremap <buffer> <lt>CR> y<lt>Cmd>call iy#tmux#SetBuffer(@")<lt>CR><Left><Left><Left><Left><Left>')
 cnoreabbrev <expr> xmapai <SID>ExpandAlias(':', 'xmapai', "xnoremap <buffer> <lt>CR> y<lt>Cmd>\'>put =system(['ai-polish'], @\\\")<lt>CR>")
-cnoreabbrev <expr> ycd <SID>ExpandAlias(':', 'ycd', 'let @* = 'cd ' . shellescape(getcwd())')
+cnoreabbrev <expr> ycd <SID>ExpandAlias(':', 'ycd', "let @* = 'cd ' . shellescape(getcwd())")
 cnoreabbrev <expr> y' <SID>ExpandAlias(':', "y'", "let @* = '<Left>") " :y''
 
 if has('win32')
