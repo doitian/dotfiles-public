@@ -20,6 +20,54 @@ return {
       vim.g.dispatch_no_maps = 1
       vim.g.dispatch_compilers = { ["mise exec --"] = "" }
     end,
+    config = function()
+      if vim.fn.has("nvim-0.12") == 0 then
+        return
+      end
+
+      -- dispatch#complete fires ShellCmdPost without saying which request finished
+      local running = {}
+
+      local function progress(id, status)
+        local request = vim.fn["dispatch#request"](id)
+        vim.api.nvim_echo({ { request.expanded } }, false, {
+          id = "dispatch." .. id,
+          kind = "progress",
+          source = "vim-dispatch",
+          status = status,
+          title = "Dispatch",
+        })
+      end
+
+      local group = vim.api.nvim_create_augroup("dispatch_progress", { clear = true })
+      vim.api.nvim_create_autocmd("QuickFixCmdPost", {
+        group = group,
+        pattern = "dispatch-make",
+        callback = function()
+          local request = vim.fn["dispatch#request"]()
+          if request.id and request.handler ~= "sync" and request.completed ~= 1 then
+            running[request.id] = true
+            progress(request.id, "running")
+          end
+        end,
+      })
+      vim.api.nvim_create_autocmd("ShellCmdPost", {
+        group = group,
+        callback = function()
+          for id in pairs(running) do
+            if vim.fn["dispatch#completed"](id) == 1 then
+              running[id] = nil
+              local request = vim.fn["dispatch#request"](id)
+              local status = tonumber(vim.fn.readfile(request.file .. ".complete", "", 1)[1])
+              progress(id, status == 0 and "success" or "failed")
+              if status > 0 then
+                vim.api.nvim_ui_send("\a")
+              end
+            end
+          end
+        end,
+      })
+    end,
   },
 
   {
