@@ -18,3 +18,12 @@ test("spawnSyncOrExit propagates failure without continuing", async () => {
   `);
   expect(result).toEqual({ exitCode: 7, stdout: "", stderr: "" });
 });
+
+test.skipIf(process.platform === "win32")("spawnSyncOrExit exits with 128+N when the child is killed by a signal", async () => {
+  const result = await runBun(`
+    import { spawnSyncOrExit } from "./src/lib/shell.js";
+    spawnSyncOrExit("sh", "-c", "kill -TERM $$");
+    console.log("unreachable");
+  `);
+  expect(result).toEqual({ exitCode: 143, stdout: "", stderr: "" });
+});
