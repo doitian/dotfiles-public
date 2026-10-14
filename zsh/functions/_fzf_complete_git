@@ -13,4 +13,4 @@ _fzf_complete_git_post() {
   awk -F ' =' '{print $1}'
 }
 
-_fzf_complete_git
+_fzf_complete_git "$@"
