@@ -27,7 +27,7 @@
 @define-color crust #181926;
 
 * {
-    font-family: "Sarasa UI SC", "Font Awesome 7 Free", sans-serif;
+    font-family: "Sarasa UI SC", "FontAwesome", sans-serif;
     font-size: 13px;
     min-height: 9px;
 }
@@ -76,24 +76,6 @@ button:hover {
     color: @red;
 }
 
-/* Taskbar */
-#taskbar button {
-    padding: 0 6px;
-    margin: 0 2px;
-}
-
-#taskbar button:hover {
-    background: @surface0;
-}
-
-#taskbar button.active {
-    background: alpha(@mauve, 0.5);
-}
-
-#taskbar button.minimized {
-    opacity: 0.5;
-}
-
 /* Niri Taskbar */
 .niri-taskbar button {
     padding: 0 6px;
@@ -114,18 +96,15 @@ button:hover {
 
 /* Common module styling */
 #clock,
-#battery,
 #cpu,
 #memory,
 #load,
 #temperature,
-#backlight,
 #network,
 #pulseaudio,
 #tray,
 #idle_inhibitor,
 #power-profiles-daemon,
-#mpd,
 #custom-menu,
 #custom-agent-berth,
 #custom-hyprwhspr {
@@ -141,19 +120,6 @@ button:hover {
 /* Clock */
 #clock {
     color: @text;
-}
-
-/* Battery */
-#battery {
-    color: @green;
-}
-
-#battery.warning:not(.charging) {
-    color: @yellow;
-}
-
-#battery.critical:not(.charging) {
-    color: @red;
 }
 
 /* Network */
@@ -203,11 +169,6 @@ button:hover {
 
 #temperature.critical {
     color: @red;
-}
-
-/* Backlight */
-#backlight {
-    color: @yellow;
 }
 
 /* Tray */
@@ -270,20 +231,6 @@ menu separator {
 
 #power-profiles-daemon.power-saver {
     color: @green;
-}
-
-/* MPD */
-#mpd {
-    color: @green;
-}
-
-#mpd.disconnected,
-#mpd.stopped {
-    color: @overlay0;
-}
-
-#mpd.paused {
-    color: @subtext0;
 }
 
 /* Custom agent-berth */
