@@ -6,7 +6,9 @@ function Writer(doc, opts)
     end,
   }
   doc = doc:walk(filter)
-  table.insert(doc.blocks, 1, pandoc.Header(1, doc.meta.title))
+  if doc.meta.title then
+    table.insert(doc.blocks, 1, pandoc.Header(1, doc.meta.title))
+  end
   return pandoc.write(doc, "gfm", opts)
 end
 

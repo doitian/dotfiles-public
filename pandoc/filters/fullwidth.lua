@@ -11,12 +11,12 @@ function Pandoc(doc)
   end
 
   local tags = doc.meta.fullwidthTags
-  if type(tags) == 'string' then
+  if pandoc.utils.type(tags) ~= 'List' then
     tags = { tags }
   end
   local filter = {}
   for _, tag in ipairs(tags) do
-    filter[tag] = Block
+    filter[pandoc.utils.stringify(tag)] = Block
   end
 
   return doc:walk(filter)

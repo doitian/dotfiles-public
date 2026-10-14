@@ -1,9 +1,28 @@
+-- Accepts a JSON string (`-M` or front matter) or the equivalent YAML
+-- structure in front matter, e.g. `{2: [0.3, 0.7]}`.
+local function parseColSpecs(value)
+  if value == nil then
+    return {}
+  end
+  local typ = pandoc.utils.type(value)
+  if typ == 'string' or typ == 'Inlines' then
+    return pandoc.json.decode(pandoc.utils.stringify(value))
+  end
+  local specs = {}
+  for key, widths in pairs(value) do
+    specs[key] = widths:map(function(width)
+      return tonumber(pandoc.utils.stringify(width))
+    end)
+  end
+  return specs
+end
+
 function Pandoc(doc)
   if doc.meta.tableColSpecs == nil and doc.meta.tableColSpecsSameWidth == nil then
     return
   end
 
-  local tableColSpecs = pandoc.json.decode(doc.meta.tableColSpecs or '[]');
+  local tableColSpecs = parseColSpecs(doc.meta.tableColSpecs)
 
   local tableId = 0
   function Table(table)
