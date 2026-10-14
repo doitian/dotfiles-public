@@ -143,7 +143,7 @@ def snapshot(args):
         status, filename = names[i:i + 2]
         old_bytes = b'' if status == 'A' else blob(repo, base, filename)
         new_bytes = b'' if status == 'D' else blob(repo, head, filename)
-        command = ['git', 'diff', '--no-ext-diff', '--no-textconv', '--no-color', '--no-renames', '--unified=3', base, head, '--', filename]
+        command = ['git', 'diff', '--no-ext-diff', '--no-textconv', '--no-color', '--no-renames', '--unified=3', base, head, '--', ':(literal)' + filename]
         raw_patch = run(command, repo, binary=True)
         binary = b'Binary files ' in raw_patch or b'GIT binary patch' in raw_patch
         recovered = False
