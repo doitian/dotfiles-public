@@ -4,15 +4,12 @@
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { readJsoncObject } from "../lib/fs.js";
+import { posixQuote } from "../lib/shell.js";
 import {
   getMiseShimsPath,
   getMiseEnv,
   getMisePathEntries,
 } from "../lib/mise.js";
-
-function escapeShell(s) {
-  return `"${s.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/`/g, "\\`")}"`;
-}
 
 async function main() {
   const shimsPath = await getMiseShimsPath();
@@ -29,10 +26,14 @@ async function main() {
 
   mkdirSync(".claude", { recursive: true });
 
-  const lines = [`export PATH=${escapeShell(`${extraPath}:$PATH`)}`];
+  const lines = [`export PATH=${posixQuote(extraPath)}:"$PATH"`];
   for (const [key, value] of Object.entries(miseEnv)) {
     if (key === "PATH" || key === "Path") continue;
-    lines.push(`export ${key}=${escapeShell(String(value))}`);
+    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) {
+      console.warn(`Skipping mise env ${JSON.stringify(key)}: not a valid shell variable name`);
+      continue;
+    }
+    lines.push(`export ${key}=${posixQuote(value)}`);
   }
   writeFileSync(".claude/mise.env", lines.join("\n") + "\n");
 

@@ -40,7 +40,7 @@ async function main() {
     const content = readFileSync(lazyFile, "utf8");
     const pattern = /--- mise\n[\s\S]*?\n---/;
     if (pattern.test(content)) {
-      newContent = content.replace(pattern, miseSection);
+      newContent = content.replace(pattern, () => miseSection);
     } else {
       const returnMatch = content.match(/^return\s*\{\s*\}\s*$/m);
       if (returnMatch) {

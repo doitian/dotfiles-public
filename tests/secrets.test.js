@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { gopassToEnv } from "../src/lib/secrets.js";
+import { gopassToEnv, resolveSecret } from "../src/lib/secrets.js";
 
 test("gopassToEnv exports password via export_as", () => {
   expect(
@@ -85,4 +85,68 @@ test("gopassToEnv returns empty for PowerShell when nothing is exportable", () =
       "powershell",
     ),
   ).toBe("");
+});
+
+test("gopassToEnv rejects an export_as name that is not a shell variable", () => {
+  expect(() =>
+    gopassToEnv({
+      password: "pw",
+      fields: new Map([["export_as", "X=1; echo pwned #"]]),
+    }),
+  ).toThrow("Invalid export_as name");
+});
+
+test("gopassToEnv accepts a lowercase export_as name", () => {
+  expect(
+    gopassToEnv({ password: "pw", fields: new Map([["export_as", "api_key"]]) }),
+  ).toBe("api_key='pw'\n");
+});
+
+function memoryStore(initial = {}) {
+  const values = new Map(Object.entries(initial));
+  return {
+    values,
+    get: async ({ name }) => values.get(name) ?? null,
+    set: async ({ name, value }) => { values.set(name, value); },
+  };
+}
+
+test("resolveSecret prefers env vars in order", async () => {
+  const store = memoryStore({ token: "stored" });
+  const env = { SECOND: "from-second", FIRST: "" };
+  expect(await resolveSecret("token", ["FIRST", "SECOND"], { env, store, isTTY: false })).toBe("from-second");
+});
+
+test("resolveSecret ignores env vars when NO_SECRET_ENV_VAR is set", async () => {
+  const store = memoryStore({ token: "stored" });
+  const env = { TOKEN: "from-env", NO_SECRET_ENV_VAR: "1" };
+  expect(await resolveSecret("token", ["TOKEN"], { env, store, isTTY: false })).toBe("stored");
+});
+
+test("resolveSecret prompts on a TTY and stores the answer", async () => {
+  const store = memoryStore();
+  const asked = [];
+  const value = await resolveSecret("token", ["TOKEN"], {
+    env: {},
+    store,
+    isTTY: true,
+    ask: async (question) => { asked.push(question); return "typed"; },
+  });
+  expect(value).toBe("typed");
+  expect(asked).toEqual(["Enter value for token: "]);
+  expect(store.values.get("token")).toBe("typed");
+});
+
+test("resolveSecret rejects an empty answer without storing it", async () => {
+  const store = memoryStore();
+  await expect(
+    resolveSecret("token", [], { env: {}, store, isTTY: true, ask: async () => "" }),
+  ).rejects.toThrow("No value provided for token");
+  expect(store.values.has("token")).toBe(false);
+});
+
+test("resolveSecret names the env vars when it cannot prompt", async () => {
+  await expect(
+    resolveSecret("token", ["TOKEN", "ALT_TOKEN"], { env: {}, store: memoryStore(), isTTY: false }),
+  ).rejects.toThrow('Missing secret "token" (set one of: TOKEN, ALT_TOKEN');
 });

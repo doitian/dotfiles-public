@@ -48,6 +48,8 @@ async function run(f, args = ["-p"], options = {}) {
     HOME: f.home,
     USERPROFILE: f.home,
     TZ: options.zone ?? "UTC",
+    // Bun otherwise caches transpiled modules under $HOME/.bun, polluting the fake home.
+    BUN_RUNTIME_TRANSPILER_CACHE_PATH: "0",
     EDITOR: editor,
     JRNL_TEST_EDITOR_LOG: join(f.home, "editor.json"),
     JRNL_TEST_NOW: options.now ?? "2026-09-24T10:23:00Z",

@@ -34,6 +34,39 @@ export function readStdin() {
 }
 
 /**
+ * Prompt on stderr and read one line from the TTY without echoing it.
+ * Rejects when the user presses Ctrl-C.
+ * @param {string} question
+ * @returns {Promise<string>}
+ */
+export function readHidden(question) {
+  return new Promise((resolve, reject) => {
+    const stdin = process.stdin;
+    let value = "";
+    const finish = (err) => {
+      stdin.off("data", onData);
+      stdin.setRawMode(false);
+      stdin.pause();
+      process.stderr.write("\n");
+      if (err) reject(err);
+      else resolve(value);
+    };
+    const onData = (chunk) => {
+      for (const ch of chunk.toString("utf8")) {
+        if (ch === "\r" || ch === "\n") return finish();
+        if (ch === "\u0003") return finish(new Error("Cancelled"));
+        if (ch === "\u007f" || ch === "\b") value = value.slice(0, -1);
+        else if (ch >= " ") value += ch;
+      }
+    };
+    process.stderr.write(question);
+    stdin.setRawMode(true);
+    stdin.resume();
+    stdin.on("data", onData);
+  });
+}
+
+/**
  * Read lines from stdin in a loop, calling onLine for each non-empty line.
  * Returns when stdin closes (Ctrl-D) or onLine throws.
  * @param {(line: string) => Promise<void>} onLine - async callback for each line

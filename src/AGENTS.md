@@ -11,7 +11,7 @@ Shared patterns were extracted from the CLI scripts so that:
 
 1. **Single place for common behavior** – e.g. async `exists(path)`, `home()`, and `readStdin()` live in `src/lib/`. Scripts run subprocesses via Bun shell; see the **bun-shell-src** skill.
 2. **Clear split** – anything in `src/` that is a `#!/usr/bin/env node` (or bun) entrypoint is an executable; anything in `src/lib/` is a dependency only.
-3. **Credentials** – `src/lib/secrets.js` provides `getSecret()` using Bun Secrets (service name `ian-bin`). Scripts resolve API keys and tokens via env, then stored secrets, then TTY prompt.
+3. **Credentials** – `src/lib/secrets.js` provides `getSecret()` using Bun Secrets (service name `me.iany.bin`). Scripts resolve API keys and tokens via env, then stored secrets, then TTY prompt.
 
 ## Conventions
 

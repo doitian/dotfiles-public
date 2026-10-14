@@ -3,36 +3,47 @@
  * Service name used for Bun.secrets get/set/delete.
  */
 import { secrets, $ } from "bun";
+import { readHidden } from "./io.js";
+import { posixQuote } from "./shell.js";
 
 export const SERVICE_NAME = "me.iany.bin";
 const DISABLE_ENV_VAR_NAME = "NO_SECRET_ENV_VAR";
 
 /**
- * Resolve a secret: try env vars first, then Bun.secrets, then prompt and store if TTY.
+ * Resolve a secret: try env vars first, then Bun.secrets, then prompt (without echo) and store if TTY.
  * @param {string} secretName - Name used for Bun.secrets (e.g. "openai-api-key").
  * @param {...string} envVarNames - Env var names to check in order (e.g. "OPENAI_API_KEY").
  * @returns {Promise<string>} The secret value.
  * @throws {Error} When value is not set and stdin is not a TTY.
  */
 export async function getSecret(secretName, ...envVarNames) {
-  const disable_flag = process.env[DISABLE_ENV_VAR_NAME];
+  return resolveSecret(secretName, envVarNames);
+}
+
+/** {@link getSecret} with injectable environment, store and prompt. */
+export async function resolveSecret(
+  secretName,
+  envVarNames,
+  { env = process.env, store = secrets, isTTY = process.stdin.isTTY, ask = readHidden } = {},
+) {
+  const disable_flag = env[DISABLE_ENV_VAR_NAME];
   if (disable_flag == null || disable_flag === "") {
     for (const name of envVarNames) {
-      const val = process.env[name];
+      const val = env[name];
       if (val != null && val !== "") return val;
     }
   }
-  let value = await secrets.get({
+  let value = await store.get({
     service: SERVICE_NAME,
     name: secretName,
   });
   if (value != null && value !== "") return value;
-  if (process.stdin.isTTY) {
-    value = prompt(`Enter value for ${secretName}: `);
+  if (isTTY) {
+    value = await ask(`Enter value for ${secretName}: `);
     if (value == null || value === "") {
       throw new Error(`No value provided for ${secretName}`);
     }
-    await secrets.set({
+    await store.set({
       service: SERVICE_NAME,
       name: secretName,
       value,
@@ -58,8 +69,7 @@ export async function getPushoverCredentials(app) {
 export async function getOpenAICredentials() {
   const apiKey = await getSecret("openai-api-key", "OPENAI_API_KEY");
   const baseURL = await getSecret("openai-base-url", "OPENAI_BASE_URL");
-  const model =
-    (await getSecret("openai-model", "OPENAI_DEFAULT_MODEL")) ?? "gpt-4o-mini";
+  const model = await getSecret("openai-model", "OPENAI_DEFAULT_MODEL");
   return { apiKey, baseURL, model };
 }
 
@@ -88,13 +98,10 @@ export async function gopassFields(name) {
 }
 
 const ENV_FIELD_NAME = /^[A-Z0-9_]+$/;
+const SHELL_VARIABLE_NAME = /^[A-Za-z_][A-Za-z0-9_]*$/;
 
 function isExportableField(name) {
   return ENV_FIELD_NAME.test(name) && /[A-Z]/.test(name);
-}
-
-function posixQuote(value) {
-  return `'${String(value).replaceAll("'", `'\\''`)}'`;
 }
 
 function powerShellQuote(value) {
@@ -113,6 +120,9 @@ export function gopassToEnv({ password, fields }, shell = "posix") {
   const lines = [];
   const exportAs = fields.get("export_as")?.trim();
   if (exportAs) {
+    if (!SHELL_VARIABLE_NAME.test(exportAs)) {
+      throw new Error(`Invalid export_as name: ${JSON.stringify(exportAs)}`);
+    }
     lines.push(`${prefix}${exportAs}=${quote(password ?? "")}`);
   }
   for (const [key, value] of fields) {
