@@ -2,7 +2,7 @@ import { afterEach, beforeEach, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { exists, touch, writeIfNotExists } from "../src/lib/fs.js";
+import { exists, readJsoncObject, touch, writeIfNotExists } from "../src/lib/fs.js";
 
 let directory;
 
@@ -50,4 +50,26 @@ test("touch preserves existing content", async () => {
   await writeFile(file, "keep me");
   await touch(file);
   expect(await readFile(file, "utf8")).toBe("keep me");
+});
+
+test("readJsoncObject accepts comments and trailing commas", async () => {
+  const file = join(directory, "settings.json");
+  await writeFile(file, '// note\n{ "a": 1, /* inline */ "b": [2,], }\n');
+  expect(await readJsoncObject(file)).toEqual({ a: 1, b: [2] });
+});
+
+test("readJsoncObject returns an empty object for missing or blank files", async () => {
+  const blank = join(directory, "blank.json");
+  await writeFile(blank, " \n");
+  expect(await readJsoncObject(join(directory, "missing.json"))).toEqual({});
+  expect(await readJsoncObject(blank)).toEqual({});
+});
+
+test("readJsoncObject rejects unparsable and non-object content", async () => {
+  const broken = join(directory, "broken.json");
+  const array = join(directory, "array.json");
+  await writeFile(broken, "{ bad");
+  await writeFile(array, "[1]");
+  await expect(readJsoncObject(broken)).rejects.toThrow(`Cannot parse ${broken}`);
+  await expect(readJsoncObject(array)).rejects.toThrow("must contain a JSON object");
 });

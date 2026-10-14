@@ -2,7 +2,8 @@
 /**
  * Activate mise in VSCode: write terminal.integrated.env.{platform} to .vscode/settings.json.
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { readJsoncObject } from "../lib/fs.js";
 import { getMiseShimsPath, getMiseEnv, getMisePathEntries } from "../lib/mise.js";
 
 function detectPlatform() {
@@ -22,12 +23,7 @@ async function main() {
   mkdirSync(".vscode", { recursive: true });
   const settingsPath = ".vscode/settings.json";
 
-  let settings = {};
-  if (existsSync(settingsPath)) {
-    try {
-      settings = JSON.parse(readFileSync(settingsPath, "utf8"));
-    } catch (_) { }
-  }
+  const settings = await readJsoncObject(settingsPath);
 
   const envKey = `terminal.integrated.env.${platform}`;
   if (!settings[envKey]) settings[envKey] = {};

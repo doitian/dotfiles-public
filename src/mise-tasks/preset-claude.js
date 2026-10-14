@@ -2,7 +2,8 @@
 /**
  * Activate mise in Claude Code: write .claude/mise.env and set CLAUDE_ENV_FILE.
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { readJsoncObject } from "../lib/fs.js";
 import {
   getMiseShimsPath,
   getMiseEnv,
@@ -23,6 +24,9 @@ async function main() {
   const extraPath = [shimsPath, ...pathEntries].join(":");
   const miseEnv = await getMiseEnv();
 
+  const settingsPath = ".claude/settings.local.json";
+  const settings = await readJsoncObject(settingsPath);
+
   mkdirSync(".claude", { recursive: true });
 
   const lines = [`export PATH=${escapeShell(`${extraPath}:$PATH`)}`];
@@ -32,13 +36,6 @@ async function main() {
   }
   writeFileSync(".claude/mise.env", lines.join("\n") + "\n");
 
-  const settingsPath = ".claude/settings.local.json";
-  let settings = {};
-  if (existsSync(settingsPath)) {
-    try {
-      settings = JSON.parse(readFileSync(settingsPath, "utf8"));
-    } catch (_) { }
-  }
   if (!settings.env) settings.env = {};
   settings.env.CLAUDE_ENV_FILE = ".claude/mise.env";
   writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + "\n");
