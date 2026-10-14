@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd ~
-tar -L -cf - .bashrc .bash_profile | ssh "$@" 'tar -xf -'
+tar -chf - .bashrc .bash_profile | ssh "$@" 'tar -xf -'

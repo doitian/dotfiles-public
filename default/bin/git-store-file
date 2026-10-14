@@ -26,6 +26,10 @@ def run_output(cmd: list[str], *, check: bool = True, env: dict | None = None) -
     return result.stdout.strip() if result.stdout else ""
 
 
+def temp_index_path(name: str) -> str:
+    return run_output(["git", "rev-parse", "--path-format=absolute", "--git-path", name])
+
+
 def branch_exists(remote: str, branch: str) -> bool:
     """Check if a remote branch exists."""
     result = run(["git", "rev-parse", "--verify", f"{remote}/{branch}"], check=False, capture=True)
@@ -61,7 +65,7 @@ def cmd_status(args: argparse.Namespace) -> int:
 
         # Check if file differs from branch version
         result = run(
-            ["git", "--no-pager", "diff", "--quiet", f"{remote}/{branch}:{file}", file],
+            ["git", "--no-pager", "diff", "--quiet", f"{remote}/{branch}:./{file}", file],
             check=False,
             capture=True,
         )
@@ -84,7 +88,7 @@ def cmd_status(args: argparse.Namespace) -> int:
         for file in modified_files:
             print(f"--- {remote}/{branch}:{file}")
             print(f"+++ {file}")
-            run(["git", "--no-pager", "diff", f"{remote}/{branch}:{file}", file], check=False)
+            run(["git", "--no-pager", "diff", f"{remote}/{branch}:./{file}", file], check=False)
 
     return 0
 
@@ -97,7 +101,7 @@ def cmd_restore(args: argparse.Namespace) -> int:
         print(f"Branch {remote}/{branch} does not exist.", file=sys.stderr)
         return 1
 
-    temp_index = ".git/temp_restore_index"
+    temp_index = temp_index_path("temp_restore_index")
     env = {"GIT_INDEX_FILE": temp_index}
 
     try:
@@ -139,7 +143,7 @@ def cmd_remove(args: argparse.Namespace) -> int:
             print(f"Error: '{f}' is not in branch {remote}/{branch}", file=sys.stderr)
         return 1
 
-    temp_index = ".git/temp_remove_index"
+    temp_index = temp_index_path("temp_remove_index")
     env = {"GIT_INDEX_FILE": temp_index}
 
     try:
@@ -220,7 +224,7 @@ def cmd_store(args: argparse.Namespace) -> int:
         print("Error: No files specified to store", file=sys.stderr)
         return 1
 
-    temp_index = ".git/temp_backup_index"
+    temp_index = temp_index_path("temp_backup_index")
     env = {"GIT_INDEX_FILE": temp_index}
 
     try:

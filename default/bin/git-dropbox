@@ -26,7 +26,7 @@ main() {
       echo "Usage: git dropbox init <dir>" >&2
       exit 1
     fi
-    git init --separate-git-dir "$1"
+    git init --separate-git-dir "$2"
   else
     echo "Usage: git dropbox ([clone] | init <dir>)" >&2
     exit 1

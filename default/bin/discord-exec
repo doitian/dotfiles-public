@@ -12,8 +12,8 @@ discord() {
 }
 main() {
   local stime=$(date '+%s')
-  "$@"
-  local exitcode="$?"
+  local exitcode=0
+  "$@" || exitcode="$?"
   local etime=$(date '+%s')
 
   local dt=$((etime - stime))
@@ -29,6 +29,7 @@ Succeeded${HOST:+ on $HOST} in $times"
     discord -d "content=exec $*
 Failed($exitcode)${HOST:+ on $HOST} in $times"
   fi
+  return "$exitcode"
 }
 
 main "$@"
