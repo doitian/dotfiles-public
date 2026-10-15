@@ -6,6 +6,7 @@ progress-color=over #45475a
 border-size=2
 border-radius=10
 padding=12
+font=MesloLGS Nerd Font 10
 icon-path=/usr/share/icons/breeze-dark:/usr/share/icons/breeze
 
 # niri hardcodes a "Screenshot captured" notification on every capture
@@ -22,3 +23,17 @@ border-color=#f38ba8
 ignore-timeout=1
 default-timeout=0
 on-button-left=dismiss
+
+# Firefox sends no icon and mako cannot assign one, so draw one in the message.
+# Order is priority: the Slack rule below overrides this.
+[desktop-entry=firefox app-icon=""]
+format=<span foreground="#FF7139">󰈹</span>  <b>%s</b>\n%b
+
+# Slack in a Firefox tab still reports desktop-entry=firefox, so the summary is
+# the only discriminator (fragile: any site using "New message from ..." too).
+[desktop-entry=firefox summary~="^New message from " app-icon=""]
+format=<span foreground="#E01E5A">󰒱</span>  <b>%s</b>\n%b
+
+# cod-claude U+EC82
+[desktop-entry=com.anthropic.Claude app-icon=""]
+format=<span foreground="#D97757"></span>  <b>%s</b>\n%b
