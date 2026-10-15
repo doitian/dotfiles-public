@@ -29,6 +29,6 @@ export function updatePlan(which = (cmd) => Bun.which(cmd)) {
   return steps;
 }
 
-if (import.meta.main) {
+if (import.meta.main || Bun.isStandaloneExecutable) {
   await runSteps(updatePlan().map(({ args, estimateMs }) => ({ estimateMs, run: () => spawnOrExit(...args) })));
 }

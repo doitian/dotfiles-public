@@ -20,7 +20,7 @@ export function pluginCommands(which = (cmd) => Bun.which(cmd)) {
   return Object.keys(updaters).filter((cmd) => which(cmd));
 }
 
-if (import.meta.main) {
+if (import.meta.main || Bun.isStandaloneExecutable) {
   const cmds = pluginCommands();
   if (cmds.length === 0) process.exit(0);
   claimProgress();

@@ -49,7 +49,7 @@ async function runOwned({ index, count, command }) {
   return code;
 }
 
-if (import.meta.main) {
+if (import.meta.main || Bun.isStandaloneExecutable) {
   try {
     process.exit(await run(process.argv.slice(2)));
   } catch (err) {

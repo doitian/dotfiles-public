@@ -1,4 +1,8 @@
 import { expect, test } from "bun:test";
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { updatePlan as linuxPlan } from "../src/mise-tasks/g-up-all-linux.js";
 import { pluginCommands } from "../src/mise-tasks/g-up-plugins.js";
 import { updatePlan as windowsPlan } from "../src/mise-tasks/g-up-all-windows.js";
@@ -204,3 +208,22 @@ test("osc-progress preserves the command status and an intermediate step", async
   ]);
   expect(await step.exited).toBe(0);
 });
+
+test("compiled osc-progress runs its command instead of exiting silently", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "osc-progress-compiled-"));
+  try {
+    const build = await Bun.build({
+      entrypoints: [fileURLToPath(new URL("../src/osc-progress.js", import.meta.url))],
+      minify: true,
+      compile: { outfile: join(dir, "osc-progress"), autoloadDotenv: false, autoloadBunfig: false },
+    });
+    expect(build.success).toBe(true);
+    const child = Bun.spawn([build.outputs[0].path, process.execPath, "-e", "process.exit(3)"], {
+      stdout: "ignore",
+      stderr: "ignore",
+    });
+    expect(await child.exited).toBe(3);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+}, 30000);
