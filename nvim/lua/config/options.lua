@@ -2,27 +2,25 @@
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
 
-local opt = vim.opt
+vim.opt.background = vim.env.TERM_BACKGROUND or "light"
 
-opt.background = vim.env.TERM_BACKGROUND or "light"
-
-opt.clipboard = vim.env.KITTY_PIPE_DATA and "unnamedplus" or ""
-opt.completeopt = { "menu" }
-opt.formatexpr = ""
-opt.grepprg = "rg --hidden -g '!.git' --vimgrep"
+vim.opt.clipboard = vim.env.KITTY_PIPE_DATA and "unnamedplus" or ""
+vim.opt.completeopt = { "menu" }
+vim.opt.formatexpr = ""
+vim.opt.grepprg = "rg --hidden -g '!.git' --vimgrep"
 if vim.fn.executable("mise") == 1 then
-  opt.makeprg = "mise run"
+  vim.opt.makeprg = "mise run"
 end
-opt.laststatus = 2
-opt.listchars = { tab = "▸ ", trail = "·", extends = "»", precedes = "«", nbsp = "␣" }
-opt.report = 99
-opt.spellfile = { vim.env.HOME .. "/.vim-spell-en.utf-8.add", ".vim-spell-en.utf-8.add" }
-opt.spelllang = { "en", "cjk" }
-opt.timeoutlen = 700
-opt.updatetime = 1800
-opt.visualbell = true
-opt.wildignore = "*.swp,*.bak,*.pyc,*.class,*.beam"
-opt.winwidth = 78
+vim.opt.laststatus = 2
+vim.opt.listchars = { tab = "▸ ", trail = "·", extends = "»", precedes = "«", nbsp = "␣" }
+vim.opt.report = 99
+vim.opt.spellfile = { vim.env.HOME .. "/.vim-spell-en.utf-8.add", ".vim-spell-en.utf-8.add" }
+vim.opt.spelllang = { "en", "cjk" }
+vim.opt.timeoutlen = 700
+vim.opt.updatetime = 1800
+vim.opt.visualbell = true
+vim.opt.wildignore = "*.swp,*.bak,*.pyc,*.class,*.beam"
+vim.opt.winwidth = 78
 
 if vim.tbl_contains(vim.v.argv, "--embed") then
   vim.opt.guifont = "CartographCF Nerd Font:h12"
@@ -64,12 +62,12 @@ if my_clipboard then
 end
 
 if vim.fn.has("win32") == 1 then
-  opt.shellslash = true
-  opt.shell = vim.fn.executable("pwsh") == 1 and "pwsh" or "powershell"
-  opt.shellcmdflag =
+  vim.opt.shellslash = true
+  vim.opt.shell = vim.fn.executable("pwsh") == 1 and "pwsh" or "powershell"
+  vim.opt.shellcmdflag =
     "-NoLogo -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new();$PSDefaultParameterValues['Out-File:Encoding']='utf8';"
-  opt.shellredir = '2>&1 | %%{ "$_" } | Out-File %s; exit $LastExitCode'
-  opt.shellpipe = '2>&1 | %%{ "$_" } | Tee-Object %s; exit $LastExitCode'
-  opt.shellquote = ""
-  opt.shellxquote = ""
+  vim.opt.shellredir = '2>&1 | %%{ "$_" } | Out-File %s; exit $LastExitCode'
+  vim.opt.shellpipe = '2>&1 | %%{ "$_" } | Tee-Object %s; exit $LastExitCode'
+  vim.opt.shellquote = ""
+  vim.opt.shellxquote = ""
 end
