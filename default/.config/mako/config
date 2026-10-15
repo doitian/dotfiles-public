@@ -24,9 +24,13 @@ ignore-timeout=1
 default-timeout=0
 on-button-left=dismiss
 
-# A Firefox web app can ship an icon via the image-data hint while leaving
-# app_icon empty, and mako criteria cannot see image-data, so a blanket
-# Firefox rule double-draws (icon + glyph). Match known summaries instead:
+# Firefox web notifications carry no app_icon, so draw a glyph in the message.
+# A web app that ships an icon via image-data still matches (mako criteria
+# cannot see image-data) and shows its real icon plus this glyph. Order is
+# priority: the Slack rule below overrides this format.
+[desktop-entry=firefox app-icon=""]
+format=<span foreground="#FF7139">󰈹</span> <b>%s</b>\n%b
+
 # Slack in a tab reports desktop-entry=firefox, so the summary is the only
 # discriminator (fragile: any site using "New message ..." too).
 [desktop-entry=firefox summary~="^New message (from|in) " app-icon=""]
