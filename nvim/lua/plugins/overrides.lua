@@ -387,6 +387,18 @@ return {
     end,
   },
 
+  -- ai {{{1
+  -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/extras/ai/sidekick.lua
+  {
+    "folke/sidekick.nvim",
+    opts = {
+      cli = {
+        mux = { enabled = true, backend = "tmux", create = "split" },
+        win = { layout = "right" },
+      },
+    },
+  },
+
   -- lsp {{{1
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/lsp/init.lua
 
