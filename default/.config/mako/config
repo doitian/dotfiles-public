@@ -30,8 +30,8 @@ on-button-left=dismiss
 # Slack in a tab reports desktop-entry=firefox, so the summary is the only
 # discriminator (fragile: any site using "New message ..." too).
 [desktop-entry=firefox summary~="^New message (from|in) " app-icon=""]
-format=<span foreground="#E01E5A">󰒱</span>  <b>%s</b>\n%b
+format=<span foreground="#E01E5A">󰒱</span> <b>%s</b>\n%b
 
 # cod-claude U+EC82
 [desktop-entry=com.anthropic.Claude app-icon=""]
-format=<span foreground="#D97757"></span>  <b>%s</b>\n%b
+format=<span foreground="#D97757"></span> <b>%s</b>\n%b
