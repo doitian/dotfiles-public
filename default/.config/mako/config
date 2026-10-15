@@ -24,13 +24,11 @@ ignore-timeout=1
 default-timeout=0
 on-button-left=dismiss
 
-# Firefox sends no icon and mako cannot assign one, so draw one in the message.
-# Order is priority: the Slack rule below overrides this.
-[desktop-entry=firefox app-icon=""]
-format=<span foreground="#FF7139">󰈹</span>  <b>%s</b>\n%b
-
-# Slack in a Firefox tab still reports desktop-entry=firefox, so the summary is
-# the only discriminator (fragile: any site using "New message ..." too).
+# A Firefox web app can ship an icon via the image-data hint while leaving
+# app_icon empty, and mako criteria cannot see image-data, so a blanket
+# Firefox rule double-draws (icon + glyph). Match known summaries instead:
+# Slack in a tab reports desktop-entry=firefox, so the summary is the only
+# discriminator (fragile: any site using "New message ..." too).
 [desktop-entry=firefox summary~="^New message (from|in) " app-icon=""]
 format=<span foreground="#E01E5A">󰒱</span>  <b>%s</b>\n%b
 
