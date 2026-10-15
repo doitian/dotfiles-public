@@ -39,3 +39,7 @@ format=<span foreground="#E01E5A">󰒱</span> <b>%s</b>\n%b
 # cod-claude U+EC82
 [desktop-entry=com.anthropic.Claude app-icon=""]
 format=<span foreground="#D97757"></span> <b>%s</b>\n%b
+
+# Grok Bot sends no icon either.
+[desktop-entry=grok-bot app-icon=""]
+format=<span foreground="#FFFFFF">󰚩</span> <b>%s</b>\n%b
