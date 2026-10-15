@@ -5,6 +5,7 @@
 import { $ } from "bun";
 import { ensureGpgTty } from "./lib/env.js";
 import { fzf } from "./lib/fzf.js";
+import { spawnOrExit } from "./lib/shell.js";
 
 const args = process.argv.slice(2);
 const isRofi = args[0] === "--rofi";
@@ -172,9 +173,9 @@ async function main() {
   const { code: fzfCode, selected: fzfSelected } = await fzfSelect(list.stdout);
   if (fzfCode !== 0 || !fzfSelected) process.exit(fzfCode ?? 1);
   const entry = fzfSelected;
-  const gopassArgs = [...rest, entry].filter(Boolean);
-  const r = await $`gopass ${gopassArgs}`.nothrow();
-  process.exit(r.exitCode ?? 0);
+  // Inherit the terminal instead of Bun Shell's pipes so interactive
+  // subcommands like `edit` can launch a full-screen editor.
+  await spawnOrExit(...["gopass", ...rest, entry].filter(Boolean));
 }
 
 main();
