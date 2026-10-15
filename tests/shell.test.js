@@ -28,6 +28,15 @@ test.skipIf(process.platform === "win32")("spawnSyncOrExit exits with 128+N when
   expect(result).toEqual({ exitCode: 143, stdout: "", stderr: "" });
 });
 
+test("spawnSyncOrExit forwards environment changes made at runtime", async () => {
+  const result = await runBun(`
+    import { spawnSyncOrExit } from "./src/lib/shell.js";
+    process.env.OSC_PROGRESS_OWNER = "1";
+    spawnSyncOrExit(process.execPath, "--eval", "console.log(process.env.OSC_PROGRESS_OWNER ?? 'unset')");
+  `);
+  expect(result).toEqual({ exitCode: 0, stdout: "1\n", stderr: "" });
+});
+
 test("spawnOrExit continues after success and preserves argument boundaries", async () => {
   const result = await runBun(`
     import { spawnOrExit } from "./src/lib/shell.js";
@@ -35,6 +44,15 @@ test("spawnOrExit continues after success and preserves argument boundaries", as
     console.log("continued");
   `);
   expect(result).toEqual({ exitCode: 0, stdout: "spaces & symbols\ncontinued\n", stderr: "" });
+});
+
+test("spawnOrExit forwards environment changes made at runtime", async () => {
+  const result = await runBun(`
+    import { spawnOrExit } from "./src/lib/shell.js";
+    process.env.OSC_PROGRESS_OWNER = "1";
+    await spawnOrExit(process.execPath, "--eval", "console.log(process.env.OSC_PROGRESS_OWNER ?? 'unset')");
+  `);
+  expect(result).toEqual({ exitCode: 0, stdout: "1\n", stderr: "" });
 });
 
 test("spawnOrExit propagates failure without continuing", async () => {
