@@ -124,8 +124,8 @@ New Kitty windows start maximized. The **iPad Latte** theme uses Kitty's light
 Catppuccin Latte window decorations with a dark taskbar matching Waybar.
 The bar uses Macchiato crust (`#181926`), with pale text (`#cad3f5`) and a
 Macchiato base desktop background (`#24273a`). Window controls are flat, with
-a simple app-grid launcher and Sarasa UI SC text matching Waybar. The fallback font list is Font Awesome 7
-Free, then sans-serif. Title text is 12-point, menus 11-point, and the taskbar 10-point,
+a simple app-grid launcher and Sarasa UI SC text matching Waybar. The fallback font list is FontAwesome,
+then sans-serif. Title text is 12-point, menus 11-point, and the taskbar 10-point,
 with a 41-pixel taskbar and 32-pixel title bars at the initial resolution.
 The clock fills the bar's 40-pixel content row and uses the desktop background
 color; `TaskBarGraphHeight=40` prevents dark padding above and below it.
