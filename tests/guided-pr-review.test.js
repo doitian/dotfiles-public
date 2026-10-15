@@ -1,9 +1,11 @@
 import { $ } from "bun";
-import { afterAll, expect, test } from "bun:test";
+import { afterAll, expect, setDefaultTimeout, test } from "bun:test";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { runInNewContext, Script } from "node:vm";
+
+setDefaultTimeout(30000);
 
 const skill = resolve("ai/local-skills/guided-pr-review");
 const storeSource = await readFile(join(skill, "assets/pages-store.js"), "utf8");

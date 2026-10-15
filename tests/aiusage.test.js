@@ -38,7 +38,7 @@ async function bridge(handler) {
   });
   cleanups.push(() => server.stop(true));
   const dir = await mkdtemp(join(tmpdir(), "aiusage-windows-"));
-  cleanups.push(() => rm(dir, { recursive: true, force: true }));
+  cleanups.push(() => rm(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 }));
   const cache = join(dir, "aiusage", "port.json");
   await mkdir(join(dir, "aiusage"));
   await Bun.write(cache, `${server.port}\n`);
@@ -466,7 +466,7 @@ test.skipIf(process.platform !== "linux")("Linux CLI uses JSON without touching 
     expect(missing.exitCode).toBe(1);
     expect(missing.stderr).toContain("no providers object");
   } finally {
-    await rm(dir, { recursive: true, force: true });
+    await rm(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
   }
 });
 

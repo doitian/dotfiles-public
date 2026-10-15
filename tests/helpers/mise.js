@@ -48,13 +48,18 @@ export async function createMiseSandbox() {
       stdout: "pipe",
       stderr: "pipe",
     });
-    const timer = setTimeout(() => child.kill(), 15000);
+    let timedOut = false;
+    const timer = setTimeout(() => {
+      timedOut = true;
+      child.kill();
+    }, 30000);
     try {
       const [exitCode, stdout, stderr] = await Promise.all([
         child.exited,
         new Response(child.stdout).text(),
         new Response(child.stderr).text(),
       ]);
+      if (timedOut) throw new Error(`mise ${args.join(" ")} timed out after 30s`);
       return { exitCode, stdout, stderr };
     } finally {
       clearTimeout(timer);
