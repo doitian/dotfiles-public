@@ -9,6 +9,8 @@ bindkey '^Xa' all-matches
 zstyle ':completion:all-matches:*' old-matches only
 zstyle ':completion:all-matches::::' completer _all_matches
 
+bindkey '^Xv' vi-cmd-mode
+
 # useful to drill into a directory
 bindkey -M menuselect '^O' accept-and-infer-next-history
 
