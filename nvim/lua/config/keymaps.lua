@@ -70,6 +70,9 @@ if vim.tbl_contains(vim.v.argv, "--embed") and vim.fn.has("win32") == 1 then
   map("i", "<C-S-V>", "<C-R>+", { desc = "Paste from system clipboard" })
 end
 
+unmap("i", "<A-j>")
+unmap("i", "<A-k>")
+
 -- windows {{{1
 map("n", "<Leader>wk", "<Cmd>Close<CR>", { desc = "Close disturbing windows" })
 
