@@ -30,8 +30,8 @@ on-button-left=dismiss
 format=<span foreground="#FF7139">󰈹</span>  <b>%s</b>\n%b
 
 # Slack in a Firefox tab still reports desktop-entry=firefox, so the summary is
-# the only discriminator (fragile: any site using "New message from ..." too).
-[desktop-entry=firefox summary~="^New message from " app-icon=""]
+# the only discriminator (fragile: any site using "New message ..." too).
+[desktop-entry=firefox summary~="^New message (from|in) " app-icon=""]
 format=<span foreground="#E01E5A">󰒱</span>  <b>%s</b>\n%b
 
 # cod-claude U+EC82
