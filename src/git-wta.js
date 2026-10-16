@@ -3,14 +3,16 @@
  * Create a new git worktree, copy included files, and optionally run setup
  * commands from .agents/worktrees.json or .cursor/worktrees.json.
  *
- * Usage: git-wta [git-worktree-add-options...] <path> [<commit-ish>]
+ * Usage: git-wta [git-worktree-add-options...] [--tmux] <path> [<commit-ish>]
  *        git-wta --setup [<dest> | <source> <dest>]
  *        git-wta --setup-all
  *        git-wta --run [--] <command> [args...]
  *
  * A <path> given as a bare name is rewritten to ../{REPO}.worktrees/{NAME},
  * where {REPO} is the root worktree directory name. Pass ./NAME or any path
- * containing a separator to use it as given.
+ * containing a separator to use it as given. Pass --tmux to open a new tmux
+ * window in the created worktree after setup finishes. Pass --quiet to suppress
+ * progress and subprocess output (errors are still reported).
  *
  * After `git worktree add`, any untracked files in the root worktree matching
  * the patterns in .worktreeinclude (using .gitignore syntax) are copied into
@@ -29,10 +31,17 @@ import { parseArgs } from "node:util";
 import { $ } from "bun";
 import { exists } from "./lib/fs.js";
 
-const usage = `Usage: git-wta [git-worktree-add-options...] <path> [<commit-ish>]
+const usage = `Usage: git-wta [git-worktree-add-options...] [--tmux] [--quiet] <path> [<commit-ish>]
        git-wta --setup [<dest> | <source> <dest>]
        git-wta --setup-all
        git-wta --run [--] <command> [args...]`;
+
+// Set from --quiet; suppresses progress logs and subprocess output.
+let quiet = false;
+
+function log(...args) {
+  if (!quiet) console.log(...args);
+}
 
 async function getWorktreePaths() {
   // `git worktree list --porcelain` lists worktrees; the first one is the root.
@@ -91,7 +100,7 @@ async function copyIncludedFiles(rootWorktreePath, worktreePath) {
     return;
   }
 
-  console.log(`Copying ${relPaths.length} included file(s)…`);
+  log(`Copying ${relPaths.length} included file(s)…`);
   for (const rel of relPaths) {
     const dest = join(worktreePath, rel);
     await mkdir(dirname(dest), { recursive: true });
@@ -124,16 +133,15 @@ async function runSetupCommands(rootWorktreePath, worktreePath) {
     return;
   }
 
-  console.log(`Running ${setupKey} commands…`);
+  log(`Running ${setupKey} commands…`);
   const env = { ...process.env, ROOT_WORKTREE_PATH: rootWorktreePath };
 
   for (const cmd of commands) {
-    console.log(`$ ${cmd}`);
-    const result = await $`${{ raw: cmd }}`
-      .cwd(worktreePath)
-      .env(env)
-      .nothrow();
+    log(`$ ${cmd}`);
+    const run = $`${{ raw: cmd }}`.cwd(worktreePath).env(env);
+    const result = await (quiet ? run.quiet() : run).nothrow();
     if (result.exitCode !== 0) {
+      if (quiet) process.stderr.write(result.stderr);
       console.error(`Command failed with exit code ${result.exitCode}: ${cmd}`);
       process.exit(result.exitCode);
     }
@@ -145,11 +153,19 @@ async function setupWorktree(rootWorktreePath, worktreePath) {
   await runSetupCommands(rootWorktreePath, worktreePath);
 }
 
+async function openTmuxWindow(worktreePath) {
+  const result = await $`tmux new-window -c ${worktreePath}`.nothrow();
+  if (result.exitCode !== 0) {
+    console.error("Could not open a tmux window; is tmux running?");
+  }
+}
+
 async function runInAllWorktrees(command) {
   let failed = false;
   for (const worktreePath of await getWorktreePaths()) {
-    console.log(`\n==> ${worktreePath}`);
-    const result = await $`${command}`.cwd(worktreePath).nothrow();
+    log(`\n==> ${worktreePath}`);
+    const run = $`${command}`.cwd(worktreePath);
+    const result = await (quiet ? run.quiet() : run).nothrow();
     if (result.exitCode !== 0) {
       failed = true;
     }
@@ -208,9 +224,13 @@ async function main() {
       B: { type: "string", short: "B" },
       setup: { type: "boolean" },
       "setup-all": { type: "boolean" },
+      tmux: { type: "boolean" },
+      quiet: { type: "boolean", short: "q" },
     },
     strict: false,
   });
+
+  quiet = values.quiet;
 
   if (values["setup-all"]) {
     if (positionals.length !== 0) {
@@ -255,7 +275,8 @@ async function main() {
     process.exit(1);
   }
 
-  const args = rawArgs;
+  const ownFlags = new Set(["--tmux", "--quiet", "-q"]);
+  const args = rawArgs.filter((arg) => !ownFlags.has(arg));
   const rootWorktreePath = await getRootWorktreePath();
 
   // A bare name gets placed in a sibling "{REPO}.worktrees" directory; any
@@ -269,13 +290,19 @@ async function main() {
     );
   }
 
-  const result = await $`git worktree add ${args}`.nothrow();
+  const add = $`git worktree add ${args}`;
+  const result = await (quiet ? add.quiet() : add).nothrow();
   if (result.exitCode !== 0) {
+    if (quiet) process.stderr.write(result.stderr);
     process.exit(result.exitCode);
   }
 
   const worktreePath = resolve(args[pathIndex]);
   await setupWorktree(rootWorktreePath, worktreePath);
+
+  if (values.tmux) {
+    await openTmuxWindow(worktreePath);
+  }
 }
 
 main();
