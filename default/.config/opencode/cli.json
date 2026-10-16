@@ -17,7 +17,7 @@
   },
   "animations": false,
   "tabs": {
-    "mode": "on",
+    "mode": "off",
     "indicators": "status",
     "layout": "horizontal"
   }
