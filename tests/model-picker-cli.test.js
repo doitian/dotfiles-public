@@ -6,11 +6,13 @@ import { fileURLToPath } from "node:url";
 
 const OPENCODE_MODELS = ["test/alpha", "test/shared"];
 const PI_MODELS = ["test/pi-alpha", "test/shared"];
+const CLAUDE_MODELS = ["best", "fable", "opus", "sonnet", "haiku", "opusplan", "default"];
 const ALL_MODELS = [
   "opencode\ttest/alpha",
   "opencode\ttest/shared",
   "pi\ttest/pi-alpha",
   "pi\ttest/shared",
+  ...CLAUDE_MODELS.map((model) => `claude\t${model}`),
 ];
 const HOUR_MS = 60 * 60 * 1000;
 
@@ -24,13 +26,18 @@ test("fa lists models, forwards args, and caches per agent", async () => {
       compile: { outfile: compiled },
     });
     expect(build.success).toBe(true);
-    for (const name of ["opencode", "pi", "fzf"]) await copyFile(compiled, join(dir, name + suffix));
+    for (const name of ["opencode", "pi", "claude", "fzf"]) await copyFile(compiled, join(dir, name + suffix));
     const log = join(dir, "calls.jsonl");
     const env = { ...process.env };
     const pathKey = Object.keys(env).find((key) => key.toUpperCase() === "PATH") ?? "PATH";
     env[pathKey] = dir + delimiter + (env[pathKey] ?? "");
     const stateDir = join(dir, "state");
+    // Point HOME at an empty directory so claude's picker catalog is absent and
+    // its alias fallback is deterministic regardless of the host.
+    const homeDir = join(dir, "home");
     Object.assign(env, {
+      HOME: homeDir,
+      USERPROFILE: homeDir,
       PICKER_LOG: log,
       XDG_STATE_HOME: stateDir,
       LOCALAPPDATA: stateDir,
@@ -42,6 +49,17 @@ test("fa lists models, forwards args, and caches per agent", async () => {
     const clearCache = () => rm(join(stateDir, "fa"), { recursive: true, force: true });
     const seedCache = (agent, models, ageMs = 0) =>
       Bun.write(cacheFile(agent), JSON.stringify({ updated: Date.now() - ageMs, value: models }));
+
+    const catalogDir = join(homeDir, ".claude", "cache", "model-catalog");
+    const clearCatalog = () => rm(catalogDir, { recursive: true, force: true });
+    const seedCatalog = (ids) =>
+      Bun.write(
+        join(catalogDir, "org-cc.json"),
+        JSON.stringify({
+          fetchedAt: Date.now(),
+          catalog: { surface: "cc", config: { models: ids.map((id) => ({ id })) } },
+        }),
+      );
 
     const cases = [
       {
@@ -222,6 +240,25 @@ test("fa lists models, forwards args, and caches per agent", async () => {
         expect: { tool: "opencode", args: ["--standalone"], config: { model: "test/alpha" } },
         expectCache: { opencode: OPENCODE_MODELS },
       },
+      {
+        args: ["-a", "claude"],
+        selection: "claude\topus",
+        listing: [],
+        picker: CLAUDE_MODELS.map((model) => `claude\t${model}`),
+        query: "",
+        expect: { tool: "claude", args: ["--model", "opus"] },
+        expectCache: { claude: CLAUDE_MODELS },
+      },
+      {
+        args: ["-a", "claude", "-r"],
+        prep: () => seedCatalog(["claude-opus-5-5", "claude-sonnet-5-5"]),
+        selection: "claude\tclaude-sonnet-5-5",
+        listing: [],
+        picker: ["claude\tclaude-opus-5-5", "claude\tclaude-sonnet-5-5"],
+        query: "",
+        expect: { tool: "claude", args: ["--model", "claude-sonnet-5-5"] },
+        expectCache: { claude: ["claude-opus-5-5", "claude-sonnet-5-5"] },
+      },
     ];
 
     for (const scenario of cases) {
@@ -233,6 +270,7 @@ test("fa lists models, forwards args, and caches per agent", async () => {
       for (const [key, sequence] of Object.entries(scenario.sequence ?? {})) {
         env[`PICKER_SEQUENCE_${key}`] = JSON.stringify(sequence);
       }
+      await clearCatalog();
       const prep = scenario.prep ?? clearCache;
       if (prep !== "keep") await prep();
       if ("selection" in scenario) env.PICKER_FZF_SELECTION = scenario.selection;

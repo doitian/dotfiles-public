@@ -1,8 +1,9 @@
 #!/usr/bin/env bun
+import { readFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { $ } from "bun";
 import { readCache, writeCache } from "./lib/cache.js";
-import { stateDir } from "./lib/env.js";
+import { home, stateDir } from "./lib/env.js";
 import { fzf, queryHistoryFile } from "./lib/fzf.js";
 
 function fail(message) {
@@ -20,6 +21,43 @@ function output(result) {
 }
 
 const MODEL_CACHE_TTL_MS = 60 * 60 * 1000;
+
+// Claude Code has no model-list command, so these aliases are the fallback when
+// its cached picker catalog is missing.
+const CLAUDE_MODEL_ALIASES = ["best", "fable", "opus", "sonnet", "haiku", "opusplan", "default"];
+
+/** Model IDs from Claude Code's newest cached picker catalog, or [] without one. */
+async function claudeCatalogModels() {
+  const dir = join(home(), ".claude", "cache", "model-catalog");
+  let names;
+  try {
+    names = await readdir(dir);
+  } catch {
+    return [];
+  }
+  const entries = await Promise.all(
+    names
+      .filter((name) => name.endsWith("-cc.json"))
+      .map(async (name) => {
+        try {
+          const entry = JSON.parse(await readFile(join(dir, name), "utf8"));
+          return entry?.catalog?.surface === "cc" ? entry : null;
+        } catch {
+          // Ignore unreadable or malformed catalog entries and try the rest.
+          return null;
+        }
+      }),
+  );
+  const newest = entries.reduce(
+    (best, entry) =>
+      entry && (!best || (entry.fetchedAt ?? 0) > (best.fetchedAt ?? 0)) ? entry : best,
+    null,
+  );
+  const models = newest?.catalog?.config?.models;
+  if (!Array.isArray(models)) return [];
+  const ids = models.map((model) => model?.id).filter((id) => typeof id === "string" && id);
+  return [...new Set(ids)];
+}
 
 const AGENTS = [
   {
@@ -73,6 +111,18 @@ const AGENTS = [
         .map((line) => line.trim().split(/\s+/))
         .filter(([provider, model]) => provider && model)
         .map(([provider, model]) => `${provider}/${model}`);
+    },
+    launch(model, args) {
+      return { args: ["--model", model, ...args] };
+    },
+  },
+  {
+    name: "claude",
+    bin: "claude",
+    aliases: ["claude"],
+    async models() {
+      const models = await claudeCatalogModels();
+      return models.length ? models : [...CLAUDE_MODEL_ALIASES];
     },
     launch(model, args) {
       return { args: ["--model", model, ...args] };
