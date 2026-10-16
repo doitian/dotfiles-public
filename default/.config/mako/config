@@ -40,6 +40,12 @@ format=<span foreground="#E01E5A">󰒱</span> <b>%s</b>\n%b
 [desktop-entry=com.anthropic.Claude app-icon=""]
 format=<span foreground="#D97757"></span> <b>%s</b>\n%b
 
+# The Claude Code CLI posts through kitty, so it inherits kitty's app icon and
+# only the summary identifies it. Drop that icon and draw the glyph instead.
+[app-name=kitty summary="Claude Code"]
+icons=0
+format=<span foreground="#D97757"></span> <b>%s</b>\n%b
+
 # Grok Bot sends no icon either.
 [desktop-entry=grok-bot app-icon=""]
 format=<span foreground="#FFFFFF">󰚩</span> <b>%s</b>\n%b
