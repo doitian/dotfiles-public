@@ -9,6 +9,15 @@
       "skillFolderHash": "bde7bcf5a96697d31aa55b33565fa0ff002167ca",
       "installedAt": "2026-09-12T10:35:06.634Z",
       "updatedAt": "2026-10-14T09:48:40.877Z"
+    },
+    "agent-berth": {
+      "source": "doitian/agent-berth",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/doitian/agent-berth.git",
+      "skillPath": ".agents/skills/agent-berth/SKILL.md",
+      "skillFolderHash": "b0b787c6c6b144dbe68f5860590a3bacec99ae1d",
+      "installedAt": "2026-10-17T00:49:38.893Z",
+      "updatedAt": "2026-10-17T00:54:47.542Z"
     }
   },
   "dismissed": {}
