@@ -77,6 +77,37 @@ async function patchOpencode() {
   console.log(`Updated ${path}`);
 }
 
+/** CLI settings this task enforces; the TUI rewrites cli.json, so re-apply them on every run. */
+const OPENCODE_CLI = {
+  theme: { name: "catppuccin", mode: "light" },
+  keybinds: { "prompt.editor": "ctrl+g" },
+  tabs: { mode: "on" },
+};
+
+/** Apply OPENCODE_CLI to ~/.config/opencode/cli.json, leaving unrelated settings alone. */
+async function patchOpencodeCli() {
+  const path = join(home(), ".config/opencode/cli.json");
+  const file = Bun.file(path);
+  const config = (await file.exists())
+    ? await file.json()
+    : { $schema: "https://opencode.ai/v2/cli.json" };
+
+  let changed = false;
+  for (const [group, values] of Object.entries(OPENCODE_CLI)) {
+    const section = config[group] ??= {};
+    for (const [key, value] of Object.entries(values)) {
+      if (section[key] === value) continue;
+      section[key] = value;
+      changed = true;
+    }
+  }
+  if (!changed) return;
+
+  await mkdir(dirname(path), { recursive: true });
+  await Bun.write(path, `${JSON.stringify(config, null, 2)}\n`);
+  console.log(`Updated ${path}`);
+}
+
 const ULANZI_HOOK_NAMES = new Set(["ulanzi-studio", "ai-tool-state-monitor"]);
 const ULANZI_HOOK_MARKER = "ai-tool-state-monitor/hooks/monitor-hook.js";
 
@@ -145,6 +176,7 @@ async function main() {
   await patchClaude();
   await patchPi();
   await patchOpencode();
+  await patchOpencodeCli();
   await scrubUlanziHooks();
 }
 
