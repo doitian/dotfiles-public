@@ -2,7 +2,6 @@
 import { mkdir, readFile, stat } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { parseArgs } from "node:util";
-import { $ } from "bun";
 import { home } from "./lib/env.js";
 import { fzf } from "./lib/fzf.js";
 
@@ -90,8 +89,13 @@ async function main() {
   if (!selected) return;
   const channel = channels[Number(selected.split("\t")[0])];
   if (!channel) throw new Error("invalid channel selection");
-  const result = await $`mpv --quiet --msg-level=all=${logLevel} --force-media-title=${channel.name} -- ${channel.url}`.nothrow();
-  process.exit(result.exitCode);
+  // Bun's shell spawns Windows children with a hidden window, which leaves
+  // mpv's video window invisible; Bun.spawn with inherited stdio shows it.
+  const child = Bun.spawn([
+    "mpv", "--quiet", `--msg-level=all=${logLevel}`,
+    `--force-media-title=${channel.name}`, "--", channel.url,
+  ], { stdin: "inherit", stdout: "inherit", stderr: "inherit" });
+  process.exit(await child.exited);
 }
 
 if (import.meta.main || Bun.isStandaloneExecutable) await main().catch((error) => {

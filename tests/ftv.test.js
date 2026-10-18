@@ -1,5 +1,5 @@
 import { expect, spyOn, test } from "bun:test";
-import { chmod, mkdtemp, readFile, rm, utimes } from "node:fs/promises";
+import { copyFile, mkdtemp, readFile, rm, utimes } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { delimiter, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -18,18 +18,29 @@ const CHANNELS = [
   { name: "News, World", group: "News, international", url: "https://example.test/live/2.m3u8?key=a&b=c" },
 ];
 
-test.skipIf(process.platform === "win32")("ftv CLI defaults to errors and forwards chosen mpv log levels", async () => {
+test("ftv CLI defaults to errors and forwards chosen mpv log levels", async () => {
   const dir = await mkdtemp(join(tmpdir(), "ftv-cli-"));
+  const suffix = process.platform === "win32" ? ".exe" : "";
   try {
-    await Bun.write(join(dir, "fzf"), '#!/bin/sh\nIFS= read -r row\nprintf "%s\\n" "$row"\n');
-    await Bun.write(join(dir, "mpv"), '#!/bin/sh\nprintf "%s\\n" "$@"\nexit "${FTV_MPV_EXIT:-0}"\n');
-    for (const command of ["fzf", "mpv"]) await chmod(join(dir, command), 0o755);
+    const compiled = join(dir, `command${suffix}`);
+    const build = await Bun.build({
+      entrypoints: [fileURLToPath(new URL("./fixtures/ftv-command.js", import.meta.url))],
+      compile: { outfile: compiled },
+    });
+    expect(build.success).toBe(true);
+    for (const command of ["fzf", "mpv"]) await copyFile(compiled, join(dir, command + suffix));
     await Bun.write(join(dir, "ftv", "iptv4.m3u"), PLAYLIST);
-    const env = { ...process.env, PATH: dir + delimiter + process.env.PATH, XDG_CACHE_HOME: dir };
+    const pathKey = Object.keys(process.env).find((key) => key.toUpperCase() === "PATH") ?? "PATH";
+    const env = {
+      ...process.env,
+      [pathKey]: dir + delimiter + (process.env[pathKey] ?? ""),
+      XDG_CACHE_HOME: dir,
+    };
     const script = fileURLToPath(new URL("../src/ftv.js", import.meta.url));
     const run = async (args, overrides = {}) => {
       const child = Bun.spawn([process.execPath, script, ...args], {
         env: { ...env, ...overrides },
+        stdin: "ignore",
         stdout: "pipe",
         stderr: "pipe",
       });
@@ -62,9 +73,10 @@ test.skipIf(process.platform === "win32")("ftv CLI defaults to errors and forwar
     expect((await run(["--log-level"])).code).toBe(1);
     expect((await run([], { FTV_MPV_EXIT: "7" })).code).toBe(7);
   } finally {
-    await rm(dir, { recursive: true, force: true });
+    // Windows briefly keeps the spawned fixture executables locked after exit
+    await rm(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
   }
-});
+}, 15000);
 
 test("ftv parses names, groups, CRLF, and intervening comments", () => {
   expect(parsePlaylist(PLAYLIST)).toEqual(CHANNELS);
