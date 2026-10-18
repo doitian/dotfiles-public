@@ -19,8 +19,8 @@ async function patchCodex() {
   if (!(await file.exists())) return;
 
   const config = Bun.TOML.parse(await file.text());
-  const sandbox = config.sandbox_workspace_write ??= {};
-  const roots = sandbox.writable_roots ??= [];
+  const sandbox = (config.sandbox_workspace_write ??= {});
+  const roots = (sandbox.writable_roots ??= []);
   const root = mbxCacheRoot();
   if (roots.includes(root)) return;
 
@@ -33,8 +33,8 @@ async function patchClaude() {
   const path = join(home(), ".claude/settings.json");
   const file = Bun.file(path);
   const settings = (await file.exists()) ? await file.json() : {};
-  const permissions = settings.permissions ??= {};
-  const allow = permissions.allow ??= [];
+  const permissions = (settings.permissions ??= {});
+  const allow = (permissions.allow ??= []);
   const permission = "Bash(gtasks:*)";
   if (allow.includes(permission)) return;
 
@@ -66,9 +66,9 @@ async function patchOpencode() {
   const config = (await file.exists())
     ? await file.json()
     : { $schema: "https://opencode.ai/config.json", mcp: {}, plugin: [] };
-  const providers = config.providers ??= {};
-  const provider = providers["alibaba-cn"] ??= {};
-  const settings = provider.settings ??= {};
+  const providers = (config.providers ??= {});
+  const provider = (providers["alibaba-cn"] ??= {});
+  const settings = (provider.settings ??= {});
   if (settings.baseURL === baseURL) return;
 
   settings.baseURL = baseURL;
@@ -81,7 +81,7 @@ async function patchOpencode() {
 const OPENCODE_CLI = {
   theme: { name: "catppuccin", mode: "light" },
   keybinds: { "prompt.editor": "ctrl+g" },
-  tabs: { mode: "on" },
+  tabs: { mode: "off" },
 };
 
 /** Apply OPENCODE_CLI to ~/.config/opencode/cli.json, leaving unrelated settings alone. */
@@ -94,7 +94,7 @@ async function patchOpencodeCli() {
 
   let changed = false;
   for (const [group, values] of Object.entries(OPENCODE_CLI)) {
-    const section = config[group] ??= {};
+    const section = (config[group] ??= {});
     for (const [key, value] of Object.entries(values)) {
       if (section[key] === value) continue;
       section[key] = value;
@@ -114,10 +114,7 @@ const ULANZI_HOOK_MARKER = "ai-tool-state-monitor/hooks/monitor-hook.js";
 /** The Ulanzi hook installer; while it exists, Ulanzi may (re)install hooks into agent configs. */
 function ulanziHookInstallerPath() {
   const appData = process.env.APPDATA || join(home(), "AppData", "Roaming");
-  return join(
-    appData,
-    "Ulanzi/UlanziDeck/ustudio-cli/installers/install.js",
-  );
+  return join(appData, "Ulanzi/UlanziDeck/ustudio-cli/installers/install.js");
 }
 
 function hookCommands(entry) {
@@ -133,8 +130,7 @@ function isUlanziHookEntry(entry) {
   if (ULANZI_HOOK_NAMES.has(entry.name)) return true;
   if ((entry.hooks ?? []).some(isUlanziHookEntry)) return true;
   return hookCommands(entry).some(
-    (command) =>
-      command.includes(ULANZI_HOOK_MARKER) || command.includes("ustudio-cli"),
+    (command) => command.includes(ULANZI_HOOK_MARKER) || command.includes("ustudio-cli"),
   );
 }
 
