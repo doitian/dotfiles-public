@@ -54,12 +54,12 @@ async function buildOne({ sourcePath, outfile }) {
   });
   if (!result.success) {
     console.error(result.logs);
-    process.exit(1);
+    throw new Error(`Build failed: ${sourcePath}`);
   }
   return result.outputs[0].path;
 }
 
-async function buildIfStale(entries, outDir, sharedMtime) {
+async function buildIfStale(entries, outDir, sharedMtime, failures) {
   mkdirSync(outDir, { recursive: true });
   for (const { name, sourcePath } of entries) {
     const outfile = join(outDir, name);
@@ -69,8 +69,13 @@ async function buildIfStale(entries, outDir, sharedMtime) {
       continue;
     }
     console.log(`Building ${sourcePath} -> ${outfile}`);
-    const outPath = await buildOne({ sourcePath, outfile });
-    console.log(`  -> ${outPath}`);
+    try {
+      const outPath = await buildOne({ sourcePath, outfile });
+      console.log(`  -> ${outPath}`);
+    } catch (err) {
+      console.error(err.message);
+      failures.push(sourcePath);
+    }
   }
 }
 
@@ -96,15 +101,21 @@ const binEntries = [
   ...(await scanEntries(join(root, "..", "private", "src"))),
 ];
 const niriEntries = await scanEntries(join(root, "src", "niri-scripts"));
-await buildIfStale(binEntries, distDir, sharedMtime);
+const failures = [];
+await buildIfStale(binEntries, distDir, sharedMtime, failures);
 if (process.platform === "linux") {
-  await buildIfStale(niriEntries, distDir, sharedMtime);
+  await buildIfStale(niriEntries, distDir, sharedMtime, failures);
 }
 pruneStale([...binEntries, ...niriEntries], distDir);
 
 const miseTasksDistDir = join(distDir, "mise-tasks");
 const miseEntries = await scanEntries(join(root, "src", "mise-tasks"));
-await buildIfStale(miseEntries, miseTasksDistDir, sharedMtime);
+await buildIfStale(miseEntries, miseTasksDistDir, sharedMtime, failures);
 pruneStale(miseEntries, miseTasksDistDir);
 
+if (failures.length > 0) {
+  console.error(`Build failed for ${failures.length} file(s):`);
+  for (const f of failures) console.error(`  - ${f}`);
+  process.exit(1);
+}
 console.log("Build done.");
