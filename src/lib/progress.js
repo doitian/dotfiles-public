@@ -1,7 +1,9 @@
 import { openSync, writeSync } from "node:fs";
 import { constants } from "node:os";
 
-// OSC 9;4 (ConEmu progress, read by kitty and tmux's progressbar feature).
+// OSC 9;4 (ConEmu progress, read by kitty, tmux's progressbar feature and
+// psmux). psmux only matches the four-field form
+// (`\x1b]9;4;<state>;<percent>\x1b\\`), so the percent is always sent.
 const STATES = {
   hidden: 0,
   normal: 1,
@@ -17,10 +19,8 @@ const INTERVAL_MS = 500;
 export function formatProgress(state, percent) {
   const code = STATES[state];
   if (code == null) throw new Error(`unknown progress state: ${state}`);
-  let body = String(code);
-  if ((state === "normal" || state === "paused") && Number.isFinite(percent)) {
-    body += `;${Math.max(0, Math.min(100, Math.round(percent)))}`;
-  }
+  const value = Number.isFinite(percent) ? Math.round(percent) : 0;
+  const body = `${code};${Math.max(0, Math.min(100, value))}`;
   return `\x1b]9;4;${body}\x1b\\`;
 }
 

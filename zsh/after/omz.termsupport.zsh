@@ -113,10 +113,11 @@ if [[ -z "$INSIDE_EMACS" || "$INSIDE_EMACS" = vterm ]]; then
 fi
 
 # Drop a finished task's OSC 9;4 state when the next command starts.
-# Same sequence as `osc-progress` with no arguments.
+# Same sequence as `osc-progress` with no arguments; the percent field keeps
+# psmux (which only parses the four-field form) happy.
 function osc_progress_clear {
   [[ -w /dev/tty ]] || return 0
-  printf '\033]9;4;0\033\\' >/dev/tty
+  printf '\033]9;4;0;0\033\\' >/dev/tty
 }
 add-zsh-hook preexec osc_progress_clear
 

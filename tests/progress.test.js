@@ -16,14 +16,14 @@ import {
   slices,
 } from "../src/lib/progress.js";
 
-test("formatProgress emits OSC 9;4 states tmux and kitty parse", () => {
-  expect(formatProgress("hidden")).toBe("\x1b]9;4;0\x1b\\");
+test("formatProgress emits OSC 9;4 states tmux, kitty and psmux parse", () => {
+  expect(formatProgress("hidden")).toBe("\x1b]9;4;0;0\x1b\\");
   expect(formatProgress("normal", 42)).toBe("\x1b]9;4;1;42\x1b\\");
   expect(formatProgress("normal", 42.6)).toBe("\x1b]9;4;1;43\x1b\\");
   expect(formatProgress("normal", -4)).toBe("\x1b]9;4;1;0\x1b\\");
   expect(formatProgress("normal", 140)).toBe("\x1b]9;4;1;100\x1b\\");
-  expect(formatProgress("error")).toBe("\x1b]9;4;2\x1b\\");
-  expect(formatProgress("indeterminate")).toBe("\x1b]9;4;3\x1b\\");
+  expect(formatProgress("error")).toBe("\x1b]9;4;2;0\x1b\\");
+  expect(formatProgress("indeterminate")).toBe("\x1b]9;4;3;0\x1b\\");
   expect(formatProgress("paused", 10)).toBe("\x1b]9;4;4;10\x1b\\");
 });
 
