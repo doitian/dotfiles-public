@@ -7,7 +7,7 @@
  * bun.lock, src/lib/**), and removes outputs whose source no longer exists.
  */
 import { Glob } from "bun";
-import { existsSync, mkdirSync, readdirSync, rmSync, statSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, renameSync, rmSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 const root = import.meta.dir;
@@ -46,14 +46,51 @@ function outputMtime(outfile) {
   return Math.max(mtime(outfile), mtime(outfile + ".exe"));
 }
 
+/** A running process locks its .exe on Windows, but renaming it away still works. */
+function moveAsideLockedOutputs(outfile) {
+  if (process.platform !== "win32") return false;
+  let moved = false;
+  for (const path of [outfile, outfile + ".exe"]) {
+    if (!existsSync(path)) continue;
+    try {
+      renameSync(path, `${path}.old-${process.pid}`);
+      moved = true;
+    } catch {}
+  }
+  return moved;
+}
+
+/** Removes outputs moved aside by moveAsideLockedOutputs; they may still be locked by the running process. */
+function cleanOldOutputs(outDir) {
+  if (!existsSync(outDir)) return;
+  for (const file of readdirSync(outDir, { withFileTypes: true })) {
+    if (!file.isFile() || !/\.old-\d+$/.test(file.name)) continue;
+    try {
+      rmSync(join(outDir, file.name));
+    } catch {}
+  }
+}
+
+async function tryBuild({ sourcePath, outfile }) {
+  try {
+    const result = await Bun.build({
+      entrypoints: [sourcePath],
+      minify: true,
+      compile: { outfile, autoloadDotenv: false, autoloadBunfig: false },
+    });
+    return result.success ? { result } : { error: result.logs };
+  } catch (err) {
+    return { error: err.message };
+  }
+}
+
 async function buildOne({ sourcePath, outfile }) {
-  const result = await Bun.build({
-    entrypoints: [sourcePath],
-    minify: true,
-    compile: { outfile, autoloadDotenv: false, autoloadBunfig: false },
-  });
-  if (!result.success) {
-    console.error(result.logs);
+  let { result, error } = await tryBuild({ sourcePath, outfile });
+  if (!result && moveAsideLockedOutputs(outfile)) {
+    ({ result, error } = await tryBuild({ sourcePath, outfile }));
+  }
+  if (!result) {
+    console.error(error);
     throw new Error(`Build failed: ${sourcePath}`);
   }
   return result.outputs[0].path;
@@ -61,6 +98,7 @@ async function buildOne({ sourcePath, outfile }) {
 
 async function buildIfStale(entries, outDir, sharedMtime, failures) {
   mkdirSync(outDir, { recursive: true });
+  cleanOldOutputs(outDir);
   for (const { name, sourcePath } of entries) {
     const outfile = join(outDir, name);
     const outMtime = outputMtime(outfile);
@@ -83,7 +121,8 @@ function pruneStale(entries, outDir) {
   if (!existsSync(outDir)) return;
   const names = new Set(entries.map((e) => e.name));
   for (const file of readdirSync(outDir, { withFileTypes: true })) {
-    if (!file.isFile() || names.has(file.name.replace(/\.exe$/, ""))) continue;
+    if (!file.isFile() || /\.old-\d+$/.test(file.name)) continue;
+    if (names.has(file.name.replace(/\.exe$/, ""))) continue;
     const path = join(outDir, file.name);
     try {
       rmSync(path);
