@@ -15,9 +15,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/doitian/agent-berth.git",
       "skillPath": ".agents/skills/agent-berth/SKILL.md",
-      "skillFolderHash": "b0b787c6c6b144dbe68f5860590a3bacec99ae1d",
+      "skillFolderHash": "6fcf45becd44dbacf7bc9f91b77b000a628a3ad0",
       "installedAt": "2026-10-17T00:49:38.893Z",
-      "updatedAt": "2026-10-17T00:54:47.542Z"
+      "updatedAt": "2026-10-19T10:36:12.580Z"
     }
   },
   "dismissed": {}
