@@ -27,9 +27,10 @@ export async function main(args = Bun.argv.slice(2), { readEntry = gopass, store
   }
 
   const openaiEntry = args[0] ?? "default"
-  const [openai, pushover] = await Promise.all([
+  const [openai, pushover, flomo] = await Promise.all([
     readEntry(`key/openai/${openaiEntry}`),
     readEntry("web/pushover.net/ian"),
+    readEntry("web/flomoapp.com/ian"),
   ]);
 
   await set("openai-api-key", openai.password);
@@ -40,6 +41,8 @@ export async function main(args = Bun.argv.slice(2), { readEntry = gopass, store
   await set("pushover-agent-token", pushover.fields.get("agent"));
   await set("pushover-personal-token", pushover.fields.get("personal"));
   await set("pushover-desktop-notification-token", pushover.fields.get("desktop-notification"));
+
+  await set("flomo-mcp-token", flomo.fields.get("FLOMO_MCP_TOKEN"));
 
   await importGoogleTasks();
 }

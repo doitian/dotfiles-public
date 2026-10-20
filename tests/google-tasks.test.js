@@ -1148,6 +1148,7 @@ describe("Credentials and terminal lifecycle", () => {
                         ["export_as", "GWS_CLIENT_SECRET"], ["GWS_CLIENT_ID", "client"],
                         ["OPENAI_BASE_URL", "https://example.com"], ["OPENAI_DEFAULT_MODEL", "model"],
                         ["key", "user"], ["agent", "agent"], ["personal", "personal"], ["desktop-notification", "desktop"],
+                        ["FLOMO_MCP_TOKEN", "flomo-token"],
                     ])
                 };
             },
@@ -1158,7 +1159,11 @@ describe("Credentials and terminal lifecycle", () => {
             },
         });
         expect(requested).toContain("key/cloud.google.com/gwscli");
-        expect(requested).toHaveLength(args.length ? 1 : 3);
+        expect(requested).toHaveLength(args.length ? 1 : 4);
+        if (!args.length) {
+            expect(requested).toContain("web/flomoapp.com/ian");
+            expect(values.get("flomo-mcp-token")).toBe("flomo-token");
+        }
         expect(values.get("google-tasks-client-id")).toBe("client");
         expect(values.get("google-tasks-client-secret")).toBe("secret");
         expect(values.get("google-tasks-refresh-token")).toBe("saved-refresh");
