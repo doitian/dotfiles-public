@@ -115,8 +115,8 @@ available as a mouse/trackpad fallback. These bindings are stored in
 
 Kitty remains the default terminal, using your usual Kitty configuration with
 X11, 11-point text, and visible window decorations overridden by the VNC
-launchers. This font size is scaled by the remote desktop DPI; at 144 DPI,
-11 points is approximately 22 pixels. These launch options leave Niri terminals
+launchers. This font size is scaled by the remote desktop DPI; at 128 DPI,
+11 points is approximately 20 pixels. These launch options leave Niri terminals
 unchanged and also apply to Rofi's terminal command.
 The session clears the inherited `SHELL_ENV_LOADED` guard before starting IceWM
 and Kitty, allowing each new shell to load `~/.zshenv` and rebuild its tool paths.
@@ -156,15 +156,15 @@ iPad. Pending authentication also counts as a connection. Brief reconnects or
 overlapping connections keep the current size; the helper never deliberately
 resets while another viewer remains connected.
 
-All connected viewers share one desktop resolution. DPI stays at 144 unless
+All connected viewers share one desktop resolution. DPI stays at 128 unless
 you change `VNC_DPI`; requesting a different resolution does not provide
 independent per-client font scaling. Resizing preserves running applications,
 though the window manager may rearrange windows to fit the new screen.
 
 ### Display scale
 
-`icewm-vnc/environment` sets `VNC_DPI=144` (150% relative to
-96 DPI). Use `120` for 125%, `168` for 175%, or `192` for 200%.
+`icewm-vnc/environment` sets `VNC_DPI=128` (133% relative to
+96 DPI). Use `120` for 125%, `144` for 150%, `168` for 175%, or `192` for 200%.
 The directory link exposes this file at `~/.config/icewm-vnc/environment`.
 The session sets Xvnc DPI, the display's `Xft.dpi` resource, and XSettings
 `Xft/DPI` together, so Xft, GTK, and Qt applications receive the same font DPI.

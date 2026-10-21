@@ -47,7 +47,7 @@ def main():
     parser.add_argument("--address", type=ipaddress.IPv4Address, required=True)
     parser.add_argument("--port", type=int, default=5901)
     parser.add_argument("--geometry", default="1600x1200")
-    parser.add_argument("--dpi", type=int, default=144)
+    parser.add_argument("--dpi", type=int, default=128)
     args = parser.parse_args()
     if not re.fullmatch(r"[1-9][0-9]{1,4}x[1-9][0-9]{1,4}", args.geometry):
         parser.error("geometry must be WIDTHxHEIGHT")
