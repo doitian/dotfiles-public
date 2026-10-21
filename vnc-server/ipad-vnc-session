@@ -32,7 +32,10 @@ mkdir -p "$runtime_dir"
 export DISPLAY=:1
 export XAUTHORITY="$runtime_dir/Xauthority"
 touch "$XAUTHORITY"
-xauth -f "$XAUTHORITY" add "$DISPLAY" . "$(mcookie)"
+# Reuse the cookie so panes started before a restart can still open windows.
+if ! xauth -f "$XAUTHORITY" list "$DISPLAY" 2>/dev/null | grep -q .; then
+    xauth -f "$XAUTHORITY" add "$DISPLAY" . "$(mcookie)"
+fi
 unset SESSION_MANAGER DBUS_SESSION_BUS_ADDRESS WAYLAND_DISPLAY I3SOCK SWAYSOCK DESKTOP_STARTUP_ID
 # The service resets PATH, so Kitty shells must rebuild it through ~/.zshenv.
 unset SHELL_ENV_LOADED
@@ -46,6 +49,7 @@ desktop_pid=''
 xsettings_pid=''
 taskbar_pid=''
 resolution_pid=''
+tmux_pid=''
 keyring_pid_file="$runtime_dir/keyring.pid"
 stop_keyring() {
     [[ -s "$keyring_pid_file" ]] || return 0
@@ -63,6 +67,7 @@ cleanup() {
     stop_keyring
     test -z "$taskbar_pid" || kill "$taskbar_pid" 2>/dev/null || true
     test -z "$resolution_pid" || kill "$resolution_pid" 2>/dev/null || true
+    test -z "$tmux_pid" || kill "$tmux_pid" 2>/dev/null || true
     test -z "$xsettings_pid" || kill "$xsettings_pid" 2>/dev/null || true
     test -z "$xvnc_pid" || kill "$xvnc_pid" 2>/dev/null || true
     wait 2>/dev/null || true
@@ -107,6 +112,10 @@ taskbar_pid=$!
 "$(dirname "${BASH_SOURCE[0]}")/ipad-vnc-resolution" \
     --server-pid "$xvnc_pid" --address "$lan_ip" --geometry "$geometry" --dpi "$dpi" &
 resolution_pid=$!
+
+# Keep tmux outside this service cgroup; systemd kills the cgroup on restart.
+"$(dirname "${BASH_SOURCE[0]}")/ipad-vnc-tmux" &
+tmux_pid=$!
 
 dbus-run-session -- bash -c '
     keyring_pid=""

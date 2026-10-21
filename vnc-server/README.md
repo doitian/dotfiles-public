@@ -23,6 +23,7 @@ All VNC files live in `~/.dotfiles/repos/public/vnc-server/`:
 - `icewm-vnc/`: preferences, shortcuts, menus, fonts, and theme assets.
 - `ipad-vnc-session` and `ipad-vnc-taskbar`: session launch, keyring, and taskbar positioning.
 - `ipad-vnc-resolution`: restores the iPad resolution when no viewers remain.
+- `ipad-vnc-tmux`: moves tmux servers out of the service cgroup so restarts do not kill them.
 - `ipad-vnc.service`: systemd user service.
 - `setup-ipad-vnc.sh`: installation and explicit link management.
 
@@ -190,6 +191,22 @@ it does not receive the SDDM wallet key and cannot unlock automatically.
 that also runs `ksecretd` is a second daemon on the same wallet files; stop one
 before unlocking the wallet from the other.
 
+### tmux
+
+The desktop runs in one systemd cgroup. Stopping that service kills every
+process still in it, which used to include tmux servers started from Kitty.
+`ipad-vnc-tmux` moves each `tmux: server` and the processes it still parents
+out of that cgroup into a sibling `tmux-sessions` cgroup. It keeps doing so
+while the desktop runs, and the service runs it once more before shutdown.
+Restarting therefore closes Kitty, IceWM, and other desktop processes, but
+shells, editors, and agents inside tmux keep running. Reattach after the
+desktop is back.
+
+The X authority cookie is reused across restarts, so those panes can still
+open windows on display `:1`. They keep the private D-Bus address from when
+the tmux server started, so keyring and portal calls from them fail until
+you start a new tmux server on the new desktop.
+
 ### Service commands
 
 ```sh
@@ -207,8 +224,8 @@ applications:
 DISPLAY=:1 XAUTHORITY="$XDG_RUNTIME_DIR/ipad-vnc/Xauthority" icesh restart
 ```
 
-Restarting the service closes the remote desktop's running applications. To
-change initial and fallback resolution, write `VNC_GEOMETRY=1920x1440` to
+Restarting the service closes the remote desktop. tmux sessions survive; see
+above. To change initial and fallback resolution, write `VNC_GEOMETRY=1920x1440` to
 `~/.config/icewm-vnc/environment`, then restart. `VNC_INTERFACE` can also be set in
 that file; changing networks requires updating the firewall rule accordingly.
 

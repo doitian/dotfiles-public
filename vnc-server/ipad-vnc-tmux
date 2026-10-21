@@ -1,0 +1,173 @@
+#!/usr/bin/env python3
+"""Move tmux servers out of the VNC service cgroup so restarts do not kill them."""
+
+import argparse
+import errno
+import fcntl
+import os
+import sys
+import time
+from pathlib import Path
+
+SERVICE_NAME = "ipad-vnc.service"
+SURVIVAL_NAME = "tmux-sessions"
+POLL_SECONDS = 0.25
+
+
+def cgroup_rel(pid="self"):
+    for line in Path(f"/proc/{pid}/cgroup").read_text().splitlines():
+        if line.startswith("0::"):
+            return line[3:]
+    return ""
+
+
+def comm(pid):
+    try:
+        return Path(f"/proc/{pid}/comm").read_text().strip()
+    except OSError:
+        return ""
+
+
+def members(cgroup):
+    path = Path("/sys/fs/cgroup") / cgroup.lstrip("/") / "cgroup.procs"
+    try:
+        text = path.read_text()
+    except FileNotFoundError:
+        return []
+    return [int(line) for line in text.split() if line]
+
+
+def children_map():
+    children = {}
+    for entry in Path("/proc").iterdir():
+        if not entry.name.isdigit():
+            continue
+        try:
+            status = (entry / "status").read_text()
+        except OSError:
+            continue
+        ppid = next(
+            (int(line.split()[1]) for line in status.splitlines() if line.startswith("PPid:")),
+            None,
+        )
+        if ppid is not None:
+            children.setdefault(ppid, []).append(int(entry.name))
+    return children
+
+
+def move(pid, dest_procs):
+    try:
+        fd = os.open(dest_procs, os.O_WRONLY)
+    except FileNotFoundError:
+        return False
+    try:
+        os.write(fd, f"{pid}\n".encode())
+    except OSError as exc:
+        # A process can exit or fork while the cgroup snapshot is in hand.
+        if exc.errno not in (errno.ESRCH, errno.ENOENT, errno.EBUSY):
+            print(f"Could not move pid {pid} out of the VNC service: {exc}", file=sys.stderr)
+        return False
+    finally:
+        os.close(fd)
+    return True
+
+
+def survival_dir(service):
+    dest = Path("/sys/fs/cgroup") / service.lstrip("/")
+    dest = dest.parent / SURVIVAL_NAME
+    dest.mkdir(exist_ok=True)
+    return dest
+
+
+def evacuate(service, dest_dir):
+    """Move tmux servers in this service, and every process they still parent."""
+    dest_procs = dest_dir / "cgroup.procs"
+    protected = set()
+    moved = []
+    exclude = {os.getpid()}
+    for _ in range(20):
+        current = set(members(service))
+        servers = {pid for pid in current if comm(pid) == "tmux: server"}
+        protected.update(servers)
+        protected = {pid for pid in protected if Path(f"/proc/{pid}").exists()}
+        if not protected:
+            return moved
+        children = children_map()
+        targets = []
+        seen = set()
+        stack = list(protected)
+        while stack:
+            pid = stack.pop()
+            if pid in seen:
+                continue
+            seen.add(pid)
+            if pid in current and pid not in exclude:
+                targets.append(pid)
+            stack.extend(children.get(pid, ()))
+        if not targets:
+            return moved
+        progress = False
+        for pid in targets:
+            if not move(pid, dest_procs):
+                continue
+            progress = True
+            if pid in servers:
+                moved.append(pid)
+        if not progress:
+            time.sleep(0.05)
+    return moved
+
+
+def report(service, moved):
+    for pid in moved:
+        print(f"Moved tmux server {pid} out of the VNC service", flush=True)
+    remaining = [pid for pid in members(service) if comm(pid) == "tmux: server"]
+    if remaining:
+        print(
+            f"tmux servers still in the VNC service: {' '.join(map(str, remaining))}",
+            file=sys.stderr,
+            flush=True,
+        )
+
+
+def watch(service, dest):
+    runtime = Path(os.environ["XDG_RUNTIME_DIR"]) / "ipad-vnc"
+    runtime.mkdir(mode=0o700, exist_ok=True)
+    lock = (runtime / "tmux.lock").open("w")
+    try:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        return
+    service_dir = Path("/sys/fs/cgroup") / service.lstrip("/")
+    procs = service_dir / "cgroup.procs"
+    seen = None
+    while service_dir.is_dir():
+        try:
+            current = procs.read_text()
+        except OSError:
+            return
+        # A new server is a new pid. Retry only when membership changes or a move failed.
+        if current != seen:
+            moved = evacuate(service, dest)
+            report(service, moved)
+            if not any(comm(pid) == "tmux: server" for pid in members(service)):
+                seen = current
+        time.sleep(POLL_SECONDS)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--once", action="store_true", help="evacuate once and exit")
+    args = parser.parse_args()
+    service = cgroup_rel()
+    if not service.endswith(f"/{SERVICE_NAME}"):
+        return
+    dest = survival_dir(service)
+    if args.once:
+        report(service, evacuate(service, dest))
+        return
+    watch(service, dest)
+
+
+if __name__ == "__main__":
+    main()

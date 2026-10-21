@@ -9,6 +9,8 @@ Environment=VNC_INTERFACE=wlan0
 Environment=VNC_GEOMETRY=1600x1200
 EnvironmentFile=-%h/.config/icewm-vnc/environment
 ExecStart=%h/.dotfiles/repos/public/vnc-server/ipad-vnc-session
+# tmux is moved out of this cgroup first; otherwise restart kills every session.
+ExecStop=-%h/.dotfiles/repos/public/vnc-server/ipad-vnc-tmux --once
 Restart=always
 RestartSec=10
 TimeoutStopSec=10
