@@ -21,7 +21,7 @@ mirror reports missing packages, perform the usual full system upgrade and retry
 All VNC files live in `~/.dotfiles/repos/public/vnc-server/`:
 
 - `icewm-vnc/`: preferences, shortcuts, menus, fonts, and theme assets.
-- `ipad-vnc-session` and `ipad-vnc-taskbar`: session launch and taskbar positioning.
+- `ipad-vnc-session` and `ipad-vnc-taskbar`: session launch, keyring, and taskbar positioning.
 - `ipad-vnc-resolution`: restores the iPad resolution when no viewers remain.
 - `ipad-vnc.service`: systemd user service.
 - `setup-ipad-vnc.sh`: installation and explicit link management.
@@ -176,6 +176,19 @@ After changing the value, save remote work and restart `ipad-vnc.service`.
 Reopening an application may be required after a live DPI adjustment.
 For display scaling details, see [Qt's X11 DPI documentation](https://doc.qt.io/qt-6/highdpi.html#configuring-x11)
 and [GTK font DPI](https://docs.gtk.org/gtk3/property.Settings.gtk-xft-dpi.html).
+
+### Keyring
+
+The session starts `ksecretd` on its private D-Bus bus before IceWM and waits
+until that process owns `org.freedesktop.secrets`. Nothing else activates that
+name: KWallet's D-Bus service file is `org.kde.secretservicecompat`, so GTK, Qt,
+and Electron apps would otherwise find no keyring. The daemon uses the existing
+KWallet files. It stays locked until an application asks for a secret; the
+unlock prompt appears on the VNC display. This service is not a PAM login, so
+it does not receive the SDDM wallet key and cannot unlock automatically.
+`kwalletd6` still starts on demand for older KWallet clients. A local desktop
+that also runs `ksecretd` is a second daemon on the same wallet files; stop one
+before unlocking the wallet from the other.
 
 ### Service commands
 

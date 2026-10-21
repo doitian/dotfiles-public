@@ -46,8 +46,8 @@ if "$links_only"; then
     exit 0
 fi
 
-echo 'Installing TigerVNC, IceWM, Kitty, Rofi, and the Sarasa UI font.'
-sudo pacman -S --needed --noconfirm tigervnc icewm kitty rofi ttf-sarasa-gothic xorg-xrdb xorg-xrandr xsettingsd xorg-xset xorg-xsetroot python-xlib
+echo 'Installing TigerVNC, IceWM, Kitty, Rofi, KWallet, and the Sarasa UI font.'
+sudo pacman -S --needed --noconfirm tigervnc icewm kitty rofi kwallet ttf-sarasa-gothic xorg-xrdb xorg-xrandr xsettingsd xorg-xset xorg-xsetroot python-xlib
 
 install -d -m 700 "$HOME/.config/tigervnc"
 if [[ ! -s "$HOME/.config/tigervnc/passwd" ]]; then
