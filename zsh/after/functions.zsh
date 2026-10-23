@@ -77,10 +77,9 @@ function gwtcd() {
   local current selected
   current="$(git rev-parse --show-toplevel 2>/dev/null)" || return 1
   selected="$(
-    git worktree list --porcelain |
-      sed -n 's/^worktree //p' |
-      grep -vxF -- "$current" |
-      fzf -0 -1 -q "$*"
+    git worktree list |
+      awk -v cur="$current" '$1 != cur' |
+      fzf -0 -1 -q "$*" --delimiter=' ' --accept-nth=1
   )" || return
   [[ -n "$selected" ]] && cd -- "$selected"
 }
