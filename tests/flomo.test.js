@@ -91,10 +91,12 @@ describe("create", () => {
     expect(f.calls[0].args).toEqual({ content: "#til\n\npiped body" });
   });
 
-  test("empty content is an error before any API call", async () => {
+  test("empty input creates nothing", async () => {
     const f = fixture();
-    await expect(f.run([])).rejects.toThrow("content is empty");
+    await f.run([]);
+    await f.run([], { stdin: "  \n\t" });
     expect(f.calls).toEqual([]);
+    expect(f.text()).toBe("");
   });
 
   test("--json prints raw result", async () => {

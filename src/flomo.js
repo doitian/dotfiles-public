@@ -3,7 +3,7 @@
  * flomo CLI over the flomo MCP API (https://flomoapp.com/mcp).
  *
  * `flomo [content...]` creates a memo, reading Markdown from stdin when no
- * content arguments are given. Other subcommands search, read, update and
+ * content arguments are given (empty input is a no-op). Other subcommands search, read, update and
  * organize memos and tags. Token resolution: FLOMO_MCP_TOKEN env, then the OS
  * keyring, then an interactive prompt (stored for later runs).
  */
@@ -21,6 +21,7 @@ Capture and query flomo memos via the flomo MCP API.
 
 Create & update:
   flomo [content...]            Create a memo; reads Markdown from stdin when no args
+                                (empty input is a no-op)
   flomo create [content...]     Same as above (-f/--file reads content from a file)
   flomo update <id> [content...]  Replace a memo's content (args, -f, or stdin)
 
@@ -149,11 +150,11 @@ export async function createClient(env = process.env, fetchImpl = fetch) {
   return client;
 }
 
-async function readContent(values, prefix, readInput) {
+async function readContent(values, prefix, readInput, { required = true } = {}) {
   const fileContent = await loadFileContent(values.file);
   const stdin = values.file === "-" ? "" : await readInput();
   const content = prependToInput(prefix, fileContent, stdin).trim();
-  if (!content) throw new Error("Memo content is empty (pass args, -f/--file, or pipe stdin).");
+  if (!content && required) throw new Error("Memo content is empty (pass args, -f/--file, or pipe stdin).");
   return content;
 }
 
@@ -161,7 +162,7 @@ export async function run(argv, {
   env = process.env,
   client = null,
   output = process.stdout,
-  readInput = async () => (process.stdin.isTTY ? "" : await readStdin()),
+  readInput = readStdin,
 } = {}) {
   const parsed = parseArgs(argv);
   if (parsed.help) {
@@ -178,7 +179,8 @@ export async function run(argv, {
 
   switch (command) {
     case "create": {
-      const content = await readContent(values, args.join(" "), readInput);
+      const content = await readContent(values, args.join(" "), readInput, { required: false });
+      if (!content) break;
       const memo = await api.callTool("memo_create", { content });
       await print(values.json ? memo : formatWritten("created", memo));
       break;
