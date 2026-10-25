@@ -1,8 +1,9 @@
 import { expect, test } from "bun:test";
-import { copyFile, mkdtemp, rm } from "node:fs/promises";
+import { copyFile, mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { delimiter, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { removeDir } from "./helpers/remove-dir.js";
 
 test("pickers work without shim files and reuse session lists for exact and fuzzy queries", async () => {
   const dir = await mkdtemp(join(tmpdir(), "tmux fzf cli "));
@@ -50,7 +51,6 @@ test("pickers work without shim files and reuse session lists for exact and fuzz
       }
     }
   } finally {
-    // Windows briefly keeps the spawned fixture executables locked after exit
-    await rm(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
+    await removeDir(dir);
   }
 }, 15000);

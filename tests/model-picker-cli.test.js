@@ -3,6 +3,7 @@ import { copyFile, mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { delimiter, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { removeDir } from "./helpers/remove-dir.js";
 
 const OPENCODE_MODELS = ["test/alpha", "test/shared"];
 const PI_MODELS = ["test/pi-alpha", "test/shared"];
@@ -331,6 +332,6 @@ test("fa lists models, forwards args, and caches per agent", async () => {
       }
     }
   } finally {
-    await rm(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
+    await removeDir(dir);
   }
 }, 30000);

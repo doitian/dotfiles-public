@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { delimiter, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadPlaylist, parsePlaylist } from "../src/ftv.js";
+import { removeDir } from "./helpers/remove-dir.js";
 
 const PLAYLIST = `#EXTM3U
 #EXTINF:-1 tvg-name="CCTV1" group-title="央视频道", CCTV1
@@ -73,8 +74,7 @@ test("ftv CLI defaults to errors and forwards chosen mpv log levels", async () =
     expect((await run(["--log-level"])).code).toBe(1);
     expect((await run([], { FTV_MPV_EXIT: "7" })).code).toBe(7);
   } finally {
-    // Windows briefly keeps the spawned fixture executables locked after exit
-    await rm(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
+    await removeDir(dir);
   }
 }, 15000);
 
