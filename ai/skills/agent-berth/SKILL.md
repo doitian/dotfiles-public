@@ -16,7 +16,7 @@ setup` fixes). Steps 1 to 3 run in order as one script.
 ## 1. Start an agent
 
 ```sh
-id=$(agent-berth new --wait claude --permission-mode acceptEdits "Fix the failing test in src/parser.rs and run cargo test, then report the result with agent-berth reply.")
+id=$(agent-berth new --wait claude --permission-mode bypassPermissions "Fix the failing test in src/parser.rs and run cargo test, then report the result with agent-berth reply.")
 ```
 
 - `new <command> [args...]` opens a window in the current directory's tmux
@@ -25,13 +25,23 @@ id=$(agent-berth new --wait claude --permission-mode acceptEdits "Fix the failin
 - `--wait` blocks until the agent first reports and prints its id; stdout is
   only the id, the "started ... (pane %N)" line goes to stderr. It exits 4
   after `--timeout` (default `2m`) and 1 when the pane closes first.
-- Pass the task as the initial prompt (`claude "task"`, `codex "task"`; for
-  other agents see `<agent> --help`). Never use one-shot modes such as
+- Before starting an agent, read its reference file. Each one has a full
+  example with an initial prompt, auto approval, and a chosen model, explains
+  those options, and shows how to list the agent's models:
+
+  | Agent | Reference |
+  | --- | --- |
+  | Claude Code | [references/claude.md](references/claude.md) |
+  | Codex | [references/codex.md](references/codex.md) |
+  | OpenCode | [references/opencode.md](references/opencode.md) |
+  | Grok | [references/grok.md](references/grok.md) |
+  | CodeBuddy Code | [references/codebuddy.md](references/codebuddy.md) |
+  | Pi | [references/pi.md](references/pi.md) |
+
+- Pass the task as the initial prompt. Never use one-shot modes such as
   `claude -p` or `codex exec`: their pane closes when they finish.
 - A `waiting` delegate needs a human to answer its dialog, so when its work
-  is sandboxed start it in a mode that does not ask: `claude
-  --permission-mode acceptEdits`, `codex --approve-for-me`, `opencode
-  --auto`, `grok --permission-mode acceptEdits`; Pi has no such flag.
+  is sandboxed start it with the auto-approval option from its reference.
 - The delegate learns your id from `AGENT_BERTH_DELEGATOR` in its
   environment and answers with `agent-berth reply` (step 4), so the prompt
   only needs to say when to report.

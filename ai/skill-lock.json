@@ -6,18 +6,18 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/github/gh-stack.git",
       "skillPath": "skills/gh-stack/SKILL.md",
-      "skillFolderHash": "bde7bcf5a96697d31aa55b33565fa0ff002167ca",
+      "skillFolderHash": "53018dd61238961f3aae77c6d369170ab4eb06f3",
       "installedAt": "2026-09-12T10:35:06.634Z",
-      "updatedAt": "2026-10-14T09:48:40.877Z"
+      "updatedAt": "2026-10-26T12:24:44.900Z"
     },
     "agent-berth": {
       "source": "doitian/agent-berth",
       "sourceType": "github",
       "sourceUrl": "https://github.com/doitian/agent-berth.git",
       "skillPath": ".agents/skills/agent-berth/SKILL.md",
-      "skillFolderHash": "6fcf45becd44dbacf7bc9f91b77b000a628a3ad0",
+      "skillFolderHash": "bf6b136b1a4dbdbd78a63f6de8c34f022f97bd23",
       "installedAt": "2026-10-17T00:49:38.893Z",
-      "updatedAt": "2026-10-19T10:36:12.580Z"
+      "updatedAt": "2026-10-26T12:24:47.353Z"
     }
   },
   "dismissed": {}
