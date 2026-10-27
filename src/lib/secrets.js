@@ -66,10 +66,32 @@ export async function getPushoverCredentials(app) {
   return { userKey, appToken };
 }
 
-export async function getOpenAICredentials() {
-  const apiKey = await getSecret("openai-api-key", "OPENAI_API_KEY");
-  const baseURL = await getSecret("openai-base-url", "OPENAI_BASE_URL");
-  const model = await getSecret("openai-model", "OPENAI_DEFAULT_MODEL");
+/** True when the URL points at an OpenCode endpoint (opencode.ai or a subdomain). */
+export function isOpenCodeEndpoint(baseURL) {
+  if (!baseURL) return false;
+  let host;
+  try {
+    host = new URL(baseURL).hostname.toLowerCase();
+  } catch {
+    return false;
+  }
+  return host === "opencode.ai" || host.endsWith(".opencode.ai");
+}
+
+/**
+ * OpenAI-compatible credentials for the configured endpoint. An OpenCode endpoint is
+ * authenticated with the OpenCode API key, everything else with the OpenAI one.
+ * @param {{ env?: object, store?: object, isTTY?: boolean, ask?: Function }} [options]
+ *   Injectable dependencies, mainly for tests.
+ */
+export async function getOpenAICredentials({ env, store, isTTY, ask } = {}) {
+  const options = { env, store, isTTY, ask };
+  const baseURL = await resolveSecret("openai-base-url", ["OPENAI_BASE_URL"], options);
+  const [secretName, ...envVarNames] = isOpenCodeEndpoint(baseURL)
+    ? ["opencode-api-key", "OPENCODE_API_KEY"]
+    : ["openai-api-key", "OPENAI_API_KEY"];
+  const apiKey = await resolveSecret(secretName, envVarNames, options);
+  const model = await resolveSecret("openai-model", ["OPENAI_DEFAULT_MODEL"], options);
   return { apiKey, baseURL, model };
 }
 

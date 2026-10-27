@@ -1,5 +1,10 @@
 import { expect, test } from "bun:test";
-import { gopassToEnv, resolveSecret } from "../src/lib/secrets.js";
+import {
+  getOpenAICredentials,
+  gopassToEnv,
+  isOpenCodeEndpoint,
+  resolveSecret,
+} from "../src/lib/secrets.js";
 
 test("gopassToEnv exports password via export_as", () => {
   expect(
@@ -149,4 +154,65 @@ test("resolveSecret names the env vars when it cannot prompt", async () => {
   await expect(
     resolveSecret("token", ["TOKEN", "ALT_TOKEN"], { env: {}, store: memoryStore(), isTTY: false }),
   ).rejects.toThrow('Missing secret "token" (set one of: TOKEN, ALT_TOKEN');
+});
+
+test("isOpenCodeEndpoint matches opencode.ai and its subdomains", () => {
+  expect(isOpenCodeEndpoint("https://opencode.ai/zen/v1")).toBe(true);
+  expect(isOpenCodeEndpoint("https://api.opencode.ai/v1")).toBe(true);
+  expect(isOpenCodeEndpoint("https://OPENCODE.AI/zen/v1")).toBe(true);
+});
+
+test("isOpenCodeEndpoint rejects other hosts and invalid input", () => {
+  expect(isOpenCodeEndpoint("https://api.openai.com/v1")).toBe(false);
+  expect(isOpenCodeEndpoint("https://opencode.ai.evil.example/v1")).toBe(false);
+  expect(isOpenCodeEndpoint("https://notopencode.ai/v1")).toBe(false);
+  expect(isOpenCodeEndpoint("")).toBe(false);
+  expect(isOpenCodeEndpoint(undefined)).toBe(false);
+  expect(isOpenCodeEndpoint("not a url")).toBe(false);
+});
+
+test("getOpenAICredentials picks the OpenAI key for a non-OpenCode endpoint", async () => {
+  const env = {
+    OPENAI_BASE_URL: "https://api.openai.com/v1",
+    OPENAI_API_KEY: "sk-openai",
+    OPENAI_DEFAULT_MODEL: "gpt-5",
+  };
+  const credentials = await getOpenAICredentials({ env, store: memoryStore(), isTTY: false });
+  expect(credentials).toEqual({
+    apiKey: "sk-openai",
+    baseURL: "https://api.openai.com/v1",
+    model: "gpt-5",
+  });
+});
+
+test("getOpenAICredentials picks the OpenCode key for an OpenCode endpoint", async () => {
+  const env = {
+    OPENAI_BASE_URL: "https://opencode.ai/zen/v1",
+    OPENAI_API_KEY: "sk-openai",
+    OPENCODE_API_KEY: "sk-opencode",
+    OPENAI_DEFAULT_MODEL: "zen-1",
+  };
+  const credentials = await getOpenAICredentials({ env, store: memoryStore(), isTTY: false });
+  expect(credentials.apiKey).toBe("sk-opencode");
+});
+
+test("the endpoint decides the key even when both keys are stored", async () => {
+  const store = memoryStore({
+    "openai-base-url": "https://opencode.ai/zen/v1",
+    "openai-model": "zen-1",
+    "openai-api-key": "sk-openai",
+    "opencode-api-key": "sk-opencode",
+  });
+  const credentials = await getOpenAICredentials({ env: {}, store, isTTY: false });
+  expect(credentials.apiKey).toBe("sk-opencode");
+});
+
+test("getOpenAICredentials asks for the OpenCode key only when the endpoint is OpenCode", async () => {
+  await expect(
+    getOpenAICredentials({
+      env: { OPENAI_BASE_URL: "https://opencode.ai/zen/v1", OPENAI_API_KEY: "sk-openai" },
+      store: memoryStore(),
+      isTTY: false,
+    }),
+  ).rejects.toThrow("OPENCODE_API_KEY");
 });

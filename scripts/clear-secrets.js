@@ -9,6 +9,7 @@ import { GOOGLE_TASKS_SECRETS } from "../src/gtasks.js";
 export const CATEGORIES = {
   "google-tasks": GOOGLE_TASKS_SECRETS,
   openai: ["openai-api-key", "openai-base-url", "openai-model"],
+  opencode: ["opencode-api-key"],
   pushover: [
     "pushover-user-key",
     "pushover-personal-token",
@@ -22,7 +23,7 @@ export const SECRET_NAMES = Object.values(CATEGORIES).flat();
 if (import.meta.main) {
   function usage() {
     process.stderr.write(
-      "Usage: bun run clear-secrets [openai|pushover|google-tasks]\n  No args = clear all categories.\n",
+      "Usage: bun run clear-secrets [openai|opencode|pushover|google-tasks]\n  No args = clear all categories.\n",
     );
     process.exit(1);
   }
