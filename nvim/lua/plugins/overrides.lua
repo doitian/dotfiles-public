@@ -391,12 +391,61 @@ return {
   -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/extras/ai/sidekick.lua
   {
     "folke/sidekick.nvim",
-    opts = {
-      cli = {
-        mux = { enabled = true, backend = "tmux", create = "split" },
-        win = { layout = "right" },
-      },
-    },
+    opts = function(_, opts)
+      if vim.fn.has("win32") == 1 then
+        local Procs = require("sidekick.cli.procs")
+        if not Procs._psmux_patched then
+          -- Sidekick disables `ps` on Windows; use CIM to discover AI tools in psmux panes.
+          local Util = require("sidekick.util")
+          local new = Procs.new
+          local shells = { ["cmd.exe"] = true, ["powershell.exe"] = true, ["pwsh.exe"] = true }
+          Procs.new = function()
+            local self = new()
+            local shell = vim.fn.executable("pwsh") == 1 and "pwsh" or "powershell"
+            if vim.fn.executable(shell) ~= 1 then
+              return self
+            end
+            local lines = Util.exec({
+              shell,
+              "-NoProfile",
+              "-NonInteractive",
+              "-Command",
+              [[Get-CimInstance Win32_Process | Select-Object ProcessId, ParentProcessId, Name, CommandLine | ConvertTo-Json -Compress]],
+            }, { notify = false })
+            local ok, processes = pcall(vim.json.decode, table.concat(lines or {}, "\n"))
+            if not ok then
+              return self
+            end
+            if processes[1] == nil then
+              processes = { processes }
+            end
+            for _, proc in ipairs(processes) do
+              local pid = tonumber(proc.ProcessId)
+              local ppid = tonumber(proc.ParentProcessId)
+              local name = type(proc.Name) == "string" and proc.Name or ""
+              local cmd = proc.CommandLine
+              -- psmux's PowerShell bootstrap mentions Claude, so match shells by executable name only.
+              if type(cmd) ~= "string" or cmd == "" or shells[name:lower()] then
+                cmd = name
+              end
+              if pid and ppid and cmd ~= "" then
+                self._procs[pid] = { pid = pid, ppid = ppid, cmd = cmd }
+                self._children[ppid] = self._children[ppid] or {}
+                table.insert(self._children[ppid], pid)
+              end
+            end
+            return self
+          end
+          Procs._psmux_patched = true
+        end
+      end
+      return vim.tbl_deep_extend("force", opts, {
+        cli = {
+          mux = { enabled = true, backend = "tmux", create = "split" },
+          win = { layout = "right" },
+        },
+      })
+    end,
   },
 
   -- lsp {{{1
