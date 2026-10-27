@@ -34,7 +34,6 @@ function agentConfig(agent) {
     return {
       path: join(home(), ".config/opencode/opencode.jsonc"),
       defaultConfig: { $schema: "https://opencode.ai/config.json" },
-      key: "mcp",
       style: "opencode",
     };
   }
@@ -110,6 +109,7 @@ function toClaudeCodeEntry(mcpTemplate) {
   if (isRemoteTemplate(mcpTemplate)) {
     const entry = { ...mcpTemplate };
     delete entry.enabled;
+    delete entry.disabled;
     // OpenCode's `oauth: false` disables discovery; Claude only accepts an options object.
     if (entry.oauth == null || typeof entry.oauth !== "object") delete entry.oauth;
     if (entry.type === "remote") entry.type = "http";
@@ -192,10 +192,60 @@ async function writeJson(path, data) {
   await Bun.write(path, `${JSON.stringify(data, null, 2)}\n`);
 }
 
+function isServerEntry(value) {
+  return (
+    value != null &&
+    typeof value === "object" &&
+    !Array.isArray(value) &&
+    (value.type != null || value.command != null || value.url != null)
+  );
+}
+
+function normalizeOpenCodeEntry(entry) {
+  const next = { ...entry };
+  if (next.enabled === false && next.disabled == null) next.disabled = true;
+  delete next.enabled;
+  if (next.disabled === false) delete next.disabled;
+  return next;
+}
+
+/** V1 servers lived directly under `mcp` and used `enabled`. V2 uses `mcp.servers` and `disabled`. */
+function normalizeOpenCodeMcp(config) {
+  config.mcp ??= {};
+  const mcp = config.mcp;
+  if (mcp.servers == null || typeof mcp.servers !== "object" || Array.isArray(mcp.servers)) {
+    mcp.servers = {};
+  }
+  for (const [name, entry] of Object.entries(mcp)) {
+    if (name === "servers" || name === "timeout") continue;
+    if (!isServerEntry(entry)) continue;
+    if (!isServerEntry(mcp.servers[name])) mcp.servers[name] = entry;
+    delete mcp[name];
+  }
+  for (const [name, entry] of Object.entries(mcp.servers)) {
+    if (!isServerEntry(entry)) continue;
+    mcp.servers[name] = normalizeOpenCodeEntry(entry);
+  }
+  return mcp.servers;
+}
+
+function openCodeEntry(mcpTemplate) {
+  const entry = { ...mcpTemplate };
+  delete entry.enabled;
+  delete entry.disabled;
+  return entry;
+}
+
+function serversOf(cfg, config) {
+  if (cfg.style === "opencode") return normalizeOpenCodeMcp(config);
+  config[cfg.key] ??= {};
+  return config[cfg.key];
+}
+
 function mcpStatus(cfg, servers, name) {
   if (cfg.style === "opencode") {
     if (servers[name] == null) return "not configured";
-    if (servers[name].enabled === false) return "disabled";
+    if (servers[name].disabled === true) return "disabled";
     return "enabled";
   }
   return servers[name] != null ? "enabled" : "not configured";
@@ -203,11 +253,15 @@ function mcpStatus(cfg, servers, name) {
 
 async function enable(cfg, servers, name, mcpTemplate, agent) {
   if (cfg.style === "opencode") {
-    if (servers[name]?.enabled === true) {
+    const entry = openCodeEntry(mcpTemplate);
+    if (
+      servers[name] != null &&
+      JSON.stringify(servers[name]) === JSON.stringify(entry)
+    ) {
       console.log(`${agent}: ${name} mcp already enabled`);
       return;
     }
-    servers[name] = { ...mcpTemplate, enabled: true };
+    servers[name] = entry;
     return `${agent}: ${name} mcp enabled`;
   }
 
@@ -229,11 +283,11 @@ async function disable(cfg, servers, name, agent) {
       console.log(`${agent}: ${name} mcp not configured`);
       return;
     }
-    if (servers[name].enabled === false) {
+    if (servers[name].disabled === true) {
       console.log(`${agent}: ${name} mcp already disabled`);
       return;
     }
-    servers[name].enabled = false;
+    servers[name].disabled = true;
     return `${agent}: ${name} mcp disabled`;
   }
 
@@ -255,7 +309,7 @@ async function main() {
   }
 
   const template = await readJson(TEMPLATE);
-  const mcpTemplate = template.mcp?.[name];
+  const mcpTemplate = template.mcp?.servers?.[name];
   if (mcpTemplate == null) {
     console.error(`${name} mcp not in template`);
     process.exit(1);
@@ -264,8 +318,7 @@ async function main() {
   const config = (await exists(cfg.path))
     ? await readJson(cfg.path)
     : { ...cfg.defaultConfig };
-  config[cfg.key] ??= {};
-  const servers = config[cfg.key];
+  const servers = serversOf(cfg, config);
 
   if (action === "status") {
     console.log(`${agent}: ${name} mcp ${mcpStatus(cfg, servers, name)}`);

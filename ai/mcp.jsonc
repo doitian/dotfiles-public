@@ -1,27 +1,24 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "mcp": {
-    "grafana": {
-      "type": "local",
-      "command": [
-        "uvx",
-        "mcp-grafana"
-      ],
-      "enabled": false
+    "servers": {
+      "grafana": {
+        "type": "local",
+        "command": ["uvx", "mcp-grafana"],
+        "disabled": true,
+      },
+      "portal": {
+        "type": "remote",
+        "url": "https://mcp.iany.me/mcp",
+      },
+      "tc002": {
+        "type": "remote",
+        "url": "http://10.31.0.5:8008/mcp/",
+        "oauth": false,
+        "headers": {
+          "Authorization": "Bearer {env:TC002_TOKEN}",
+        },
+      },
     },
-    "portal": {
-      "type": "remote",
-      "url": "https://mcp.iany.me/mcp",
-      "enabled": true
-    },
-    "tc002": {
-      "type": "remote",
-      "url": "http://10.31.0.5:8008/mcp/",
-      "enabled": true,
-      "oauth": false,
-      "headers": {
-        "Authorization": "Bearer {env:TC002_TOKEN}"
-      }
-    }
-  }
+  },
 }
