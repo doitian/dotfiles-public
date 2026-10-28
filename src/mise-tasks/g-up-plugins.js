@@ -2,11 +2,20 @@
 import { $ } from "bun";
 import { claimProgress, duringSlice, finishProgress, slices } from "../lib/progress";
 
+// Claude probes SSH with `ssh -T ... git@github.com` and a 3s timeout before
+// cloning GitHub marketplaces. With gpg-agent's SSH support that starts a
+// smartcard pinentry, which the probe then kills before it can be answered.
+// Prefer HTTPS so the probe is skipped.
+export function claudePluginEnv(env = process.env) {
+  return { ...env, CLAUDE_CODE_PLUGIN_PREFER_HTTPS: "1" };
+}
+
 async function updateClaude() {
-  await $`claude plugin marketplace update`;
-  const plugins = JSON.parse(await $`claude plugin list --json`.text());
+  const env = claudePluginEnv();
+  await $`claude plugin marketplace update`.env(env);
+  const plugins = JSON.parse(await $`claude plugin list --json`.env(env).text());
   for (const plugin of plugins.filter((p) => p.scope === "user")) {
-    await $`claude plugin update ${plugin.id}`;
+    await $`claude plugin update ${plugin.id}`.env(env);
   }
 }
 

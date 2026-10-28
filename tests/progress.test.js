@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { updatePlan as linuxPlan } from "../src/mise-tasks/g-up-all-linux.js";
-import { pluginCommands } from "../src/mise-tasks/g-up-plugins.js";
+import { claudePluginEnv, pluginCommands } from "../src/mise-tasks/g-up-plugins.js";
 import { updatePlan as windowsPlan } from "../src/mise-tasks/g-up-all-windows.js";
 import { parseInvocation, run as runOscProgress } from "../src/osc-progress.js";
 import {
@@ -154,6 +154,10 @@ test("windows updater plans scoop and the shared tool steps", () => {
 test("plugin updates follow pi, opencode, then claude", () => {
   expect(pluginCommands(() => true)).toEqual(["pi", "opencode", "claude"]);
   expect(pluginCommands((cmd) => cmd === "opencode")).toEqual(["opencode"]);
+});
+
+test("claude plugin updates prefer HTTPS to skip the SSH pinentry probe", () => {
+  expect(claudePluginEnv({ FOO: "bar" })).toEqual({ FOO: "bar", CLAUDE_CODE_PLUGIN_PREFER_HTTPS: "1" });
 });
 
 test("osc-progress parses a step fraction and clears with no arguments", async () => {
