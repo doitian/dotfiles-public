@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-import { mkdir } from "node:fs/promises";
+import { chmod, mkdir } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { home, localAppData } from "../lib/env";
 import { exists } from "../lib/fs";
@@ -53,6 +53,114 @@ async function patchPi() {
   settings.defaultThinkingLevel = "high";
   await mkdir(dirname(path), { recursive: true });
   await Bun.write(path, `${JSON.stringify(settings, null, 2)}\n`);
+  console.log(`Updated ${path}`);
+}
+
+/** Limits and pricing from models.dev's alibaba-cn catalog; compat follows Pi's per-family provider data. */
+const ALIBABA_CN_MODELS = [
+  {
+    id: "qwen3.8-max",
+    name: "Qwen3.8 Max",
+    reasoning: true,
+    thinkingLevelMap: {
+      off: null,
+      minimal: null,
+      low: "low",
+      medium: "medium",
+      high: null,
+      xhigh: "xhigh",
+      max: null,
+    },
+    input: ["text", "image"],
+    cost: { input: 1.77744, output: 5.33231, cacheRead: 0.22218, cacheWrite: 2.22179 },
+    compat: {
+      supportsStore: false,
+      supportsDeveloperRole: false,
+      supportsReasoningEffort: true,
+      maxTokensField: "max_tokens",
+      thinkingFormat: "qwen",
+      supportsStrictMode: true,
+    },
+    contextWindow: 1000000,
+    maxTokens: 131072,
+  },
+  {
+    id: "glm-5.3",
+    name: "GLM-5.3",
+    reasoning: true,
+    thinkingLevelMap: {
+      off: null,
+      minimal: null,
+      low: "low",
+      medium: null,
+      high: "high",
+      xhigh: null,
+      max: "max",
+    },
+    input: ["text"],
+    cost: { input: 1.1, output: 3.851, cacheRead: 0.275, cacheWrite: 0 },
+    compat: {
+      supportsStore: false,
+      supportsDeveloperRole: false,
+      supportsReasoningEffort: true,
+      maxTokensField: "max_tokens",
+      thinkingFormat: "zai",
+      supportsStrictMode: true,
+    },
+    contextWindow: 1000000,
+    maxTokens: 131072,
+  },
+  {
+    id: "deepseek-v4.1-flash-1017",
+    name: "DeepSeek V4.1 Flash (1017)",
+    reasoning: true,
+    thinkingLevelMap: {
+      minimal: null,
+      low: "low",
+      medium: null,
+      high: "high",
+      max: "max",
+    },
+    input: ["text", "image"],
+    cost: { input: 0.29754, output: 1.19015, cacheRead: 0.01488, cacheWrite: 0 },
+    compat: {
+      supportsStore: false,
+      supportsDeveloperRole: false,
+      supportsReasoningEffort: true,
+      maxTokensField: "max_tokens",
+      thinkingFormat: "deepseek",
+      requiresReasoningContentOnAssistantMessages: true,
+      supportsStrictMode: true,
+    },
+    contextWindow: 1000000,
+    maxTokens: 384000,
+  },
+];
+
+/** Write the full alibaba-cn provider into Pi's models.json when the secret points at Aliyun. */
+async function patchPiModels() {
+  const { apiKey, baseURL } = await getOpenAICredentials();
+  if (!baseURL?.includes("aliyuncs")) return;
+
+  const path = join(home(), ".pi/agent/models.json");
+  const file = Bun.file(path);
+  const config = (await file.exists())
+    ? await file.json()
+    : { $schema: "https://pi.dev/schemas/models.schema.json" };
+  const providers = (config.providers ??= {});
+  const provider = {
+    name: "Alibaba (China)",
+    baseUrl: baseURL,
+    api: "openai-completions",
+    apiKey,
+    models: ALIBABA_CN_MODELS,
+  };
+  if (JSON.stringify(providers["alibaba-cn"]) === JSON.stringify(provider)) return;
+
+  providers["alibaba-cn"] = provider;
+  await mkdir(dirname(path), { recursive: true });
+  await Bun.write(path, `${JSON.stringify(config, null, 2)}\n`);
+  await chmod(path, 0o600);
   console.log(`Updated ${path}`);
 }
 
@@ -171,6 +279,7 @@ async function main() {
   await patchCodex();
   await patchClaude();
   await patchPi();
+  await patchPiModels();
   await patchOpencode();
   await patchOpencodeCli();
   await scrubUlanziHooks();
