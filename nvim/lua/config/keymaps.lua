@@ -58,8 +58,8 @@ map("n", "<p", "<Cmd>exec 'put! '.v:register.\"<Bar>keepjump norm '[\"<CR>", { d
 map("n", ">gp", "<Cmd>exec 'put '.v:register<CR>j", { desc = "Paste below" })
 map("n", "<gp", "<Cmd>exec 'put! '.v:register<CR>j", { desc = "Paste above" })
 map("x", "&", ":&&<CR>", { desc = "Repeat substitution on selected lines" })
-vim.F.npcall(unmap, { "s" }, ">")
-vim.F.npcall(unmap, { "s" }, "<")
+pcall(unmap, { "s" }, ">")
+pcall(unmap, { "s" }, "<")
 
 map("i", "<C-M-BS>", "<C-u>")
 
