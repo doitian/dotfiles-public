@@ -73,6 +73,12 @@ end
 unmap("i", "<A-j>")
 unmap("i", "<A-k>")
 
+map("n", "<Leader><C-l>", function()
+  vim.cmd("noh")
+  local mc_ns = vim.api.nvim_create_namespace("nvim.multicursor")
+  vim.api.nvim_buf_clear_namespace(0, mc_ns, 0, -1)
+end, { expr = true, desc = "Clear hlsearch and multicursor" })
+
 -- windows {{{1
 map("n", "<Leader>wk", "<Cmd>Close<CR>", { desc = "Close disturbing windows" })
 
