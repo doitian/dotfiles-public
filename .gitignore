@@ -1,9 +1,10 @@
-private-snippets.code-snippets
+/.claude/skills
+/ai/skills/.trash
+/dist
 /mise/auto
 /mise/config.toml
 /mise/github_tokens.toml
-node_modules
-/dist
 /src/lib/dn-windows/bin/
 /src/lib/dn-windows/obj/
-/.claude/skills
+node_modules
+private-snippets.code-snippets
