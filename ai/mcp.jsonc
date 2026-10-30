@@ -19,6 +19,10 @@
           "Authorization": "Bearer {env:TC002_TOKEN}",
         },
       },
+      "flomo": {
+        "type": "remote",
+        "url": "https://flomoapp.com/mcp",
+      },
     },
   },
 }
