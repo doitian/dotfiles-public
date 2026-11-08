@@ -25,9 +25,8 @@ export async function exists(path) {
  * @returns {Promise<Record<string, unknown>>}
  */
 export async function readJsoncObject(path) {
-  const file = Bun.file(path);
-  if (!(await file.exists())) return {};
-  const text = await file.text();
+  if (!(await exists(path))) return {};
+  const text = await Bun.file(path).text();
   if (!text.trim()) return {};
   let value;
   try {

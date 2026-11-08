@@ -2,7 +2,7 @@
 import { chmod, mkdir } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { home, localAppData } from "../lib/env";
-import { exists } from "../lib/fs";
+import { exists, readJsoncObject } from "../lib/fs";
 import { getOpenAICredentials } from "../lib/secrets";
 
 /** mbx cache root: %LOCALAPPDATA%\mbx on Windows, ~/.cache/mbx elsewhere. */
@@ -13,26 +13,29 @@ function mbxCacheRoot() {
   return join(home(), ".cache/mbx");
 }
 
+/** Existing config parsed as JSON(C), or `makeDefault()` when the file has not been created yet. */
+async function readConfig(path, makeDefault) {
+  return (await exists(path)) ? await readJsoncObject(path) : makeDefault();
+}
+
 async function patchCodex() {
   const path = join(home(), ".codex/config.toml");
-  const file = Bun.file(path);
-  if (!(await file.exists())) return;
-
-  const config = Bun.TOML.parse(await file.text());
+  const text = (await exists(path)) ? await Bun.file(path).text() : "";
+  const config = text.trim() === "" ? {} : Bun.TOML.parse(text);
   const sandbox = (config.sandbox_workspace_write ??= {});
   const roots = (sandbox.writable_roots ??= []);
   const root = mbxCacheRoot();
   if (roots.includes(root)) return;
 
   roots.push(root);
+  await mkdir(dirname(path), { recursive: true });
   await Bun.write(path, Bun.TOML.stringify(config));
   console.log(`Updated ${path}`);
 }
 
 async function patchClaude() {
   const path = join(home(), ".claude/settings.json");
-  const file = Bun.file(path);
-  const settings = (await file.exists()) ? await file.json() : {};
+  const settings = await readConfig(path, () => ({}));
   const permissions = (settings.permissions ??= {});
   const allow = (permissions.allow ??= []);
   const permission = "Bash(gtasks:*)";
@@ -46,8 +49,7 @@ async function patchClaude() {
 
 async function patchPi() {
   const path = join(home(), ".pi/agent/settings.json");
-  const file = Bun.file(path);
-  const settings = (await file.exists()) ? await file.json() : {};
+  const settings = await readConfig(path, () => ({}));
   if (settings.defaultThinkingLevel === "high") return;
 
   settings.defaultThinkingLevel = "high";
@@ -143,10 +145,9 @@ async function patchPiModels() {
   if (!baseURL?.includes("aliyuncs")) return;
 
   const path = join(home(), ".pi/agent/models.json");
-  const file = Bun.file(path);
-  const config = (await file.exists())
-    ? await file.json()
-    : { $schema: "https://pi.dev/schemas/models.schema.json" };
+  const config = await readConfig(path, () => ({
+    $schema: "https://pi.dev/schemas/models.schema.json",
+  }));
   const providers = (config.providers ??= {});
   const provider = {
     name: "Alibaba (China)",
@@ -170,10 +171,11 @@ async function patchOpencode() {
   if (!baseURL?.includes("aliyuncs")) return;
 
   const path = join(home(), ".config/opencode/opencode.jsonc");
-  const file = Bun.file(path);
-  const config = (await file.exists())
-    ? await file.json()
-    : { $schema: "https://opencode.ai/config.json", mcp: {}, plugin: [] };
+  const config = await readConfig(path, () => ({
+    $schema: "https://opencode.ai/config.json",
+    mcp: {},
+    plugin: [],
+  }));
   const providers = (config.providers ??= {});
   const provider = (providers["alibaba-cn"] ??= {});
   const settings = (provider.settings ??= {});
@@ -195,10 +197,9 @@ const OPENCODE_CLI = {
 /** Apply OPENCODE_CLI to ~/.config/opencode/cli.json, leaving unrelated settings alone. */
 async function patchOpencodeCli() {
   const path = join(home(), ".config/opencode/cli.json");
-  const file = Bun.file(path);
-  const config = (await file.exists())
-    ? await file.json()
-    : { $schema: "https://opencode.ai/v2/cli.json" };
+  const config = await readConfig(path, () => ({
+    $schema: "https://opencode.ai/v2/cli.json",
+  }));
 
   let changed = false;
   for (const [group, values] of Object.entries(OPENCODE_CLI)) {
@@ -275,17 +276,34 @@ async function scrubUlanziHooks() {
   await scrubHooksFile(join(home(), ".codex/hooks.json"));
 }
 
+/** Config patchers grouped by the CLI that owns them. */
+const AGENT_PATCHES = [
+  { command: "codex", patch: [patchCodex] },
+  { command: "claude", patch: [patchClaude] },
+  { command: "pi", patch: [patchPi, patchPiModels] },
+  { command: "opencode", patch: [patchOpencode, patchOpencodeCli] },
+];
+
+/** Patchers of the agents installed here; a CLI missing from PATH means the agent is unused. */
+export function installedAgentPatches(which = (command) => Bun.which(command)) {
+  return AGENT_PATCHES.filter(({ command }) => which(command));
+}
+
+/** Patches installed agents only, creating config files that do not exist yet. */
+export async function patchAgents(which = (command) => Bun.which(command)) {
+  for (const { patch } of installedAgentPatches(which)) {
+    for (const apply of patch) await apply();
+  }
+}
+
 async function main() {
-  await patchCodex();
-  await patchClaude();
-  await patchPi();
-  await patchPiModels();
-  await patchOpencode();
-  await patchOpencodeCli();
+  await patchAgents();
   await scrubUlanziHooks();
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+if (import.meta.main || Bun.isStandaloneExecutable) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}
