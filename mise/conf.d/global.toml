@@ -59,7 +59,7 @@ run = ["osc-progress gh extension install github/gh-stack"]
 hide = true
 description = "Install pi extensions"
 dir = "~"
-run = ["osc-progress pi install npm:pi-advisor"]
+run = ["osc-progress pi install npm:pi-advisor-flow"]
 
 [tasks."g:add:sprite"]
 hide = true
